@@ -26,6 +26,27 @@
       align-items: center;
       justify-content: center;
     }
+    /* 智能助手子页：横向信息卡 */
+    .assistant-scene-card {
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .assistant-scene-card:hover {
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+    .assistant-icon-ring {
+      flex-shrink: 0;
+      width: 3.75rem;
+      height: 3.75rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .view-hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
@@ -85,16 +106,18 @@
   </header>
 
   <!-- 内容区域 -->
-  <main class="p-6 min-h-[calc(100vh-64px)] max-w-7xl mx-auto">
-    <div class="mb-6">
-      <h1 class="text-xl font-bold text-gray-800">AI 专区</h1>
-      <p class="text-sm text-gray-500 mt-1">更多智能能力，持续扩展中</p>
-    </div>
+  <main id="main-content" class="min-h-[calc(100vh-64px)] w-full">
+    <!-- ========== 视图：AI 专区首页（居中限宽） ========== -->
+    <section id="view-ai-home" class="view-ai-home p-6 max-w-[90rem] mx-auto">
+      <div class="mb-6">
+        <h1 class="text-xl font-bold text-gray-800">AI 专区</h1>
+        <p class="text-sm text-gray-500 mt-1">更多智能能力，持续扩展中</p>
+      </div>
 
-    <!-- 卡片网格：参考三列布局，小屏自动换行 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- 智能助手 -->
-      <a href="ai-assistant.html" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block no-underline text-inherit">
+      <!-- 卡片网格：参考三列布局，小屏自动换行 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- 智能助手（进入子界面） -->
+      <button type="button" id="btn-open-assistant" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
           <div class="ai-icon-box bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-inner">
             <i data-lucide="bot" class="w-7 h-7"></i>
@@ -106,7 +129,7 @@
             </p>
           </div>
         </div>
-      </a>
+      </button>
 
       <!-- 数字人 -->
       <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
@@ -168,9 +191,243 @@
         </div>
       </article>
     </div>
+    </section>
+
+    <!-- ========== 视图：智能助手（场景卡片） ========== -->
+    <section id="view-smart-assistant" class="view-smart-assistant view-hidden w-full max-w-none">
+      <!-- 顶部面包屑导航（与 evaluate.html 一致：顶部分隔线 + 图标） -->
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+          <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
+            <button type="button" id="breadcrumb-ai-zone" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <span class="text-gray-700 font-medium">智能助手</span>
+          </nav>
+      </div>
+
+      <div class="py-[15px] px-6">
+        <h1 class="text-2xl font-bold text-gray-900">智能助手</h1>
+      </div>
+
+      <!-- 一行最多 5 个；小屏自动换行（整宽铺满，无两侧大留白） -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 px-6">
+        <!-- 教学工作计划 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="教学工作计划" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-emerald-500 text-white shadow-md">
+              <i data-lucide="clipboard-list" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">教学工作计划</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                快速生成教学计划，智能匹配内容安排，助力教学更高效。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 校园活动策划 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="校园活动策划" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-violet-600 text-white shadow-md">
+              <i data-lucide="scroll-text" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">校园活动策划</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                聚焦活动目标与流程，输出清晰可执行方案。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 家长会发言稿 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="家长会发言稿" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-gradient-to-b from-sky-400 to-blue-600 text-white shadow-md">
+              <i data-lucide="file-user" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">家长会发言稿</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                贴合班级情况，给出高质量发言稿建议。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 班会课设计 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="班会课设计" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-amber-500 text-white shadow-md">
+              <i data-lucide="users-round" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">班会课设计</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                围绕主题与学情，生成环节设计与讨论引导语。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 评课稿 / 教学反思 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="评课稿与反思" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-rose-500 text-white shadow-md">
+              <i data-lucide="message-square-text" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">评课稿与反思</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                结构化梳理亮点与改进点，辅助教研与自我提升。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第二行示例：家校沟通短信 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="家校沟通短信" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-cyan-600 text-white shadow-md">
+              <i data-lucide="smartphone" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">家校沟通短信</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                通知、提醒、表扬等话术一键润色，语气得体。
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 作业评语 -->
+        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="作业评语" role="button" tabindex="0">
+          <div class="flex gap-4 items-start">
+            <div class="assistant-icon-ring bg-indigo-600 text-white shadow-md">
+              <i data-lucide="pen-line" class="w-7 h-7"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="text-base font-bold text-gray-800 leading-snug">作业评语</h2>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                针对作业表现生成鼓励性、建设性评语建议。
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== 视图：具体助手对话（截图原型） ========== -->
+    <section id="view-assistant-scene" class="view-assistant-scene view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-scene" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-assistant-list" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">智能助手</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span id="breadcrumb-scene-name" class="text-gray-700 font-medium">场景名称</span>
+        </nav>
+      </div>
+      <!-- 对话内容区：标题 + 操作（预览 / 下载 / 新建） -->
+      <div class="px-6 pt-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 py-3 px-4 rounded-t-lg bg-slate-100/90 border border-b-0 border-gray-200/80">
+          <h2 id="assistant-toolbar-name" class="text-base font-semibold text-gray-800">教学工作计划</h2>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" class="assistant-toolbar-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-200/95 text-gray-600 text-sm font-medium hover:bg-gray-300/95 transition-colors border-0 cursor-pointer">
+              <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
+              预览
+            </button>
+            <button type="button" class="assistant-toolbar-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-200/95 text-gray-600 text-sm font-medium hover:bg-gray-300/95 transition-colors border-0 cursor-pointer">
+              <i data-lucide="download" class="w-4 h-4 shrink-0"></i>
+              下载
+            </button>
+            <button type="button" class="assistant-toolbar-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors border-0 cursor-pointer shadow-sm">
+              <i data-lucide="square-plus" class="w-4 h-4 shrink-0"></i>
+              新建
+            </button>
+          </div>
+        </div>
+        <div class="rounded-b-lg overflow-hidden border border-t-0 border-gray-200/80 shadow-sm">
+          <img src="img/助手对话.png" alt="助手对话界面" class="w-full h-auto block" />
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
+    function hideAllAssistantViews() {
+      document.getElementById('view-smart-assistant').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+    }
+
+    function showAiHome() {
+      document.getElementById('view-ai-home').classList.remove('view-hidden');
+      hideAllAssistantViews();
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html');
+      }
+      lucide.createIcons();
+    }
+
+    function showSmartAssistant() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-smart-assistant').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#assistant');
+      }
+      lucide.createIcons();
+    }
+
+    function showAssistantScene(sceneName) {
+      if (!sceneName) return;
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-smart-assistant').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.remove('view-hidden');
+      document.getElementById('breadcrumb-scene-name').textContent = sceneName;
+      var toolbarTitle = document.getElementById('assistant-toolbar-name');
+      if (toolbarTitle) toolbarTitle.textContent = sceneName;
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#assistant/' + encodeURIComponent(sceneName));
+      }
+      lucide.createIcons();
+    }
+
+    document.getElementById('btn-open-assistant').addEventListener('click', showSmartAssistant);
+    document.getElementById('breadcrumb-ai-zone').addEventListener('click', showAiHome);
+    document.getElementById('breadcrumb-ai-zone-scene').addEventListener('click', showAiHome);
+    document.getElementById('breadcrumb-back-assistant-list').addEventListener('click', showSmartAssistant);
+
+    document.querySelectorAll('.assistant-scene-card').forEach(function (el) {
+      function open() {
+        showAssistantScene('教学工作计划');
+      }
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+    });
+
+    function applyHashRoute() {
+      var hash = window.location.hash || '';
+      if (hash.indexOf('#assistant/') === 0) {
+        var name = decodeURIComponent(hash.slice('#assistant/'.length));
+        if (name) {
+          showAssistantScene(name);
+          return;
+        }
+      }
+      if (hash === '#assistant') {
+        showSmartAssistant();
+      }
+    }
+
+    applyHashRoute();
+    window.addEventListener('hashchange', applyHashRoute);
+
     // 初始化 Lucide 图标
     lucide.createIcons();
   </script>
