@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能教学 - 智能测评</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <style>
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      color: #2563EB;
+    }
+    .menu-item.active {
+      background-color: #DBEAFE;
+      color: #2563EB;
+      border-left: 3px solid #2563EB;
+    }
+    .menu-item.active .menu-icon {
+      color: #2563EB;
+    }
+    /* 作业卡片 */
+    .homework-card {
+      transition: box-shadow 0.2s ease;
+    }
+    .homework-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .stamp {
+      transform: rotate(-12deg);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .stamp-checked { color: #16a34a; border-color: #bbf7d0; background: #f0fdf4; }
+    .stamp-unchecked { color: #dc2626; border-color: #fecaca; background: #fef2f2; }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+  <!-- 顶部导航栏 -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg flex-shrink-0">
+    <div class="flex items-center justify-between h-16 px-6">
+      <!-- 左侧 Logo -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
+          <span class="text-lg font-bold">兆函科技</span>
+        </div>
+      </div>
+
+      <!-- 中间导航 -->
+      <nav class="flex items-center gap-1">
+        <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">
+          首页
+        </a>
+        <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
+        <a href="teach.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能授课</a>
+        <a href="evaluate.html" class="px-4 py-2 text-sm font-medium rounded-lg bg-white/20 transition-all hover:bg-white/30 no-underline text-white">
+          智能测评
+        </a>
+        <a href="ai.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">AI专区</a>
+      </nav>
+
+      <!-- 右侧图标 + 用户 -->
+      <div class="flex items-center gap-4">
+        <!-- 任务 -->
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="list-todo" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+        </div>
+        
+        <!-- 通知 -->
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
+        </div>
+        
+        <!-- 用户信息 -->
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <div class="text-sm">
+            <div class="font-medium">张老师</div>
+            <div class="text-xs text-white/70">语文教师</div>
+          </div>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区域：左侧菜单 + 右侧内容，flex-1 填满剩余高度 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 左侧二级功能菜单，固定宽度、可滚动 -->
+    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
+      <!-- 菜单标题 -->
+      <div class="p-4 border-b border-gray-100">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2">
+          <i data-lucide="clipboard-check" class="w-5 h-5 text-blue-600"></i>
+          智能测评
+        </h2>
+      </div>
+      
+      <!-- 菜单列表 -->
+      <nav class="py-2">
+        <!-- 作业&批改 -->
+        <a href="#homework" class="menu-item active flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="file-text" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>作业&批改</span>
+        </a>
+        
+        <!-- 智能组卷 -->
+        <a href="#paper" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="file-stack" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>智能组卷</span>
+        </a>
+        
+        <!-- 数据分析 -->
+        <a href="#analysis" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="bar-chart-2" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>数据分析</span>
+        </a>
+        
+        <!-- 学生管理 -->
+        <a href="#student" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="users" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>学生管理</span>
+        </a>
+
+        <!-- 综合评价 -->
+        <a href="#comprehensive" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="clipboard-list" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>综合评价</span>
+        </a>
+
+        <!-- 课堂点评（老师写评语，使用奖杯图标） -->
+        <a href="#classroom-review" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="trophy" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>课堂点评</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧内容区域，独立滚动 -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <!-- 作业&批改 内容面板 -->
+      <div id="panel-homework" class="space-y-6">
+        <!-- 顶部：页面标题 + 筛选条件 + 操作按钮 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <!-- 左侧：页面标题 -->
+            <div>
+              <h3 class="font-bold text-gray-800">作业&批改</h3>
+            </div>
+            <!-- 右侧：筛选条件 + 操作按钮 -->
+            <div class="flex flex-wrap items-center gap-3">
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部</option>
+                <option>语文</option>
+                <option>数学</option>
+                <option>英语</option>
+              </select>
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部</option>
+                <option>二年级四班</option>
+                <option>三年级一班</option>
+                <option>三年级二班</option>
+                <option>四年级一班</option>
+              </select>
+              <div class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-500 text-sm">
+                <i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i>
+                <input type="text" placeholder="开始日期 至 结束日期" class="border-0 outline-none w-44 placeholder-gray-400" readonly>
+              </div>
+              <div class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg bg-white">
+                <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                <input type="text" placeholder="搜索作业" class="border-0 outline-none w-32 placeholder-gray-400">
+              </div>
+              <button type="button" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                作业数据分析
+              </button>
+              <button type="button" id="btn-assign" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                布置作业
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 作业列表截图（点击进入检查作业） -->
+        <div role="button" tabindex="0" class="cursor-pointer rounded-lg" onclick="showCheckHomework()" title="点击进入检查作业">
+          <img src="img/作业列表.png" alt="作业列表" class="w-full h-auto block rounded-lg" />
+        </div>
+      </div>
+
+      <!-- 检查作业 二级页面 -->
+      <div id="panel-check" class="hidden space-y-6">
+        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+          <nav class="flex items-center gap-2 text-sm text-gray-500">
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showHomework(); return false;">作业&批改</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <span class="text-gray-700 font-medium">检查作业</span>
+          </nav>
+        </div>
+        <img src="img/检查作业.png" alt="检查作业" class="w-full h-auto block rounded-lg" />
+      </div>
+
+      <!-- 布置作业面板 -->
+      <div id="panel-assign" class="hidden space-y-6">
+        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+          <nav class="flex items-center gap-2 text-sm text-gray-500">
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showHomework(); return false;">作业&批改</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <span class="text-gray-700 font-medium">布置作业</span>
+          </nav>
+        </div>
+        <img src="img/布置作业.png" alt="布置作业" class="w-full h-auto block rounded-lg" />
+      </div>
+
+      <!-- 智能组卷 内容面板 -->
+      <div id="panel-paper" class="hidden space-y-6">
+        <!-- 一级分类标签：试卷库 | 题库 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div class="border-b border-gray-100">
+            <div class="flex">
+              <button type="button" id="tab-paper-lib" class="paper-tab active px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600" onclick="switchPaperTab('lib')">
+                试卷库
+              </button>
+              <button type="button" id="tab-paper-bank" class="paper-tab px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchPaperTab('bank')">
+                题库
+              </button>
+            </div>
+          </div>
+
+          <!-- 试卷库 子标签 -->
+          <div id="paper-lib-content" class="p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex gap-4">
+                <button type="button" id="subtab-self" class="paper-subtab active px-4 py-2 text-sm font-medium rounded-lg bg-blue-50 text-blue-600" onclick="switchPaperSubTab('self')">
+                  自主组卷库
+                </button>
+                <button type="button" id="subtab-ai" class="paper-subtab px-4 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100" onclick="switchPaperSubTab('ai')">
+                  AI试卷库
+                </button>
+              </div>
+              <!-- 自主组卷库 按钮 -->
+              <div id="btns-self" class="flex gap-3">
+                <button type="button" id="btn-refined-paper" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                  精细化组卷
+                </button>
+                <button type="button" id="btn-quick-paper" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                  快速组卷
+                </button>
+              </div>
+              <!-- AI试卷库 按钮 -->
+              <div id="btns-ai" class="hidden">
+                <button type="button" id="btn-ai-paper" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                  智能AI组卷
+                </button>
+              </div>
+            </div>
+            <!-- 内容：截图 -->
+            <div class="rounded-xl overflow-hidden border border-gray-200 bg-white">
+              <img id="img-self" class="w-full h-auto block" src="img/自主组卷库.png" alt="自主组卷库" />
+              <img id="img-ai" class="w-full h-auto hidden" src="img/AI组卷库.png" alt="AI试卷库" />
+            </div>
+          </div>
+
+          <!-- 题库 子标签 -->
+          <div id="paper-bank-content" class="hidden p-6">
+            <div class="flex gap-4 mb-6">
+              <button type="button" id="subtab-personal" class="paper-subtab active px-4 py-2 text-sm font-medium rounded-lg bg-blue-50 text-blue-600" onclick="switchPaperSubTab2('personal')">
+                个人题库
+              </button>
+              <button type="button" id="subtab-public" class="paper-subtab px-4 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100" onclick="switchPaperSubTab2('public')">
+                公共题库
+              </button>
+            </div>
+            <!-- 内容：截图 -->
+            <div class="rounded-xl overflow-hidden border border-gray-200 bg-white">
+              <img id="img-personal" class="w-full h-auto block" src="img/个人题库.png" alt="个人题库" />
+              <img id="img-public" class="w-full h-auto hidden" src="img/公共题库.png" alt="公共题库" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 精细化组卷 内容面板 -->
+      <div id="panel-refined-paper" class="hidden space-y-6">
+        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+          <nav class="flex items-center gap-2 text-sm text-gray-500">
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLib(); return false;">试卷库</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLib(); return false;">自主组卷库</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <span class="text-gray-700 font-medium">精细化组卷</span>
+          </nav>
+        </div>
+        <!-- 内容：截图 -->
+        <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="refined-paper-img-wrap" onclick="toggleRefinedPaperImg()" title="点击切换">
+          <img id="img-refined-paper" class="w-full h-auto block" src="img/精细化组卷1.png" alt="精细化组卷" />
+        </div>
+      </div>
+
+      <!-- 快速组卷 内容面板 -->
+      <div id="panel-quick-paper" class="hidden space-y-6">
+        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+          <nav class="flex items-center gap-2 text-sm text-gray-500">
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLib(); return false;">试卷库</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLib(); return false;">自主组卷库</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <span class="text-gray-700 font-medium">快速组卷</span>
+          </nav>
+        </div>
+        <!-- 内容：截图 -->
+        <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="quick-paper-img-wrap" onclick="toggleQuickPaperImg()" title="点击切换">
+          <img id="img-quick-paper" class="w-full h-auto block" src="img/快速组卷1.png" alt="快速组卷" />
+        </div>
+      </div>
+
+      <!-- 智能AI组卷 内容面板 -->
+      <div id="panel-ai-paper" class="hidden space-y-6">
+        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+          <nav class="flex items-center gap-2 text-sm text-gray-500">
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLibFromAi(); return false;">试卷库</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLibFromAi(); return false;">AI试卷库</a>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            <span class="text-gray-700 font-medium">智能AI组卷</span>
+          </nav>
+        </div>
+        <!-- 内容：截图 -->
+        <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="ai-paper-img-wrap" onclick="toggleAiPaperImg()" title="点击切换">
+          <img id="img-ai-paper" class="w-full h-auto block" src="img/AI组卷1.png" alt="智能AI组卷" />
+        </div>
+      </div>
+
+      <!-- 数据分析 内容面板 -->
+      <div id="panel-analysis" class="hidden">
+        <img src="img/数据分析.png" alt="数据分析" class="w-full h-auto block rounded-lg" />
+      </div>
+
+      <!-- 学生管理 内容面板 -->
+      <div id="panel-student" class="hidden space-y-6">
+        <!-- 顶部：选项卡在左 + 选择器在右 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-0 z-10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <!-- 左侧：选项卡 -->
+            <div class="flex rounded-lg border border-gray-200 overflow-hidden">
+              <button type="button" id="tab-student-all" class="student-tab active px-4 py-2 text-sm font-medium bg-blue-600 text-white" onclick="switchStudentTab('all')">
+                全部学生
+              </button>
+              <button type="button" id="tab-student-group" class="student-tab px-4 py-2 text-sm font-medium text-gray-600 bg-white hover:bg-gray-50" onclick="switchStudentTab('group')">
+                学生分组
+              </button>
+            </div>
+            <!-- 右侧：筛选选择器 -->
+            <div class="flex flex-wrap items-center gap-3">
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部班级</option>
+                <option>二年级四班</option>
+                <option>三年级一班</option>
+                <option>三年级二班</option>
+                <option>四年级一班</option>
+              </select>
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部学科</option>
+                <option>语文</option>
+                <option>数学</option>
+                <option>英语</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- 内容：根据选项卡显示截图 -->
+        <div class="rounded-xl overflow-hidden border border-gray-200 bg-white">
+          <img id="img-student-all" class="w-full h-auto block" src="img/全部学生.png" alt="全部学生" />
+          <img id="img-student-group" class="w-full h-auto hidden" src="img/学生分组.png" alt="学生分组" />
+        </div>
+      </div>
+
+      <!-- 综合评价 内容面板 -->
+      <div id="panel-comprehensive" class="hidden space-y-6">
+        <!-- 顶部：页面标题 + 班级、学科 选择器 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-0 z-10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <!-- 左侧：页面标题 -->
+            <div>
+              <h3 class="font-bold text-gray-800">综合评价</h3>
+            </div>
+            <!-- 右侧：筛选条件 -->
+            <div class="flex flex-wrap items-center gap-3">
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部班级</option>
+                <option selected>三年级2班</option>
+                <option>二年级四班</option>
+                <option>四年级一班</option>
+              </select>
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部学科</option>
+                <option selected>语文</option>
+                <option>数学</option>
+                <option>英语</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- 内容：综合评价截图 -->
+        <div class="rounded-xl overflow-hidden border border-gray-200 bg-white">
+          <img src="img/综合评价.png" alt="综合评价" class="w-full h-auto block" />
+        </div>
+      </div>
+
+      <!-- 课堂点评 内容面板 -->
+      <div id="panel-classroom-review" class="hidden space-y-6">
+        <!-- 顶部：页面标题 + 筛选条件 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-0 z-10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <!-- 左侧：页面标题 -->
+            <div>
+              <h3 class="font-bold text-gray-800">课堂点评</h3>
+            </div>
+            <!-- 右侧：筛选条件 -->
+            <div class="flex flex-wrap items-center gap-3">
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部年级</option>
+                <option selected>三年级</option>
+                <option>二年级</option>
+                <option>四年级</option>
+              </select>
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>全部学科</option>
+                <option selected>语文</option>
+                <option>数学</option>
+                <option>英语</option>
+              </select>
+              <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>近一周</option>
+                <option>近一个月</option>
+                <option selected>近六个月</option>
+                <option>近一年</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- 内容：课堂点评截图 -->
+        <div class="rounded-xl overflow-hidden border border-gray-200 bg-white">
+          <img src="img/课堂点评.png" alt="课堂点评" class="w-full h-auto block" />
+        </div>
+      </div>
+
+      <!-- 其他菜单占位内容 -->
+      <div id="panel-other" class="hidden bg-white rounded-xl shadow-sm border border-gray-100 min-h-[400px] flex items-center justify-center">
+        <div class="text-center text-gray-400">
+          <i data-lucide="layout" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
+          <p class="text-lg">选择左侧菜单查看对应功能</p>
+          <p class="text-sm mt-2">详细内容区域，后续开发</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // 初始化 Lucide 图标（需在动态内容后再次执行以渲染新图标）
+    function initIcons() {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+    initIcons();
+
+    // 菜单点击切换
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+        this.classList.add('active');
+
+        const href = this.getAttribute('href');
+        const menuTitle = this.querySelector('span')?.textContent || '';
+        const panelHomework = document.getElementById('panel-homework');
+        const panelOther = document.getElementById('panel-other');
+        const panelAssign = document.getElementById('panel-assign');
+        const panelPaper = document.getElementById('panel-paper');
+        const panelCheck = document.getElementById('panel-check');
+        const panelAnalysis = document.getElementById('panel-analysis');
+        const panelStudent = document.getElementById('panel-student');
+        const panelComprehensive = document.getElementById('panel-comprehensive');
+        const panelClassroomReview = document.getElementById('panel-classroom-review');
+        const panelRefinedPaper = document.getElementById('panel-refined-paper');
+        const panelQuickPaper = document.getElementById('panel-quick-paper');
+        const panelAiPaper = document.getElementById('panel-ai-paper');
+
+        // 隐藏所有面板
+        panelHomework.classList.add('hidden');
+        panelOther.classList.add('hidden');
+        panelAssign.classList.add('hidden');
+        panelPaper.classList.add('hidden');
+        if (panelRefinedPaper) panelRefinedPaper.classList.add('hidden');
+        if (panelQuickPaper) panelQuickPaper.classList.add('hidden');
+        if (panelAiPaper) panelAiPaper.classList.add('hidden');
+        if (panelCheck) panelCheck.classList.add('hidden');
+        if (panelAnalysis) panelAnalysis.classList.add('hidden');
+        if (panelStudent) panelStudent.classList.add('hidden');
+        if (panelComprehensive) panelComprehensive.classList.add('hidden');
+        if (panelClassroomReview) panelClassroomReview.classList.add('hidden');
+
+        if (href === '#homework' || menuTitle === '作业&批改') {
+          panelHomework.classList.remove('hidden');
+        } else if (href === '#paper' || menuTitle === '智能组卷') {
+          panelPaper.classList.remove('hidden');
+        } else if (href === '#analysis' || menuTitle === '数据分析') {
+          if (panelAnalysis) panelAnalysis.classList.remove('hidden');
+        } else if (href === '#student' || menuTitle === '学生管理') {
+          if (panelStudent) panelStudent.classList.remove('hidden');
+        } else if (href === '#comprehensive' || menuTitle === '综合评价') {
+          if (panelComprehensive) panelComprehensive.classList.remove('hidden');
+        } else if (href === '#classroom-review' || menuTitle === '课堂点评') {
+          if (panelClassroomReview) panelClassroomReview.classList.remove('hidden');
+        } else {
+          panelOther.classList.remove('hidden');
+        }
+        initIcons();
+      });
+    });
+
+    // 智能组卷 - 一级标签切换
+    function switchPaperTab(tab) {
+      const tabLib = document.getElementById('tab-paper-lib');
+      const tabBank = document.getElementById('tab-paper-bank');
+      const libContent = document.getElementById('paper-lib-content');
+      const bankContent = document.getElementById('paper-bank-content');
+
+      if (tab === 'lib') {
+        tabLib.classList.add('active', 'text-blue-600', 'border-blue-600');
+        tabLib.classList.remove('text-gray-500');
+        tabBank.classList.remove('active', 'text-blue-600', 'border-blue-600');
+        tabBank.classList.add('text-gray-500');
+        libContent.classList.remove('hidden');
+        bankContent.classList.add('hidden');
+      } else {
+        tabBank.classList.add('active', 'text-blue-600', 'border-blue-600');
+        tabBank.classList.remove('text-gray-500');
+        tabLib.classList.remove('active', 'text-blue-600', 'border-blue-600');
+        tabLib.classList.add('text-gray-500');
+        bankContent.classList.remove('hidden');
+        libContent.classList.add('hidden');
+      }
+      initIcons();
+    }
+
+    // 智能组卷 - 试卷库子标签切换
+    function switchPaperSubTab(sub) {
+      const subtabs = ['self', 'ai'];
+      subtabs.forEach(s => {
+        const btn = document.getElementById('subtab-' + s);
+        const img = document.getElementById('img-' + s);
+        const btns = document.getElementById('btns-' + s);
+        if (s === sub) {
+          btn.classList.add('bg-blue-50', 'text-blue-600');
+          btn.classList.remove('text-gray-600');
+          if (img) { img.classList.remove('hidden'); img.classList.add('block'); }
+          if (btns) btns.classList.remove('hidden');
+        } else {
+          btn.classList.remove('bg-blue-50', 'text-blue-600');
+          btn.classList.add('text-gray-600');
+          if (img) { img.classList.add('hidden'); img.classList.remove('block'); }
+          if (btns) btns.classList.add('hidden');
+        }
+      });
+    }
+
+    // 学生管理 - 选项卡切换
+    function switchStudentTab(tab) {
+      const tabAll = document.getElementById('tab-student-all');
+      const tabGroup = document.getElementById('tab-student-group');
+      const imgAll = document.getElementById('img-student-all');
+      const imgGroup = document.getElementById('img-student-group');
+
+      if (tab === 'all') {
+        tabAll.classList.add('bg-blue-600', 'text-white');
+        tabAll.classList.remove('text-gray-600', 'bg-white');
+        tabGroup.classList.remove('bg-blue-600', 'text-white');
+        tabGroup.classList.add('text-gray-600', 'bg-white');
+        imgAll.classList.remove('hidden');
+        imgGroup.classList.add('hidden');
+      } else {
+        tabGroup.classList.add('bg-blue-600', 'text-white');
+        tabGroup.classList.remove('text-gray-600', 'bg-white');
+        tabAll.classList.remove('bg-blue-600', 'text-white');
+        tabAll.classList.add('text-gray-600', 'bg-white');
+        imgGroup.classList.remove('hidden');
+        imgAll.classList.add('hidden');
+      }
+      initIcons();
+    }
+
+    // 智能组卷 - 题库子标签切换
+    function switchPaperSubTab2(sub) {
+      const subtabs = ['personal', 'public'];
+      subtabs.forEach(s => {
+        const btn = document.getElementById('subtab-' + s);
+        const img = document.getElementById('img-' + s);
+        if (s === sub) {
+          btn.classList.add('bg-blue-50', 'text-blue-600');
+          btn.classList.remove('text-gray-600');
+          if (img) { img.classList.remove('hidden'); img.classList.add('block'); }
+        } else {
+          btn.classList.remove('bg-blue-50', 'text-blue-600');
+          btn.classList.add('text-gray-600');
+          if (img) { img.classList.add('hidden'); img.classList.remove('block'); }
+        }
+      });
+    }
+
+    // 精细化/快速组卷：从子页面返回自主组卷库
+    function showPaperLib() {
+      document.getElementById('panel-refined-paper').classList.add('hidden');
+      document.getElementById('panel-quick-paper').classList.add('hidden');
+      document.getElementById('panel-ai-paper').classList.add('hidden');
+      document.getElementById('panel-paper').classList.remove('hidden');
+      document.getElementById('img-refined-paper').src = 'img/精细化组卷1.png';
+      document.getElementById('img-refined-paper').dataset.step = '1';
+      document.getElementById('img-quick-paper').src = 'img/快速组卷1.png';
+      document.getElementById('img-quick-paper').dataset.step = '1';
+      document.getElementById('img-ai-paper').src = 'img/AI组卷1.png';
+      document.getElementById('img-ai-paper').dataset.step = '1';
+      initIcons();
+    }
+
+    // 智能AI组卷：从子页面返回 AI试卷库
+    function showPaperLibFromAi() {
+      document.getElementById('panel-ai-paper').classList.add('hidden');
+      document.getElementById('panel-paper').classList.remove('hidden');
+      document.getElementById('img-ai-paper').src = 'img/AI组卷1.png';
+      document.getElementById('img-ai-paper').dataset.step = '1';
+      switchPaperSubTab('ai');
+      initIcons();
+    }
+
+    // 精细化组卷：点击图片切换 1 -> 2，再点击返回自主组卷库
+    function toggleRefinedPaperImg() {
+      const img = document.getElementById('img-refined-paper');
+      const step = img.dataset.step || '1';
+      if (step === '1') {
+        img.src = 'img/精细化组卷2.png';
+        img.dataset.step = '2';
+      } else {
+        showPaperLib();
+      }
+    }
+
+    // 快速组卷：点击图片切换 1 -> 2，再点击返回自主组卷库
+    function toggleQuickPaperImg() {
+      const img = document.getElementById('img-quick-paper');
+      const step = img.dataset.step || '1';
+      if (step === '1') {
+        img.src = 'img/快速组卷2.png';
+        img.dataset.step = '2';
+      } else {
+        showPaperLib();
+      }
+    }
+
+    // 智能AI组卷：点击图片切换 1 -> 2，再点击返回 AI试卷库
+    function toggleAiPaperImg() {
+      const img = document.getElementById('img-ai-paper');
+      const step = img.dataset.step || '1';
+      if (step === '1') {
+        img.src = 'img/AI组卷2.png';
+        img.dataset.step = '2';
+      } else {
+        showPaperLibFromAi();
+      }
+    }
+
+    // 从面包屑返回主菜单
+    function showEvaluateHome() {
+      document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+      document.querySelector('.menu-item[href="#homework"]').classList.add('active');
+      document.getElementById('panel-homework').classList.remove('hidden');
+      document.getElementById('panel-other').classList.add('hidden');
+      document.getElementById('panel-assign').classList.add('hidden');
+      document.getElementById('panel-paper').classList.add('hidden');
+      initIcons();
+    }
+
+    // 点击"布置作业"按钮，显示布置作业面板
+    document.getElementById('btn-assign').addEventListener('click', function() {
+      const panelHomework = document.getElementById('panel-homework');
+      const panelOther = document.getElementById('panel-other');
+      const panelAssign = document.getElementById('panel-assign');
+      panelHomework.classList.add('hidden');
+      panelOther.classList.add('hidden');
+      panelAssign.classList.remove('hidden');
+      initIcons();
+    });
+
+    // 点击「精细化组卷」进入子页面
+    document.getElementById('btn-refined-paper').addEventListener('click', function() {
+      document.getElementById('panel-paper').classList.add('hidden');
+      document.getElementById('panel-quick-paper').classList.add('hidden');
+      document.getElementById('panel-ai-paper').classList.add('hidden');
+      document.getElementById('panel-refined-paper').classList.remove('hidden');
+      document.getElementById('img-refined-paper').src = 'img/精细化组卷1.png';
+      document.getElementById('img-refined-paper').dataset.step = '1';
+      initIcons();
+    });
+
+    // 点击「快速组卷」进入子页面
+    document.getElementById('btn-quick-paper').addEventListener('click', function() {
+      document.getElementById('panel-paper').classList.add('hidden');
+      document.getElementById('panel-refined-paper').classList.add('hidden');
+      document.getElementById('panel-ai-paper').classList.add('hidden');
+      document.getElementById('panel-quick-paper').classList.remove('hidden');
+      document.getElementById('img-quick-paper').src = 'img/快速组卷1.png';
+      document.getElementById('img-quick-paper').dataset.step = '1';
+      initIcons();
+    });
+
+    // 点击「智能AI组卷」进入子页面
+    document.getElementById('btn-ai-paper').addEventListener('click', function() {
+      document.getElementById('panel-paper').classList.add('hidden');
+      document.getElementById('panel-refined-paper').classList.add('hidden');
+      document.getElementById('panel-quick-paper').classList.add('hidden');
+      document.getElementById('panel-ai-paper').classList.remove('hidden');
+      document.getElementById('img-ai-paper').src = 'img/AI组卷1.png';
+      document.getElementById('img-ai-paper').dataset.step = '1';
+      initIcons();
+    });
+
+    // 从面包屑返回作业列表
+    function showHomework() {
+      const panelHomework = document.getElementById('panel-homework');
+      const panelOther = document.getElementById('panel-other');
+      const panelAssign = document.getElementById('panel-assign');
+      const panelCheck = document.getElementById('panel-check');
+      panelHomework.classList.remove('hidden');
+      panelOther.classList.add('hidden');
+      panelAssign.classList.add('hidden');
+      if (panelCheck) panelCheck.classList.add('hidden');
+      initIcons();
+    }
+
+    // 点击作业列表进入检查作业页
+    function showCheckHomework() {
+      const panelHomework = document.getElementById('panel-homework');
+      const panelAssign = document.getElementById('panel-assign');
+      const panelPaper = document.getElementById('panel-paper');
+      const panelOther = document.getElementById('panel-other');
+      const panelCheck = document.getElementById('panel-check');
+      panelHomework.classList.add('hidden');
+      panelAssign.classList.add('hidden');
+      panelPaper.classList.add('hidden');
+      panelOther.classList.add('hidden');
+      panelCheck.classList.remove('hidden');
+      initIcons();
+    }
+  </script>
+</body>
+</html>

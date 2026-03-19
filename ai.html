@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能教学 - AI专区</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <style>
+    .ai-tool-card {
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .ai-tool-card:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+      border-color: rgb(229 231 235);
+      transform: translateY(-2px);
+    }
+    .ai-icon-box {
+      flex-shrink: 0;
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  <!-- 顶部导航栏 -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
+    <div class="flex items-center justify-between h-16 px-6">
+      <!-- 左侧 Logo -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
+          <span class="text-lg font-bold">兆函科技</span>
+        </div>
+      </div>
+
+      <!-- 中间导航 -->
+      <nav class="flex items-center gap-1">
+        <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">
+          首页
+        </a>
+        <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
+        <a href="teach.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能授课</a>
+        <a href="evaluate.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能测评</a>
+        <a href="ai.html" class="px-4 py-2 text-sm font-medium rounded-lg bg-white/20 transition-all hover:bg-white/30 no-underline text-white">
+          AI专区
+        </a>
+      </nav>
+
+      <!-- 右侧图标 + 用户 -->
+      <div class="flex items-center gap-4">
+        <!-- 任务 -->
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="list-todo" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+        </div>
+        
+        <!-- 通知 -->
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
+        </div>
+        
+        <!-- 用户信息 -->
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <div class="text-sm">
+            <div class="font-medium">张老师</div>
+            <div class="text-xs text-white/70">语文教师</div>
+          </div>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 内容区域 -->
+  <main class="p-6 min-h-[calc(100vh-64px)] max-w-7xl mx-auto">
+    <div class="mb-6">
+      <h1 class="text-xl font-bold text-gray-800">AI 专区</h1>
+      <p class="text-sm text-gray-500 mt-1">更多智能能力，持续扩展中</p>
+    </div>
+
+    <!-- 卡片网格：参考三列布局，小屏自动换行 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- 智能助手 -->
+      <a href="ai-assistant.html" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block no-underline text-inherit">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-inner">
+            <i data-lucide="bot" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">智能助手</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              对话式答疑与教学辅助，快速获取备课、课堂与学情相关建议。
+            </p>
+          </div>
+        </div>
+      </a>
+
+      <!-- 数字人 -->
+      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-violet-400 to-purple-600 text-white shadow-inner">
+            <i data-lucide="user-round" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">数字人</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              虚拟形象互动讲解，适合公开课、微课与沉浸式教学演示。
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- AI讲题 -->
+      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-inner">
+            <i data-lucide="lightbulb" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+              <h2 class="text-base font-semibold text-gray-900">AI讲题</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              针对题目分步解析与思路引导，帮助学生理解考点与解题路径。
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- AI讲课 -->
+      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-inner">
+            <i data-lucide="presentation" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+              <h2 class="text-base font-semibold text-gray-900">AI讲课</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              按知识点生成讲解稿与板书要点，辅助教师组织课堂节奏与表达。
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- AI绘本 -->
+      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-inner">
+            <i data-lucide="book-open" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+              <h2 class="text-base font-semibold text-gray-900">AI绘本</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              图文故事与阅读素材生成，适配低年级语文与拓展阅读教学。
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    // 初始化 Lucide 图标
+    lucide.createIcons();
+  </script>
+</body>
+</html>
