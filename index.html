@@ -6,6 +6,8 @@
   <title>智能教学 - 首页</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ECharts -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
   <style>
@@ -62,7 +64,6 @@
           </div>
           <div class="text-sm">
             <div class="font-medium">张老师</div>
-            <div class="text-xs text-white/70">语文教师</div>
           </div>
           <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
         </div>
@@ -72,254 +73,336 @@
 
   <!-- 内容区域 -->
   <main class="p-6 min-h-[calc(100vh-64px)]">
-    <!-- 主体内容区域 -->
-    <div class="flex gap-6">
-      <!-- 左侧面板 -->
-      <div class="flex-1 space-y-6">
-        <!-- 学业预警和最新诊断左右并排 -->
-        <div class="grid grid-cols-2 gap-6">
-          <!-- 学业预警 -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i>
-                学业预警
-                <span class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">7人</span>
-              </h3>
-              <a href="warning.html" class="text-sm text-blue-600 hover:text-blue-700">查看更多</a>
-            </div>
-            <div class="p-4">
-              <div class="space-y-2">
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">赵</div>
-                    <div>
-                      <div class="text-sm font-medium text-gray-800">赵强</div>
-                      <div class="text-xs text-gray-500">三年级(3)班</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-lg font-bold text-red-500">55.6%</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">陈</div>
-                    <div>
-                      <div class="text-sm font-medium text-gray-800">陈思</div>
-                      <div class="text-xs text-gray-500">四年级(2)班</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-lg font-bold text-red-500">58.4%</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">张</div>
-                    <div>
-                      <div class="text-sm font-medium text-gray-800">张伟</div>
-                      <div class="text-xs text-gray-500">四年级(1)班</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-lg font-bold text-red-500">62.8%</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">王</div>
-                    <div>
-                      <div class="text-sm font-medium text-gray-800">王小红</div>
-                      <div class="text-xs text-gray-500">三年级(2)班</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-lg font-bold text-red-500">65.2%</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between py-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">李</div>
-                    <div>
-                      <div class="text-sm font-medium text-gray-800">李明</div>
-                      <div class="text-xs text-gray-500">三年级(1)班</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-lg font-bold text-red-500">68.5%</div>
-                  </div>
-                </div>
+    <!-- 4列网格布局 -->
+    <div class="grid gap-6" style="grid-template-columns: 1fr 1fr 1fr auto;">
+      <!-- 第1列：学业预警 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i>
+            学业预警
+            <span class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">7人</span>
+            <div class="relative group">
+              <i data-lucide="info" class="w-4 h-4 text-gray-400 cursor-pointer"></i>
+              <div class="absolute left-0 top-full mt-1 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                近5次作业得分率
+                <div class="absolute -top-1 left-3 w-2 h-2 bg-gray-800 rotate-45"></div>
               </div>
             </div>
-          </div>
-
-          <!-- 最新诊断 -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
-                最新诊断
-              </h3>
-              <a href="diagnose.html" class="text-sm text-blue-600 hover:text-blue-700">查看更多</a>
+          </h3>
+          <a href="warning.html" class="text-sm text-blue-600 hover:text-blue-700">查看更多</a>
+        </div>
+        <div class="p-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">赵</div>
+                <div>
+                  <div class="text-sm font-medium text-gray-800">赵强</div>
+                  <div class="text-xs text-gray-500">三年级(3)班</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-red-500">55.6%</div>
+              </div>
             </div>
-            <div class="p-4">
-              <div class="space-y-2">
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div>
-                    <div class="text-sm font-medium text-gray-800">生字练习册</div>
-                    <div class="text-xs text-gray-500">2026-03-18</div>
-                  </div>
-                  <div class="text-lg font-bold text-green-600">92.3%</div>
-                </div>
 
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div>
-                    <div class="text-sm font-medium text-gray-800">作文 - 我的梦想</div>
-                    <div class="text-xs text-gray-500">2026-03-17</div>
-                  </div>
-                  <div class="text-lg font-bold text-green-600">88.5%</div>
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">陈</div>
+                <div>
+                  <div class="text-sm font-medium text-gray-800">陈思</div>
+                  <div class="text-xs text-gray-500">四年级(2)班</div>
                 </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-red-500">58.4%</div>
+              </div>
+            </div>
 
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div>
-                    <div class="text-sm font-medium text-gray-800">阅读理解</div>
-                    <div class="text-xs text-gray-500">2026-03-16</div>
-                  </div>
-                  <div class="text-lg font-bold text-green-600">85.2%</div>
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">张</div>
+                <div>
+                  <div class="text-sm font-medium text-gray-800">张伟</div>
+                  <div class="text-xs text-gray-500">四年级(1)班</div>
                 </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-red-500">62.8%</div>
+              </div>
+            </div>
 
-                <div class="flex items-center justify-between py-2 border-b border-gray-50">
-                  <div>
-                    <div class="text-sm font-medium text-gray-800">单元测试</div>
-                    <div class="text-xs text-gray-500">2026-03-15</div>
-                  </div>
-                  <div class="text-lg font-bold text-yellow-600">76.8%</div>
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">王</div>
+                <div>
+                  <div class="text-sm font-medium text-gray-800">王小红</div>
+                  <div class="text-xs text-gray-500">三年级(2)班</div>
                 </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-red-500">65.2%</div>
+              </div>
+            </div>
 
-                <div class="flex items-center justify-between py-2">
-                  <div>
-                    <div class="text-sm font-medium text-gray-800">听写练习</div>
-                    <div class="text-xs text-gray-500">2026-03-14</div>
-                  </div>
-                  <div class="text-lg font-bold text-green-600">90.1%</div>
+            <div class="flex items-center justify-between py-2">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">李</div>
+                <div>
+                  <div class="text-sm font-medium text-gray-800">李明</div>
+                  <div class="text-xs text-gray-500">三年级(1)班</div>
                 </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-red-500">68.5%</div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- 课堂点评排行榜 -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div class="p-4 border-b border-gray-100">
-            <h3 class="font-bold text-gray-800 flex items-center gap-2">
-              <i data-lucide="trophy" class="w-5 h-5 text-yellow-500"></i>
-              课堂点评排行榜
-            </h3>
-          </div>
-          <div class="p-4">
-            <div class="grid grid-cols-2 gap-4">
-              <!-- 点赞排行 -->
+      <!-- 第2列：最新诊断 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2">
+            <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
+            最新诊断
+            <div class="relative group">
+              <i data-lucide="info" class="w-4 h-4 text-gray-400 cursor-pointer"></i>
+              <div class="absolute left-0 top-full mt-1 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                得分率
+                <div class="absolute -top-1 left-3 w-2 h-2 bg-gray-800 rotate-45"></div>
+              </div>
+            </div>
+          </h3>
+          <a href="diagnose.html" class="text-sm text-blue-600 hover:text-blue-700">查看更多</a>
+        </div>
+        <div class="p-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
               <div>
-                <div class="flex items-center gap-2 mb-3">
-                  <i data-lucide="thumbs-up" class="w-4 h-4 text-green-500"></i>
-                  <span class="text-sm font-medium text-gray-600">点赞TOP5</span>
+                <div class="text-sm font-medium text-gray-800">生字练习册</div>
+                <div class="text-xs text-gray-500">2026-03-18</div>
+              </div>
+              <div class="text-lg font-bold text-green-600">92.3%</div>
+            </div>
+
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div>
+                <div class="text-sm font-medium text-gray-800">作文 - 我的梦想</div>
+                <div class="text-xs text-gray-500">2026-03-17</div>
+              </div>
+              <div class="text-lg font-bold text-green-600">88.5%</div>
+            </div>
+
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div>
+                <div class="text-sm font-medium text-gray-800">阅读理解</div>
+                <div class="text-xs text-gray-500">2026-03-16</div>
+              </div>
+              <div class="text-lg font-bold text-green-600">85.2%</div>
+            </div>
+
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+              <div>
+                <div class="text-sm font-medium text-gray-800">单元测试</div>
+                <div class="text-xs text-gray-500">2026-03-15</div>
+              </div>
+              <div class="text-lg font-bold text-yellow-600">76.8%</div>
+            </div>
+
+            <div class="flex items-center justify-between py-2">
+              <div>
+                <div class="text-sm font-medium text-gray-800">听写练习</div>
+                <div class="text-xs text-gray-500">2026-03-14</div>
+              </div>
+              <div class="text-lg font-bold text-green-600">90.1%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第3列：模块掌握度 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2">
+            <i data-lucide="radar" class="w-5 h-5 text-purple-600"></i>
+            模块掌握度
+          </h3>
+          <select id="gradeSelect" class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option value="1-1">一年级一班</option>
+            <option value="1-2">一年级二班</option>
+            <option value="2-1" selected>二年级一班</option>
+            <option value="2-2">二年级二班</option>
+            <option value="3-1">三年级一班</option>
+            <option value="3-2">三年级二班</option>
+          </select>
+        </div>
+        <div class="p-4">
+          <div id="radarChart" class="w-full h-80"></div>
+        </div>
+      </div>
+
+      <!-- 第4列：待办事项（从顶部开始，跨行） -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 row-span-2 w-72 shrink-0">
+        <div class="p-5 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2">
+            <i data-lucide="list-todo" class="w-5 h-5 text-blue-600"></i>
+            待办事项
+          </h3>
+        </div>
+        <div class="p-5">
+          <div class="divide-y divide-gray-100">
+            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+              <div>
+                <div class="text-sm font-medium text-gray-800">批改生字练习册</div>
+                <div class="text-xs text-gray-500 mt-1">三年级(1)班 · 28份 · 截止今天 18:00</div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+
+            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+              <div>
+                <div class="text-sm font-medium text-gray-800">批改作文</div>
+                <div class="text-xs text-gray-500 mt-1">三年级(2)班 · 25份 · 截止今天 20:00</div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+
+            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+              <div>
+                <div class="text-sm font-medium text-gray-800">批改阅读理解</div>
+                <div class="text-xs text-gray-500 mt-1">三年级(3)班 · 30份 · 截止明天 18:00</div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+
+            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+              <div>
+                <div class="text-sm font-medium text-gray-800">批改单元测试</div>
+                <div class="text-xs text-gray-500 mt-1">四年级(1)班 · 32份 · 截止明天 20:00</div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+
+            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+              <div>
+                <div class="text-sm font-medium text-gray-800">批改听写练习</div>
+                <div class="text-xs text-gray-500 mt-1">四年级(2)班 · 28份 · 截止后天 18:00</div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第1-2列（跨2列）：课堂评价排行榜 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 col-span-2">
+        <div class="p-4 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2">
+            <i data-lucide="trophy" class="w-5 h-5 text-yellow-500"></i>
+            课堂评价排行榜
+          </h3>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-2 gap-4">
+            <!-- 点赞排行 -->
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <i data-lucide="thumbs-up" class="w-4 h-4 text-green-500"></i>
+                <span class="text-sm font-medium text-gray-600">点赞TOP5</span>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-yellow-400 text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
+                    <span class="text-sm text-gray-800">王小明</span>
+                    <span class="text-xs text-gray-400">三(1)</span>
+                  </div>
+                  <span class="text-sm font-medium text-green-600">28次</span>
                 </div>
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-yellow-400 text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
-                      <span class="text-sm text-gray-800">王小明</span>
-                      <span class="text-xs text-gray-400">三(1)</span>
-                    </div>
-                    <span class="text-sm font-medium text-green-600">28次</span>
+                <div class="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-gray-300 text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+                    <span class="text-sm text-gray-800">李可乐</span>
+                    <span class="text-xs text-gray-400">三(2)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-gray-300 text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
-                      <span class="text-sm text-gray-800">李可乐</span>
-                      <span class="text-xs text-gray-400">三(2)</span>
-                    </div>
-                    <span class="text-sm font-medium text-green-600">24次</span>
+                  <span class="text-sm font-medium text-green-600">24次</span>
+                </div>
+                <div class="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-orange-300 text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
+                    <span class="text-sm text-gray-800">张小红</span>
+                    <span class="text-xs text-gray-400">三(1)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-orange-300 text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
-                      <span class="text-sm text-gray-800">张小红</span>
-                      <span class="text-xs text-gray-400">三(1)</span>
-                    </div>
-                    <span class="text-sm font-medium text-green-600">21次</span>
+                  <span class="text-sm font-medium text-green-600">21次</span>
+                </div>
+                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">4</span>
+                    <span class="text-sm text-gray-800">陈伟</span>
+                    <span class="text-xs text-gray-400">四(1)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">4</span>
-                      <span class="text-sm text-gray-800">陈伟</span>
-                      <span class="text-xs text-gray-400">四(1)</span>
-                    </div>
-                    <span class="text-sm font-medium text-green-600">18次</span>
+                  <span class="text-sm font-medium text-green-600">18次</span>
+                </div>
+                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">5</span>
+                    <span class="text-sm text-gray-800">赵敏</span>
+                    <span class="text-xs text-gray-400">三(3)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">5</span>
-                      <span class="text-sm text-gray-800">赵敏</span>
-                      <span class="text-xs text-gray-400">三(3)</span>
-                    </div>
-                    <span class="text-sm font-medium text-green-600">15次</span>
-                  </div>
+                  <span class="text-sm font-medium text-green-600">15次</span>
                 </div>
               </div>
+            </div>
 
-              <!-- 批评排行 -->
-              <div>
-                <div class="flex items-center gap-2 mb-3">
-                  <i data-lucide="thumbs-down" class="w-4 h-4 text-red-500"></i>
-                  <span class="text-sm font-medium text-gray-600">批评TOP5</span>
+            <!-- 批评排行 -->
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <i data-lucide="thumbs-down" class="w-4 h-4 text-red-500"></i>
+                <span class="text-sm font-medium text-gray-600">批评TOP5</span>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-yellow-400 text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
+                    <span class="text-sm text-gray-800">刘星</span>
+                    <span class="text-xs text-gray-400">三(2)</span>
+                  </div>
+                  <span class="text-sm font-medium text-red-600">12次</span>
                 </div>
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-yellow-400 text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
-                      <span class="text-sm text-gray-800">刘星</span>
-                      <span class="text-xs text-gray-400">三(2)</span>
-                    </div>
-                    <span class="text-sm font-medium text-red-600">12次</span>
+                <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-gray-300 text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+                    <span class="text-sm text-gray-800">黄磊</span>
+                    <span class="text-xs text-gray-400">四(1)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-gray-300 text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
-                      <span class="text-sm text-gray-800">黄磊</span>
-                      <span class="text-xs text-gray-400">四(1)</span>
-                    </div>
-                    <span class="text-sm font-medium text-red-600">10次</span>
+                  <span class="text-sm font-medium text-red-600">10次</span>
+                </div>
+                <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-orange-300 text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
+                    <span class="text-sm text-gray-800">周杰</span>
+                    <span class="text-xs text-gray-400">三(1)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-orange-300 text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
-                      <span class="text-sm text-gray-800">周杰</span>
-                      <span class="text-xs text-gray-400">三(1)</span>
-                    </div>
-                    <span class="text-sm font-medium text-red-600">8次</span>
+                  <span class="text-sm font-medium text-red-600">8次</span>
+                </div>
+                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">4</span>
+                    <span class="text-sm text-gray-800">吴涛</span>
+                    <span class="text-xs text-gray-400">四(2)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">4</span>
-                      <span class="text-sm text-gray-800">吴涛</span>
-                      <span class="text-xs text-gray-400">四(2)</span>
-                    </div>
-                    <span class="text-sm font-medium text-red-600">6次</span>
+                  <span class="text-sm font-medium text-red-600">6次</span>
+                </div>
+                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">5</span>
+                    <span class="text-sm text-gray-800">郑凯</span>
+                    <span class="text-xs text-gray-400">三(3)</span>
                   </div>
-                  <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-2">
-                      <span class="w-5 h-5 bg-gray-200 text-gray-500 text-xs rounded-full flex items-center justify-center font-bold">5</span>
-                      <span class="text-sm text-gray-800">郑凯</span>
-                      <span class="text-xs text-gray-400">三(3)</span>
-                    </div>
-                    <span class="text-sm font-medium text-red-600">5次</span>
-                  </div>
+                  <span class="text-sm font-medium text-red-600">5次</span>
                 </div>
               </div>
             </div>
@@ -327,59 +410,16 @@
         </div>
       </div>
 
-      <!-- 右侧待办事项 -->
-      <div class="w-80">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 sticky top-6">
-          <div class="p-5 border-b border-gray-100">
-            <h3 class="font-bold text-gray-800 flex items-center gap-2">
-              <i data-lucide="list-todo" class="w-5 h-5 text-blue-600"></i>
-              待办事项
-            </h3>
-          </div>
-          <div class="p-5">
-            <!-- 待批改作业列表 -->
-            <div class="divide-y divide-gray-100">
-              <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
-                <div>
-                  <div class="text-sm font-medium text-gray-800">批改生字练习册</div>
-                  <div class="text-xs text-gray-500 mt-1">三年级(1)班 · 28份 · 截止今天 18:00</div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              </a>
-
-              <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
-                <div>
-                  <div class="text-sm font-medium text-gray-800">批改作文</div>
-                  <div class="text-xs text-gray-500 mt-1">三年级(2)班 · 25份 · 截止今天 20:00</div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              </a>
-
-              <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
-                <div>
-                  <div class="text-sm font-medium text-gray-800">批改阅读理解</div>
-                  <div class="text-xs text-gray-500 mt-1">三年级(3)班 · 30份 · 截止明天 18:00</div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              </a>
-
-              <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
-                <div>
-                  <div class="text-sm font-medium text-gray-800">批改单元测试</div>
-                  <div class="text-xs text-gray-500 mt-1">四年级(1)班 · 32份 · 截止明天 20:00</div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              </a>
-
-              <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
-                <div>
-                  <div class="text-sm font-medium text-gray-800">批改听写练习</div>
-                  <div class="text-xs text-gray-500 mt-1">四年级(2)班 · 28份 · 截止后天 18:00</div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              </a>
-            </div>
-          </div>
+      <!-- 第3列：得分率趋势分析 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-4 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
+            得分率趋势分析
+          </h3>
+        </div>
+        <div class="p-4">
+          <div id="trendChart" class="w-full h-48"></div>
         </div>
       </div>
     </div>
@@ -388,6 +428,146 @@
   <script>
     // 初始化 Lucide 图标
     lucide.createIcons();
+
+    // 初始化雷达图
+    var radarChart = echarts.init(document.getElementById('radarChart'));
+
+    var option = {
+      color: ['#8b5cf6', '#10b981'],
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        bottom: 0,
+        data: ['班级平均', '年级平均'],
+        textStyle: {
+          fontSize: 12
+        }
+      },
+      radar: {
+        indicator: [
+          { name: '语言表达及应用', max: 100 },
+          { name: '阅读理解\n及鉴赏', max: 100 },
+          { name: '写作训练', max: 100 },
+          { name: '基础知识', max: 100 }
+        ],
+        radius: '65%',
+        center: ['50%', '42%'],
+        axisName: {
+          color: '#6b7280',
+          fontSize: 12
+        },
+        splitArea: {
+          areaStyle: {
+            color: ['#f9fafb', '#fff']
+          }
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#e5e7eb'
+          }
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#e5e7eb'
+          }
+        }
+      },
+      series: [{
+        type: 'radar',
+        data: [
+          {
+            value: [78, 82, 75, 88],
+            name: '班级平均',
+            areaStyle: {
+              color: 'rgba(139, 92, 246, 0.2)'
+            },
+            lineStyle: {
+              color: '#8b5cf6'
+            },
+            itemStyle: {
+              color: '#8b5cf6'
+            }
+          },
+          {
+            value: [72, 76, 70, 82],
+            name: '年级平均',
+            areaStyle: {
+              color: 'rgba(16, 185, 129, 0.2)'
+            },
+            lineStyle: {
+              color: '#10b981'
+            },
+            itemStyle: {
+              color: '#10b981'
+            }
+          }
+        ]
+      }]
+    };
+
+    radarChart.setOption(option);
+
+    // 初始化趋势图
+    var trendChart = echarts.init(document.getElementById('trendChart'));
+    var trendOption = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: {
+        type: 'category',
+        data: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周'],
+        axisLabel: {
+          fontSize: 11
+        }
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: '{value}%',
+          fontSize: 11
+        }
+      },
+      series: [{
+        data: [75, 78, 82, 80, 85, 88],
+        type: 'line',
+        smooth: true,
+        lineStyle: {
+          color: '#3b82f6',
+          width: 2
+        },
+        itemStyle: {
+          color: '#3b82f6'
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [{
+              offset: 0, color: 'rgba(59, 130, 246, 0.3)'
+            }, {
+              offset: 1, color: 'rgba(59, 130, 246, 0.05)'
+            }]
+          }
+        }
+      }],
+      grid: {
+        left: '10%',
+        right: '10%',
+        top: '15%',
+        bottom: '15%'
+      }
+    };
+    trendChart.setOption(trendOption);
+
+    // 响应窗口变化
+    window.addEventListener('resize', function() {
+      radarChart.resize();
+      trendChart.resize();
+    });
   </script>
 </body>
 </html>

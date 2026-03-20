@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课件预览 - 奕兆科技</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f3ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <style>
+    /* 侧栏样式 */
+    .sidebar-blue {
+      background: linear-gradient(180deg, #3b5bdb 0%, #2563eb 50%, #1d4ed8 100%);
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 10px;
+      margin: 4px 12px;
+      transition: background-color 0.2s;
+      text-decoration: none;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    .sidebar-item.active {
+      background: rgba(255,255,255,0.25);
+    }
+    /* 工具区：横向条，与目录区顶对齐 */
+    .toolbar-bar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem 0.5rem;
+      min-width: 3.5rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .toolbar-bar-item:hover {
+      background-color: #eff6ff;
+    }
+    .toolbar-bar-item span {
+      white-space: nowrap;
+      font-size: 0.75rem;
+      margin-top: 0.125rem;
+    }
+    .toolbar-bar-item i,
+    .toolbar-bar-item svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    /* 左右可折叠工具条 */
+    .collapsible-strip {
+      width: 48px;
+      min-width: 48px;
+      transition: width 0.2s ease, min-width 0.2s ease;
+    }
+    .collapsible-strip.expanded {
+      width: 240px;
+      min-width: 240px;
+    }
+    .collapsible-strip .panel-content {
+      min-width: 0;
+      flex: 1;
+      /* 初始隐藏，展开后显示 */
+      display: none;
+    }
+    .collapsible-strip.expanded .panel-content {
+      display: flex;
+      max-width: 192px;
+    }
+
+    /* 线上课件：画布内编辑元素 */
+    .ppt-edit-el {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%);
+      cursor: move;
+      pointer-events: auto;
+      user-select: none;
+    }
+    .ppt-edit-el:focus-within,
+    .ppt-edit-el.is-selected {
+      outline: 2px solid rgba(59, 130, 246, 0.9);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+    .ppt-text-box {
+      min-width: 120px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(229, 231, 235, 1);
+      border-radius: 8px;
+      color: #111827;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .ppt-text-box[contenteditable="true"] {
+      cursor: text;
+      user-select: text;
+    }
+    .ppt-image {
+      width: 180px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+      display: block;
+      background: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden bg-[#f0f2f5]" x-data="{ openPanel: null }">
+  <!-- 自定义提示弹窗（与演示页一致） -->
+  <div id="custom-alert" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center">
+    <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-80 p-6 transform transition-all scale-100 text-center">
+      <p class="text-lg font-medium mb-6">同在线课件那边一致</p>
+      <button onclick="closeCustomAlert()" class="px-8 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确定</button>
+    </div>
+  </div>
+
+  <!-- 顶部导航栏（与index.html一致） -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
+    <div class="flex items-center justify-between h-16 px-6">
+      <!-- 左侧 Logo -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
+          <span class="text-lg font-bold">兆函科技</span>
+        </div>
+      </div>
+
+      <!-- 中间导航 -->
+      <nav class="flex items-center gap-1">
+        <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
+        <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
+        <a href="teach.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能授课</a>
+        <a href="evaluate.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能测评</a>
+        <a href="ai.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">AI专区</a>
+      </nav>
+
+      <!-- 右侧图标 + 用户 -->
+      <div class="flex items-center gap-4">
+        <!-- 任务 -->
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="list-todo" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+        </div>
+
+        <!-- 通知 -->
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
+        </div>
+
+        <!-- 用户信息 -->
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <div class="text-sm">
+            <div class="font-medium">张老师</div>
+          </div>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体区域 -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <!-- 顶部标题栏：左侧返回+标题，右侧按钮 -->
+    <div class="bg-[#f0f2f5] px-6 py-2 flex items-center justify-between border-b border-gray-200">
+      <!-- 左侧：返回 + 标题 -->
+      <div class="flex items-center gap-3 shrink-0">
+        <button onclick="history.back()" class="p-1.5 hover:bg-white rounded-lg border border-transparent hover:border-gray-200 transition-colors">
+          <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
+        </button>
+        <div class="h-6 w-px bg-gray-300"></div>
+        <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          3相似多边形
+          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-normal">在线课件</span>
+        </h1>
+      </div>
+
+      <!-- 右侧：演示、下载 -->
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="local-courseware-present.html" target="_blank" class="px-4 py-1.5 text-sm text-white rounded-lg shadow-sm font-medium flex items-center gap-1 bg-[#f97316] hover:bg-[#ea580c] no-underline">
+          <i data-lucide="presentation" class="w-4 h-4"></i> 演示
+        </a>
+        <button class="px-4 py-1.5 text-sm text-white rounded-lg shadow-sm font-medium flex items-center gap-1 bg-[#22c55e] hover:bg-[#16a34a]">
+          <i data-lucide="download" class="w-4 h-4"></i> 下载
+        </button>
+      </div>
+    </div>
+
+    <!-- 主体区域：思维导图 | PPT页+PPT目录 | 编辑面板 | AI对话（底部 10px 安全区） -->
+    <div class="flex-1 flex overflow-hidden min-h-0 pb-[10px] pt-[10px] bg-[#f0f2f5]">
+      <!-- 左侧：思维导图 -->
+      <div class="collapsible-strip flex flex-col bg-white border-r border-gray-200 shrink-0"
+           :class="{ 'expanded': openPanel === 'left' }">
+        <button type="button"
+                class="trigger-btn w-full h-full flex flex-col items-center justify-center gap-1 py-3 text-gray-600 hover:bg-gray-100 transition-colors"
+                :class="{ 'hidden': openPanel === 'left' }"
+                @click="openPanel = 'left'"
+                title="思维导图">
+          <i data-lucide="network" class="w-5 h-5 text-violet-500"></i>
+        </button>
+        <div class="panel-content flex h-full w-full bg-white min-h-0"
+             :class="{ 'flex': openPanel === 'left', 'hidden': openPanel !== 'left' }">
+          <div class="relative w-full h-full flex flex-col items-center justify-center">
+            <p class="text-sm text-gray-500 text-center">保持原有不变</p>
+            <button @click="openPanel = null" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 shadow-sm" title="收起">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 中央列：PPT页（上）+ PPT目录（下） -->
+      <div class="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden bg-gray-100">
+        <!-- PPT页 -->
+        <div class="flex-1 flex items-center justify-center p-0 overflow-hidden min-h-0">
+          <div class="w-full h-full flex items-center justify-center min-h-0">
+            <div class="relative w-full h-full bg-transparent overflow-hidden" id="ppt-canvas">
+              <!-- 画布内悬浮工具：文本 / 图片 / 超链接 / 上传文件 -->
+              <div class="absolute right-3 top-1 z-20 flex flex-col items-center gap-1 bg-white/90 backdrop-blur border border-gray-200 rounded-lg shadow-sm px-1.5 py-1.5"
+                   id="ppt-float-toolbar">
+                <button type="button" class="p-1.5 rounded hover:bg-gray-100 text-gray-700" id="tool-text" title="添加文本">
+                  <i data-lucide="type" class="w-4 h-4"></i>
+                </button>
+                <div class="h-px w-6 bg-gray-200 my-0.5"></div>
+                <button type="button" class="p-1.5 rounded hover:bg-gray-100 text-gray-700" id="tool-image" title="添加图片">
+                  <i data-lucide="image" class="w-4 h-4"></i>
+                </button>
+                <div class="h-px w-6 bg-gray-200 my-0.5"></div>
+                <button type="button" class="p-1.5 rounded hover:bg-gray-100 text-gray-700" id="tool-link" title="添加超链接">
+                  <i data-lucide="link" class="w-4 h-4"></i>
+                </button>
+                <div class="h-px w-6 bg-gray-200 my-0.5"></div>
+                <button type="button" class="p-1.5 rounded hover:bg-gray-100 text-gray-700" id="tool-file" title="上传文件">
+                  <i data-lucide="file-up" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <img src="img/0.png" class="absolute inset-0 w-full h-full object-contain" id="main-preview-img">
+              <div id="activity-layer" class="absolute inset-0 pointer-events-none"></div>
+              <!-- 可编辑层：承载新增文本/图片 -->
+              <div id="editor-layer" class="absolute inset-0 z-10"></div>
+            </div>
+          </div>
+        </div>
+        <!-- PPT目录（仅在此列底部）：上方 10px、左右 30px 安全距离 -->
+        <div class="shrink-0 w-[calc(100%-60px)] bg-white border border-gray-200 rounded-xl mt-[10px] mx-[30px] px-[30px] py-2">
+          <div class="flex items-center justify-between mb-2 text-xs">
+            <div class="flex items-center text-gray-600">
+              <i data-lucide="monitor" class="w-4 h-4 text-gray-500 mr-1"></i>
+              <span id="slide-counter">幻灯片 1 / 4</span>
+            </div>
+            <div class="text-gray-400">内容由AI生成,请注意甄别</div>
+          </div>
+          <div class="flex gap-3 overflow-x-auto pb-0 items-start" id="bottom-directory">
+            <div class="cursor-pointer group shrink-0" onclick="switchSlide(1)">
+              <div class="aspect-video w-36 bg-gray-100 rounded border-2 border-blue-500 flex items-center justify-center text-gray-400 relative overflow-hidden">
+                <img src="img/0.png" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                <span class="relative z-10 text-xs font-bold bg-white/80 px-1 rounded">1</span>
+              </div>
+            </div>
+            <div class="cursor-pointer group shrink-0" onclick="switchSlide(2)">
+              <div class="aspect-video w-36 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-400 relative overflow-hidden hover:border-blue-300 transition-colors">
+                <img src="img/1.png" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                <span class="relative z-10 text-xs font-bold bg-white/80 px-1 rounded">2</span>
+              </div>
+            </div>
+            <div class="cursor-pointer group shrink-0" onclick="switchSlide(3)">
+              <div class="aspect-video w-36 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-400 relative overflow-hidden hover:border-blue-300 transition-colors">
+                <img src="img/2.png" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                <span class="relative z-10 text-xs font-bold bg-white/80 px-1 rounded">3</span>
+              </div>
+            </div>
+            <div class="cursor-pointer group shrink-0" onclick="switchSlide(4)">
+              <div class="aspect-video w-36 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-400 relative overflow-hidden hover:border-blue-300 transition-colors">
+                <img src="img/3.png" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                <span class="relative z-10 text-xs font-bold bg-white/80 px-1 rounded">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 编辑面板（PPT 右侧） -->
+      <div class="w-64 shrink-0 bg-white border-l border-gray-200 flex flex-col">
+        <div class="px-4 py-3 border-b border-gray-200">
+          <h3 class="text-sm font-medium text-gray-800">编辑面板</h3>
+        </div>
+        <div class="flex-1 flex items-center justify-center p-4">
+          <p class="text-sm text-gray-500 text-center">保持原有不变</p>
+        </div>
+      </div>
+
+      <!-- 右侧：AI对话 -->
+      <div class="collapsible-strip flex flex-col bg-white border-l border-gray-200 shrink-0 ml-[10px]"
+           :class="{ 'expanded': openPanel === 'right' }">
+        <button type="button"
+                class="trigger-btn w-full h-full flex flex-col items-center justify-center gap-1 py-3 text-gray-600 hover:bg-gray-100 transition-colors"
+                :class="{ 'hidden': openPanel === 'right' }"
+                @click="openPanel = 'right'"
+                title="AI 智能体">
+          <i data-lucide="bot" class="w-5 h-5 text-indigo-500"></i>
+        </button>
+        <div class="panel-content flex h-full w-full bg-white min-h-0"
+             :class="{ 'flex': openPanel === 'right', 'hidden': openPanel !== 'right' }">
+          <div class="relative w-full h-full flex flex-col items-center justify-center">
+            <p class="text-sm text-gray-500 text-center">保持原有不变</p>
+            <button @click="openPanel = null" class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 shadow-sm" title="收起">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
+    })();
+
+    // 线上课件：画布内添加文本/图片（最小可用交互）
+    (function () {
+      const canvas = document.getElementById('ppt-canvas');
+      const editorLayer = document.getElementById('editor-layer');
+      const btnText = document.getElementById('tool-text');
+      const btnImage = document.getElementById('tool-image');
+      const btnLink = document.getElementById('tool-link');
+      const btnFile = document.getElementById('tool-file');
+
+      if (!canvas || !editorLayer || !btnText || !btnImage || !btnLink || !btnFile) return;
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+
+      let mode = null; // 'text' | 'image' | null
+      let pendingImagePos = null; // { x, y }
+      let drag = null; // { el, startX, startY, baseLeft, baseTop }
+
+      const setMode = (next) => {
+        mode = next;
+        pendingImagePos = null;
+        btnText.classList.toggle('bg-blue-50', mode === 'text');
+        btnImage.classList.toggle('bg-blue-50', mode === 'image');
+        btnLink.classList.toggle('bg-blue-50', mode === 'link');
+        btnFile.classList.toggle('bg-blue-50', mode === 'file');
+        canvas.style.cursor = mode ? 'crosshair' : 'default';
+      };
+
+      const getCanvasPoint = (evt) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: Math.max(0, Math.min(rect.width, evt.clientX - rect.left)),
+          y: Math.max(0, Math.min(rect.height, evt.clientY - rect.top)),
+        };
+      };
+
+      const placeText = (pt) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'ppt-edit-el';
+        wrap.style.left = `${pt.x}px`;
+        wrap.style.top = `${pt.y}px`;
+
+        const box = document.createElement('div');
+        box.className = 'ppt-text-box';
+        box.contentEditable = 'true';
+        box.spellcheck = false;
+        box.innerText = '双击编辑文本';
+        wrap.appendChild(box);
+
+        editorLayer.appendChild(wrap);
+        box.focus();
+      };
+
+      const placeImage = (pt, dataUrl) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'ppt-edit-el';
+        wrap.style.left = `${pt.x}px`;
+        wrap.style.top = `${pt.y}px`;
+
+        const img = document.createElement('img');
+        img.className = 'ppt-image';
+        img.src = dataUrl;
+        img.alt = '';
+        img.draggable = false;
+        wrap.appendChild(img);
+
+        editorLayer.appendChild(wrap);
+      };
+
+      const placeLink = (pt, url) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'ppt-edit-el';
+        wrap.style.left = `${pt.x}px`;
+        wrap.style.top = `${pt.y}px`;
+
+        const link = document.createElement('a');
+        link.className = 'ppt-link';
+        link.href = url;
+        link.target = '_blank';
+        link.innerText = url;
+        link.style.color = '#3b82f6';
+        link.style.textDecoration = 'underline';
+        wrap.appendChild(link);
+
+        editorLayer.appendChild(wrap);
+      };
+
+      const placeFile = (pt, file) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'ppt-edit-el';
+        wrap.style.left = `${pt.x}px`;
+        wrap.style.top = `${pt.y}px`;
+
+        const fileEl = document.createElement('div');
+        fileEl.className = 'ppt-file';
+        fileEl.innerHTML = `<i data-lucide="file-text" class="w-4 h-4"></i><span>${file.name}</span>`;
+        fileEl.style.display = 'flex';
+        fileEl.style.alignItems = 'center';
+        fileEl.style.gap = '4px';
+        fileEl.style.padding = '4px 8px';
+        fileEl.style.background = '#f3f4f6';
+        fileEl.style.borderRadius = '4px';
+        fileEl.style.fontSize = '12px';
+        wrap.appendChild(fileEl);
+
+        editorLayer.appendChild(wrap);
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          lucide.createIcons({ root: wrap });
+        }
+      };
+
+      const clearSelection = () => {
+        editorLayer.querySelectorAll('.ppt-edit-el.is-selected').forEach((el) => el.classList.remove('is-selected'));
+      };
+
+      btnText.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMode(mode === 'text' ? null : 'text');
+      });
+      btnImage.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMode(mode === 'image' ? null : 'image');
+      });
+      btnLink.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLinkModal();
+      });
+      btnFile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openFileModal();
+      });
+
+      // 放置（点击画布空白处）
+      canvas.addEventListener('click', (e) => {
+        // 点击到工具条/已存在元素时，不触发放置
+        const t = e.target;
+        if (t.closest && (t.closest('#ppt-float-toolbar') || t.closest('.ppt-edit-el'))) return;
+        if (!mode) return;
+
+        const pt = getCanvasPoint(e);
+        if (mode === 'text') {
+          placeText(pt);
+          setMode(null);
+          return;
+        }
+        if (mode === 'image') {
+          pendingImagePos = pt;
+          fileInput.value = '';
+          fileInput.click();
+          return;
+        }
+        if (mode === 'link') {
+          const url = prompt('请输入超链接地址：');
+          if (url) {
+            placeLink(pt, url);
+          }
+          setMode(null);
+          return;
+        }
+        if (mode === 'file') {
+          const fileInput2 = document.createElement('input');
+          fileInput2.type = 'file';
+          fileInput2.style.display = 'none';
+          fileInput2.addEventListener('change', async () => {
+            const file = fileInput2.files && fileInput2.files[0];
+            if (file) {
+              placeFile(pt, file);
+            }
+            fileInput2.remove();
+          });
+          document.body.appendChild(fileInput2);
+          fileInput2.click();
+          setMode(null);
+          return;
+        }
+      });
+
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file || !pendingImagePos) return;
+        const pt = pendingImagePos;
+        pendingImagePos = null;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          placeImage(pt, String(reader.result || ''));
+          setMode(null);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // 选择/拖拽
+      editorLayer.addEventListener('mousedown', (e) => {
+        const el = e.target.closest && e.target.closest('.ppt-edit-el');
+        if (!el) {
+          clearSelection();
+          return;
+        }
+
+        clearSelection();
+        el.classList.add('is-selected');
+
+        // contenteditable 里按下不拖拽（让用户选中文本）
+        const inEditable = e.target.closest && e.target.closest('.ppt-text-box[contenteditable=\"true\"]');
+        if (inEditable) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const left = parseFloat(el.style.left || '0');
+        const top = parseFloat(el.style.top || '0');
+        drag = { el, startX: e.clientX, startY: e.clientY, baseLeft: left, baseTop: top, rect };
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!drag) return;
+        const dx = e.clientX - drag.startX;
+        const dy = e.clientY - drag.startY;
+        const nextLeft = Math.max(0, Math.min(drag.rect.width, drag.baseLeft + dx));
+        const nextTop = Math.max(0, Math.min(drag.rect.height, drag.baseTop + dy));
+        drag.el.style.left = `${nextLeft}px`;
+        drag.el.style.top = `${nextTop}px`;
+      });
+      window.addEventListener('mouseup', () => {
+        drag = null;
+      });
+
+      // 文本框双击进入编辑（拖拽时不会抢焦点）
+      editorLayer.addEventListener('dblclick', (e) => {
+        const box = e.target.closest && e.target.closest('.ppt-text-box');
+        if (!box) return;
+        box.contentEditable = 'true';
+        box.focus();
+      });
+
+      // ESC 退出放置
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setMode(null);
+      });
+    })();
+
+    function switchSlide(index) {
+      const img = document.getElementById('main-preview-img');
+      const imgIndex = (index - 1) % 4; 
+      img.src = `img/${imgIndex}.png`;
+      
+      const counter = document.getElementById('slide-counter');
+      if (counter) counter.textContent = `幻灯片 ${index} / 4`;
+      
+      // 同步底部目录缩略图选中状态
+      const container = document.getElementById('bottom-directory');
+      if (container) {
+        container.querySelectorAll('.cursor-pointer').forEach((el, i) => {
+          const inner = el.querySelector('div');
+          if (inner) {
+            if (i + 1 === index) {
+              inner.classList.add('border-blue-500');
+              inner.classList.remove('border-gray-200', 'border');
+              inner.classList.add('border-2');
+            } else {
+              inner.classList.remove('border-blue-500', 'border-2');
+              inner.classList.add('border-gray-200', 'border');
+            }
+          }
+        });
+      }
+    }
+
+    function addActivity(type) {
+      document.getElementById('custom-alert').classList.remove('hidden');
+    }
+    function closeCustomAlert() {
+      document.getElementById('custom-alert').classList.add('hidden');
+    }
+
+    // ========== 超链接管理弹窗 ==========
+    let linkItems = []; // { name: '', url: '' }
+    function openLinkModal() {
+      document.getElementById('link-modal').classList.remove('hidden');
+      renderLinkItems();
+    }
+    function closeLinkModal() {
+      document.getElementById('link-modal').classList.add('hidden');
+    }
+    function renderLinkItems() {
+      const list = document.getElementById('link-list');
+      list.innerHTML = linkItems.map((item, idx) => {
+        const prefix = item.url.match(/^(https?:\/\/|ftp:\/\/|mailto:)/)?.[1] || '';
+        const urlWithoutPrefix = item.url.replace(/^(https?:\/\/|ftp:\/\/|mailto:)/, '');
+        return `
+        <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+          <input type="text" placeholder="名称" value="${escapeHtml(item.name)}" onchange="updateLinkItem(${idx}, 'name', this.value)" class="w-24 px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:border-blue-400">
+          <div class="flex-1 flex items-center border border-gray-200 rounded overflow-hidden focus-within:border-blue-400">
+            <select onchange="updateLinkPrefix(${idx}, this.value)" class="px-1 py-1 text-sm bg-gray-50 border-r border-gray-200 text-gray-600 focus:outline-none">
+              <option value="http://" ${prefix === 'http://' ? 'selected' : ''}>http://</option>
+              <option value="https://" ${prefix === 'https://' ? 'selected' : ''}>https://</option>
+              <option value="ftp://" ${prefix === 'ftp://' ? 'selected' : ''}>ftp://</option>
+              <option value="mailto:" ${prefix === 'mailto:' ? 'selected' : ''}>mailto:</option>
+            </select>
+            <input type="text" placeholder="地址" value="${escapeHtml(urlWithoutPrefix)}" onchange="updateLinkItem(${idx}, 'url', this.value)" class="flex-1 px-2 py-1 text-sm border-0 focus:outline-none">
+          </div>
+          <button onclick="removeLinkItem(${idx})" class="p-1 text-gray-400 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        </div>
+      `}).join('');
+      document.getElementById('link-count').textContent = linkItems.length + '/10';
+      lucide.createIcons();
+    }
+    function updateLinkPrefix(idx, prefix) {
+      const item = linkItems[idx];
+      const urlWithoutPrefix = item.url.replace(/^(https?:\/\/|ftp:\/\/|mailto:)/, '');
+      item.url = prefix + urlWithoutPrefix;
+    }
+    function updateLinkItem(idx, field, value) {
+      if (field === 'url') {
+        const prefix = linkItems[idx].url.match(/^(https?:\/\/|ftp:\/\/|mailto:)/)?.[1] || 'http://';
+        if (!value.match(/^(https?:\/\/|ftp:\/\/|mailto:)/)) {
+          linkItems[idx].url = prefix + value;
+        } else {
+          linkItems[idx].url = value;
+        }
+      } else {
+        linkItems[idx][field] = value;
+      }
+    }
+    function addLinkItem() {
+      if (linkItems.length >= 10) return;
+      linkItems.push({ name: '', url: '' });
+      renderLinkItems();
+    }
+    function removeLinkItem(idx) {
+      linkItems.splice(idx, 1);
+      renderLinkItems();
+    }
+    function saveLinkItems() {
+      // 数据校验
+      for (let i = 0; i < linkItems.length; i++) {
+        const item = linkItems[i];
+        if (!item.name.trim()) {
+          alert(`第${i + 1}个超链接名称不能为空`);
+          return;
+        }
+        if (!item.url.trim()) {
+          alert(`第${i + 1}个超链接地址不能为空`);
+          return;
+        }
+        // 校验地址格式（去除前缀后应该有内容）
+        const urlWithoutPrefix = item.url.replace(/^(https?:\/\/|ftp:\/\/|mailto:)/, '');
+        if (!urlWithoutPrefix.trim()) {
+          alert(`第${i + 1}个超链接地址不能为空`);
+          return;
+        }
+      }
+      closeLinkModal();
+    }
+
+    // ========== 上传文件管理弹窗 ==========
+    let fileItems = []; // { name: '', file: File }
+    function openFileModal() {
+      document.getElementById('file-modal').classList.remove('hidden');
+      renderFileItems();
+    }
+    function closeFileModal() {
+      document.getElementById('file-modal').classList.add('hidden');
+    }
+    function renderFileItems() {
+      const list = document.getElementById('file-list');
+      list.innerHTML = fileItems.map((item, idx) => `
+        <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg" data-file-idx="${idx}">
+          <div class="flex-1 px-2 py-1 text-sm border border-gray-200 rounded bg-white text-gray-600 truncate">${escapeHtml(item.name)}</div>
+          ${item.uploading ? `
+            <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="progress-bar h-full bg-blue-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+            </div>
+          ` : ''}
+          <button onclick="removeFileItem(${idx})" class="p-1 text-gray-400 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        </div>
+      `).join('');
+      document.getElementById('file-count').textContent = fileItems.length + '/5';
+      lucide.createIcons();
+    }
+    function addFileItem() {
+      if (fileItems.length >= 5) return;
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar';
+      input.onchange = () => {
+        if (input.files && input.files[0]) {
+          const file = input.files[0];
+          const tempItem = { name: file.name, file: file, uploading: true };
+          fileItems.push(tempItem);
+          renderFileItems();
+          
+          // 模拟5秒进度条
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += 20;
+            const itemEl = document.querySelector(`[data-file-idx="${fileItems.length - 1}"]`);
+            if (itemEl) {
+              const progressBar = itemEl.querySelector('.progress-bar');
+              if (progressBar) {
+                progressBar.style.width = progress + '%';
+              }
+            }
+            if (progress >= 100) {
+              clearInterval(interval);
+              tempItem.uploading = false;
+              renderFileItems();
+            }
+          }, 1000);
+        }
+      };
+      input.click();
+    }
+    function removeFileItem(idx) {
+      fileItems.splice(idx, 1);
+      renderFileItems();
+    }
+    function saveFileItems() {
+      // 数据校验
+      for (let i = 0; i < fileItems.length; i++) {
+        const item = fileItems[i];
+        if (!item.name.trim()) {
+          alert(`第${i + 1}个文件名称不能为空`);
+          return;
+        }
+        if (!item.file) {
+          alert(`第${i + 1}个文件不能为空`);
+          return;
+        }
+      }
+      closeFileModal();
+    }
+
+    function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  </script>
+
+  <!-- 超链接管理弹窗 -->
+  <div id="link-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl w-[520px] shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-800">关联超链接</h3>
+        <button onclick="closeLinkModal()" class="text-gray-400 hover:text-gray-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm text-gray-500">最多添加10个超链接</span>
+          <span id="link-count" class="text-sm text-blue-600 font-medium">0/5</span>
+        </div>
+        <div id="link-list" class="space-y-2 max-h-64 overflow-y-auto mb-4"></div>
+        <button onclick="addLinkItem()" id="add-link-btn" class="w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-blue-300 hover:text-blue-500 transition flex items-center justify-center gap-1">
+          <i data-lucide="plus" class="w-4 h-4"></i> 添加超链接
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 上传文件管理弹窗 -->
+  <div id="file-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl w-[520px] shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-800">关联文件</h3>
+        <button onclick="closeFileModal()" class="text-gray-400 hover:text-gray-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm text-gray-500">最多添加5个文件</span>
+          <span id="file-count" class="text-sm text-blue-600 font-medium">0/5</span>
+        </div>
+        <div id="file-list" class="space-y-2 max-h-64 overflow-y-auto mb-4"></div>
+        <button onclick="addFileItem()" id="add-file-btn" class="w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-gray-500 hover:border-blue-300 hover:text-blue-500 transition flex items-center justify-center gap-1">
+          <i data-lucide="plus" class="w-4 h-4"></i> 添加文件
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

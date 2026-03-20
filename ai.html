@@ -26,24 +26,6 @@
       align-items: center;
       justify-content: center;
     }
-    /* 智能助手子页：横向信息卡 */
-    .assistant-scene-card {
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-      box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-    .assistant-scene-card:hover {
-      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.06);
-      transform: translateY(-2px);
-    }
-    .assistant-icon-ring {
-      flex-shrink: 0;
-      width: 3.75rem;
-      height: 3.75rem;
-      border-radius: 9999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
     .view-hidden {
       display: none !important;
     }
@@ -97,7 +79,6 @@
           </div>
           <div class="text-sm">
             <div class="font-medium">张老师</div>
-            <div class="text-xs text-white/70">语文教师</div>
           </div>
           <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
         </div>
@@ -109,30 +90,70 @@
   <main id="main-content" class="min-h-[calc(100vh-64px)] w-full">
     <!-- ========== 视图：AI 专区首页（居中限宽） ========== -->
     <section id="view-ai-home" class="view-ai-home p-6 max-w-[90rem] mx-auto">
-      <div class="mb-6">
-        <h1 class="text-xl font-bold text-gray-800">AI 专区</h1>
-        <p class="text-sm text-gray-500 mt-1">更多智能能力，持续扩展中</p>
-      </div>
-
       <!-- 卡片网格：参考三列布局，小屏自动换行 -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- 智能助手（进入子界面） -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5">
+        <!-- 分组标题：智能助手 -->
+        <div class="col-span-full mb-2">
+          <h2 class="text-lg font-bold text-gray-800">智能助手</h2>
+          <p class="text-sm text-gray-500 mt-1">各类教学文档与方案智能生成</p>
+        </div>
+
+      <!-- 智能助手卡片 -->
       <button type="button" id="btn-open-assistant" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
-          <div class="ai-icon-box bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-inner">
-            <i data-lucide="bot" class="w-7 h-7"></i>
+          <div class="ai-icon-box bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-inner">
+            <i data-lucide="clipboard-list" class="w-7 h-7"></i>
           </div>
           <div class="flex-1 min-w-0">
-            <h2 class="text-base font-semibold text-gray-900">智能助手</h2>
+            <h2 class="text-base font-semibold text-gray-900">教学工作计划</h2>
             <p class="text-sm text-gray-500 mt-2 leading-relaxed">
-              对话式答疑与教学辅助，快速获取备课、课堂与学情相关建议。
+              快速生成教学计划，智能匹配内容安排，助力教学更高效。
             </p>
           </div>
         </div>
       </button>
 
-      <!-- 数字人 -->
-      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+      <!-- 校园活动策划 -->
+      <button type="button" id="btn-open-assistant2" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-inner">
+            <i data-lucide="scroll-text" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">校园活动策划</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              聚焦活动目标与流程，输出清晰可执行方案。
+            </p>
+          </div>
+        </div>
+      </button>
+
+      <!-- 家长会发言稿 -->
+      <button type="button" id="btn-open-assistant3" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-inner">
+            <i data-lucide="file-user" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">家长会发言稿</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              贴合班级情况，给出高质量发言稿建议。
+            </p>
+          </div>
+        </div>
+      </button>
+
+        <!-- 分隔线 -->
+        <div class="col-span-full border-t border-gray-200 my-4"></div>
+
+        <!-- 分组标题：AI工具 -->
+        <div class="col-span-full mb-2">
+          <h2 class="text-lg font-bold text-gray-800">AI工具</h2>
+          <p class="text-sm text-gray-500 mt-1">多场景智能应用，赋能教学全流程</p>
+        </div>
+
+      <!-- 数字人（进入子界面） -->
+      <button type="button" id="btn-open-digital-human" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
           <div class="ai-icon-box bg-gradient-to-br from-violet-400 to-purple-600 text-white shadow-inner">
             <i data-lucide="user-round" class="w-7 h-7"></i>
@@ -144,176 +165,245 @@
             </p>
           </div>
         </div>
-      </article>
+      </button>
 
-      <!-- AI讲题 -->
-      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+      <!-- AI讲题（进入子界面） -->
+      <button type="button" id="btn-open-ai-explain" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
           <div class="ai-icon-box bg-gradient-to-br from-emerald-400 to-teal-600 text-white shadow-inner">
             <i data-lucide="lightbulb" class="w-7 h-7"></i>
           </div>
           <div class="flex-1 min-w-0">
-              <h2 class="text-base font-semibold text-gray-900">AI讲题</h2>
+            <h2 class="text-base font-semibold text-gray-900">AI讲题</h2>
             <p class="text-sm text-gray-500 mt-2 leading-relaxed">
               针对题目分步解析与思路引导，帮助学生理解考点与解题路径。
             </p>
           </div>
         </div>
-      </article>
+      </button>
 
-      <!-- AI讲课 -->
-      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+      <!-- AI讲课（进入子界面） -->
+      <button type="button" id="btn-open-ai-lecture" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
           <div class="ai-icon-box bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-inner">
             <i data-lucide="presentation" class="w-7 h-7"></i>
           </div>
           <div class="flex-1 min-w-0">
-              <h2 class="text-base font-semibold text-gray-900">AI讲课</h2>
+            <h2 class="text-base font-semibold text-gray-900">AI讲课</h2>
             <p class="text-sm text-gray-500 mt-2 leading-relaxed">
               按知识点生成讲解稿与板书要点，辅助教师组织课堂节奏与表达。
             </p>
           </div>
         </div>
-      </article>
+      </button>
 
-      <!-- AI绘本 -->
-      <article class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer">
+      <!-- AI绘本（进入子界面） -->
+      <button type="button" id="btn-open-ai-picture-book" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
           <div class="ai-icon-box bg-gradient-to-br from-pink-400 to-rose-500 text-white shadow-inner">
             <i data-lucide="book-open" class="w-7 h-7"></i>
           </div>
           <div class="flex-1 min-w-0">
-              <h2 class="text-base font-semibold text-gray-900">AI绘本</h2>
+            <h2 class="text-base font-semibold text-gray-900">AI绘本</h2>
             <p class="text-sm text-gray-500 mt-2 leading-relaxed">
               图文故事与阅读素材生成，适配低年级语文与拓展阅读教学。
             </p>
           </div>
         </div>
-      </article>
+      </button>
+
+      <!-- 拍题答疑（进入子界面） -->
+      <button type="button" id="btn-open-photo-qa" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-indigo-400 to-blue-600 text-white shadow-inner">
+            <i data-lucide="camera" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">拍题答疑</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              拍照上传题目，获取 AI 分步解析与答疑，支持任务与收藏管理。
+            </p>
+          </div>
+        </div>
+      </button>
     </div>
     </section>
 
-    <!-- ========== 视图：智能助手（场景卡片） ========== -->
-    <section id="view-smart-assistant" class="view-smart-assistant view-hidden w-full max-w-none">
-      <!-- 顶部面包屑导航（与 evaluate.html 一致：顶部分隔线 + 图标） -->
+    <!-- ========== 视图：数字人（截图原型） ========== -->
+    <section id="view-digital-human" class="view-digital-human view-hidden w-full max-w-none">
       <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
-          <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
-            <button type="button" id="breadcrumb-ai-zone" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-            <span class="text-gray-700 font-medium">智能助手</span>
-          </nav>
+        <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-digital" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          <span class="text-gray-700 font-medium">数字人</span>
+        </nav>
       </div>
-
-      <div class="py-[15px] px-6">
-        <h1 class="text-2xl font-bold text-gray-900">智能助手</h1>
+      <div class="px-6 pb-6 mt-4">
+        <img src="img/数字人.png" alt="数字人" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
       </div>
+    </section>
 
-      <!-- 一行最多 5 个；小屏自动换行（整宽铺满，无两侧大留白） -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 px-6">
-        <!-- 教学工作计划 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="教学工作计划" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-emerald-500 text-white shadow-md">
-              <i data-lucide="clipboard-list" class="w-7 h-7"></i>
+    <!-- ========== 视图：AI讲题（截图原型） ========== -->
+    <section id="view-ai-explain" class="view-ai-explain view-hidden w-full max-w-none">
+      <!-- 固定定位：记录入口（与截图顶部横幅右上区域对齐，位于站点顶栏下方） -->
+      <button type="button" id="btn-ai-explain-records" class="fixed top-[7rem] right-6 z-40 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/95 text-gray-700 text-sm font-medium shadow-md border border-gray-200/80 hover:bg-violet-50 hover:border-violet-200/80 hover:text-violet-700 transition-colors cursor-pointer">
+        <i data-lucide="history" class="w-4 h-4 shrink-0"></i>
+        记录
+      </button>
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-explain" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          <span class="text-gray-700 font-medium">AI讲题</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <img src="img/AI讲题.png" alt="AI讲题" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
+      </div>
+    </section>
+
+    <!-- ========== 视图：AI讲题记录（截图原型） ========== -->
+    <section id="view-ai-explain-records" class="view-ai-explain-records view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-explain-records" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-ai-explain" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI讲题</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span class="text-gray-700 font-medium">问答记录</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <div id="wrap-ai-explain-records-img" role="button" tabindex="0" class="cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50" title="点击进入问题讲解">
+          <img src="img/AI讲题记录.png" alt="AI讲题记录" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm pointer-events-none" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 视图：问题讲解（截图原型） ========== -->
+    <section id="view-ai-explain-question" class="view-ai-explain-question view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-question-explain" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-ai-explain-question" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI讲题</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-records-question" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">问答记录</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span class="text-gray-700 font-medium">问题讲解</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <img src="img/问题讲解.png" alt="问题讲解" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
+      </div>
+    </section>
+
+    <!-- ========== 视图：AI绘本（截图原型） ========== -->
+    <section id="view-ai-picture-book" class="view-ai-picture-book view-hidden w-full max-w-none">
+      <button type="button" id="btn-ai-picture-book-records" class="fixed top-[7rem] right-6 z-40 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/95 text-gray-700 text-sm font-medium shadow-md border border-gray-200/80 hover:bg-rose-50 hover:border-rose-200/80 hover:text-rose-700 transition-colors cursor-pointer">
+        <i data-lucide="history" class="w-4 h-4 shrink-0"></i>
+        记录
+      </button>
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-picture-book" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          <span class="text-gray-700 font-medium">AI绘本</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <img src="img/AI绘本.png" alt="AI绘本" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
+      </div>
+    </section>
+
+    <!-- ========== 视图：我的绘本（截图原型） ========== -->
+    <section id="view-my-picture-books" class="view-my-picture-books view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-my-picture-books" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-ai-picture-book" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI绘本</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span class="text-gray-700 font-medium">我的绘本</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <img src="img/我的绘本.png" alt="我的绘本" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
+      </div>
+    </section>
+
+    <!-- ========== 视图：AI讲课（截图原型） ========== -->
+    <section id="view-ai-lecture" class="view-ai-lecture view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-lecture" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          <span class="text-gray-700 font-medium">AI讲课</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <img src="img/AI讲课.png" alt="AI讲课" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
+      </div>
+    </section>
+
+    <!-- ========== 视图：拍题答疑（面包屑通栏，白色面板左右撑满） ========== -->
+    <section id="view-photo-qa" class="view-photo-qa view-hidden w-full max-w-none bg-gray-50 min-h-[calc(100vh-64px)]">
+      <div class="px-6 pt-4">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-3" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-photo-qa" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          <span class="text-gray-700 font-medium">拍题答疑</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-8">
+        <div class="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="inline-flex items-center gap-4 text-sm" role="tablist" aria-label="拍题答疑列表切换">
+              <button type="button" id="tab-photo-qa-task" role="tab" aria-selected="true" class="photo-qa-tab px-5 py-2.5 rounded-lg font-medium border-0 cursor-pointer bg-blue-600 text-white shadow-sm">任务列表</button>
+              <button type="button" id="tab-photo-qa-favorite" role="tab" aria-selected="false" class="photo-qa-tab px-5 py-2.5 rounded-lg font-medium border-0 cursor-pointer text-gray-500 bg-transparent hover:text-gray-700">收藏列表</button>
             </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">教学工作计划</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                快速生成教学计划，智能匹配内容安排，助力教学更高效。
-              </p>
+            <div id="photo-qa-upload-actions" class="flex flex-wrap items-center gap-3">
+              <button type="button" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium border-0 shadow-sm cursor-default min-w-[8rem]">手机拍照上传</button>
+              <button type="button" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium border-0 shadow-sm cursor-default min-w-[8rem]">本地上传</button>
             </div>
           </div>
-        </article>
-
-        <!-- 校园活动策划 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="校园活动策划" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-violet-600 text-white shadow-md">
-              <i data-lucide="scroll-text" class="w-7 h-7"></i>
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <div id="photo-qa-panel-task" role="tabpanel" aria-labelledby="tab-photo-qa-task">
+              <div id="wrap-photo-qa-task-img" role="button" tabindex="0" class="cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 overflow-hidden" title="点击进入 AI 解析">
+                <img src="img/拍题答疑-任务列表.png" alt="任务列表" class="w-full h-auto block pointer-events-none" />
+              </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">校园活动策划</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                聚焦活动目标与流程，输出清晰可执行方案。
-              </p>
+            <div id="photo-qa-panel-favorite" role="tabpanel" aria-labelledby="tab-photo-qa-favorite" class="view-hidden">
+              <div id="wrap-photo-qa-favorite-img" role="button" tabindex="0" class="cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 overflow-hidden" title="点击进入 AI 解析">
+                <img src="img/拍题答疑-收藏列表.png" alt="收藏列表" class="w-full h-auto block pointer-events-none" />
+              </div>
             </div>
           </div>
-        </article>
+        </div>
+      </div>
+    </section>
 
-        <!-- 家长会发言稿 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="家长会发言稿" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-gradient-to-b from-sky-400 to-blue-600 text-white shadow-md">
-              <i data-lucide="file-user" class="w-7 h-7"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">家长会发言稿</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                贴合班级情况，给出高质量发言稿建议。
-              </p>
-            </div>
+    <!-- ========== 视图：拍题答疑 - AI解析（面包屑通栏，白色面板左右撑满） ========== -->
+    <section id="view-photo-qa-ai-analysis" class="view-photo-qa-ai-analysis view-hidden w-full max-w-none bg-gray-50 min-h-[calc(100vh-64px)]">
+      <div class="px-6 pt-4">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap mb-3" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-photo-qa-ai" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-photo-qa" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">拍题答疑</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span class="text-gray-700 font-medium">AI解析</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-8">
+        <div class="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
+          <div class="flex flex-wrap items-center justify-end gap-3 min-h-[2.5rem]">
+            <button type="button" id="btn-photo-qa-collect" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium border-0 shadow-sm cursor-default view-hidden">收藏此题</button>
+            <button type="button" id="btn-photo-qa-uncollect" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium border-0 shadow-sm cursor-default view-hidden">取消收藏</button>
           </div>
-        </article>
-
-        <!-- 班会课设计 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="班会课设计" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-amber-500 text-white shadow-md">
-              <i data-lucide="users-round" class="w-7 h-7"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">班会课设计</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                围绕主题与学情，生成环节设计与讨论引导语。
-              </p>
-            </div>
+          <div class="mt-6 pt-6 border-t border-gray-100 overflow-hidden rounded-lg">
+            <img src="img/拍题答疑-AI解析.png" alt="AI解析" class="w-full h-auto block" />
           </div>
-        </article>
-
-        <!-- 评课稿 / 教学反思 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="评课稿与反思" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-rose-500 text-white shadow-md">
-              <i data-lucide="message-square-text" class="w-7 h-7"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">评课稿与反思</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                结构化梳理亮点与改进点，辅助教研与自我提升。
-              </p>
-            </div>
-          </div>
-        </article>
-
-        <!-- 第二行示例：家校沟通短信 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="家校沟通短信" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-cyan-600 text-white shadow-md">
-              <i data-lucide="smartphone" class="w-7 h-7"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">家校沟通短信</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                通知、提醒、表扬等话术一键润色，语气得体。
-              </p>
-            </div>
-          </div>
-        </article>
-
-        <!-- 作业评语 -->
-        <article class="assistant-scene-card bg-white rounded-xl border border-gray-100/80 p-5 cursor-pointer" data-scene="作业评语" role="button" tabindex="0">
-          <div class="flex gap-4 items-start">
-            <div class="assistant-icon-ring bg-indigo-600 text-white shadow-md">
-              <i data-lucide="pen-line" class="w-7 h-7"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="text-base font-bold text-gray-800 leading-snug">作业评语</h2>
-              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
-                针对作业表现生成鼓励性、建设性评语建议。
-              </p>
-            </div>
-          </div>
-        </article>
+        </div>
       </div>
     </section>
 
@@ -322,8 +412,6 @@
       <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
         <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
           <button type="button" id="breadcrumb-ai-zone-scene" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
-          <button type="button" id="breadcrumb-back-assistant-list" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">智能助手</button>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
           <span id="breadcrumb-scene-name" class="text-gray-700 font-medium">场景名称</span>
         </nav>
@@ -356,25 +444,130 @@
 
   <script>
     function hideAllAssistantViews() {
-      document.getElementById('view-smart-assistant').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
     }
 
-    function showAiHome() {
-      document.getElementById('view-ai-home').classList.remove('view-hidden');
-      hideAllAssistantViews();
+    var photoQaActiveTab = 'task';
+
+    function setPhotoQaTab(tab) {
+      photoQaActiveTab = tab === 'favorite' ? 'favorite' : 'task';
+      var tabTask = document.getElementById('tab-photo-qa-task');
+      var tabFav = document.getElementById('tab-photo-qa-favorite');
+      var panelTask = document.getElementById('photo-qa-panel-task');
+      var panelFav = document.getElementById('photo-qa-panel-favorite');
+      var uploadRow = document.getElementById('photo-qa-upload-actions');
+      if (photoQaActiveTab === 'task') {
+        tabTask.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+        tabTask.classList.remove('text-gray-500', 'hover:text-gray-700');
+        tabTask.setAttribute('aria-selected', 'true');
+        tabFav.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        tabFav.classList.add('text-gray-500', 'bg-transparent', 'hover:text-gray-700');
+        tabFav.setAttribute('aria-selected', 'false');
+        panelTask.classList.remove('view-hidden');
+        panelFav.classList.add('view-hidden');
+        if (uploadRow) uploadRow.classList.remove('view-hidden');
+      } else {
+        tabFav.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+        tabFav.classList.remove('text-gray-500', 'hover:text-gray-700');
+        tabFav.setAttribute('aria-selected', 'true');
+        tabTask.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        tabTask.classList.add('text-gray-500', 'bg-transparent', 'hover:text-gray-700');
+        tabTask.setAttribute('aria-selected', 'false');
+        panelFav.classList.remove('view-hidden');
+        panelTask.classList.add('view-hidden');
+        if (uploadRow) uploadRow.classList.add('view-hidden');
+      }
       if (history.replaceState) {
-        history.replaceState(null, '', 'ai.html');
+        history.replaceState(null, '', photoQaActiveTab === 'favorite' ? 'ai.html#photo-qa-favorites' : 'ai.html#photo-qa');
+      }
+    }
+
+    function showPhotoQa(tab) {
+      var t = tab === 'favorite' ? 'favorite' : 'task';
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.remove('view-hidden');
+      setPhotoQaTab(t);
+      lucide.createIcons();
+    }
+
+    function showPhotoQaAiAnalysis(source) {
+      var fromFavorite = source === 'favorite';
+      photoQaActiveTab = fromFavorite ? 'favorite' : 'task';
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.remove('view-hidden');
+      var btnCollect = document.getElementById('btn-photo-qa-collect');
+      var btnUncollect = document.getElementById('btn-photo-qa-uncollect');
+      if (fromFavorite) {
+        btnCollect.classList.add('view-hidden');
+        btnUncollect.classList.remove('view-hidden');
+        if (history.replaceState) history.replaceState(null, '', 'ai.html#photo-qa-ai/favorite');
+      } else {
+        btnUncollect.classList.add('view-hidden');
+        btnCollect.classList.remove('view-hidden');
+        if (history.replaceState) history.replaceState(null, '', 'ai.html#photo-qa-ai/task');
       }
       lucide.createIcons();
     }
 
-    function showSmartAssistant() {
+    function showDigitalHuman() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
-      document.getElementById('view-smart-assistant').classList.remove('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.remove('view-hidden');
       if (history.replaceState) {
-        history.replaceState(null, '', 'ai.html#assistant');
+        history.replaceState(null, '', 'ai.html#digital-human');
+      }
+      lucide.createIcons();
+    }
+
+    function showAiHome() {
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-home').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html');
       }
       lucide.createIcons();
     }
@@ -382,7 +575,15 @@
     function showAssistantScene(sceneName) {
       if (!sceneName) return;
       document.getElementById('view-ai-home').classList.add('view-hidden');
-      document.getElementById('view-smart-assistant').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.remove('view-hidden');
       document.getElementById('breadcrumb-scene-name').textContent = sceneName;
       var toolbarTitle = document.getElementById('assistant-toolbar-name');
@@ -393,26 +594,192 @@
       lucide.createIcons();
     }
 
-    document.getElementById('btn-open-assistant').addEventListener('click', showSmartAssistant);
-    document.getElementById('breadcrumb-ai-zone').addEventListener('click', showAiHome);
-    document.getElementById('breadcrumb-ai-zone-scene').addEventListener('click', showAiHome);
-    document.getElementById('breadcrumb-back-assistant-list').addEventListener('click', showSmartAssistant);
-
-    document.querySelectorAll('.assistant-scene-card').forEach(function (el) {
-      function open() {
-        showAssistantScene('教学工作计划');
+    function showAiExplain() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-explain');
       }
-      el.addEventListener('click', open);
-      el.addEventListener('keydown', function (e) {
+      lucide.createIcons();
+    }
+
+    function showAiExplainRecords() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-explain-records');
+      }
+      lucide.createIcons();
+    }
+
+    function showQuestionExplain() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-explain-question');
+      }
+      lucide.createIcons();
+    }
+
+    function showAiPictureBook() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-picture-book');
+      }
+      lucide.createIcons();
+    }
+
+    function showMyPictureBooks() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#my-picture-books');
+      }
+      lucide.createIcons();
+    }
+
+    function showAiLecture() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-lecture');
+      }
+      lucide.createIcons();
+    }
+
+    function bindEvent(id, event, handler) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener(event, handler);
+      }
+    }
+
+    bindEvent('btn-open-assistant', 'click', function() { showAssistantScene('教学工作计划'); });
+    bindEvent('btn-open-assistant2', 'click', function() { showAssistantScene('校园活动策划'); });
+    bindEvent('btn-open-assistant3', 'click', function() { showAssistantScene('家长会发言稿'); });
+    bindEvent('btn-open-digital-human', 'click', showDigitalHuman);
+    bindEvent('btn-open-ai-explain', 'click', showAiExplain);
+    bindEvent('btn-open-ai-picture-book', 'click', showAiPictureBook);
+    bindEvent('btn-open-ai-lecture', 'click', showAiLecture);
+    bindEvent('btn-open-photo-qa', 'click', function () { showPhotoQa('task'); });
+    bindEvent('breadcrumb-ai-zone-photo-qa', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-photo-qa-ai', 'click', showAiHome);
+    bindEvent('breadcrumb-back-photo-qa', 'click', function () { showPhotoQa(photoQaActiveTab); });
+    bindEvent('tab-photo-qa-task', 'click', function () { setPhotoQaTab('task'); });
+    bindEvent('tab-photo-qa-favorite', 'click', function () { setPhotoQaTab('favorite'); });
+    bindEvent('btn-ai-picture-book-records', 'click', showMyPictureBooks);
+    bindEvent('breadcrumb-ai-zone-digital', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-explain', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-explain-records', 'click', showAiHome);
+    bindEvent('breadcrumb-back-ai-explain', 'click', showAiExplain);
+    bindEvent('breadcrumb-ai-zone-question-explain', 'click', showAiHome);
+    bindEvent('breadcrumb-back-ai-explain-question', 'click', showAiExplain);
+    bindEvent('breadcrumb-back-records-question', 'click', showAiExplainRecords);
+    bindEvent('breadcrumb-ai-zone-picture-book', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-my-picture-books', 'click', showAiHome);
+    bindEvent('breadcrumb-back-ai-picture-book', 'click', showAiPictureBook);
+    bindEvent('breadcrumb-ai-zone-lecture', 'click', showAiHome);
+    bindEvent('btn-ai-explain-records', 'click', showAiExplainRecords);
+    bindEvent('breadcrumb-ai-zone-scene', 'click', showAiHome);
+    (function () {
+      var wrap = document.getElementById('wrap-ai-explain-records-img');
+      if (!wrap) return;
+      wrap.addEventListener('click', showQuestionExplain);
+      wrap.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          open();
+          showQuestionExplain();
         }
       });
-    });
+    })();
+    (function () {
+      function bindImgWrap(id, source) {
+        var wrap = document.getElementById(id);
+        if (!wrap) return;
+        wrap.addEventListener('click', function () { showPhotoQaAiAnalysis(source); });
+        wrap.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showPhotoQaAiAnalysis(source);
+          }
+        });
+      }
+      bindImgWrap('wrap-photo-qa-task-img', 'task');
+      bindImgWrap('wrap-photo-qa-favorite-img', 'favorite');
+    })();
 
     function applyHashRoute() {
       var hash = window.location.hash || '';
+      if (hash.indexOf('#photo-qa-ai/') === 0) {
+        var src = hash.slice('#photo-qa-ai/'.length);
+        if (src === 'task' || src === 'favorite') {
+          showPhotoQaAiAnalysis(src);
+          return;
+        }
+      }
+      if (hash === '#photo-qa-favorites') {
+        showPhotoQa('favorite');
+        return;
+      }
+      if (hash === '#photo-qa') {
+        showPhotoQa('task');
+        return;
+      }
       if (hash.indexOf('#assistant/') === 0) {
         var name = decodeURIComponent(hash.slice('#assistant/'.length));
         if (name) {
@@ -420,8 +787,32 @@
           return;
         }
       }
-      if (hash === '#assistant') {
-        showSmartAssistant();
+      if (hash === '#digital-human') {
+        showDigitalHuman();
+        return;
+      }
+      if (hash === '#ai-lecture') {
+        showAiLecture();
+        return;
+      }
+      if (hash === '#ai-explain-question') {
+        showQuestionExplain();
+        return;
+      }
+      if (hash === '#my-picture-books') {
+        showMyPictureBooks();
+        return;
+      }
+      if (hash === '#ai-picture-book') {
+        showAiPictureBook();
+        return;
+      }
+      if (hash === '#ai-explain-records') {
+        showAiExplainRecords();
+        return;
+      }
+      if (hash === '#ai-explain') {
+        showAiExplain();
       }
     }
 

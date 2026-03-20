@@ -62,7 +62,6 @@
           </div>
           <div class="text-sm">
             <div class="font-medium">张老师</div>
-            <div class="text-xs text-white/70">语文教师</div>
           </div>
           <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
         </div>
@@ -318,18 +317,13 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
           <!-- 章节标题 -->
           <div class="p-6 pb-4 shrink-0 border-b border-gray-100">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                <i data-lucide="presentation" class="w-6 h-6 text-white"></i>
-              </div>
-              <div>
-                <h2 class="text-xl font-bold text-gray-800">
-                  ${sectionName && sectionName !== chapterTitle ? sectionName : chapterTitle}
-                </h2>
-                <p class="text-sm text-gray-500">
-                  ${sectionName && sectionName !== chapterTitle ? chapterTitle + ' · ' : ''}智能授课
-                </p>
-              </div>
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">
+                ${sectionName && sectionName !== chapterTitle ? sectionName : chapterTitle}
+              </h2>
+              <p class="text-sm text-gray-500">
+                ${sectionName && sectionName !== chapterTitle ? chapterTitle + ' · ' : ''}智能授课
+              </p>
             </div>
           </div>
 
@@ -348,10 +342,12 @@
                     </div>
                     <div>
                       <h4 class="text-sm font-medium text-gray-800">《初中生活的变化》PPT课件 V2</h4>
-                      <p class="text-xs text-gray-400">2024-01-14</p>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-green-50 text-green-600 text-xs font-medium rounded-full">课件</span>
+                      </div>
                     </div>
                   </div>
-                  <button class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
+                  <button onclick="window.open('present.html', '_blank')" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i>
                     上课
                   </button>
@@ -365,10 +361,12 @@
                     </div>
                     <div>
                       <h4 class="text-sm font-medium text-gray-800">《初中生活的变化》PPT课件 V1</h4>
-                      <p class="text-xs text-gray-400">2024-01-10</p>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-green-50 text-green-600 text-xs font-medium rounded-full">课件</span>
+                      </div>
                     </div>
                   </div>
-                  <button class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
+                  <button onclick="window.open('present.html', '_blank')" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i>
                     上课
                   </button>
@@ -389,7 +387,12 @@
                     <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">随堂测</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">《春》随堂测验</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs font-medium rounded-full">随堂测</span>
+                      </div>
+                    </div>
                   </div>
                   <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                     查看
@@ -402,7 +405,12 @@
                     <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="pen-tool" class="w-5 h-5 text-pink-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">智能听写</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">词语听写练习</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-pink-50 text-pink-600 text-xs font-medium rounded-full">听写</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
@@ -420,7 +428,12 @@
                     <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">活动</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">小组协作</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-xs font-medium rounded-full">活动</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="text-xs text-gray-400">已使用 <span class="font-semibold text-gray-600">5</span> 次</span>
@@ -436,7 +449,12 @@
                     <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="gift" class="w-5 h-5 text-yellow-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">抽奖</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">随机抽奖</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-yellow-50 text-yellow-600 text-xs font-medium rounded-full">抽奖</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="text-xs text-gray-400">已使用 <span class="font-semibold text-gray-600">12</span> 次</span>
@@ -452,7 +470,12 @@
                     <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="spell-check" class="w-5 h-5 text-indigo-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">单词评测</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">英语单词测试</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full">单词评测</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
@@ -471,7 +494,12 @@
                     <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="message-circle" class="w-5 h-5 text-teal-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">对话评测</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">情景对话评测</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-teal-50 text-teal-600 text-xs font-medium rounded-full">对话评测</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
@@ -490,13 +518,38 @@
                     <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
                       <i data-lucide="theater" class="w-5 h-5 text-rose-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">场景对话</span>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">购物场景对话</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-rose-50 text-rose-600 text-xs font-medium rounded-full">场景对话</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
                       <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-gray-500"></i>
                       <span class="text-xs text-gray-500">已测评 <span class="font-semibold text-gray-600">5</span> 次</span>
                     </div>
+                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                      进入
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 智能体 -->
+                <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-violet-300 transition-all">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center">
+                      <i data-lucide="bot" class="w-5 h-5 text-violet-600"></i>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-gray-700">苏轼</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-violet-50 text-violet-600 text-xs font-medium rounded-full">智能体</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
                     <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>

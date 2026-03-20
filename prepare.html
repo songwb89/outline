@@ -13,9 +13,62 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
+    /* 下拉菜单 hover 区域扩展 - 消除按钮与菜单之间的间隙导致的丢失问题 */
+    .dropdown-menu::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      height: 12px;
+      background: transparent;
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
+  <!-- Toast提示 -->
+  <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2"></div>
+
+  <style>
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+    .toast-item {
+      animation: toastIn 0.3s ease forwards;
+      background: #1f2937;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 200px;
+      text-align: center;
+    }
+    .toast-item.success { background: #059669; }
+    .toast-item.error { background: #dc2626; }
+    .toast-item.toast-out { animation: toastOut 0.3s ease forwards; }
+  </style>
+
+  <script>
+    // Toast提示函数
+    function showToast(message, type = 'info', duration = 3000) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-item ' + type;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+  </script>
   <!-- 顶部导航栏 -->
   <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
     <div class="flex items-center justify-between h-16 px-6">
@@ -62,7 +115,6 @@
           </div>
           <div class="text-sm">
             <div class="font-medium">张老师</div>
-            <div class="text-xs text-white/70">语文教师</div>
           </div>
           <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
         </div>
@@ -355,9 +407,9 @@
                 添加教案
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
-              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">上传教案</a>
+              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
+                <button onclick="openGeneratePlanModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</button>
+                <button onclick="openUploadModal('教案')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">上传教案</button>
               </div>
             </div>
 
@@ -368,9 +420,9 @@
                 添加课件
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
-              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">上传课件</a>
+              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
+                <button onclick="openGenerateCoursewareModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</button>
+                <button onclick="openUploadModal('课件')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">上传课件</button>
               </div>
             </div>
 
@@ -381,9 +433,9 @@
                 添加学案
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
-              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">上传学案</a>
+              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
+                <button onclick="openGenerateStudyPlanModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</button>
+                <button onclick="openUploadModal('学案')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">上传学案</button>
               </div>
             </div>
 
@@ -394,7 +446,7 @@
                 添加活动
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
-              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10">
+              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">模板活动</a>
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI活动</a>
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">趣味抽奖</a>
@@ -408,7 +460,7 @@
                 口语训练
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
-              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10">
+              <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">单词评测</a>
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">对话评测</a>
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</a>
@@ -428,6 +480,12 @@
               添加听写
             </button>
 
+            <!-- 添加智能体 -->
+            <button class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium shadow-sm">
+              <i data-lucide="bot" class="w-4 h-4"></i>
+              添加智能体
+            </button>
+
             <!-- 校本资源 -->
             <button class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium shadow-sm border border-gray-200">
               <i data-lucide="library" class="w-4 h-4"></i>
@@ -439,21 +497,25 @@
           <!-- 内容区域（可滚动） -->
           <div class="flex-1 min-h-0 overflow-y-auto p-6">
             <!-- 紧凑卡片网格 -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               <!-- 教案 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-blue-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="file-text" class="w-4 h-4 text-blue-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-blue-100 text-blue-600 text-xs rounded">教案</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-blue-600 transition-colors">《春》教学教案</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">教案</span>
+                      <span class="text-xs text-gray-400">1月15日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">《春》教学教案</h4>
-                <p class="text-xs text-gray-400">2024-01-15</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
@@ -461,19 +523,23 @@
               </div>
 
               <!-- 课件 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-green-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="presentation" class="w-4 h-4 text-green-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-green-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="presentation" class="w-5 h-5 text-green-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-green-100 text-green-600 text-xs rounded">课件</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-green-600 transition-colors">《春》PPT课件</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-green-50 text-green-600 text-xs font-medium rounded-full">课件</span>
+                      <span class="text-xs text-gray-400">1月14日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">《春》PPT课件</h4>
-                <p class="text-xs text-gray-400">2024-01-14</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
@@ -481,19 +547,23 @@
               </div>
 
               <!-- 学案 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-cyan-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="book-open" class="w-4 h-4 text-cyan-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="book-open" class="w-5 h-5 text-cyan-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-cyan-100 text-cyan-600 text-xs rounded">学案</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-cyan-600 transition-colors">《春》导学案</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-cyan-50 text-cyan-600 text-xs font-medium rounded-full">学案</span>
+                      <span class="text-xs text-gray-400">1月13日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">《春》导学案</h4>
-                <p class="text-xs text-gray-400">2024-01-13</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('下载')">下载</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
@@ -502,19 +572,23 @@
               </div>
 
               <!-- 活动 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-orange-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="users" class="w-4 h-4 text-orange-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-orange-100 text-orange-600 text-xs rounded">活动</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-orange-600 transition-colors">朗读比赛活动</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-xs font-medium rounded-full">活动</span>
+                      <span class="text-xs text-gray-400">1月12日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">朗读比赛活动</h4>
-                <p class="text-xs text-gray-400">2024-01-12</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
@@ -523,38 +597,46 @@
               </div>
 
               <!-- 抽奖 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-yellow-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="gift" class="w-4 h-4 text-yellow-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-yellow-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="gift" class="w-5 h-5 text-yellow-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-600 text-xs rounded">抽奖</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-yellow-600 transition-colors">课堂抽奖活动</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-yellow-50 text-yellow-600 text-xs font-medium rounded-full">抽奖</span>
+                      <span class="text-xs text-gray-400">1月11日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">课堂抽奖活动</h4>
-                <p class="text-xs text-gray-400">2024-01-11</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
                 </div>
               </div>
 
               <!-- 随堂测 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-purple-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="clipboard-check" class="w-4 h-4 text-purple-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-purple-100 text-purple-600 text-xs rounded">随堂测</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-purple-600 transition-colors">《春》随堂测验</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs font-medium rounded-full">随堂测</span>
+                      <span class="text-xs text-gray-400">1月10日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">《春》随堂测验</h4>
-                <p class="text-xs text-gray-400">2024-01-10</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('下载')">下载</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
@@ -563,38 +645,46 @@
               </div>
 
               <!-- 听写 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-pink-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="pen-tool" class="w-4 h-4 text-pink-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-pink-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="pen-tool" class="w-5 h-5 text-pink-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-pink-100 text-pink-600 text-xs rounded">听写</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-pink-600 transition-colors">词语听写练习</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-pink-50 text-pink-600 text-xs font-medium rounded-full">听写</span>
+                      <span class="text-xs text-gray-400">1月9日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">词语听写练习</h4>
-                <p class="text-xs text-gray-400">2024-01-09</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
                 </div>
               </div>
 
               <!-- 单词评测 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-indigo-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="spell-check" class="w-4 h-4 text-indigo-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="spell-check" class="w-5 h-5 text-indigo-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-indigo-100 text-indigo-600 text-xs rounded">单词评测</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-indigo-600 transition-colors">英语单词测试</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full">单词评测</span>
+                      <span class="text-xs text-gray-400">1月8日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">英语单词测试</h4>
-                <p class="text-xs text-gray-400">2024-01-08</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
@@ -602,19 +692,23 @@
               </div>
 
               <!-- 对话评测 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-teal-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="message-circle" class="w-4 h-4 text-teal-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-teal-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-teal-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-teal-100 text-teal-600 text-xs rounded">对话评测</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-teal-600 transition-colors">情景对话评测</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-teal-50 text-teal-600 text-xs font-medium rounded-full">对话评测</span>
+                      <span class="text-xs text-gray-400">1月7日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">情景对话评测</h4>
-                <p class="text-xs text-gray-400">2024-01-07</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
@@ -622,19 +716,47 @@
               </div>
 
               <!-- 场景对话 -->
-              <div class="bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer relative">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-rose-50 rounded flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="theater" class="w-4 h-4 text-rose-500"></i>
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="theater" class="w-5 h-5 text-rose-600"></i>
                   </div>
-                  <span class="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-xs rounded">场景对话</span>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-rose-600 transition-colors">购物场景对话</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-rose-50 text-rose-600 text-xs font-medium rounded-full">场景对话</span>
+                      <span class="text-xs text-gray-400">1月6日</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 class="text-sm font-medium text-gray-800 truncate mb-1">购物场景对话</h4>
-                <p class="text-xs text-gray-400">2024-01-06</p>
-                <button class="card-more-btn absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-8 right-2 w-36 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                </div>
+              </div>
+
+              <!-- 苏轼智能体 -->
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-violet-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="bot" class="w-5 h-5 text-violet-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-violet-600 transition-colors">苏轼</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-violet-50 text-violet-600 text-xs font-medium rounded-full">智能体</span>
+                      <span class="text-xs text-gray-400">1月6日</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                  <i data-lucide="ellipsis" class="w-4 h-4"></i>
+                </button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
@@ -684,6 +806,263 @@
         this.style.backgroundColor = '';
       });
     });
+  </script>
+
+  <!-- 全屏弹窗：生成教案 -->
+  <div id="generate-plan-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden">
+    <div class="w-full h-full flex flex-col">
+      <!-- 弹窗顶部工具栏 -->
+      <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="text-lg font-semibold text-gray-800">生成教案</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
+            调试文本
+          </button>
+          <button class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
+            预览
+          </button>
+          <button class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
+            下载
+          </button>
+          <button class="px-4 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+            新建
+          </button>
+          <button onclick="closeGeneratePlanModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+          </button>
+        </div>
+      </div>
+      <!-- 弹窗内容区 -->
+      <div class="flex-1 overflow-auto bg-gray-100 p-4">
+        <img src="img/生成教案.png" alt="生成教案" class="w-full h-full object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 全屏弹窗：生成学案 -->
+  <div id="generate-study-plan-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden">
+    <div class="w-full h-full flex flex-col">
+      <!-- 弹窗顶部 -->
+      <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
+        <span class="text-lg font-semibold text-gray-800">生成学案</span>
+        <button onclick="closeGenerateStudyPlanModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容区 -->
+      <div class="flex-1 overflow-auto bg-gray-100 p-4">
+        <img src="img/生成学案.png" alt="生成学案" class="w-full h-full object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 全屏弹窗：生成课件 -->
+  <div id="generate-courseware-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden">
+    <div class="w-full h-full flex flex-col">
+      <!-- 弹窗顶部 -->
+      <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-end shrink-0">
+        <button onclick="closeGenerateCoursewareModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容区 -->
+      <div class="flex-1 overflow-auto bg-gray-100 p-4">
+        <img src="img/生成课件.png" alt="生成课件" class="w-full h-full object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 上传弹窗：选择文件 -->
+  <div id="upload-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[420px] overflow-hidden">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 id="upload-modal-title" class="text-base font-semibold text-gray-800">上传教案</h3>
+        <button onclick="closeUploadModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="p-5 text-center">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="upload-cloud" class="w-6 h-6 text-blue-500"></i>
+        </div>
+        <p class="text-sm font-medium text-gray-700 mb-1">点击按钮选择文件</p>
+        <p class="text-xs text-gray-500 mb-4">支持 PDF、Word、PPT 格式</p>
+        <input type="file" id="file-input" class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx" onchange="handleFileSelect(this)">
+        <button onclick="document.getElementById('file-input').click()" class="px-6 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+          选择文件
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 上传进度弹窗 -->
+  <div id="progress-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[360px] overflow-hidden">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-base font-semibold text-gray-800">正在上传</h3>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="p-5">
+        <p id="upload-file-name" class="text-sm text-gray-600 mb-3 truncate"></p>
+        <!-- 进度条 -->
+        <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+          <div id="progress-bar" class="h-full bg-blue-600 rounded-full transition-all duration-200" style="width: 0%"></div>
+        </div>
+        <p id="progress-text" class="text-xs text-gray-500 text-right">0%</p>
+      </div>
+      <!-- 取消按钮 -->
+      <div class="px-5 py-4 bg-gray-50 border-t border-gray-100">
+        <button onclick="cancelUpload()" class="w-full py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
+          取消上传
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 打开生成教案弹窗
+    function openGeneratePlanModal() {
+      document.getElementById('generate-plan-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭生成教案弹窗
+    function closeGeneratePlanModal() {
+      document.getElementById('generate-plan-modal').classList.add('hidden');
+    }
+
+    // 打开生成学案弹窗
+    function openGenerateStudyPlanModal() {
+      document.getElementById('generate-study-plan-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭生成学案弹窗
+    function closeGenerateStudyPlanModal() {
+      document.getElementById('generate-study-plan-modal').classList.add('hidden');
+    }
+
+    // 打开生成课件弹窗
+    function openGenerateCoursewareModal() {
+      document.getElementById('generate-courseware-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭生成课件弹窗
+    function closeGenerateCoursewareModal() {
+      document.getElementById('generate-courseware-modal').classList.add('hidden');
+    }
+
+    // ESC 键关闭弹窗
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeGeneratePlanModal();
+        closeGenerateStudyPlanModal();
+        closeGenerateCoursewareModal();
+        closeUploadModal();
+      }
+    });
+
+    // 点击背景关闭弹窗
+    document.getElementById('generate-plan-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeGeneratePlanModal();
+      }
+    });
+
+    document.getElementById('generate-study-plan-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeGenerateStudyPlanModal();
+      }
+    });
+
+    document.getElementById('generate-courseware-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeGenerateCoursewareModal();
+      }
+    });
+
+    document.getElementById('upload-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeUploadModal();
+      }
+    });
+
+    // ========== 上传弹窗相关 ==========
+    let currentUploadType = '教案';
+    let uploadTimer = null;
+    let isUploading = false;
+
+    // 打开上传弹窗
+    function openUploadModal(type) {
+      currentUploadType = type;
+      document.getElementById('upload-modal-title').textContent = '上传' + type;
+      document.getElementById('upload-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭上传弹窗
+    function closeUploadModal() {
+      document.getElementById('upload-modal').classList.add('hidden');
+      document.getElementById('file-input').value = '';
+    }
+
+    // 选择文件后开始模拟上传
+    function handleFileSelect(input) {
+      if (input.files.length > 0) {
+        const file = input.files[0];
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) {
+          showToast('不支持的文件格式，请上传 PDF、Word 或 PPT 文件', 'error');
+          input.value = '';
+          return;
+        }
+        closeUploadModal();
+        startUploadProgress(file);
+      }
+      input.value = '';
+    }
+
+    // 开始上传进度
+    function startUploadProgress(file) {
+      isUploading = true;
+      document.getElementById('upload-file-name').textContent = file.name;
+      document.getElementById('progress-bar').style.width = '0%';
+      document.getElementById('progress-text').textContent = '0%';
+      document.getElementById('progress-modal').classList.remove('hidden');
+
+      let progress = 0;
+      uploadTimer = setInterval(() => {
+        progress += Math.random() * 5 + 2;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(uploadTimer);
+          uploadTimer = null;
+          isUploading = false;
+          setTimeout(() => {
+            document.getElementById('progress-modal').classList.add('hidden');
+            showToast('上传成功！', 'success');
+          }, 300);
+        }
+        document.getElementById('progress-bar').style.width = progress + '%';
+        document.getElementById('progress-text').textContent = Math.round(progress) + '%';
+      }, 200);
+    }
+
+    // 取消上传
+    function cancelUpload() {
+      if (uploadTimer) {
+        clearInterval(uploadTimer);
+        uploadTimer = null;
+      }
+      isUploading = false;
+      document.getElementById('progress-modal').classList.add('hidden');
+    }
   </script>
 </body>
 </html>
