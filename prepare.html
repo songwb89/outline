@@ -14,7 +14,8 @@
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
     /* 下拉菜单 hover 区域扩展 - 消除按钮与菜单之间的间隙导致的丢失问题 */
-    .dropdown-menu::before {
+    .dropdown-menu::before,
+    .card-menu::before {
       content: '';
       position: absolute;
       bottom: 100%;
@@ -27,7 +28,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
   <!-- Toast提示 -->
-  <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2"></div>
+  <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[210] flex flex-col gap-2"></div>
 
   <style>
     @keyframes toastIn {
@@ -383,6 +384,10 @@
       element.classList.remove('border-l-transparent');
       element.classList.add('bg-blue-100', 'border-l-blue-500');
 
+      // 保存当前选中的章节和节次信息
+      currentChapterTitle = chapterTitle;
+      currentSectionName = sectionName;
+
       // 更新右侧内容区
       updateRightContent(chapterTitle, sectionName);
     }
@@ -393,9 +398,9 @@
       rightContent.innerHTML = `
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
           <div class="p-6 pb-0 shrink-0">
-            <!-- 章节标题（兼容一级/两级目录：一级只显示章节，两级用 · 连接） -->
+            <!-- 章节标题（只显示最后一级） -->
             <div class="mb-3 text-lg font-bold text-gray-800">
-              ${sectionName && sectionName !== chapterTitle ? chapterTitle + ' · ' + sectionName : chapterTitle}
+              ${sectionName || chapterTitle}
             </div>
             
             <!-- 添加内容工具栏 -->
@@ -447,9 +452,9 @@
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
               <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">模板活动</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI活动</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">趣味抽奖</a>
+                <button onclick="openTemplateActivityModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">模板活动</button>
+                <button onclick="openAIActivityModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI活动</button>
+                <button onclick="openLotteryActivityModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">趣味抽奖</button>
               </div>
             </div>
 
@@ -461,33 +466,33 @@
                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
               </button>
               <div class="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 hidden group-hover:block z-10 dropdown-menu">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">单词评测</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">对话评测</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">场景对话</a>
+                <button onclick="openWordSetModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">单词评测</button>
+                <button onclick="openDialogueModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">对话评测</button>
+                <button onclick="openAICorpusModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">AI生成</button>
+                <button onclick="openSceneModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">场景对话</button>
               </div>
             </div>
 
-            <!-- 添加随堂测 -->
-            <button class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium shadow-sm">
+            <!-- 随堂测 -->
+            <button onclick="openQuizModal()" class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium shadow-sm">
               <i data-lucide="check-square" class="w-4 h-4"></i>
-              添加随堂测
+              随堂测
             </button>
 
             <!-- 添加听写 -->
-            <button class="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors text-sm font-medium shadow-sm">
+            <button onclick="openDictationModal()" class="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors text-sm font-medium shadow-sm">
               <i data-lucide="mic" class="w-4 h-4"></i>
               添加听写
             </button>
 
             <!-- 添加智能体 -->
-            <button class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium shadow-sm">
+            <button onclick="openAgentModal()" class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium shadow-sm">
               <i data-lucide="bot" class="w-4 h-4"></i>
               添加智能体
             </button>
 
             <!-- 校本资源 -->
-            <button class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium shadow-sm border border-gray-200">
+            <button onclick="openSchoolResourceModal()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium shadow-sm border border-gray-200">
               <i data-lucide="library" class="w-4 h-4"></i>
               校本资源
             </button>
@@ -495,11 +500,11 @@
           </div>
 
           <!-- 内容区域（可滚动） -->
-          <div class="flex-1 min-h-0 overflow-y-auto p-6">
+          <div class="flex-1 min-h-0 overflow-y-auto p-6" id="content-area">
             <!-- 紧凑卡片网格 -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               <!-- 教案 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openLessonPlanPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
@@ -512,18 +517,20 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditLessonPlan('《春》教学教案')">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 课件 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-green-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-green-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openCoursewarePreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="presentation" class="w-5 h-5 text-green-600"></i>
@@ -536,18 +543,20 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditCoursewareModal('《春》PPT课件')">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 学案 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openStudyPlanPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="book-open" class="w-5 h-5 text-cyan-600"></i>
@@ -560,44 +569,70 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('下载')">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditStudyPlanModal('《春》导学案')">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 活动 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openActivityPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-orange-600 transition-colors">朗读比赛活动</h4>
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-orange-600 transition-colors">AI填字比赛活动</h4>
                     <div class="flex items-center gap-2 mt-1.5">
                       <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-xs font-medium rounded-full">活动</span>
                       <span class="text-xs text-gray-400">1月12日</span>
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('重命名')">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditAIActivityModal()">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
+                </div>
+              </div>
+
+              <!-- AI汉字活动 -->
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openActivityPreview('AI汉字活动')">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-orange-600 transition-colors">汉字活动</h4>
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-xs font-medium rounded-full">活动</span>
+                      <span class="text-xs text-gray-400">1月12日</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
+                  <i data-lucide="ellipsis" class="w-4 h-4"></i>
+                </button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditActivityModal('AI汉字活动')">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 抽奖 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-yellow-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-yellow-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openLotteryPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="gift" class="w-5 h-5 text-yellow-600"></i>
@@ -610,17 +645,17 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditLotteryModal()">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 随堂测 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openQuizPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i>
@@ -633,19 +668,19 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('下载')">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 听写 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-pink-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-pink-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openDictationPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="pen-tool" class="w-5 h-5 text-pink-600"></i>
@@ -658,17 +693,17 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditDictationModal()">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 单词评测 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openWordEvaluationPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="spell-check" class="w-5 h-5 text-indigo-600"></i>
@@ -681,18 +716,18 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditWordSetModal()">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 对话评测 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-teal-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-teal-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openDialoguePreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="message-circle" class="w-5 h-5 text-teal-600"></i>
@@ -705,18 +740,18 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditDialogueModal()">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 场景对话 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-rose-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openSceneDialoguePreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="theater" class="w-5 h-5 text-rose-600"></i>
@@ -729,18 +764,18 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditSceneModal()">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
 
               <!-- 苏轼智能体 -->
-              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-violet-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer relative">
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-violet-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openAgentPreview()">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i data-lucide="bot" class="w-5 h-5 text-violet-600"></i>
@@ -753,13 +788,13 @@
                     </div>
                   </div>
                 </div>
-                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all" onclick="toggleCardMenu(this)">
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
                   <i data-lucide="ellipsis" class="w-4 h-4"></i>
                 </button>
-                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20">
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('编辑')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="cardAction('共享')">共享</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="cardAction('删除')">删除</button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditAgentModal('苏轼')">编辑</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
             </div>
@@ -811,28 +846,12 @@
   <!-- 全屏弹窗：生成教案 -->
   <div id="generate-plan-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden">
     <div class="w-full h-full flex flex-col">
-      <!-- 弹窗顶部工具栏 -->
+      <!-- 弹窗顶部 -->
       <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-3">
-          <span class="text-lg font-semibold text-gray-800">生成教案</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <button class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
-            调试文本
-          </button>
-          <button class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
-            预览
-          </button>
-          <button class="px-4 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
-            下载
-          </button>
-          <button class="px-4 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-            新建
-          </button>
-          <button onclick="closeGeneratePlanModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
-          </button>
-        </div>
+        <span class="text-lg font-semibold text-gray-800">生成教案</span>
+        <button onclick="closeGeneratePlanModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+        </button>
       </div>
       <!-- 弹窗内容区 -->
       <div class="flex-1 overflow-auto bg-gray-100 p-4">
@@ -841,35 +860,368 @@
     </div>
   </div>
 
-  <!-- 全屏弹窗：生成学案 -->
-  <div id="generate-study-plan-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden">
-    <div class="w-full h-full flex flex-col">
-      <!-- 弹窗顶部 -->
-      <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
-        <span class="text-lg font-semibold text-gray-800">生成学案</span>
-        <button onclick="closeGenerateStudyPlanModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-          <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+  <!-- 中等弹窗：创建抽奖活动 -->
+  <div id="lottery-activity-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[900px] max-w-[90vw] max-h-[85vh] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">创建抽奖活动</h3>
+        <button onclick="closeLotteryActivityModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
         </button>
       </div>
-      <!-- 弹窗内容区 -->
-      <div class="flex-1 overflow-auto bg-gray-100 p-4">
-        <img src="img/生成学案.png" alt="生成学案" class="w-full h-full object-contain">
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/创建抽奖活动.png" alt="创建抽奖活动" class="w-full h-auto object-contain">
       </div>
     </div>
   </div>
 
-  <!-- 全屏弹窗：生成课件 -->
-  <div id="generate-courseware-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden">
-    <div class="w-full h-full flex flex-col">
-      <!-- 弹窗顶部 -->
-      <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-end shrink-0">
-        <button onclick="closeGenerateCoursewareModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-          <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+  <!-- 固定大小弹窗：编辑抽奖活动 -->
+  <div id="edit-lottery-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[600px] h-[600px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">编辑抽奖活动</h3>
+        <button onclick="closeEditLotteryModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
         </button>
       </div>
-      <!-- 弹窗内容区 -->
-      <div class="flex-1 overflow-auto bg-gray-100 p-4">
-        <img src="img/生成课件.png" alt="生成课件" class="w-full h-full object-contain">
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/编辑抽奖活动.png" alt="编辑抽奖活动" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：编辑单词集 -->
+  <div id="edit-word-set-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[600px] h-[600px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">编辑单词集</h3>
+        <button onclick="closeEditWordSetModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/编辑单词集.png" alt="编辑单词集" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：编辑对话 -->
+  <div id="edit-dialogue-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[600px] h-[600px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">编辑对话</h3>
+        <button onclick="closeEditDialogueModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/编辑对话.png" alt="编辑对话" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：编辑场景 -->
+  <div id="edit-scene-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[600px] h-[600px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">编辑场景</h3>
+        <button onclick="closeEditSceneModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/编辑场景.png" alt="编辑场景" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：添加单词集 -->
+  <div id="word-set-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[800px] h-[800px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">添加单词集</h3>
+        <button onclick="closeWordSetModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/添加单词集.png" alt="添加单词集" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：添加对话 -->
+  <div id="dialogue-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[800px] h-[800px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">添加对话</h3>
+        <button onclick="closeDialogueModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/添加对话.png" alt="添加对话" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：添加场景 -->
+  <div id="scene-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[800px] h-[800px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">添加场景</h3>
+        <button onclick="closeSceneModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/添加场景.png" alt="添加场景" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定大小弹窗：创建听写任务 -->
+  <div id="dictation-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[1500px] h-[700px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">创建听写任务</h3>
+        <button onclick="closeDictationModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/创建听写任务.png" alt="创建听写任务" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：教案 -->
+  <div id="lesson-plan-preview-modal" class="fixed inset-0 z-[210] bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[900px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">教案</h3>
+        <button onclick="closeLessonPlanPreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/预览教案.png" alt="预览教案" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：学案 -->
+  <div id="study-plan-preview-modal" class="fixed inset-0 z-[210] bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[900px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">学案</h3>
+        <button onclick="closeStudyPlanPreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/预览学案.png" alt="预览学案" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：随堂测 -->
+  <div id="quiz-preview-modal" class="fixed inset-0 z-[210] bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[800px] overflow-hidden flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">随堂测</h3>
+        <button onclick="closeQuizPreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/预览随堂测.png" alt="预览随堂测" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：活动 -->
+  <div id="activity-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeActivityPreview()" class="absolute -top-10 right-0 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/预览活动.png" alt="预览活动" class="max-w-full max-h-[90vh] object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：抽奖活动（全屏） -->
+  <div id="lottery-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeLotteryPreview()" class="absolute top-4 right-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/抽奖活动.png" alt="抽奖活动" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：听写（全屏） -->
+  <div id="dictation-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDictationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/听写.png" alt="听写" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：单词评测（全屏） -->
+  <div id="word-evaluation-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeWordEvaluationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/单词评测.png" alt="单词评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：场景对话（全屏） -->
+  <div id="scene-dialogue-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeSceneDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/场景对话.png" alt="场景对话" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：对话评测（全屏） -->
+  <div id="dialogue-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/对话评测.png" alt="对话评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：编辑AI活动（全屏） -->
+  <div id="edit-ai-activity-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeEditAIActivityModal()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/编辑活动-AI活动.png" alt="编辑AI活动" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：编辑活动-普通活动（600x600） -->
+  <div id="edit-activity-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[600px] overflow-hidden flex flex-col relative">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">编辑活动</h3>
+        <button onclick="closeEditActivityModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/编辑活动-普通活动.png" alt="编辑活动" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：编辑听写（1500x700） -->
+  <div id="edit-dictation-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[1500px] h-[700px] overflow-hidden flex flex-col relative">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">编辑听写</h3>
+        <button onclick="closeEditDictationModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/编辑听写.png" alt="编辑听写" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：智能体（全屏遮罩） -->
+  <div id="agent-preview-modal" class="fixed inset-0 z-[210] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center">
+      <!-- 左侧空白区域 -->
+      <div class="flex-1"></div>
+      
+      <!-- 人物形象 - 居中圆形 -->
+      <div class="flex items-center justify-center">
+        <div class="w-96 h-96 rounded-full overflow-hidden border-4 border-white shadow-xl">
+          <img src="img/内容预览/人物形象.png" alt="人物形象" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <!-- 对话面板 - 右侧 -->
+      <div class="flex-1 flex items-center justify-end pr-8">
+        <div class="relative">
+          <!-- 关闭按钮 - 移到右侧图片右上方 -->
+          <button onclick="closeAgentPreview()" class="absolute top-0 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10 -mr-4 -mt-4">
+            <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+          </button>
+          <img src="img/内容预览/对话面板.png" alt="对话面板" class="max-w-lg max-h-[90vh] object-contain">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：PPT课件 -->
+  <div id="courseware-preview-modal" class="fixed inset-0 z-[210] bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[1200px] h-[800px] overflow-hidden flex flex-col relative">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">课件</h3>
+        <button onclick="closeCoursewarePreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="flex-1 overflow-hidden bg-gray-50 relative">
+        <!-- 左箭头 -->
+        <button id="courseware-prev-btn" onclick="prevCoursewareSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all">
+          <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+        </button>
+        <!-- 右箭头 -->
+        <button id="courseware-next-btn" onclick="nextCoursewareSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all">
+          <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+        </button>
+        <!-- 图片显示区域 -->
+        <div class="w-full h-full flex items-center justify-center p-4">
+          <img id="courseware-slide-img" src="img/0.png" alt="课件" class="max-w-full max-h-full object-contain">
+        </div>
+        <!-- 页码显示 -->
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
+          <span id="courseware-page-info">1 / 15</span>
+        </div>
       </div>
     </div>
   </div>
@@ -890,8 +1242,8 @@
           <i data-lucide="upload-cloud" class="w-6 h-6 text-blue-500"></i>
         </div>
         <p class="text-sm font-medium text-gray-700 mb-1">点击按钮选择文件</p>
-        <p class="text-xs text-gray-500 mb-4">支持 PDF、Word、PPT 格式</p>
-        <input type="file" id="file-input" class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx" onchange="handleFileSelect(this)">
+        <p class="text-xs text-gray-500 mb-4">只支持PPT格式</p>
+        <input type="file" id="file-input" class="hidden" accept=".ppt,.pptx" onchange="handleFileSelect(this)">
         <button onclick="document.getElementById('file-input').click()" class="px-6 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
           选择文件
         </button>
@@ -925,46 +1277,860 @@
   </div>
 
   <script>
-    // 打开生成教案弹窗
+    // 当前选中的章节和节次信息（用于面包屑）
+    let currentChapterTitle = '';
+    let currentSectionName = '';
+
+    // 打开生成教案（改为在右侧内容区显示）
     function openGeneratePlanModal() {
-      document.getElementById('generate-plan-modal').classList.remove('hidden');
+      const rightContent = document.getElementById('right-content');
+      
+      // 获取当前选中的节次信息（如果还没有保存）
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          // 默认值
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <!-- 面包屑导航 -->
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">AI生成教案</span>
+            </nav>
+          </div>
+          <!-- AI生成内容区 -->
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/生成教案.png" alt="AI生成教案" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
       lucide.createIcons();
     }
 
-    // 关闭生成教案弹窗
-    function closeGeneratePlanModal() {
-      document.getElementById('generate-plan-modal').classList.add('hidden');
+    // 返回到卡片视图
+    function returnToCardView() {
+      if (currentChapterTitle && currentSectionName) {
+        // 重新调用 updateRightContent 来恢复卡片视图
+        updateRightContent(currentChapterTitle, currentSectionName);
+      } else {
+        // 如果没有保存的信息，使用默认值
+        updateRightContent('第一章 开启初中之门', '1.1 初中生活的变化');
+      }
     }
 
-    // 打开生成学案弹窗
+    // 关闭生成教案弹窗（保留用于其他可能的调用）
+    function closeGeneratePlanModal() {
+      const modal = document.getElementById('generate-plan-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // 打开生成学案（改为在右侧内容区显示）
     function openGenerateStudyPlanModal() {
-      document.getElementById('generate-study-plan-modal').classList.remove('hidden');
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">AI生成学案</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/生成学案.png" alt="AI生成学案" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
       lucide.createIcons();
     }
 
     // 关闭生成学案弹窗
     function closeGenerateStudyPlanModal() {
-      document.getElementById('generate-study-plan-modal').classList.add('hidden');
+      const modal = document.getElementById('generate-study-plan-modal');
+      if (modal) modal.classList.add('hidden');
     }
 
-    // 打开生成课件弹窗
+    // 打开生成课件（改为在右侧内容区显示）
     function openGenerateCoursewareModal() {
-      document.getElementById('generate-courseware-modal').classList.remove('hidden');
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">AI生成课件</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/生成课件.png" alt="AI生成课件" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
       lucide.createIcons();
     }
 
     // 关闭生成课件弹窗
     function closeGenerateCoursewareModal() {
-      document.getElementById('generate-courseware-modal').classList.add('hidden');
+      const modal = document.getElementById('generate-courseware-modal');
+      if (modal) modal.classList.add('hidden');
     }
 
-    // ESC 键关闭弹窗
+    // 打开模板活动（改为在右侧内容区显示）
+    function openTemplateActivityModal() {
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">创建模板活动</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/创建模板活动.png" alt="模板活动" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 关闭模板活动弹窗
+    function closeTemplateActivityModal() {
+      const modal = document.getElementById('template-activity-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // 打开AI活动（改为在右侧内容区显示）
+    function openAIActivityModal() {
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">创建AI活动</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/创建AI活动.png" alt="AI活动" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 关闭AI活动弹窗
+    function closeAIActivityModal() {
+      const modal = document.getElementById('ai-activity-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // 打开AI生成语料（改为在右侧内容区显示）
+    function openAICorpusModal() {
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">AI生成教案</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/AI智能生成语料.png" alt="AI生成教案" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 关闭AI生成语料（保留用于兼容）
+    function closeAICorpusModal() {
+      const modal = document.getElementById('ai-corpus-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // 打开随堂测（改为在右侧内容区显示）
+    function openQuizModal() {
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">创建随堂测</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="quiz-img-wrap" onclick="toggleQuizImg()" title="点击切换">
+              <img id="img-quiz" src="img/AI组卷1.png" alt="创建随堂测" class="w-full h-auto block">
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 切换随堂测图片
+    function toggleQuizImg() {
+      const img = document.getElementById('img-quiz');
+      const step = img.dataset.step || '1';
+      if (step === '1') {
+        img.src = 'img/AI组卷2.png';
+        img.dataset.step = '2';
+      } else {
+        img.src = 'img/AI组卷1.png';
+        img.dataset.step = '1';
+      }
+    }
+
+    // 打开教案预览弹窗
+    function openLessonPlanPreview() {
+      document.getElementById('lesson-plan-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭教案预览弹窗
+    function closeLessonPlanPreview() {
+      document.getElementById('lesson-plan-preview-modal').classList.add('hidden');
+    }
+
+    // 打开学案预览弹窗
+    function openStudyPlanPreview() {
+      document.getElementById('study-plan-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭学案预览弹窗
+    function closeStudyPlanPreview() {
+      document.getElementById('study-plan-preview-modal').classList.add('hidden');
+    }
+
+    // 打开随堂测预览弹窗
+    function openQuizPreview() {
+      document.getElementById('quiz-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭随堂测预览弹窗
+    function closeQuizPreview() {
+      document.getElementById('quiz-preview-modal').classList.add('hidden');
+    }
+
+    // 课件预览相关变量
+    let currentCoursewareSlide = 0;
+    const totalCoursewareSlides = 15;
+
+    // 打开活动预览弹窗
+    function openActivityPreview(activityType) {
+      // 可以根据 activityType 显示不同的预览内容
+      document.getElementById('activity-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭活动预览弹窗
+    function closeActivityPreview() {
+      document.getElementById('activity-preview-modal').classList.add('hidden');
+    }
+
+    // 打开抽奖活动预览弹窗（全屏）
+    function openLotteryPreview() {
+      document.getElementById('lottery-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭抽奖活动预览弹窗
+    function closeLotteryPreview() {
+      document.getElementById('lottery-preview-modal').classList.add('hidden');
+    }
+
+    // 打开听写预览弹窗（全屏）
+    function openDictationPreview() {
+      document.getElementById('dictation-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭听写预览弹窗
+    function closeDictationPreview() {
+      document.getElementById('dictation-preview-modal').classList.add('hidden');
+    }
+
+    // 打开单词评测预览弹窗（全屏）
+    function openWordEvaluationPreview() {
+      document.getElementById('word-evaluation-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭单词评测预览弹窗
+    function closeWordEvaluationPreview() {
+      document.getElementById('word-evaluation-preview-modal').classList.add('hidden');
+    }
+
+    // 打开场景对话预览弹窗（全屏）
+    function openSceneDialoguePreview() {
+      document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭场景对话预览弹窗
+    function closeSceneDialoguePreview() {
+      document.getElementById('scene-dialogue-preview-modal').classList.add('hidden');
+    }
+
+    // 打开智能体预览弹窗（全屏遮罩）
+    function openAgentPreview() {
+      document.getElementById('agent-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭智能体预览弹窗
+    function closeAgentPreview() {
+      document.getElementById('agent-preview-modal').classList.add('hidden');
+    }
+
+    // 打开编辑智能体界面（在右侧内容区显示）
+    function openEditAgentModal(agentName) {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      
+      const rightContent = document.getElementById('right-content');
+      
+      // 获取当前选中的节次信息（如果还没有保存）
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          // 默认值
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <!-- 面包屑导航 -->
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">编辑智能体：${agentName}</span>
+            </nav>
+          </div>
+          <!-- 编辑智能体内容区 -->
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/内容预览/重新设定智能体.png" alt="编辑智能体" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 打开编辑课件界面（在右侧内容区显示）
+    function openEditCoursewareModal(coursewareName) {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      
+      const rightContent = document.getElementById('right-content');
+      
+      // 获取当前选中的节次信息（如果还没有保存）
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          // 默认值
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <!-- 面包屑导航 -->
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">编辑课件：${coursewareName}</span>
+            </nav>
+          </div>
+          <!-- 编辑课件内容区 -->
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/内容预览/编辑课件.png" alt="编辑课件" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 打开编辑教案界面（在右侧内容区显示）
+    function openEditLessonPlan(lessonPlanName) {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      
+      const rightContent = document.getElementById('right-content');
+      
+      // 获取当前选中的节次信息（如果还没有保存）
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          // 默认值
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <!-- 面包屑导航 -->
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">编辑教案：${lessonPlanName}</span>
+            </nav>
+          </div>
+          <!-- 编辑教案内容区 -->
+          <div class="flex-1 overflow-auto bg-gray-50 p-6">
+            <img src="img/内容预览/编辑教案.png" alt="编辑教案" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 打开编辑学案界面（在右侧内容区显示）
+    function openEditStudyPlanModal(studyPlanName) {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      
+      const rightContent = document.getElementById('right-content');
+      
+      // 获取当前选中的节次信息（如果还没有保存）
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          // 默认值
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <!-- 面包屑导航 -->
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">编辑学案：${studyPlanName}</span>
+            </nav>
+          </div>
+          <!-- 编辑学案内容区 -->
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/内容预览/编辑学案.png" alt="编辑学案" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 打开编辑活动界面（600x600弹窗 - 普通活动）
+    function openEditActivityModal(activityName) {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-activity-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑活动弹窗
+    function closeEditActivityModal() {
+      document.getElementById('edit-activity-modal').classList.add('hidden');
+    }
+
+    // 打开编辑听写弹窗（1500x700）
+    function openEditDictationModal() {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-dictation-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑听写弹窗
+    function closeEditDictationModal() {
+      document.getElementById('edit-dictation-modal').classList.add('hidden');
+    }
+
+    // 打开编辑AI活动弹窗（全屏）
+    function openEditAIActivityModal() {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-ai-activity-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑AI活动弹窗
+    function closeEditAIActivityModal() {
+      document.getElementById('edit-ai-activity-modal').classList.add('hidden');
+    }
+
+    // 打开对话评测预览弹窗
+    function openDialoguePreview() {
+      document.getElementById('dialogue-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭对话评测预览弹窗
+    function closeDialoguePreview() {
+      document.getElementById('dialogue-preview-modal').classList.add('hidden');
+    }
+
+    // 打开课件预览弹窗
+    function openCoursewarePreview() {
+      currentCoursewareSlide = 0;
+      updateCoursewareSlide();
+      document.getElementById('courseware-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭课件预览弹窗
+    function closeCoursewarePreview() {
+      document.getElementById('courseware-preview-modal').classList.add('hidden');
+    }
+
+    // 更新课件幻灯片显示
+    function updateCoursewareSlide() {
+      const img = document.getElementById('courseware-slide-img');
+      const pageInfo = document.getElementById('courseware-page-info');
+      const prevBtn = document.getElementById('courseware-prev-btn');
+      const nextBtn = document.getElementById('courseware-next-btn');
+
+      if (img) {
+        img.src = `img/${currentCoursewareSlide}.png`;
+      }
+      if (pageInfo) {
+        pageInfo.textContent = `${currentCoursewareSlide + 1} / ${totalCoursewareSlides}`;
+      }
+      
+      // 更新箭头按钮状态
+      if (prevBtn) {
+        prevBtn.style.opacity = currentCoursewareSlide === 0 ? '0.3' : '1';
+        prevBtn.style.pointerEvents = currentCoursewareSlide === 0 ? 'none' : 'auto';
+      }
+      if (nextBtn) {
+        nextBtn.style.opacity = currentCoursewareSlide === totalCoursewareSlides - 1 ? '0.3' : '1';
+        nextBtn.style.pointerEvents = currentCoursewareSlide === totalCoursewareSlides - 1 ? 'none' : 'auto';
+      }
+    }
+
+    // 上一张课件
+    function prevCoursewareSlide() {
+      if (currentCoursewareSlide > 0) {
+        currentCoursewareSlide--;
+        updateCoursewareSlide();
+      }
+    }
+
+    // 下一张课件
+    function nextCoursewareSlide() {
+      if (currentCoursewareSlide < totalCoursewareSlides - 1) {
+        currentCoursewareSlide++;
+        updateCoursewareSlide();
+      }
+    }
+
+    // 打开创建智能体（改为在右侧内容区显示）
+    function openAgentModal() {
+      const rightContent = document.getElementById('right-content');
+      
+      if (!currentSectionName) {
+        const selectedSection = document.querySelector('.section-item.bg-blue-100');
+        if (selectedSection) {
+          const chapterHeader = selectedSection.closest('.chapter-item').querySelector('.chapter-header');
+          currentChapterTitle = chapterHeader.querySelector('.flex-1').textContent;
+          currentSectionName = selectedSection.querySelector('span').textContent;
+        } else {
+          currentChapterTitle = '第一章 开启初中之门';
+          currentSectionName = '1.1 初中生活的变化';
+        }
+      }
+
+      rightContent.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
+            <nav class="flex items-center gap-2 text-sm text-gray-500">
+              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+              <span class="text-gray-700 font-medium">创建智能体</span>
+            </nav>
+          </div>
+          <div class="flex-1 overflow-auto bg-gray-50 p-4">
+            <img src="img/创建智能体.png" alt="创建智能体" class="w-full h-auto block rounded-lg">
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 打开创建抽奖活动弹窗
+    function openLotteryActivityModal() {
+      document.getElementById('lottery-activity-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭创建抽奖活动弹窗
+    function closeLotteryActivityModal() {
+      document.getElementById('lottery-activity-modal').classList.add('hidden');
+    }
+
+    // 打开编辑抽奖活动弹窗
+    function openEditLotteryModal() {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-lottery-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑抽奖活动弹窗
+    function closeEditLotteryModal() {
+      document.getElementById('edit-lottery-modal').classList.add('hidden');
+    }
+
+    // 打开编辑单词集弹窗
+    function openEditWordSetModal() {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-word-set-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑单词集弹窗
+    function closeEditWordSetModal() {
+      document.getElementById('edit-word-set-modal').classList.add('hidden');
+    }
+
+    // 打开编辑对话弹窗
+    function openEditDialogueModal() {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-dialogue-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑对话弹窗
+    function closeEditDialogueModal() {
+      document.getElementById('edit-dialogue-modal').classList.add('hidden');
+    }
+
+    // 打开编辑场景弹窗
+    function openEditSceneModal() {
+      // 关闭菜单
+      document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+      document.getElementById('edit-scene-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭编辑场景弹窗
+    function closeEditSceneModal() {
+      document.getElementById('edit-scene-modal').classList.add('hidden');
+    }
+
+    // 打开添加单词集弹窗
+    function openWordSetModal() {
+      document.getElementById('word-set-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭添加单词集弹窗
+    function closeWordSetModal() {
+      document.getElementById('word-set-modal').classList.add('hidden');
+    }
+
+    // 打开添加对话弹窗
+    function openDialogueModal() {
+      document.getElementById('dialogue-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭添加对话弹窗
+    function closeDialogueModal() {
+      document.getElementById('dialogue-modal').classList.add('hidden');
+    }
+
+    // 打开添加场景弹窗
+    function openSceneModal() {
+      document.getElementById('scene-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭添加场景弹窗
+    function closeSceneModal() {
+      document.getElementById('scene-modal').classList.add('hidden');
+    }
+
+    // 打开创建听写任务弹窗
+    function openDictationModal() {
+      document.getElementById('dictation-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭创建听写任务弹窗
+    function closeDictationModal() {
+      document.getElementById('dictation-modal').classList.add('hidden');
+    }
+
+    // ESC 键关闭弹窗（不关闭右侧内嵌页面）
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         closeGeneratePlanModal();
         closeGenerateStudyPlanModal();
         closeGenerateCoursewareModal();
+        closeTemplateActivityModal();
+        closeAIActivityModal();
+        closeLotteryActivityModal();
+        closeEditLotteryModal();
+        closeEditWordSetModal();
+        closeEditDialogueModal();
+        closeEditSceneModal();
+        closeWordSetModal();
+        closeDialogueModal();
+        closeSceneModal();
+        closeDictationModal();
+        closeLessonPlanPreview();
+        closeStudyPlanPreview();
+        closeQuizPreview();
+        closeActivityPreview();
+        closeLotteryPreview();
+        closeDictationPreview();
+        closeDialoguePreview();
+        closeWordEvaluationPreview();
+        closeSceneDialoguePreview();
+        closeAgentPreview();
+        closeEditAIActivityModal();
+        closeEditActivityModal();
+        closeEditDictationModal();
+        closeCoursewarePreview();
         closeUploadModal();
+      }
+      // 课件预览的键盘导航
+      const coursewareModal = document.getElementById('courseware-preview-modal');
+      if (coursewareModal && !coursewareModal.classList.contains('hidden')) {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          prevCoursewareSlide();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          nextCoursewareSlide();
+        }
       }
     });
 
@@ -975,15 +2141,142 @@
       }
     });
 
-    document.getElementById('generate-study-plan-modal').addEventListener('click', function(e) {
+    document.getElementById('lottery-activity-modal').addEventListener('click', function(e) {
       if (e.target === this) {
-        closeGenerateStudyPlanModal();
+        closeLotteryActivityModal();
       }
     });
 
-    document.getElementById('generate-courseware-modal').addEventListener('click', function(e) {
+    document.getElementById('edit-lottery-modal').addEventListener('click', function(e) {
       if (e.target === this) {
-        closeGenerateCoursewareModal();
+        closeEditLotteryModal();
+      }
+    });
+
+    document.getElementById('edit-word-set-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditWordSetModal();
+      }
+    });
+
+    document.getElementById('edit-dialogue-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditDialogueModal();
+      }
+    });
+
+    document.getElementById('edit-scene-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditSceneModal();
+      }
+    });
+
+    document.getElementById('word-set-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeWordSetModal();
+      }
+    });
+
+    document.getElementById('dialogue-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDialogueModal();
+      }
+    });
+
+    document.getElementById('scene-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSceneModal();
+      }
+    });
+
+    document.getElementById('dictation-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDictationModal();
+      }
+    });
+
+    document.getElementById('lesson-plan-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeLessonPlanPreview();
+      }
+    });
+
+    document.getElementById('study-plan-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeStudyPlanPreview();
+      }
+    });
+
+    document.getElementById('quiz-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeQuizPreview();
+      }
+    });
+
+    document.getElementById('activity-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeActivityPreview();
+      }
+    });
+
+    document.getElementById('lottery-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeLotteryPreview();
+      }
+    });
+
+    document.getElementById('dictation-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDictationPreview();
+      }
+    });
+
+    // 点击背景关闭对话评测预览弹窗
+    document.getElementById('dialogue-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDialoguePreview();
+      }
+    });
+
+    document.getElementById('word-evaluation-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeWordEvaluationPreview();
+      }
+    });
+
+    document.getElementById('scene-dialogue-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSceneDialoguePreview();
+      }
+    });
+
+    document.getElementById('agent-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAgentPreview();
+      }
+    });
+
+    document.getElementById('edit-ai-activity-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditAIActivityModal();
+      }
+    });
+
+    document.getElementById('edit-activity-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditActivityModal();
+      }
+    });
+
+    document.getElementById('edit-dictation-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditDictationModal();
+      }
+    });
+
+    document.getElementById('courseware-preview-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeCoursewarePreview();
       }
     });
 
@@ -1064,5 +2357,7 @@
       document.getElementById('progress-modal').classList.add('hidden');
     }
   </script>
+  <!-- 校本资源全屏组件 -->
+  <script src="school-resource-modal.js"></script>
 </body>
 </html>

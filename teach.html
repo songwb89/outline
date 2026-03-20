@@ -321,9 +321,6 @@
               <h2 class="text-xl font-bold text-gray-800">
                 ${sectionName && sectionName !== chapterTitle ? sectionName : chapterTitle}
               </h2>
-              <p class="text-sm text-gray-500">
-                ${sectionName && sectionName !== chapterTitle ? chapterTitle + ' · ' : ''}智能授课
-              </p>
             </div>
           </div>
 
@@ -413,7 +410,7 @@
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                    <button onclick="openDictationGradingPreview()" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       批改
                     </button>
                     <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
@@ -562,6 +559,145 @@
         </div>
       `;
       lucide.createIcons();
+      // 设置课堂互动按钮事件
+      setupInteractiveButtons();
+    }
+
+    // 课堂互动按钮 - 查看/进入事件
+    function setupInteractiveButtons() {
+      // 随堂测 - 查看
+      document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.trim() === '查看') {
+          const parent = btn.closest('.flex.items-center.justify-between');
+          if (parent && parent.querySelector('[data-lucide="clipboard-check"]')) {
+            btn.onclick = function(e) {
+              e.stopPropagation();
+              openQuizPreview();
+            };
+          }
+        }
+        if (btn.textContent.trim() === '进入') {
+          const parent = btn.closest('.flex.items-center.justify-between');
+          if (parent) {
+            const icon = parent.querySelector('[data-lucide]');
+            if (icon) {
+              const iconName = icon.getAttribute('data-lucide');
+              if (iconName === 'pen-tool') { // 听写
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openDictationPreview();
+                };
+              } else if (iconName === 'users') { // 活动
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openActivityPreview();
+                };
+              } else if (iconName === 'gift') { // 抽奖
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openLotteryPreview();
+                };
+              } else if (iconName === 'spell-check') { // 单词评测
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openWordEvaluationPreview();
+                };
+              } else if (iconName === 'message-circle') { // 对话评测
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openDialoguePreview();
+                };
+              } else if (iconName === 'theater') { // 场景对话
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openSceneDialoguePreview();
+                };
+              } else if (iconName === 'bot') { // 智能体
+                btn.onclick = function(e) {
+                  e.stopPropagation();
+                  openAgentPreview();
+                };
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 预览弹窗打开/关闭函数
+    function openQuizPreview() {
+      document.getElementById('quiz-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeQuizPreview() {
+      document.getElementById('quiz-preview-modal').classList.add('hidden');
+    }
+
+    function openActivityPreview() {
+      document.getElementById('activity-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeActivityPreview() {
+      document.getElementById('activity-preview-modal').classList.add('hidden');
+    }
+
+    function openLotteryPreview() {
+      document.getElementById('lottery-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeLotteryPreview() {
+      document.getElementById('lottery-preview-modal').classList.add('hidden');
+    }
+
+    function openDictationPreview() {
+      document.getElementById('dictation-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeDictationPreview() {
+      document.getElementById('dictation-preview-modal').classList.add('hidden');
+    }
+
+    function openWordEvaluationPreview() {
+      document.getElementById('word-evaluation-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeWordEvaluationPreview() {
+      document.getElementById('word-evaluation-preview-modal').classList.add('hidden');
+    }
+
+    function openDialoguePreview() {
+      document.getElementById('dialogue-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeDialoguePreview() {
+      document.getElementById('dialogue-preview-modal').classList.add('hidden');
+    }
+
+    function openSceneDialoguePreview() {
+      document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeSceneDialoguePreview() {
+      document.getElementById('scene-dialogue-preview-modal').classList.add('hidden');
+    }
+
+    function openAgentPreview() {
+      document.getElementById('agent-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeAgentPreview() {
+      document.getElementById('agent-preview-modal').classList.add('hidden');
+    }
+
+    // 打开听写批改预览（全屏）
+    function openDictationGradingPreview() {
+      document.getElementById('dictation-grading-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭听写批改预览
+    function closeDictationGradingPreview() {
+      document.getElementById('dictation-grading-preview-modal').classList.add('hidden');
     }
 
     // 页面加载完成后默认展开第一章并选中第一节
@@ -590,6 +726,9 @@
           selectSection(this, chapterTitle, sectionName);
         });
       });
+
+      // 设置课堂互动按钮事件
+      setupInteractiveButtons();
     });
 
     // 章节项 hover 效果
@@ -600,6 +739,157 @@
       item.addEventListener('mouseleave', function() {
         this.style.backgroundColor = '';
       });
+    });
+  </script>
+
+  <!-- 预览弹窗：随堂测 -->
+  <div id="quiz-preview-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[800px] overflow-hidden flex flex-col">
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">随堂测</h3>
+        <button onclick="closeQuizPreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/预览随堂测.png" alt="预览随堂测" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：听写（全屏） -->
+  <div id="dictation-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDictationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/听写.png" alt="听写" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：活动 -->
+  <div id="activity-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeActivityPreview()" class="absolute -top-10 right-0 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/预览活动.png" alt="预览活动" class="max-w-full max-h-[90vh] object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：抽奖活动（全屏） -->
+  <div id="lottery-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeLotteryPreview()" class="absolute top-4 right-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/抽奖活动.png" alt="抽奖活动" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：单词评测（全屏） -->
+  <div id="word-evaluation-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeWordEvaluationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/单词评测.png" alt="单词评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：对话评测（全屏） -->
+  <div id="dialogue-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/对话评测.png" alt="对话评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：场景对话（全屏） -->
+  <div id="scene-dialogue-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeSceneDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/场景对话.png" alt="场景对话" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：智能体（全屏遮罩） -->
+  <div id="agent-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center">
+      <div class="flex-1"></div>
+      <div class="flex items-center justify-center">
+        <div class="w-96 h-96 rounded-full overflow-hidden border-4 border-white shadow-xl">
+          <img src="img/内容预览/人物形象.png" alt="人物形象" class="w-full h-full object-cover">
+        </div>
+      </div>
+      <div class="flex-1 flex items-center justify-end pr-8">
+        <div class="relative">
+          <button onclick="closeAgentPreview()" class="absolute top-0 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10 -mr-4 -mt-4">
+            <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+          </button>
+          <img src="img/内容预览/对话面板.png" alt="对话面板" class="max-w-lg max-h-[90vh] object-contain">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：听写批改（全屏） -->
+  <div id="dictation-grading-preview-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-1">
+    <div class="relative w-full h-full">
+      <button onclick="closeDictationGradingPreview()" class="absolute top-4 right-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/听写批改.png" alt="听写批改" class="w-full h-full object-cover m-1">
+    </div>
+  </div>
+
+  <!-- ESC关闭弹窗 -->
+  <script>
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeQuizPreview();
+        closeDictationPreview();
+        closeActivityPreview();
+        closeLotteryPreview();
+        closeWordEvaluationPreview();
+        closeDialoguePreview();
+        closeSceneDialoguePreview();
+        closeAgentPreview();
+        closeDictationGradingPreview();
+      }
+    });
+
+    // 点击背景关闭弹窗
+    document.getElementById('quiz-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeQuizPreview();
+    });
+    document.getElementById('dictation-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeDictationPreview();
+    });
+    document.getElementById('activity-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeActivityPreview();
+    });
+    document.getElementById('lottery-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeLotteryPreview();
+    });
+    document.getElementById('word-evaluation-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeWordEvaluationPreview();
+    });
+    document.getElementById('dialogue-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeDialoguePreview();
+    });
+    document.getElementById('scene-dialogue-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeSceneDialoguePreview();
+    });
+    document.getElementById('agent-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeAgentPreview();
+    });
+    document.getElementById('dictation-grading-preview-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeDictationGradingPreview();
     });
   </script>
 </body>

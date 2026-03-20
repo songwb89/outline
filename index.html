@@ -90,7 +90,7 @@
               </div>
             </div>
           </h3>
-          <a href="warning.html" class="text-sm text-blue-600 hover:text-blue-700">查看更多</a>
+          <span class="text-sm text-gray-400">查看更多</span>
         </div>
         <div class="p-4">
           <div class="space-y-2">
@@ -176,7 +176,7 @@
               </div>
             </div>
           </h3>
-          <a href="diagnose.html" class="text-sm text-blue-600 hover:text-blue-700">查看更多</a>
+          <span class="text-sm text-gray-400">查看更多</span>
         </div>
         <div class="p-4">
           <div class="space-y-2">
@@ -254,45 +254,45 @@
         </div>
         <div class="p-5">
           <div class="divide-y divide-gray-100">
-            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+            <div class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors">
               <div>
                 <div class="text-sm font-medium text-gray-800">批改生字练习册</div>
                 <div class="text-xs text-gray-500 mt-1">三年级(1)班 · 28份 · 截止今天 18:00</div>
               </div>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-            </a>
+            </div>
 
-            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+            <div class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors">
               <div>
                 <div class="text-sm font-medium text-gray-800">批改作文</div>
                 <div class="text-xs text-gray-500 mt-1">三年级(2)班 · 25份 · 截止今天 20:00</div>
               </div>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-            </a>
+            </div>
 
-            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+            <div class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors">
               <div>
                 <div class="text-sm font-medium text-gray-800">批改阅读理解</div>
                 <div class="text-xs text-gray-500 mt-1">三年级(3)班 · 30份 · 截止明天 18:00</div>
               </div>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-            </a>
+            </div>
 
-            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+            <div class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors">
               <div>
                 <div class="text-sm font-medium text-gray-800">批改单元测试</div>
                 <div class="text-xs text-gray-500 mt-1">四年级(1)班 · 32份 · 截止明天 20:00</div>
               </div>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-            </a>
+            </div>
 
-            <a href="evaluate.html" class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors no-underline">
+            <div class="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors">
               <div>
                 <div class="text-sm font-medium text-gray-800">批改听写练习</div>
                 <div class="text-xs text-gray-500 mt-1">四年级(2)班 · 28份 · 截止后天 18:00</div>
               </div>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-            </a>
+            </div>
           </div>
         </div>
       </div>
@@ -412,11 +412,19 @@
 
       <!-- 第3列：得分率趋势分析 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="p-4 border-b border-gray-100">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
           <h3 class="font-bold text-gray-800 flex items-center gap-2">
             <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
             得分率趋势分析
           </h3>
+          <select id="trendGradeSelect" class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="2-1" selected>二年级一班</option>
+            <option value="1-1">一年级一班</option>
+            <option value="1-2">一年级二班</option>
+            <option value="2-2">二年级二班</option>
+            <option value="3-1">三年级一班</option>
+            <option value="3-2">三年级二班</option>
+          </select>
         </div>
         <div class="p-4">
           <div id="trendChart" class="w-full h-48"></div>
@@ -510,6 +518,17 @@
 
     // 初始化趋势图
     var trendChart = echarts.init(document.getElementById('trendChart'));
+
+    // 不同班级的趋势数据
+    var trendData = {
+      '2-1': [72, 75, 78, 77, 82, 85],
+      '1-1': [70, 72, 75, 73, 78, 80],
+      '1-2': [68, 71, 74, 76, 79, 82],
+      '2-2': [74, 77, 80, 79, 84, 87],
+      '3-1': [76, 79, 83, 81, 86, 89],
+      '3-2': [78, 81, 85, 83, 88, 91]
+    };
+
     var trendOption = {
       tooltip: {
         trigger: 'axis'
@@ -529,7 +548,7 @@
         }
       },
       series: [{
-        data: [75, 78, 82, 80, 85, 88],
+        data: trendData['2-1'],
         type: 'line',
         smooth: true,
         lineStyle: {
@@ -562,6 +581,16 @@
       }
     };
     trendChart.setOption(trendOption);
+
+    // 班级筛选事件
+    document.getElementById('trendGradeSelect').addEventListener('change', function(e) {
+      var selectedClass = e.target.value;
+      trendChart.setOption({
+        series: [{
+          data: trendData[selectedClass]
+        }]
+      });
+    });
 
     // 响应窗口变化
     window.addEventListener('resize', function() {

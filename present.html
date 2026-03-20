@@ -59,13 +59,18 @@
             </button>
 
             <!-- 课堂点评 -->
-            <button onclick="openToolPanel('课堂点评')" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点评">
+            <button onclick="openReviewPreview()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点评">
             <i data-lucide="trophy" class="w-5 h-5 text-white"></i>
             </button>
 
             <!-- 课堂点名 -->
-            <button onclick="openToolPanel('课堂点名')" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点名">
+            <button onclick="openRollcallPreview()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点名">
             <i data-lucide="users" class="w-5 h-5 text-white"></i>
+            </button>
+
+            <!-- 校本资源 -->
+            <button onclick="openSchoolResourceModal()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="校本资源">
+            <i data-lucide="library" class="w-5 h-5 text-white"></i>
             </button>
 
             <!-- 全屏 -->
@@ -349,7 +354,7 @@
         };
         const hoverBorder = hoverBorderMap[item.color] || 'hover:border-neutral-500/60';
         return `
-        <div onclick="openToolPanel('${item.title}')" class="flex items-center justify-between bg-neutral-800/60 border border-neutral-700 rounded-xl p-4 cursor-pointer transition-all ${hoverBorder} hover:bg-neutral-700/60">
+        <div onclick="openActivityPreview('${item.type}')" class="flex items-center justify-between bg-neutral-800/60 border border-neutral-700 rounded-xl p-4 cursor-pointer transition-all ${hoverBorder} hover:bg-neutral-700/60">
           <div class="flex items-center gap-3">
             <div class="w-11 h-11 ${item.bgClass} rounded-xl flex items-center justify-center shrink-0">
               <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconClass}"></i>
@@ -368,6 +373,72 @@
       lucide.createIcons();
     }
 
+    // 打开活动预览
+    function openActivityPreview(type) {
+      // 关闭活动面板
+      toggleActivityPanel();
+
+      switch(type) {
+        case '随堂测':
+          document.getElementById('quiz-preview-modal').classList.remove('hidden');
+          break;
+        case '听写':
+          document.getElementById('dictation-preview-modal').classList.remove('hidden');
+          break;
+        case '活动':
+          document.getElementById('activity-preview-modal').classList.remove('hidden');
+          break;
+        case '抽奖':
+          document.getElementById('lottery-preview-modal').classList.remove('hidden');
+          break;
+        case '单词评测':
+          document.getElementById('word-evaluation-preview-modal').classList.remove('hidden');
+          break;
+        case '对话评测':
+          document.getElementById('dialogue-preview-modal').classList.remove('hidden');
+          break;
+        case '场景对话':
+          document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden');
+          break;
+        case '智能体':
+          document.getElementById('agent-preview-modal').classList.remove('hidden');
+          break;
+      }
+      lucide.createIcons();
+    }
+
+    // 关闭预览函数
+    function closeQuizPreview() { document.getElementById('quiz-preview-modal').classList.add('hidden'); }
+    function closeDictationPreview() { document.getElementById('dictation-preview-modal').classList.add('hidden'); }
+    function closeActivityPreview() { document.getElementById('activity-preview-modal').classList.add('hidden'); }
+    function closeLotteryPreview() { document.getElementById('lottery-preview-modal').classList.add('hidden'); }
+    function closeWordEvaluationPreview() { document.getElementById('word-evaluation-preview-modal').classList.add('hidden'); }
+    function closeDialoguePreview() { document.getElementById('dialogue-preview-modal').classList.add('hidden'); }
+    function closeSceneDialoguePreview() { document.getElementById('scene-dialogue-preview-modal').classList.add('hidden'); }
+    function closeAgentPreview() { document.getElementById('agent-preview-modal').classList.add('hidden'); }
+
+    // 打开课堂点评预览
+    function openReviewPreview() {
+      document.getElementById('review-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭课堂点评预览
+    function closeReviewPreview() {
+      document.getElementById('review-preview-modal').classList.add('hidden');
+    }
+
+    // 打开课堂点名预览
+    function openRollcallPreview() {
+      document.getElementById('rollcall-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭课堂点名预览
+    function closeRollcallPreview() {
+      document.getElementById('rollcall-preview-modal').classList.add('hidden');
+    }
+
     function openToolPanel(toolName) {
       const alertBox = document.getElementById('custom-alert');
       alertBox.querySelector('p').innerText = `${toolName} 已准备就绪`;
@@ -382,6 +453,122 @@
   <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-slate-800/90 backdrop-blur-sm border border-slate-600/50 rounded-xl shadow-2xl opacity-0 pointer-events-none transition-opacity duration-300">
     <p class="text-lg text-center">⬅️ ➡️ 键盘左右键切换上下页</p>
   </div>
+
+  <!-- 预览弹窗：随堂测 -->
+  <div id="quiz-preview-modal" class="fixed inset-0 z-[100] bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[800px] overflow-hidden flex flex-col">
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">随堂测</h3>
+        <button onclick="closeQuizPreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/预览随堂测.png" alt="预览随堂测" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：听写（全屏） -->
+  <div id="dictation-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDictationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/听写.png" alt="听写" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：活动 -->
+  <div id="activity-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeActivityPreview()" class="absolute -top-10 right-0 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/预览活动.png" alt="预览活动" class="max-w-full max-h-[90vh] object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：抽奖活动（全屏） -->
+  <div id="lottery-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeLotteryPreview()" class="absolute top-4 right-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/抽奖活动.png" alt="抽奖活动" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：单词评测（全屏） -->
+  <div id="word-evaluation-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeWordEvaluationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/单词评测.png" alt="单词评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：对话评测（全屏） -->
+  <div id="dialogue-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/对话评测.png" alt="对话评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：场景对话（全屏） -->
+  <div id="scene-dialogue-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeSceneDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/场景对话.png" alt="场景对话" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：智能体（全屏遮罩） -->
+  <div id="agent-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center">
+      <div class="flex-1"></div>
+      <div class="flex items-center justify-center">
+        <div class="w-96 h-96 rounded-full overflow-hidden border-4 border-white shadow-xl">
+          <img src="img/内容预览/人物形象.png" alt="人物形象" class="w-full h-full object-cover">
+        </div>
+      </div>
+      <div class="flex-1 flex items-center justify-end pr-8">
+        <div class="relative">
+          <button onclick="closeAgentPreview()" class="absolute top-0 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10 -mr-4 -mt-4">
+            <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+          </button>
+          <img src="img/内容预览/对话面板.png" alt="对话面板" class="max-w-lg max-h-[90vh] object-contain">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：课堂点评 -->
+  <div id="review-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[85vh]">
+      <button onclick="closeReviewPreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/点评.png" alt="课堂点评" class="max-w-full max-h-[85vh] object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：课堂点名 -->
+  <div id="rollcall-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[85vh]">
+      <button onclick="closeRollcallPreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/点名.png" alt="课堂点名" class="max-w-full max-h-[85vh] object-contain">
+    </div>
+  </div>
+
   <script>
     function showToast() {
       const toast = document.getElementById('toast');
@@ -390,6 +577,37 @@
         toast.classList.add('opacity-0');
       }, 3000);
     }
+
+    // ESC 键关闭所有弹窗
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeQuizPreview();
+        closeDictationPreview();
+        closeActivityPreview();
+        closeLotteryPreview();
+        closeWordEvaluationPreview();
+        closeDialoguePreview();
+        closeSceneDialoguePreview();
+        closeAgentPreview();
+        closeReviewPreview();
+        closeRollcallPreview();
+        closeCustomAlert();
+      }
+    });
+
+    // 点击背景关闭弹窗
+    document.getElementById('quiz-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeQuizPreview(); });
+    document.getElementById('dictation-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeDictationPreview(); });
+    document.getElementById('activity-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeActivityPreview(); });
+    document.getElementById('lottery-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeLotteryPreview(); });
+    document.getElementById('word-evaluation-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeWordEvaluationPreview(); });
+    document.getElementById('dialogue-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeDialoguePreview(); });
+    document.getElementById('scene-dialogue-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeSceneDialoguePreview(); });
+    document.getElementById('agent-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeAgentPreview(); });
+    document.getElementById('review-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeReviewPreview(); });
+    document.getElementById('rollcall-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeRollcallPreview(); });
   </script>
+  <!-- 校本资源全屏组件 -->
+  <script src="school-resource-modal.js"></script>
   </body>
 </html>
