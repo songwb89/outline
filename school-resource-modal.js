@@ -143,7 +143,6 @@
       <div class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
         <div class="flex items-center gap-4">
           <h2 class="text-lg font-bold text-gray-800">校本资源库</h2>
-          <span class="text-sm text-gray-500">选择资源添加到备课区</span>
         </div>
         <button onclick="closeSchoolResourceModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
           <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
