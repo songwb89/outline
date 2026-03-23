@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>智能教学 - 教务管理</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
   <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
   <style>
     .menu-item {
@@ -39,13 +37,25 @@
     .class-table tbody tr:hover {
       background-color: #f3f4f6;
     }
+    .pm-modal-overlay {
+      background: rgba(0,0,0,0.45);
+    }
+    .pm-modal-content {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      transform: scale(1);
+    }
+    /* 子面板返回导航条 */
+    .sub-nav-bar {
+      background: #f8fafc;
+      border-bottom: 1px solid #e5e7eb;
+    }
   </style>
 </head>
 <body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+
   <!-- 顶部导航栏 -->
   <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg flex-shrink-0">
     <div class="flex items-center justify-between h-16 px-6">
-      <!-- 左侧 Logo -->
       <div class="flex items-center gap-3 shrink-0">
         <img src="img/logo.png" alt="兆涵科技" class="h-9 sm:h-10 w-auto max-h-10 object-contain object-left" />
         <div class="flex flex-col leading-tight">
@@ -53,8 +63,6 @@
           <span class="text-xs text-white leading-none">Sigma Education</span>
         </div>
       </div>
-
-      <!-- 中间导航 -->
       <nav class="flex items-center gap-1">
         <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
         <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
@@ -65,8 +73,6 @@
           教务管理
         </a>
       </nav>
-
-      <!-- 右侧图标 + 用户 -->
       <div class="flex items-center gap-4">
         <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
           <i data-lucide="list-todo" class="w-5 h-5"></i>
@@ -107,13 +113,19 @@
           <i data-lucide="user-cog" class="menu-icon w-5 h-5 text-gray-400"></i>
           <span>老师管理</span>
         </button>
+        <!-- 点数相关菜单 -->
+        <button type="button" id="nav-school-points" data-panel="panel-school-points" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer border-0 bg-transparent">
+          <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>本校点数</span>
+        </button>
       </nav>
     </aside>
 
     <main class="flex-1 p-6 overflow-y-auto">
+
+      <!-- ===================== 面板1: 班级管理 ===================== -->
       <div id="panel-class" class="academic-panel">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <!-- 标题 + 增加班级 -->
           <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
             <h3 class="font-bold text-gray-800 text-base">班级管理</h3>
             <button type="button" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shrink-0">
@@ -121,8 +133,6 @@
               增加班级
             </button>
           </div>
-
-          <!-- 筛选条件 -->
           <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/90">
             <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
               <div class="flex items-center gap-2">
@@ -153,8 +163,6 @@
               <button type="button" class="ml-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
             </div>
           </div>
-
-          <!-- 数据表格 -->
           <div class="overflow-x-auto">
             <table class="class-table w-full text-sm text-gray-800 border-collapse">
               <thead>
@@ -168,418 +176,1136 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">1</td>
-                  <td class="px-4 py-3">示例数据班</td>
-                  <td class="px-4 py-3 text-center">初中一年级</td>
-                  <td class="px-4 py-3 text-left">
-                    <div class="space-y-0.5 leading-relaxed">
-                      <div>语文 | 2月测试老师 <span class="text-gray-500">(班主任)</span></div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 text-center font-medium">6</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">2</td>
-                  <td class="px-4 py-3">一年级(1)班</td>
-                  <td class="px-4 py-3 text-center">小学一年级</td>
-                  <td class="px-4 py-3 text-left">
-                    <div class="space-y-0.5 leading-relaxed">
-                      <div>语文 | 张老师 <span class="text-gray-500">(班主任)</span></div>
-                      <div>数学 | 李老师</div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 text-center font-medium">30</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">3</td>
-                  <td class="px-4 py-3">一年级(2)班</td>
-                  <td class="px-4 py-3 text-center">小学一年级</td>
-                  <td class="px-4 py-3 text-left">
-                    <div class="space-y-0.5 leading-relaxed">
-                      <div>语文 | 王老师 <span class="text-gray-500">(班主任)</span></div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 text-center font-medium">28</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">4</td>
-                  <td class="px-4 py-3">
-                    <span>小班</span>
-                    <span class="ml-2 inline-block px-1.5 py-0.5 text-xs text-red-600 bg-red-50 border border-red-100 rounded">已禁用</span>
-                  </td>
-                  <td class="px-4 py-3 text-center">小学一年级</td>
-                  <td class="px-4 py-3 text-left">
-                    <div class="space-y-0.5 leading-relaxed">
-                      <div>语文 | 王老师 <span class="text-gray-500">(班主任)</span></div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 text-center font-medium">5</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">启用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">5</td>
-                  <td class="px-4 py-3">初三1班</td>
-                  <td class="px-4 py-3 text-center">初中三年级</td>
-                  <td class="px-4 py-3 text-left">
-                    <div class="space-y-1 leading-relaxed text-gray-800">
-                      <div>张老师 <span class="text-gray-500">(班主任)</span> · 语文</div>
-                      <div>赵老师 · 英语</div>
-                      <div>孙老师 · 数学</div>
-                      <div>钱老师 · 物理</div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 text-center font-medium">10</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">6</td>
-                  <td class="px-4 py-3">二年级(3)班</td>
-                  <td class="px-4 py-3 text-center">小学二年级</td>
-                  <td class="px-4 py-3 text-left">
-                    <div class="space-y-0.5 leading-relaxed">
-                      <div>语文 | 刘老师 <span class="text-gray-500">(班主任)</span></div>
-                      <div>英语 | 陈老师</div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 text-center font-medium">32</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
+                <tr class="border-b border-gray-100"><td class="px-4 py-3 text-center text-gray-600">1</td><td class="px-4 py-3">示例数据班</td><td class="px-4 py-3 text-center">初中一年级</td><td class="px-4 py-3"><div class="space-y-0.5 leading-relaxed"><div>语文 | 2月测试老师 <span class="text-gray-500">(班主任)</span></div></div></td><td class="px-4 py-3 text-center font-medium">6</td><td class="px-4 py-3 text-center"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button><button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button></td></tr>
+                <tr class="border-b border-gray-100"><td class="px-4 py-3 text-center text-gray-600">2</td><td class="px-4 py-3">一年级(1)班</td><td class="px-4 py-3 text-center">小学一年级</td><td class="px-4 py-3"><div class="space-y-0.5 leading-relaxed"><div>语文 | 张老师 <span class="text-gray-500">(班主任)</span></div><div>数学 | 李老师</div></div></td><td class="px-4 py-3 text-center font-medium">30</td><td class="px-4 py-3 text-center"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button><button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button></td></tr>
+                <tr class="border-b border-gray-100"><td class="px-4 py-3 text-center text-gray-600">3</td><td class="px-4 py-3">一年级(2)班</td><td class="px-4 py-3 text-center">小学一年级</td><td class="px-4 py-3"><div class="space-y-0.5 leading-relaxed"><div>语文 | 王老师 <span class="text-gray-500">(班主任)</span></div></div></td><td class="px-4 py-3 text-center font-medium">28</td><td class="px-4 py-3 text-center"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button><button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button></td></tr>
+                <tr class="border-b border-gray-100"><td class="px-4 py-3 text-center text-gray-600">4</td><td class="px-4 py-3"><span>小班</span><span class="ml-2 inline-block px-1.5 py-0.5 text-xs text-red-600 bg-red-50 border border-red-100 rounded">已禁用</span></td><td class="px-4 py-3 text-center">小学一年级</td><td class="px-4 py-3"><div class="space-y-0.5 leading-relaxed"><div>语文 | 王老师 <span class="text-gray-500">(班主任)</span></div></div></td><td class="px-4 py-3 text-center font-medium">5</td><td class="px-4 py-3 text-center"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button><button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">启用</button></td></tr>
+                <tr class="border-b border-gray-100"><td class="px-4 py-3 text-center text-gray-600">5</td><td class="px-4 py-3">初三1班</td><td class="px-4 py-3 text-center">初中三年级</td><td class="px-4 py-3"><div class="space-y-1 leading-relaxed text-gray-800"><div>张老师 <span class="text-gray-500">(班主任)</span> · 语文</div><div>赵老师 · 英语</div><div>孙老师 · 数学</div><div>钱老师 · 物理</div></div></td><td class="px-4 py-3 text-center font-medium">10</td><td class="px-4 py-3 text-center"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button><button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button></td></tr>
+                <tr class="border-b border-gray-100"><td class="px-4 py-3 text-center text-gray-600">6</td><td class="px-4 py-3">二年级(3)班</td><td class="px-4 py-3 text-center">小学二年级</td><td class="px-4 py-3"><div class="space-y-0.5 leading-relaxed"><div>语文 | 刘老师 <span class="text-gray-500">(班主任)</span></div><div>英语 | 陈老师</div></div></td><td class="px-4 py-3 text-center font-medium">32</td><td class="px-4 py-3 text-center"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button><button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button></td></tr>
               </tbody>
             </table>
           </div>
-
-          <!-- 分页 -->
           <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-end gap-3">
             <div class="flex items-center gap-1">
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="上一页">
-                <i data-lucide="chevron-left" class="w-4 h-4"></i>
-              </button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
               <button type="button" class="w-8 h-8 flex items-center justify-center rounded border-2 border-blue-600 text-blue-600 font-medium bg-white text-sm">1</button>
               <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">2</button>
               <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">3</button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">4</button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="下一页">
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-              </button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
             </div>
-            <select class="px-2 py-1.5 border border-gray-200 rounded text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <option>10条/页</option>
-              <option>20条/页</option>
-              <option>50条/页</option>
-            </select>
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-              <span>跳至</span>
-              <input type="text" value="1" class="w-10 px-2 py-1 border border-gray-200 rounded text-center text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-              <span>页</span>
-            </div>
+            <select class="px-2 py-1.5 border border-gray-200 rounded text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none"><option>10条/页</option><option>20条/页</option><option>50条/页</option></select>
+            <div class="flex items-center gap-2 text-sm text-gray-600"><span>跳至</span><input type="text" value="1" class="w-10 px-2 py-1 border border-gray-200 rounded text-center text-sm focus:ring-2 focus:ring-blue-500 outline-none" /><span>页</span></div>
           </div>
         </div>
       </div>
+
+      <!-- ===================== 面板2: 老师管理 ===================== -->
       <div id="panel-teacher" class="academic-panel hidden">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <!-- 标题 + 导出 / 增加账号 -->
+          <!-- 标题栏 + Tab -->
           <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
             <h3 class="font-bold text-gray-800 text-base">老师管理</h3>
-            <div class="flex items-center gap-3 shrink-0">
-              <button type="button" class="px-4 py-2 border border-blue-600 text-blue-600 text-sm font-medium rounded-lg bg-white hover:bg-blue-50 transition-colors">
-                导出账号
-              </button>
-              <button type="button" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                增加账号
-              </button>
-            </div>
           </div>
 
-          <!-- 筛选条件 -->
-          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/90">
-            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600 whitespace-nowrap">账号状态</label>
-                <select class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                  <option selected>全部</option>
-                  <option>正常</option>
-                  <option>已禁用</option>
-                </select>
+          <!-- ==================== Tab: 账号列表 ==================== -->
+          <div id="tm-panel-accounts">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4 bg-gray-50/90">
+              <div class="flex items-center gap-3 shrink-0">
+                <button type="button" class="px-4 py-2 border border-blue-600 text-blue-600 text-sm font-medium rounded-lg bg-white hover:bg-blue-50 transition-colors">导出账号</button>
+                <button type="button" onclick="openAddAccount()" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>增加账号</button>
               </div>
-              <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600 whitespace-nowrap">登录账号</label>
-                <input type="text" placeholder="请输入" class="w-36 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
-              </div>
-              <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600 whitespace-nowrap">老师姓名</label>
-                <input type="text" placeholder="请输入" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
-              </div>
-              <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600 whitespace-nowrap">任教科目</label>
-                <select class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                  <option selected>全部科目</option>
-                  <option>语文</option>
-                  <option>数学</option>
-                  <option>英语</option>
-                </select>
-              </div>
-              <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600 whitespace-nowrap">带教班级</label>
-                <select class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                  <option selected>全部班级</option>
-                  <option>一年级(1)班</option>
-                  <option>星光六班</option>
-                </select>
-              </div>
-              <button type="button" class="ml-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
             </div>
-          </div>
-
-          <!-- 数据表格 -->
-          <div class="overflow-x-auto">
-            <table class="class-table w-full text-sm text-gray-800 border-collapse">
-              <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="px-4 py-3 text-center w-20 border-b border-gray-200 whitespace-nowrap">序号</th>
-                  <th class="px-4 py-3 text-center min-w-[6.5rem] border-b border-gray-200 whitespace-nowrap">登录账号</th>
-                  <th class="px-4 py-3 text-left min-w-[5rem] border-b border-gray-200">老师姓名</th>
-                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">手机号</th>
-                  <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">任教科目</th>
-                  <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200">带教班级</th>
-                  <th class="px-4 py-3 text-center min-w-[11rem] border-b border-gray-200 whitespace-nowrap">最后登录时间</th>
-                  <th class="px-4 py-3 text-center min-w-[12rem] border-b border-gray-200 whitespace-nowrap">操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">1</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000022</td>
-                  <td class="px-4 py-3">2月老师4</td>
-                  <td class="px-4 py-3 text-center">13800138000</td>
-                  <td class="px-4 py-3">语文<span class="text-gray-500">(主)</span>；英语</td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">星光六班(六年级)</span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年2月10日 11:01:02</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">2</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000023</td>
-                  <td class="px-4 py-3">星诺兰</td>
-                  <td class="px-4 py-3 text-center text-gray-400">未设置</td>
-                  <td class="px-4 py-3">数学<span class="text-gray-500">(主)</span>；科学</td>
-                  <td class="px-4 py-3 text-gray-400">未分配</td>
-                  <td class="px-4 py-3 text-center text-gray-400">未登录</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">3</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000024</td>
-                  <td class="px-4 py-3">李老师</td>
-                  <td class="px-4 py-3 text-center">15912345678</td>
-                  <td class="px-4 py-3">语文</td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">一年级(1)班 <span class="text-gray-500">(班主任)</span></span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月1日 09:30:15</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">4</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000025</td>
-                  <td class="px-4 py-3">王老师</td>
-                  <td class="px-4 py-3 text-center">18600001111</td>
-                  <td class="px-4 py-3">英语<span class="text-gray-500">(主)</span></td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200 mr-1">三年级(2)班</span>
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">四年级(1)班</span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年2月28日 16:45:00</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">5</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000026</td>
-                  <td class="px-4 py-3">赵老师</td>
-                  <td class="px-4 py-3 text-center text-gray-400">未设置</td>
-                  <td class="px-4 py-3">体育；音乐</td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">初二(3)班</span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-400">未登录</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">6</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000027</td>
-                  <td class="px-4 py-3">陈老师</td>
-                  <td class="px-4 py-3 text-center">13788889999</td>
-                  <td class="px-4 py-3">美术<span class="text-gray-500">(主)</span></td>
-                  <td class="px-4 py-3 text-gray-400">未分配</td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月5日 08:12:33</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">7</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000028</td>
-                  <td class="px-4 py-3">刘老师</td>
-                  <td class="px-4 py-3 text-center">18966778899</td>
-                  <td class="px-4 py-3">信息技术</td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">五年级全年级</span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年2月20日 14:22:08</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">8</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000029</td>
-                  <td class="px-4 py-3">周老师</td>
-                  <td class="px-4 py-3 text-center">13611112222</td>
-                  <td class="px-4 py-3">道德与法治<span class="text-gray-500">(主)</span></td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">六年级(2)班 <span class="text-gray-500">(班主任)</span></span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月8日 19:00:01</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">9</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000030</td>
-                  <td class="px-4 py-3">孙老师</td>
-                  <td class="px-4 py-3 text-center">13344445555</td>
-                  <td class="px-4 py-3">化学；生物</td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">初三(1)班</span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月10日 07:55:44</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100">
-                  <td class="px-4 py-3 text-center text-gray-600">10</td>
-                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000031</td>
-                  <td class="px-4 py-3">钱老师</td>
-                  <td class="px-4 py-3 text-center text-gray-400">未设置</td>
-                  <td class="px-4 py-3">历史<span class="text-gray-500">(主)</span>；地理</td>
-                  <td class="px-4 py-3">
-                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">初一(4)班</span>
-                  </td>
-                  <td class="px-4 py-3 text-center text-gray-400">未登录</td>
-                  <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
-                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- 分页 -->
-          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-end gap-3">
-            <div class="flex items-center gap-1">
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="上一页">
-                <i data-lucide="chevron-left" class="w-4 h-4"></i>
-              </button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border-2 border-blue-600 text-blue-600 font-medium bg-white text-sm">1</button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">2</button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">3</button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="下一页">
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-              </button>
+            <!-- 筛选条件 -->
+            <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 shrink-0">姓名：</label>
+                  <input type="text" id="tm-filter-name" placeholder="输入姓名" oninput="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 w-28 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 shrink-0">任教科目：</label>
+                  <select id="tm-filter-subject" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <option value="">全部</option>
+                    <option value="语文">语文</option>
+                    <option value="数学">数学</option>
+                    <option value="英语">英语</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 shrink-0">带教班级：</label>
+                  <select id="tm-filter-class" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <option value="">全部</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 shrink-0">点数状态：</label>
+                  <select id="tm-filter-point-status" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <option value="">全部</option>
+                    <option value="normal">正常</option>
+                    <option value="warning">无限制</option>
+                    <option value="over">已达上限</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 shrink-0">账号状态：</label>
+                  <select id="tm-filter-account-status" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <option value="">全部</option>
+                    <option value="normal">正常</option>
+                    <option value="disabled">已禁用</option>
+                  </select>
+                </div>
+                <button type="button" onclick="tmAccClearFilters()" class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">清除筛选</button>
+              </div>
             </div>
-            <select class="px-2 py-1.5 border border-gray-200 rounded text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <option>10条/页</option>
-              <option>20条/页</option>
-              <option>50条/页</option>
-            </select>
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-              <span>跳至</span>
-              <input type="text" value="1" class="w-10 px-2 py-1 border border-gray-200 rounded text-center text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-              <span>页</span>
+            <div class="overflow-x-auto">
+              <table class="class-table w-full text-sm text-gray-800 border-collapse">
+                <thead><tr class="border-b border-gray-200"><th class="px-4 py-3 text-center w-16 border-b border-gray-200 whitespace-nowrap">序号</th><th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">登录账号</th><th class="px-4 py-3 text-left min-w-[5rem] border-b border-gray-200">姓名</th><th class="px-4 py-3 text-center min-w-[8rem] border-b border-gray-200 whitespace-nowrap">手机号</th><th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">任教科目</th><th class="px-4 py-3 text-left min-w-[9rem] border-b border-gray-200">带教班级</th><th class="px-4 py-3 text-right min-w-[5rem] border-b border-gray-200 whitespace-nowrap">已消耗</th><th class="px-4 py-3 text-right min-w-[6rem] border-b border-gray-200 whitespace-nowrap">消耗上限</th><th class="px-4 py-3 text-right min-w-[5rem] border-b border-gray-200 whitespace-nowrap">剩余</th><th class="px-4 py-3 text-center min-w-[6rem] border-b border-gray-200 whitespace-nowrap">点数状态</th><th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">账号状态</th><th class="px-4 py-3 text-center min-w-[11rem] border-b border-gray-200 whitespace-nowrap">操作</th></tr></thead>
+                <tbody id="tm-accounts-body"></tbody>
+              </table>
+            </div>
+            <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2 text-sm text-gray-600"><span>共 <span id="tm-accounts-count" class="font-medium">0</span> 条</span></div>
+              <div class="flex items-center gap-1">
+                <button type="button" id="tm-acc-prev" onclick="tmAccGoPage(tmAccCurPage - 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                <div id="tm-acc-pages" class="flex items-center gap-1"></div>
+                <button type="button" id="tm-acc-next" onclick="tmAccGoPage(tmAccCurPage + 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+
+      <!-- ===================== 面板5: 本校点数总览 ===================== -->
+      <div id="panel-school-points" class="academic-panel hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
+            <h3 class="font-bold text-gray-800 text-base">本校点数</h3>
+            <button type="button" class="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5">
+              <i data-lucide="download" class="w-4 h-4"></i>导出
+            </button>
+          </div>
+          <div class="p-6">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-medium text-blue-600">购买点数</span>
+                  <i data-lucide="shopping-cart" class="w-4 h-4 text-blue-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-blue-800" id="sp-stat-purchase">--</div>
+                <div class="text-xs text-blue-500 mt-1">点</div>
+              </div>
+              <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-medium text-purple-600">赠送点数</span>
+                  <i data-lucide="gift" class="w-4 h-4 text-purple-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-purple-800" id="sp-stat-gift">--</div>
+                <div class="text-xs text-purple-500 mt-1">点</div>
+              </div>
+              <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-medium text-orange-600">已消耗</span>
+                  <i data-lucide="trending-down" class="w-4 h-4 text-orange-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-orange-800" id="sp-stat-consumed">--</div>
+                <div class="text-xs text-orange-500 mt-1">点</div>
+              </div>
+              <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-medium text-emerald-600">剩余点数</span>
+                  <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-emerald-800" id="sp-stat-balance">--</div>
+                <div class="text-xs text-emerald-500 mt-1">点</div>
+              </div>
+            </div>
+            <!-- 筛选条件 -->
+            <div class="mb-4">
+              <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">类型</label>
+                  <select id="sp-rec-type" onchange="spRecApplyFilters()" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <option value="">全部</option>
+                    <option value="purchase">购买</option>
+                    <option value="gift">赠送</option>
+                    <option value="consume">消费</option>
+                    <option value="deduct">扣减</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">教师</label>
+                  <select id="sp-rec-teacher" onchange="spRecApplyFilters()" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <option value="">全部</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm text-gray-600 whitespace-nowrap">日期</label>
+                  <input type="date" id="sp-rec-date-from" onchange="spRecApplyFilters()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                  <span class="text-gray-400">~</span>
+                  <input type="date" id="sp-rec-date-to" onchange="spRecApplyFilters()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                </div>
+                <button type="button" onclick="spRecClearFilters()" class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">清除筛选</button>
+              </div>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="class-table w-full text-sm text-gray-800 border-collapse min-w-[900px]">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200 whitespace-nowrap">时间</th>
+                  <th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">类型</th>
+                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">点数</th>
+                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">余额</th>
+                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">教师/合同</th>
+                  <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">来源/理由</th>
+                </tr>
+              </thead>
+              <tbody id="sp-rec-table-body"></tbody>
+            </table>
+          </div>
+          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-sm text-gray-600"><span>共 <span id="sp-rec-count" class="font-medium">0</span> 条</span></div>
+            <div class="flex items-center gap-1">
+              <button type="button" id="sp-rec-prev" onclick="spRecGoPage(spRecCurPage - 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+              <div id="sp-rec-pages" class="flex items-center gap-1"></div>
+              <button type="button" id="sp-rec-next" onclick="spRecGoPage(spRecCurPage + 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 面板6: 点数明细子面板（已合并至本校点数）===================== -->
+      <div id="panel-sp-records" class="academic-panel hidden" data-parent-panel="panel-school-points">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <!-- 返回导航 -->
+          <div class="sub-nav-bar px-5 py-3 flex items-center gap-3">
+            <button type="button" onclick="spBackToParent()" class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回本校点数
+            </button>
+            <span class="text-gray-300">|</span>
+            <span class="text-sm text-gray-600 font-medium">点数明细</span>
+          </div>
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/90">
+            <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">类型</label>
+                <select id="sp-rec-type" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                  <option value="purchase">购买</option>
+                  <option value="gift">赠送</option>
+                  <option value="consume">消费</option>
+                  <option value="deduct">扣减</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">教师</label>
+                <select id="sp-rec-teacher" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">日期</label>
+                <input type="date" id="sp-rec-date-from" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                <span class="text-gray-400">~</span>
+                <input type="date" id="sp-rec-date-to" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <button type="button" onclick="spRecApplyFilters()" class="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
+              <button type="button" class="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5">
+                <i data-lucide="download" class="w-4 h-4"></i>导出
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="class-table w-full text-sm text-gray-800 border-collapse min-w-[900px]">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200 whitespace-nowrap">时间</th>
+                  <th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">类型</th>
+                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">点数</th>
+                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">余额</th>
+                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">教师/合同</th>
+                  <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">来源/理由</th>
+                </tr>
+              </thead>
+              <tbody id="sp-rec-table-body"></tbody>
+            </table>
+          </div>
+          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-sm text-gray-600"><span>共 <span id="sp-rec-count" class="font-medium">0</span> 条</span></div>
+            <div class="flex items-center gap-1">
+              <button type="button" id="sp-rec-prev" onclick="spRecGoPage(spRecCurPage - 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+              <div id="sp-rec-pages" class="flex items-center gap-1"></div>
+              <button type="button" id="sp-rec-next" onclick="spRecGoPage(spRecCurPage + 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 面板7: 消费记录子面板 ===================== -->
+      <div id="panel-sp-consume" class="academic-panel hidden" data-parent-panel="panel-school-points">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="sub-nav-bar px-5 py-3 flex items-center gap-3">
+            <button type="button" onclick="spBackToParent()" class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回本校点数
+            </button>
+            <span class="text-gray-300">|</span>
+            <span class="text-sm text-gray-600 font-medium">消费记录</span>
+          </div>
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/90">
+            <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">教师</label>
+                <select id="sp-con-teacher" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">日期</label>
+                <input type="date" id="sp-con-date-from" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                <span class="text-gray-400">~</span>
+                <input type="date" id="sp-con-date-to" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <button type="button" onclick="spConApplyFilters()" class="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
+              <button type="button" class="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5">
+                <i data-lucide="download" class="w-4 h-4"></i>导出
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="class-table w-full text-sm text-gray-800 border-collapse min-w-[800px]">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200 whitespace-nowrap">时间</th>
+                  <th class="px-4 py-3 text-left min-w-[7rem] border-b border-gray-200 whitespace-nowrap">教师姓名</th>
+                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">功能类型</th>
+                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">消耗点数</th>
+                  <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">相关业务ID</th>
+                </tr>
+              </thead>
+              <tbody id="sp-con-table-body"></tbody>
+            </table>
+          </div>
+          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-sm text-gray-600"><span>共 <span id="sp-con-count" class="font-medium">0</span> 条</span></div>
+            <div class="flex items-center gap-1">
+              <button type="button" id="sp-con-prev" onclick="spConGoPage(spConCurPage - 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+              <div id="sp-con-pages" class="flex items-center gap-1"></div>
+              <button type="button" id="sp-con-next" onclick="spConGoPage(spConCurPage + 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
-  <script>
-    lucide.createIcons();
+  <!-- ==================== 弹窗: 设置消耗上限 ==================== -->
+  <div id="modal-add-account" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+    <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-add-account')"></div>
+    <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden" style="transform: scale(0.95);">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-semibold text-gray-800" id="ea-modal-title">增加账号</h3>
+        <button type="button" onclick="pmHideModal('modal-add-account')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">姓名 <span class="text-red-500">*</span></label>
+          <input type="text" id="ea-name" placeholder="请输入老师姓名" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">手机号</label>
+          <input type="text" id="ea-phone" placeholder="选填，请输入手机号" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">主要任课科目 <span class="text-red-500">*</span></label>
+          <select id="ea-main-subject" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            <option value="">请选择</option>
+            <option value="语文">语文</option>
+            <option value="数学">数学</option>
+            <option value="英语">英语</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">兼任科目</label>
+          <select id="ea-other-subject" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            <option value="">无</option>
+            <option value="语文">语文</option>
+            <option value="数学">数学</option>
+            <option value="英语">英语</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">点数上限（AI生成资源）</label>
+          <div class="flex items-center gap-2">
+            <input type="number" id="ea-max-points" value="100" min="0" class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+            <span class="text-sm text-gray-500">点（0表示无限制）</span>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3">
+        <button type="button" onclick="pmHideModal('modal-add-account')" class="px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">取消</button>
+        <button type="button" onclick="confirmAccountChange()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">确认</button>
+      </div>
+    </div>
+  </div>
 
+  <div id="modal-set-limit" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+    <div class="pm-modal-overlay absolute inset-0 pm-modal-overlay" onclick="pmHideModal('modal-set-limit')"></div>
+    <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden" style="transform: scale(0.95);">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-semibold text-gray-800">设置消耗上限</h3>
+        <button type="button" onclick="pmHideModal('modal-set-limit')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="text-gray-500">老师</span>
+            <span class="font-medium text-gray-800" id="slm-teacher-name">--</span>
+          </div>
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="text-gray-500">已消耗</span>
+            <span class="font-medium text-orange-600" id="slm-consumed">--</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-500">当前上限</span>
+            <span class="font-medium text-gray-600" id="slm-current-limit">--</span>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">新的消耗上限 <span class="text-gray-400 font-normal">(留空表示无限制)</span></label>
+          <input type="number" id="slm-new-limit" min="0" placeholder="请输入新的消耗上限" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+        </div>
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">操作理由 <span class="text-red-500">*</span></label>
+          <textarea id="slm-reason" rows="3" placeholder="请输入操作理由，必填" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-3">
+          <button type="button" onclick="pmHideModal('modal-set-limit')" class="px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">取消</button>
+          <button type="button" onclick="confirmSetLimit()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">确认保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 弹窗: 老师点数明细 ==================== -->
+  <div id="modal-teacher-detail" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+    <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-teacher-detail')"></div>
+    <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden" style="transform: scale(0.95); max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="font-semibold text-gray-800">点数明细</h3>
+        <button type="button" onclick="pmHideModal('modal-teacher-detail')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <!-- 统计 -->
+      <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center">
+            <div class="text-xs text-gray-500 mb-1">已消耗</div>
+            <div class="text-lg font-bold text-orange-600" id="tdm-consumed">--</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xs text-gray-500 mb-1">消耗上限</div>
+            <div class="text-lg font-bold text-gray-600" id="tdm-limit">--</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xs text-gray-500 mb-1">剩余可用</div>
+            <div class="text-lg font-bold text-emerald-600" id="tdm-remaining">--</div>
+          </div>
+        </div>
+      </div>
+      <!-- 筛选 -->
+      <div class="px-6 py-3 border-b border-gray-100 flex flex-wrap items-end gap-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-600 whitespace-nowrap">类型</label>
+          <select id="tdm-filter-type" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-blue-500 outline-none">
+            <option value="">全部</option>
+            <option value="ai_consume">AI消耗</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-600 whitespace-nowrap">日期</label>
+          <input type="date" id="tdm-filter-from" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-blue-500 outline-none" />
+          <span class="text-gray-400 text-xs">~</span>
+          <input type="date" id="tdm-filter-to" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-blue-500 outline-none" />
+        </div>
+        <button type="button" onclick="tdmApplyFilters()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
+      </div>
+      <!-- 表格 -->
+      <div class="flex-1 overflow-y-auto">
+        <table class="class-table w-full text-sm text-gray-800 border-collapse">
+          <thead class="sticky top-0 z-10 bg-gray-50">
+            <tr><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th><th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">类型</th><th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">来源</th></tr>
+          </thead>
+          <tbody id="tdm-table-body"></tbody>
+        </table>
+      </div>
+      <!-- 分页 -->
+      <div class="px-6 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="text-xs text-gray-600">共 <span id="tdm-count" class="font-medium">0</span> 条</div>
+        <div class="flex items-center gap-1">
+          <button type="button" id="tdm-prev" onclick="tdmGoPage(tdmCurPage - 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <div id="tdm-pages" class="flex items-center gap-0.5"></div>
+          <button type="button" id="tdm-next" onclick="tdmGoPage(tdmCurPage + 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="points-manage.js"></script>
+  <script>
+    // ============================================================
+    // 全局状态
+    // ============================================================
+    const CURRENT_SCHOOL_ID = 'school001';
+    let subPanelReturnStack = [];
+
+    // ============================================================
+    // 面板切换
+    // ============================================================
     function switchPanel(panelId) {
+      // 隐藏所有主面板
       document.querySelectorAll('.academic-panel').forEach(function (el) {
         el.classList.add('hidden');
       });
+      // 显示目标面板
       var target = document.getElementById(panelId);
       if (target) target.classList.remove('hidden');
-
+      // 更新菜单激活状态
       document.querySelectorAll('[data-panel]').forEach(function (btn) {
         btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
       });
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      // 重新初始化图标
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
 
-    document.getElementById('nav-class').addEventListener('click', function () {
-      switchPanel('panel-class');
+    // ============================================================
+    // 子面板切换（带返回栈）
+    // ============================================================
+    function switchToSubPanel(subPanelId) {
+      // 隐藏所有面板
+      document.querySelectorAll('.academic-panel').forEach(el => el.classList.add('hidden'));
+      // 显示子面板
+      var sub = document.getElementById(subPanelId);
+      if (sub) sub.classList.remove('hidden');
+      // 更新菜单高亮（高亮父菜单）
+      document.querySelectorAll('[data-panel]').forEach(btn => {
+        const pid = btn.getAttribute('data-panel');
+        btn.classList.toggle('active', pid === 'panel-school-points');
+      });
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function spBackToParent() {
+      // 返回到主面板
+      switchPanel('panel-school-points');
+      // 重新加载统计数据
+      loadSchoolPointsStats();
+      // 加载列表数据
+      spRecLoad();
+    }
+
+    // ============================================================
+    // 菜单绑定
+    // ============================================================
+    document.getElementById('nav-class').addEventListener('click', function () { switchPanel('panel-class'); });
+    document.getElementById('nav-teacher').addEventListener('click', function () { switchPanel('panel-teacher'); });
+    document.getElementById('nav-school-points').addEventListener('click', function () {
+      switchPanel('panel-school-points');
+      loadSchoolPointsStats();
+      spRecLoad();
     });
-    document.getElementById('nav-teacher').addEventListener('click', function () {
-      switchPanel('panel-teacher');
+
+    // ============================================================
+    // 老师管理 - 账号列表
+    // ============================================================
+    let tmAccAll = [];
+    let tmAccFiltered = [];
+    let tmAccCurPage = 1;
+    const tmAccPageSize = 10;
+    let eaCurrentTeacherId = null;
+
+    function tmAccApplyFilters() {
+      const nameKw = (document.getElementById('tm-filter-name').value || '').trim().toLowerCase();
+      const subjVal = document.getElementById('tm-filter-subject').value;
+      const classVal = document.getElementById('tm-filter-class').value;
+      const pointStatus = document.getElementById('tm-filter-point-status').value;
+      const accStatus = document.getElementById('tm-filter-account-status').value;
+      tmAccFiltered = tmAccAll.filter(t => {
+        if (nameKw && !t.teacherName.toLowerCase().includes(nameKw)) return false;
+        if (subjVal && (!t.subjects || !t.subjects.some(s => s.name === subjVal))) return false;
+        if (classVal && (!t.classes || !t.classes.some(c => c.name === classVal))) return false;
+        if (pointStatus) {
+          const st = pmConsumeStatus(t);
+          if (pointStatus === 'normal' && st.label !== '正常') return false;
+          if (pointStatus === 'warning' && st.label !== '无限制') return false;
+          if (pointStatus === 'over' && st.label !== '已达上限') return false;
+        }
+        if (accStatus) {
+          if (accStatus === 'disabled' && !t.disabled) return false;
+          if (accStatus === 'normal' && t.disabled) return false;
+        }
+        return true;
+      });
+      tmAccCurPage = 1;
+      tmAccountsRender();
+    }
+
+    function tmAccClearFilters() {
+      document.getElementById('tm-filter-name').value = '';
+      document.getElementById('tm-filter-subject').value = '';
+      document.getElementById('tm-filter-class').value = '';
+      document.getElementById('tm-filter-point-status').value = '';
+      document.getElementById('tm-filter-account-status').value = '';
+      tmAccApplyFilters();
+    }
+
+    function updateClassFilterOptions() {
+      const classSet = new Set();
+      tmAccAll.forEach(t => {
+        if (t.classes) t.classes.forEach(c => classSet.add(c.name));
+      });
+      const sel = document.getElementById('tm-filter-class');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">全部</option>';
+      [...classSet].sort().forEach(n => {
+        const o = document.createElement('option');
+        o.value = n; o.textContent = n;
+        sel.appendChild(o);
+      });
+      sel.value = cur;
+    }
+
+    function tmAccountsLoad() {
+      tmAccAll = getTeacherPoints();
+      tmAccFiltered = [...tmAccAll];
+      tmAccCurPage = 1;
+      updateClassFilterOptions();
+      tmAccountsRender();
+    }
+
+    function tmAccountsRender() {
+      const start = (tmAccCurPage - 1) * tmAccPageSize;
+      const pageData = tmAccFiltered.slice(start, start + tmAccPageSize);
+      const totalPages = Math.max(1, Math.ceil(tmAccFiltered.length / tmAccPageSize));
+      const tbody = document.getElementById('tm-accounts-body');
+      document.getElementById('tm-accounts-count').textContent = tmAccFiltered.length;
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.length === 0
+          ? '<tr><td colspan="12" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>'
+          : pageData.map((t, i) => {
+          const status = pmConsumeStatus(t);
+          const remaining = t.maxPoints === null ? '无限制' : Math.max(0, t.maxPoints - t.consumed);
+          const no = start + i + 1;
+          const phoneHtml = t.phone ? '<span class="font-mono text-xs">' + t.phone + '</span>' : '<span class="text-gray-400">未设置</span>';
+          const subjectsHtml = t.subjects && t.subjects.length > 0
+            ? t.subjects.map(s => s.name + (s.isMain ? '<span class="text-gray-500">(主)</span>' : '')).join('；')
+            : '<span class="text-gray-400">未设置</span>';
+          const classesHtml = t.classes && t.classes.length > 0
+            ? t.classes.map(c => '<span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">' + c.name + (c.isHead ? ' <span class="text-gray-500">(班主任)</span>' : '') + '</span>').join('')
+            : '<span class="text-gray-400">未分配</span>';
+          const accDisabled = t.disabled;
+          const accStatusHtml = accDisabled
+            ? '<span class="px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-600">已禁用</span>'
+            : '<span class="px-2 py-0.5 text-xs font-medium rounded bg-emerald-100 text-emerald-600">正常</span>';
+          const toggleBtnHtml = accDisabled
+            ? '<button type="button" onclick="toggleTeacherDisabled(\'' + t.teacherId + '\')" class="text-emerald-600 hover:text-emerald-800 font-medium text-sm">启用</button>'
+            : '<button type="button" onclick="toggleTeacherDisabled(\'' + t.teacherId + '\')" class="text-red-600 hover:text-red-800 font-medium text-sm">禁用</button>';
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-3 text-center text-gray-500">' + no + '</td>' +
+            '<td class="px-4 py-3 text-center font-mono text-gray-600 text-xs">' + t.account + '</td>' +
+            '<td class="px-4 py-3 font-medium text-gray-800">' + t.teacherName + '</td>' +
+            '<td class="px-4 py-3 text-center">' + phoneHtml + '</td>' +
+            '<td class="px-4 py-3">' + subjectsHtml + '</td>' +
+            '<td class="px-4 py-3">' + classesHtml + '</td>' +
+            '<td class="px-4 py-3 text-right font-medium text-orange-600">' + t.consumed + '</td>' +
+            '<td class="px-4 py-3 text-right text-gray-600">' + (t.maxPoints === null ? '无限制' : t.maxPoints) + '</td>' +
+            '<td class="px-4 py-3 text-right font-medium ' + (t.maxPoints === null ? 'text-gray-600' : 'text-emerald-600') + '">' + remaining + '</td>' +
+            '<td class="px-4 py-3 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + status.cls + '">' + status.label + '</span></td>' +
+            '<td class="px-4 py-3 text-center">' + accStatusHtml + '</td>' +
+            '<td class="px-4 py-3 text-center">' +
+              '<button type="button" onclick="openTeacherDetail(\'' + t.teacherId + '\')" class="text-blue-600 hover:text-blue-800 font-medium text-sm mr-2">明细</button>' +
+              '<button type="button" onclick="openEditAccount(\'' + t.teacherId + '\')" class="text-blue-600 hover:text-blue-800 font-medium text-sm mr-2">编辑</button>' +
+              toggleBtnHtml +
+            '</td></tr>';
+        }).join('');
+      }
+      document.getElementById('tm-acc-prev').disabled = tmAccCurPage <= 1;
+      document.getElementById('tm-acc-next').disabled = tmAccCurPage >= totalPages;
+      const pagesEl = document.getElementById('tm-acc-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === tmAccCurPage
+          ? 'min-w-[32px] px-2 py-1 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[32px] px-2 py-1 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => { tmAccCurPage = i; tmAccountsRender(); };
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function tmAccGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(tmAccFiltered.length / tmAccPageSize));
+      if (page < 1 || page > totalPages) return;
+      tmAccCurPage = page;
+      tmAccountsRender();
+    }
+
+    // ============================================================
+    // 账号表单（新增/编辑）
+    // ============================================================
+    function openAddAccount() {
+      document.getElementById('ea-modal-title').textContent = '增加账号';
+      document.getElementById('ea-name').value = '';
+      document.getElementById('ea-phone').value = '';
+      document.getElementById('ea-main-subject').value = '';
+      document.getElementById('ea-other-subject').value = '';
+      document.getElementById('ea-max-points').value = '100';
+      document.getElementById('ea-name').removeAttribute('disabled');
+      document.getElementById('ea-main-subject').removeAttribute('disabled');
+      pmShowModal('modal-add-account');
+      pmInitIcons();
+    }
+
+    function openEditAccount(teacherId) {
+      const teachers = getTeacherPoints();
+      const t = teachers.find(x => x.teacherId === teacherId);
+      if (!t) return;
+      document.getElementById('ea-modal-title').textContent = '编辑账号';
+      document.getElementById('ea-name').value = t.teacherName;
+      document.getElementById('ea-name').removeAttribute('disabled');
+      document.getElementById('ea-phone').value = t.phone || '';
+      const mainSubj = t.subjects ? t.subjects.find(s => s.isMain) : null;
+      const otherSubj = t.subjects ? t.subjects.find(s => !s.isMain) : null;
+      document.getElementById('ea-main-subject').value = mainSubj ? mainSubj.name : '';
+      document.getElementById('ea-main-subject').removeAttribute('disabled');
+      document.getElementById('ea-other-subject').value = otherSubj ? otherSubj.name : '';
+      document.getElementById('ea-max-points').value = t.maxPoints === null ? '0' : t.maxPoints;
+      eaCurrentTeacherId = teacherId;
+      pmShowModal('modal-add-account');
+      pmInitIcons();
+    }
+
+    function confirmAccountChange() {
+      const name = (document.getElementById('ea-name').value || '').trim();
+      const mainSubject = document.getElementById('ea-main-subject').value;
+      if (!name) { pmToast('请输入姓名', 'error'); return; }
+      if (!mainSubject) { pmToast('请选择主要任课科目', 'error'); return; }
+      const phone = (document.getElementById('ea-phone').value || '').trim();
+      const otherSubject = document.getElementById('ea-other-subject').value;
+      const maxPointsRaw = document.getElementById('ea-max-points').value;
+      const maxPoints = maxPointsRaw === '' || maxPointsRaw === '0' ? null : parseInt(maxPointsRaw);
+      const subjects = [{ name: mainSubject, isMain: true }];
+      if (otherSubject && otherSubject !== mainSubject) {
+        subjects.push({ name: otherSubject, isMain: false });
+      }
+      const teachers = getTeacherPoints();
+      const isNew = !eaCurrentTeacherId;
+      if (isNew) {
+        const newId = 't' + String(teachers.length + 1).padStart(3, '0');
+        const newAccount = String(30000000 + teachers.length + 1);
+        const newTeacher = {
+          teacherId: newId, teacherName: name, account: newAccount, consumed: 0,
+          maxPoints: maxPoints, phone: phone, subjects: subjects, classes: [], lastLogin: ''
+        };
+        teachers.push(newTeacher);
+        localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+        pmHideModal('modal-add-account');
+        pmToast('添加成功，账号：' + newAccount);
+      } else {
+        const idx = teachers.findIndex(x => x.teacherId === eaCurrentTeacherId);
+        if (idx !== -1) {
+          teachers[idx].teacherName = name;
+          teachers[idx].phone = phone;
+          teachers[idx].maxPoints = maxPoints;
+          teachers[idx].subjects = subjects;
+          localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+          pmHideModal('modal-add-account');
+          pmToast('保存成功');
+        }
+      }
+      tmAccountsRender();
+    }
+
+    function toggleTeacherDisabled(teacherId) {
+      const teachers = getTeacherPoints();
+      const idx = teachers.findIndex(x => x.teacherId === teacherId);
+      if (idx !== -1) {
+        teachers[idx].disabled = !teachers[idx].disabled;
+        localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+        tmAccAll = teachers;
+        tmAccApplyFilters();
+        pmToast(teachers[idx].disabled ? '已禁用' : '已启用');
+      }
+    }
+    // ============================================================
+    // 设置消耗上限弹窗
+    // ============================================================
+    function openSetLimit(teacherId) {
+      const teachers = getTeacherPoints();
+      const t = teachers.find(x => x.teacherId === teacherId);
+      if (!t) return;
+      tpCurrentTeacherId = teacherId;
+      document.getElementById('slm-teacher-name').textContent = t.teacherName;
+      document.getElementById('slm-consumed').textContent = t.consumed + ' 点';
+      document.getElementById('slm-current-limit').textContent = t.maxPoints === null ? '无限制' : t.maxPoints + ' 点';
+      document.getElementById('slm-new-limit').value = t.maxPoints === null ? '' : t.maxPoints;
+      document.getElementById('slm-reason').value = '';
+      pmShowModal('modal-set-limit');
+      pmInitIcons();
+    }
+
+    function confirmSetLimit() {
+      const reason = (document.getElementById('slm-reason').value || '').trim();
+      if (!reason) { pmToast('请填写操作理由', 'error'); return; }
+      const newLimit = document.getElementById('slm-new-limit').value;
+      const teachers = getTeacherPoints();
+      const idx = teachers.findIndex(x => x.teacherId === tpCurrentTeacherId);
+      if (idx === -1) return;
+      teachers[idx].maxPoints = newLimit === '' ? null : parseInt(newLimit);
+      localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+      pmHideModal('modal-set-limit');
+      pmToast('设置成功');
+      tmAccountsRender();
+    }
+
+    // ============================================================
+    // 老师点数明细弹窗
+    // ============================================================
+    let tdmAllRecords = [];
+    let tdmFiltered = [];
+    let tdmCurPage = 1;
+    const tdmPageSize = 8;
+    let tdmCurrentTeacherId = null;
+
+    function openTeacherDetail(teacherId) {
+      tdmCurrentTeacherId = teacherId;
+      const teachers = getTeacherPoints();
+      const t = teachers.find(x => x.teacherId === teacherId);
+      if (!t) return;
+
+      // 统计
+      document.getElementById('tdm-consumed').textContent = t.consumed + ' 点';
+      document.getElementById('tdm-limit').textContent = t.maxPoints === null ? '无限制' : t.maxPoints + ' 点';
+      const remaining = t.maxPoints === null ? '无限制' : Math.max(0, t.maxPoints - t.consumed);
+      document.getElementById('tdm-remaining').textContent = remaining + ' 点';
+
+      tdmAllRecords = getTeacherPointRecords(teacherId);
+      document.getElementById('tdm-filter-type').value = '';
+      document.getElementById('tdm-filter-from').value = '';
+      document.getElementById('tdm-filter-to').value = '';
+      tdmFiltered = [...tdmAllRecords];
+      tdmCurPage = 1;
+      tdmRender();
+      pmShowModal('modal-teacher-detail');
+      pmInitIcons();
+    }
+
+    function tdmApplyFilters() {
+      const type = document.getElementById('tdm-filter-type').value;
+      const from = document.getElementById('tdm-filter-from').value;
+      const to = document.getElementById('tdm-filter-to').value;
+      tdmFiltered = tdmAllRecords.filter(r => {
+        if (type && r.type !== type) return false;
+        if (from && r.createdAt < from) return false;
+        if (to && r.createdAt > to + ' 23:59:59') return false;
+        return true;
+      });
+      tdmCurPage = 1;
+      tdmRender();
+    }
+
+    function tdmRender() {
+      const start = (tdmCurPage - 1) * tdmPageSize;
+      const pageData = tdmFiltered.slice(start, start + tdmPageSize);
+      const totalPages = Math.max(1, Math.ceil(tdmFiltered.length / tdmPageSize));
+      const tbody = document.getElementById('tdm-table-body');
+      document.getElementById('tdm-count').textContent = tdmFiltered.length;
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.map(r => {
+          const typeInfo = pmRecordTypeLabel(r.type);
+          let sourceDisplay = r.source || '-';
+          if (r.resourceName) {
+            sourceDisplay += '<span class="text-gray-400">(' + r.resourceName + ')</span>';
+          }
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-2.5 text-gray-600 whitespace-nowrap">' + r.createdAt.substring(0, 16) + '</td>' +
+            '<td class="px-4 py-2.5 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
+            '<td class="px-4 py-2.5 text-right font-medium text-orange-600">' + r.points + '</td>' +
+            '<td class="px-4 py-2.5 text-gray-600">' + sourceDisplay + '</td></tr>';
+        }).join('');
+      }
+
+      document.getElementById('tdm-prev').disabled = tdmCurPage <= 1;
+      document.getElementById('tdm-next').disabled = tdmCurPage >= totalPages;
+      const pagesEl = document.getElementById('tdm-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === tdmCurPage
+          ? 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => tdmGoPage(i);
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function tdmGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(tdmFiltered.length / tdmPageSize));
+      if (page < 1 || page > totalPages) return;
+      tdmCurPage = page;
+      tdmRender();
+    }
+
+    // ============================================================
+    // 本校点数统计
+    // ============================================================
+    function loadSchoolPointsStats() {
+      // 模拟统计数据
+      const stats = { purchasePoints: 10000, giftPoints: 2000, consumed: 635, balance: 11365 };
+      document.getElementById('sp-stat-purchase').textContent = stats.purchasePoints.toLocaleString();
+      document.getElementById('sp-stat-gift').textContent = stats.giftPoints.toLocaleString();
+      document.getElementById('sp-stat-consumed').textContent = stats.consumed.toLocaleString();
+      document.getElementById('sp-stat-balance').textContent = stats.balance.toLocaleString();
+
+      // 填充教师筛选下拉
+      const teacherOptions = [
+        { id: 't001', name: '张老师' },
+        { id: 't002', name: '李老师' },
+        { id: 't003', name: '王老师' },
+        { id: 't004', name: '赵老师' },
+        { id: 't005', name: '陈老师' }
+      ];
+      document.getElementById('sp-rec-teacher').innerHTML = '<option value="">全部</option>' +
+        teacherOptions.map(t => '<option value="' + t.id + '">' + t.name + '</option>').join('');
+    }
+
+    // ============================================================
+    // 点数明细子面板
+    // ============================================================
+    let spRecAll = [];
+    let spRecFiltered = [];
+    let spRecCurPage = 1;
+    const spRecPageSize = 10;
+
+    // 教师ID到名称映射
+    const spRecTeacherNames = {
+      't001': '张老师',
+      't002': '李老师',
+      't003': '王老师',
+      't004': '赵老师',
+      't005': '陈老师'
+    };
+
+    // 模拟数据
+    const spRecMockData = [
+      { id: 'spr_001', type: 'purchase', points: 10000, balance: 12000, teacherId: null, contractNo: 'HT-2026-001', source: '合同#HT-2026-001', createdAt: '2026-01-15 09:30:00', remark: null },
+      { id: 'spr_002', type: 'gift', points: 2000, balance: 12000, teacherId: null, contractNo: null, source: '促销活动赠送', createdAt: '2026-01-15 09:31:00', remark: '新用户首月赠送' },
+      { id: 'spr_003', type: 'consume', points: -50, balance: 11950, teacherId: 't001', contractNo: null, source: '生成绘本', resourceName: '丑小鸭的故事', createdAt: '2026-02-03 14:22:00', remark: null },
+      { id: 'spr_004', type: 'consume', points: -30, balance: 11920, teacherId: 't002', contractNo: null, source: '生成课件', resourceName: 'Unit 3 课件', createdAt: '2026-02-10 10:15:00', remark: null },
+      { id: 'spr_005', type: 'consume', points: -80, balance: 11840, teacherId: 't001', contractNo: null, source: '生成数字人', resourceName: '数学老师数字人', createdAt: '2026-02-18 16:45:00', remark: null },
+      { id: 'spr_006', type: 'consume', points: -25, balance: 11815, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '消防安全演练', createdAt: '2026-02-25 11:30:00', remark: null },
+      { id: 'spr_007', type: 'consume', points: -100, balance: 11715, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '小红帽的故事', createdAt: '2026-03-01 09:00:00', remark: null },
+      { id: 'spr_008', type: 'consume', points: -60, balance: 11655, teacherId: 't001', contractNo: null, source: '生成课件', resourceName: '拼音教学课件', createdAt: '2026-03-05 14:20:00', remark: null },
+      { id: 'spr_009', type: 'consume', points: -40, balance: 11615, teacherId: 't004', contractNo: null, source: '生成数字人', resourceName: '英语老师数字人', createdAt: '2026-03-10 10:05:00', remark: null },
+      { id: 'spr_010', type: 'consume', points: -120, balance: 11495, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '春季运动会', createdAt: '2026-03-12 15:40:00', remark: null },
+      { id: 'spr_011', type: 'consume', points: -55, balance: 11440, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '三只小猪', createdAt: '2026-03-15 11:25:00', remark: null },
+      { id: 'spr_012', type: 'consume', points: -35, balance: 11405, teacherId: 't005', contractNo: null, source: '生成课件', resourceName: '古诗讲解课件', createdAt: '2026-03-18 08:50:00', remark: null },
+      { id: 'spr_013', type: 'deduct', points: -40, balance: 11365, teacherId: null, contractNo: null, source: '账户调整', createdAt: '2026-03-20 10:00:00', remark: '账户调整' }
+    ];
+
+    function spRecLoad() {
+      spRecAll = [...spRecMockData];
+      spRecApplyFilters();
+      pmInitIcons();
+    }
+
+    function spRecApplyFilters() {
+      const type = document.getElementById('sp-rec-type').value;
+      const teacher = document.getElementById('sp-rec-teacher').value;
+      const from = document.getElementById('sp-rec-date-from').value;
+      const to = document.getElementById('sp-rec-date-to').value;
+      spRecFiltered = spRecAll.filter(r => {
+        if (type && r.type !== type) return false;
+        if (teacher && r.teacherId !== teacher) return false;
+        if (from && r.createdAt < from) return false;
+        if (to && r.createdAt > to + ' 23:59:59') return false;
+        return true;
+      });
+      spRecCurPage = 1;
+      spRecRender();
+    }
+
+    function spRecClearFilters() {
+      document.getElementById('sp-rec-type').value = '';
+      document.getElementById('sp-rec-teacher').value = '';
+      document.getElementById('sp-rec-date-from').value = '';
+      document.getElementById('sp-rec-date-to').value = '';
+      spRecApplyFilters();
+    }
+
+    function spRecRender() {
+      const start = (spRecCurPage - 1) * spRecPageSize;
+      const pageData = spRecFiltered.slice(start, start + spRecPageSize);
+      const totalPages = Math.max(1, Math.ceil(spRecFiltered.length / spRecPageSize));
+      const tbody = document.getElementById('sp-rec-table-body');
+      document.getElementById('sp-rec-count').textContent = spRecFiltered.length;
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.map(r => {
+          const typeInfo = pmRecordTypeLabel(r.type);
+          let subInfo = '-';
+          if (r.type === 'consume' && r.teacherId) {
+            subInfo = spRecTeacherNames[r.teacherId] || '-';
+          } else if (r.type === 'purchase' && r.contractNo) {
+            subInfo = r.contractNo;
+          }
+          // 消费类型显示来源和资源名称
+          let sourceDisplay = r.source || '-';
+          if (r.type === 'consume' && r.resourceName) {
+            sourceDisplay += '<span class="text-gray-400">(' + r.resourceName + ')</span>';
+          }
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">' + r.createdAt.substring(0, 16) + '</td>' +
+            '<td class="px-4 py-3 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
+            '<td class="px-4 py-3 text-right font-semibold ' + (r.points >= 0 ? 'text-blue-600' : 'text-orange-600') + '">' + (r.points >= 0 ? '+' : '') + r.points + '</td>' +
+            '<td class="px-4 py-3 text-right text-gray-600">' + r.balance + '</td>' +
+            '<td class="px-4 py-3 text-center text-gray-700">' + subInfo + '</td>' +
+            '<td class="px-4 py-3 text-gray-600">' + sourceDisplay + (r.remark ? ' <span class="text-gray-400">(' + r.remark + ')</span>' : '') + '</td></tr>';
+        }).join('');
+      }
+
+      document.getElementById('sp-rec-prev').disabled = spRecCurPage <= 1;
+      document.getElementById('sp-rec-next').disabled = spRecCurPage >= totalPages;
+      const pagesEl = document.getElementById('sp-rec-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === spRecCurPage
+          ? 'min-w-[32px] px-2 py-1 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[32px] px-2 py-1 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => spRecGoPage(i);
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function spRecGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(spRecFiltered.length / spRecPageSize));
+      if (page < 1 || page > totalPages) return;
+      spRecCurPage = page;
+      spRecRender();
+    }
+
+    // ============================================================
+    // 消费记录子面板
+    // ============================================================
+    let spConAll = [];
+    let spConFiltered = [];
+    let spConCurPage = 1;
+    const spConPageSize = 10;
+
+    function spConLoad() {
+      spConAll = getSchoolPointsRecords(CURRENT_SCHOOL_ID).filter(r => r.type === 'consume').sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      spConApplyFilters();
+      pmInitIcons();
+    }
+
+    function spConApplyFilters() {
+      const teacher = document.getElementById('sp-con-teacher').value;
+      const from = document.getElementById('sp-con-date-from').value;
+      const to = document.getElementById('sp-con-date-to').value;
+      spConFiltered = spConAll.filter(r => {
+        if (teacher && r.teacherId !== teacher) return false;
+        if (from && r.createdAt < from) return false;
+        if (to && r.createdAt > to + ' 23:59:59') return false;
+        return true;
+      });
+      spConCurPage = 1;
+      spConRender();
+    }
+
+    function spConRender() {
+      const start = (spConCurPage - 1) * spConPageSize;
+      const pageData = spConFiltered.slice(start, start + spConPageSize);
+      const totalPages = Math.max(1, Math.ceil(spConFiltered.length / spConPageSize));
+      const tbody = document.getElementById('sp-con-table-body');
+      document.getElementById('sp-con-count').textContent = spConFiltered.length;
+      const teachers = getTeacherPoints();
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.map(r => {
+          const t = teachers.find(x => x.teacherId === r.teacherId);
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">' + r.createdAt.substring(0, 16) + '</td>' +
+            '<td class="px-4 py-3 font-medium text-gray-800">' + (t ? t.teacherName : '-') + '</td>' +
+            '<td class="px-4 py-3 text-center text-gray-600">' + (r.source || '-') + '</td>' +
+            '<td class="px-4 py-3 text-right font-semibold text-orange-600">' + r.points + '</td>' +
+            '<td class="px-4 py-3 text-gray-400 text-xs font-mono">' + (r.relatedId || '-') + '</td></tr>';
+        }).join('');
+      }
+
+      document.getElementById('sp-con-prev').disabled = spConCurPage <= 1;
+      document.getElementById('sp-con-next').disabled = spConCurPage >= totalPages;
+      const pagesEl = document.getElementById('sp-con-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === spConCurPage
+          ? 'min-w-[32px] px-2 py-1 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[32px] px-2 py-1 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => spConGoPage(i);
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function spConGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(spConFiltered.length / spConPageSize));
+      if (page < 1 || page > totalPages) return;
+      spConCurPage = page;
+      spConRender();
+    }
+
+    // 拦截子面板切换，加载数据
+    var _origSwitchToSubPanel = switchToSubPanel;
+    window.switchToSubPanel = function(subPanelId) {
+      if (subPanelId === 'sp-records') spRecLoad();
+      if (subPanelId === 'sp-consume') spConLoad();
+      _origSwitchToSubPanel(subPanelId);
+    };
+
+    // ============================================================
+    // 初始化
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function () {
+      pmInitIcons();
+      tmAccountsLoad();
     });
   </script>
 </body>
