@@ -55,6 +55,7 @@
         <a href="ai.html" class="px-4 py-2 text-sm font-medium rounded-lg bg-white/20 transition-all hover:bg-white/30 no-underline text-white">
           AI专区
         </a>
+        <a href="academic.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">教务管理</a>
       </nav>
 
       <!-- 右侧图标 + 用户 -->
@@ -435,7 +436,7 @@
           </div>
         </div>
         <div class="rounded-b-lg overflow-hidden border border-t-0 border-gray-200/80 shadow-sm">
-          <img src="img/助手对话.png" alt="助手对话界面" class="w-full h-auto block" />
+          <img id="assistant-scene-img" src="img/助手对话.png" alt="助手对话界面" class="w-full h-auto block" />
         </div>
       </div>
     </section>
@@ -587,6 +588,19 @@
       document.getElementById('breadcrumb-scene-name').textContent = sceneName;
       var toolbarTitle = document.getElementById('assistant-toolbar-name');
       if (toolbarTitle) toolbarTitle.textContent = sceneName;
+      var sceneImg = document.getElementById('assistant-scene-img');
+      if (sceneImg) {
+        if (sceneName === '校园活动策划') {
+          sceneImg.src = 'img/校园活动策划.png';
+          sceneImg.alt = '校园活动策划';
+        } else if (sceneName === '家长会发言稿') {
+          sceneImg.src = 'img/家长会发言稿.png';
+          sceneImg.alt = '家长会发言稿';
+        } else {
+          sceneImg.src = 'img/助手对话.png';
+          sceneImg.alt = '助手对话界面';
+        }
+      }
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#assistant/' + encodeURIComponent(sceneName));
       }

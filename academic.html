@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能教学 - 教务管理</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <style>
+    .menu-item {
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      color: #2563EB;
+    }
+    .menu-item.active {
+      background-color: #DBEAFE;
+      color: #2563EB;
+      border-left: 3px solid #2563EB;
+    }
+    .menu-item.active .menu-icon {
+      color: #2563EB;
+    }
+    .class-table th {
+      font-weight: 600;
+      color: #374151;
+      background: #f3f4f6;
+    }
+    .class-table td {
+      vertical-align: middle;
+    }
+    .class-table tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .class-table tbody tr:hover {
+      background-color: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+  <!-- 顶部导航栏 -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg flex-shrink-0">
+    <div class="flex items-center justify-between h-16 px-6">
+      <!-- 左侧 Logo -->
+      <div class="flex items-center gap-3 shrink-0">
+        <img src="img/logo.png" alt="兆涵科技" class="h-9 sm:h-10 w-auto max-h-10 object-contain object-left" />
+        <div class="flex flex-col leading-tight">
+          <span class="text-base sm:text-lg font-bold text-white">兆涵科技</span>
+          <span class="text-xs text-white leading-none">Sigma Education</span>
+        </div>
+      </div>
+
+      <!-- 中间导航 -->
+      <nav class="flex items-center gap-1">
+        <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
+        <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
+        <a href="teach.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能授课</a>
+        <a href="evaluate.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能测评</a>
+        <a href="ai.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">AI专区</a>
+        <a href="academic.html" class="px-4 py-2 text-sm font-medium rounded-lg bg-white/20 transition-all hover:bg-white/30 no-underline text-white">
+          教务管理
+        </a>
+      </nav>
+
+      <!-- 右侧图标 + 用户 -->
+      <div class="flex items-center gap-4">
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="list-todo" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+        </div>
+        <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
+        </div>
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
+          <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <div class="text-sm">
+            <div class="font-medium">张老师</div>
+          </div>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区域：左侧菜单 + 右侧内容 -->
+  <div class="flex flex-1 overflow-hidden">
+    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
+      <div class="p-4 border-b border-gray-100">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-600"></i>
+          教务管理
+        </h2>
+      </div>
+      <nav class="py-2">
+        <button type="button" id="nav-class" data-panel="panel-class" class="menu-item active w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer border-0 bg-transparent">
+          <i data-lucide="school" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>班级管理</span>
+        </button>
+        <button type="button" id="nav-teacher" data-panel="panel-teacher" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer border-0 bg-transparent">
+          <i data-lucide="user-cog" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>老师管理</span>
+        </button>
+      </nav>
+    </aside>
+
+    <main class="flex-1 p-6 overflow-y-auto">
+      <div id="panel-class" class="academic-panel">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <!-- 标题 + 增加班级 -->
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
+            <h3 class="font-bold text-gray-800 text-base">班级管理</h3>
+            <button type="button" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shrink-0">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              增加班级
+            </button>
+          </div>
+
+          <!-- 筛选条件 -->
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/90">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">班级状态</label>
+                <select class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option selected>全部</option>
+                  <option>正常</option>
+                  <option>已禁用</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">班级名称</label>
+                <input type="text" placeholder="请输入" class="w-40 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">当前年级</label>
+                <select class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option selected>全部年级</option>
+                  <option>小学一年级</option>
+                  <option>初中一年级</option>
+                  <option>初中三年级</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">科任老师</label>
+                <input type="text" placeholder="请输入" class="w-40 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <button type="button" class="ml-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
+            </div>
+          </div>
+
+          <!-- 数据表格 -->
+          <div class="overflow-x-auto">
+            <table class="class-table w-full text-sm text-gray-800 border-collapse">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="px-4 py-3 text-center w-20 border-b border-gray-200 whitespace-nowrap">序号</th>
+                  <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">班级名称</th>
+                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200">当前年级</th>
+                  <th class="px-4 py-3 text-left min-w-[14rem] border-b border-gray-200">科任老师</th>
+                  <th class="px-4 py-3 text-center w-24 border-b border-gray-200">学生人数</th>
+                  <th class="px-4 py-3 text-center min-w-[8rem] border-b border-gray-200">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">1</td>
+                  <td class="px-4 py-3">示例数据班</td>
+                  <td class="px-4 py-3 text-center">初中一年级</td>
+                  <td class="px-4 py-3 text-left">
+                    <div class="space-y-0.5 leading-relaxed">
+                      <div>语文 | 2月测试老师 <span class="text-gray-500">(班主任)</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center font-medium">6</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">2</td>
+                  <td class="px-4 py-3">一年级(1)班</td>
+                  <td class="px-4 py-3 text-center">小学一年级</td>
+                  <td class="px-4 py-3 text-left">
+                    <div class="space-y-0.5 leading-relaxed">
+                      <div>语文 | 张老师 <span class="text-gray-500">(班主任)</span></div>
+                      <div>数学 | 李老师</div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center font-medium">30</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">3</td>
+                  <td class="px-4 py-3">一年级(2)班</td>
+                  <td class="px-4 py-3 text-center">小学一年级</td>
+                  <td class="px-4 py-3 text-left">
+                    <div class="space-y-0.5 leading-relaxed">
+                      <div>语文 | 王老师 <span class="text-gray-500">(班主任)</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center font-medium">28</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">4</td>
+                  <td class="px-4 py-3">
+                    <span>小班</span>
+                    <span class="ml-2 inline-block px-1.5 py-0.5 text-xs text-red-600 bg-red-50 border border-red-100 rounded">已禁用</span>
+                  </td>
+                  <td class="px-4 py-3 text-center">小学一年级</td>
+                  <td class="px-4 py-3 text-left">
+                    <div class="space-y-0.5 leading-relaxed">
+                      <div>语文 | 王老师 <span class="text-gray-500">(班主任)</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center font-medium">5</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">启用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">5</td>
+                  <td class="px-4 py-3">初三1班</td>
+                  <td class="px-4 py-3 text-center">初中三年级</td>
+                  <td class="px-4 py-3 text-left">
+                    <div class="space-y-1 leading-relaxed text-gray-800">
+                      <div>张老师 <span class="text-gray-500">(班主任)</span> · 语文</div>
+                      <div>赵老师 · 英语</div>
+                      <div>孙老师 · 数学</div>
+                      <div>钱老师 · 物理</div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center font-medium">10</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">6</td>
+                  <td class="px-4 py-3">二年级(3)班</td>
+                  <td class="px-4 py-3 text-center">小学二年级</td>
+                  <td class="px-4 py-3 text-left">
+                    <div class="space-y-0.5 leading-relaxed">
+                      <div>语文 | 刘老师 <span class="text-gray-500">(班主任)</span></div>
+                      <div>英语 | 陈老师</div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-center font-medium">32</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-3 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 分页 -->
+          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-end gap-3">
+            <div class="flex items-center gap-1">
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="上一页">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border-2 border-blue-600 text-blue-600 font-medium bg-white text-sm">1</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">2</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">3</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">4</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="下一页">
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <select class="px-2 py-1.5 border border-gray-200 rounded text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+              <option>10条/页</option>
+              <option>20条/页</option>
+              <option>50条/页</option>
+            </select>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <span>跳至</span>
+              <input type="text" value="1" class="w-10 px-2 py-1 border border-gray-200 rounded text-center text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              <span>页</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="panel-teacher" class="academic-panel hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <!-- 标题 + 导出 / 增加账号 -->
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
+            <h3 class="font-bold text-gray-800 text-base">老师管理</h3>
+            <div class="flex items-center gap-3 shrink-0">
+              <button type="button" class="px-4 py-2 border border-blue-600 text-blue-600 text-sm font-medium rounded-lg bg-white hover:bg-blue-50 transition-colors">
+                导出账号
+              </button>
+              <button type="button" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                增加账号
+              </button>
+            </div>
+          </div>
+
+          <!-- 筛选条件 -->
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/90">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">账号状态</label>
+                <select class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option selected>全部</option>
+                  <option>正常</option>
+                  <option>已禁用</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">登录账号</label>
+                <input type="text" placeholder="请输入" class="w-36 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">老师姓名</label>
+                <input type="text" placeholder="请输入" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">任教科目</label>
+                <select class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option selected>全部科目</option>
+                  <option>语文</option>
+                  <option>数学</option>
+                  <option>英语</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">带教班级</label>
+                <select class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option selected>全部班级</option>
+                  <option>一年级(1)班</option>
+                  <option>星光六班</option>
+                </select>
+              </div>
+              <button type="button" class="ml-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
+            </div>
+          </div>
+
+          <!-- 数据表格 -->
+          <div class="overflow-x-auto">
+            <table class="class-table w-full text-sm text-gray-800 border-collapse">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="px-4 py-3 text-center w-20 border-b border-gray-200 whitespace-nowrap">序号</th>
+                  <th class="px-4 py-3 text-center min-w-[6.5rem] border-b border-gray-200 whitespace-nowrap">登录账号</th>
+                  <th class="px-4 py-3 text-left min-w-[5rem] border-b border-gray-200">老师姓名</th>
+                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">手机号</th>
+                  <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">任教科目</th>
+                  <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200">带教班级</th>
+                  <th class="px-4 py-3 text-center min-w-[11rem] border-b border-gray-200 whitespace-nowrap">最后登录时间</th>
+                  <th class="px-4 py-3 text-center min-w-[12rem] border-b border-gray-200 whitespace-nowrap">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">1</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000022</td>
+                  <td class="px-4 py-3">2月老师4</td>
+                  <td class="px-4 py-3 text-center">13800138000</td>
+                  <td class="px-4 py-3">语文<span class="text-gray-500">(主)</span>；英语</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">星光六班(六年级)</span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年2月10日 11:01:02</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">2</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000023</td>
+                  <td class="px-4 py-3">星诺兰</td>
+                  <td class="px-4 py-3 text-center text-gray-400">未设置</td>
+                  <td class="px-4 py-3">数学<span class="text-gray-500">(主)</span>；科学</td>
+                  <td class="px-4 py-3 text-gray-400">未分配</td>
+                  <td class="px-4 py-3 text-center text-gray-400">未登录</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">3</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000024</td>
+                  <td class="px-4 py-3">李老师</td>
+                  <td class="px-4 py-3 text-center">15912345678</td>
+                  <td class="px-4 py-3">语文</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">一年级(1)班 <span class="text-gray-500">(班主任)</span></span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月1日 09:30:15</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">4</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000025</td>
+                  <td class="px-4 py-3">王老师</td>
+                  <td class="px-4 py-3 text-center">18600001111</td>
+                  <td class="px-4 py-3">英语<span class="text-gray-500">(主)</span></td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200 mr-1">三年级(2)班</span>
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">四年级(1)班</span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年2月28日 16:45:00</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">5</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000026</td>
+                  <td class="px-4 py-3">赵老师</td>
+                  <td class="px-4 py-3 text-center text-gray-400">未设置</td>
+                  <td class="px-4 py-3">体育；音乐</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">初二(3)班</span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-400">未登录</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">6</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000027</td>
+                  <td class="px-4 py-3">陈老师</td>
+                  <td class="px-4 py-3 text-center">13788889999</td>
+                  <td class="px-4 py-3">美术<span class="text-gray-500">(主)</span></td>
+                  <td class="px-4 py-3 text-gray-400">未分配</td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月5日 08:12:33</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">7</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000028</td>
+                  <td class="px-4 py-3">刘老师</td>
+                  <td class="px-4 py-3 text-center">18966778899</td>
+                  <td class="px-4 py-3">信息技术</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">五年级全年级</span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年2月20日 14:22:08</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">8</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000029</td>
+                  <td class="px-4 py-3">周老师</td>
+                  <td class="px-4 py-3 text-center">13611112222</td>
+                  <td class="px-4 py-3">道德与法治<span class="text-gray-500">(主)</span></td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">六年级(2)班 <span class="text-gray-500">(班主任)</span></span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月8日 19:00:01</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">9</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000030</td>
+                  <td class="px-4 py-3">孙老师</td>
+                  <td class="px-4 py-3 text-center">13344445555</td>
+                  <td class="px-4 py-3">化学；生物</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">初三(1)班</span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-600 text-xs sm:text-sm whitespace-nowrap">2026年3月10日 07:55:44</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                  <td class="px-4 py-3 text-center text-gray-600">10</td>
+                  <td class="px-4 py-3 text-center font-mono text-gray-800">30000031</td>
+                  <td class="px-4 py-3">钱老师</td>
+                  <td class="px-4 py-3 text-center text-gray-400">未设置</td>
+                  <td class="px-4 py-3">历史<span class="text-gray-500">(主)</span>；地理</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">初一(4)班</span>
+                  </td>
+                  <td class="px-4 py-3 text-center text-gray-400">未登录</td>
+                  <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">重置密码</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 mr-2 bg-transparent border-0 p-0 cursor-pointer text-sm">编辑</button>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer text-sm">禁用</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 分页 -->
+          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-end gap-3">
+            <div class="flex items-center gap-1">
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="上一页">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border-2 border-blue-600 text-blue-600 font-medium bg-white text-sm">1</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">2</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-700 hover:border-blue-400 bg-white text-sm">3</button>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white" aria-label="下一页">
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <select class="px-2 py-1.5 border border-gray-200 rounded text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+              <option>10条/页</option>
+              <option>20条/页</option>
+              <option>50条/页</option>
+            </select>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <span>跳至</span>
+              <input type="text" value="1" class="w-10 px-2 py-1 border border-gray-200 rounded text-center text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              <span>页</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    function switchPanel(panelId) {
+      document.querySelectorAll('.academic-panel').forEach(function (el) {
+        el.classList.add('hidden');
+      });
+      var target = document.getElementById(panelId);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('[data-panel]').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-panel') === panelId);
+      });
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    document.getElementById('nav-class').addEventListener('click', function () {
+      switchPanel('panel-class');
+    });
+    document.getElementById('nav-teacher').addEventListener('click', function () {
+      switchPanel('panel-teacher');
+    });
+  </script>
+</body>
+</html>
