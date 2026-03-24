@@ -100,7 +100,7 @@
   <!-- 主内容区域：左侧菜单 + 右侧内容，flex-1 填满剩余高度 -->
   <div class="flex flex-1 overflow-hidden">
     <!-- 左侧二级功能菜单，固定宽度、可滚动 -->
-    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
+    <aside id="left-sidebar" class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
       <!-- 菜单标题 -->
       <div class="p-4 border-b border-gray-100">
         <h2 class="font-bold text-gray-800 flex items-center gap-2">
@@ -150,7 +150,7 @@
     </aside>
 
     <!-- 右侧内容区域，独立滚动 -->
-    <main class="flex-1 p-6 overflow-y-auto">
+    <main class="flex-1 px-6 pb-6 pt-4 overflow-y-auto">
       <!-- 作业&批改 内容面板 -->
       <div id="panel-homework" class="space-y-6">
         <!-- 顶部：页面标题 + 筛选条件 + 操作按钮 -->
@@ -200,27 +200,33 @@
       </div>
 
       <!-- 检查作业 二级页面 -->
-      <div id="panel-check" class="hidden space-y-6">
-        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+      <div id="panel-check" class="hidden">
+        <div class="px-0 pt-2 pb-3">
           <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showHomework(); return false;">作业&批改</a>
             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
             <span class="text-gray-700 font-medium">检查作业</span>
           </nav>
         </div>
-        <img src="img/检查作业.png" alt="检查作业" class="w-full h-auto block rounded-lg" />
+        <div class="h-px w-full bg-gray-200" aria-hidden="true"></div>
+        <div class="pt-4">
+          <img src="img/检查作业.png" alt="检查作业" class="w-full h-auto block rounded-lg" />
+        </div>
       </div>
 
       <!-- 布置作业面板 -->
-      <div id="panel-assign" class="hidden space-y-6">
-        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+      <div id="panel-assign" class="hidden">
+        <div class="px-0 pt-2 pb-3">
           <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showHomework(); return false;">作业&批改</a>
             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
             <span class="text-gray-700 font-medium">布置作业</span>
           </nav>
         </div>
-        <img src="img/布置作业.png" alt="布置作业" class="w-full h-auto block rounded-lg" />
+        <div class="h-px w-full bg-gray-200" aria-hidden="true"></div>
+        <div class="pt-4">
+          <img src="img/布置作业.png" alt="布置作业" class="w-full h-auto block rounded-lg" />
+        </div>
       </div>
 
       <!-- 智能组卷 内容面板 -->
@@ -292,8 +298,8 @@
       </div>
 
       <!-- 精细化组卷 内容面板 -->
-      <div id="panel-refined-paper" class="hidden space-y-6">
-        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+      <div id="panel-refined-paper" class="hidden">
+        <div class="px-0 pt-2 pb-3">
           <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLib(); return false;">试卷库</a>
             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
@@ -302,15 +308,18 @@
             <span class="text-gray-700 font-medium">精细化组卷</span>
           </nav>
         </div>
+        <div class="h-px w-full bg-gray-200" aria-hidden="true"></div>
         <!-- 内容：截图 -->
-        <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="refined-paper-img-wrap" onclick="toggleRefinedPaperImg()" title="点击切换">
-          <img id="img-refined-paper" class="w-full h-auto block" src="img/精细化组卷1.png" alt="精细化组卷" />
+        <div class="pt-4">
+          <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="refined-paper-img-wrap" onclick="toggleRefinedPaperImg()" title="点击切换">
+            <img id="img-refined-paper" class="w-full h-auto block" src="img/精细化组卷1.png" alt="精细化组卷" />
+          </div>
         </div>
       </div>
 
       <!-- 快速组卷 内容面板 -->
-      <div id="panel-quick-paper" class="hidden space-y-6">
-        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+      <div id="panel-quick-paper" class="hidden">
+        <div class="px-0 pt-2 pb-3">
           <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLib(); return false;">试卷库</a>
             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
@@ -319,15 +328,18 @@
             <span class="text-gray-700 font-medium">快速组卷</span>
           </nav>
         </div>
+        <div class="h-px w-full bg-gray-200" aria-hidden="true"></div>
         <!-- 内容：截图 -->
-        <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="quick-paper-img-wrap" onclick="toggleQuickPaperImg()" title="点击切换">
-          <img id="img-quick-paper" class="w-full h-auto block" src="img/快速组卷1.png" alt="快速组卷" />
+        <div class="pt-4">
+          <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="quick-paper-img-wrap" onclick="toggleQuickPaperImg()" title="点击切换">
+            <img id="img-quick-paper" class="w-full h-auto block" src="img/快速组卷1.png" alt="快速组卷" />
+          </div>
         </div>
       </div>
 
       <!-- 智能AI组卷 内容面板 -->
-      <div id="panel-ai-paper" class="hidden space-y-6">
-        <div class="-mt-6 border-b border-slate-200/80 px-6 py-1.5 flex-shrink-0">
+      <div id="panel-ai-paper" class="hidden">
+        <div class="px-0 pt-2 pb-3">
           <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="#" class="hover:text-blue-600 no-underline transition-colors" onclick="showPaperLibFromAi(); return false;">试卷库</a>
             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
@@ -336,9 +348,12 @@
             <span class="text-gray-700 font-medium">智能AI组卷</span>
           </nav>
         </div>
+        <div class="h-px w-full bg-gray-200" aria-hidden="true"></div>
         <!-- 内容：截图 -->
-        <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="ai-paper-img-wrap" onclick="toggleAiPaperImg()" title="点击切换">
-          <img id="img-ai-paper" class="w-full h-auto block" src="img/AI组卷1.png" alt="智能AI组卷" />
+        <div class="pt-4">
+          <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="ai-paper-img-wrap" onclick="toggleAiPaperImg()" title="点击切换">
+            <img id="img-ai-paper" class="w-full h-auto block" src="img/AI组卷1.png" alt="智能AI组卷" />
+          </div>
         </div>
       </div>
 
@@ -468,6 +483,17 @@
   </div>
 
   <script>
+    // 进入全屏内容模式（隐藏左侧菜单）
+    function enterFullscreenMode() {
+      const el = document.getElementById('left-sidebar');
+      if (el) el.classList.add('hidden');
+    }
+    // 退出全屏内容模式（显示左侧菜单）
+    function exitFullscreenMode() {
+      const el = document.getElementById('left-sidebar');
+      if (el) el.classList.remove('hidden');
+    }
+
     // 初始化 Lucide 图标（需在动态内容后再次执行以渲染新图标）
     function initIcons() {
       if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -478,6 +504,7 @@
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('click', function(e) {
         e.preventDefault();
+        exitFullscreenMode();
         document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
         this.classList.add('active');
 
@@ -624,6 +651,7 @@
       document.getElementById('panel-quick-paper').classList.add('hidden');
       document.getElementById('panel-ai-paper').classList.add('hidden');
       document.getElementById('panel-paper').classList.remove('hidden');
+      exitFullscreenMode();
       document.getElementById('img-refined-paper').src = 'img/精细化组卷1.png';
       document.getElementById('img-refined-paper').dataset.step = '1';
       document.getElementById('img-quick-paper').src = 'img/快速组卷1.png';
@@ -637,6 +665,7 @@
     function showPaperLibFromAi() {
       document.getElementById('panel-ai-paper').classList.add('hidden');
       document.getElementById('panel-paper').classList.remove('hidden');
+      exitFullscreenMode();
       document.getElementById('img-ai-paper').src = 'img/AI组卷1.png';
       document.getElementById('img-ai-paper').dataset.step = '1';
       switchPaperSubTab('ai');
@@ -681,6 +710,7 @@
 
     // 从面包屑返回主菜单
     function showEvaluateHome() {
+      exitFullscreenMode();
       document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
       document.querySelector('.menu-item[href="#homework"]').classList.add('active');
       document.getElementById('panel-homework').classList.remove('hidden');
@@ -692,6 +722,7 @@
 
     // 点击"布置作业"按钮，显示布置作业面板
     document.getElementById('btn-assign').addEventListener('click', function() {
+      enterFullscreenMode();
       const panelHomework = document.getElementById('panel-homework');
       const panelOther = document.getElementById('panel-other');
       const panelAssign = document.getElementById('panel-assign');
@@ -703,6 +734,7 @@
 
     // 点击「精细化组卷」进入子页面
     document.getElementById('btn-refined-paper').addEventListener('click', function() {
+      enterFullscreenMode();
       document.getElementById('panel-paper').classList.add('hidden');
       document.getElementById('panel-quick-paper').classList.add('hidden');
       document.getElementById('panel-ai-paper').classList.add('hidden');
@@ -714,6 +746,7 @@
 
     // 点击「快速组卷」进入子页面
     document.getElementById('btn-quick-paper').addEventListener('click', function() {
+      enterFullscreenMode();
       document.getElementById('panel-paper').classList.add('hidden');
       document.getElementById('panel-refined-paper').classList.add('hidden');
       document.getElementById('panel-ai-paper').classList.add('hidden');
@@ -725,6 +758,7 @@
 
     // 点击「智能AI组卷」进入子页面
     document.getElementById('btn-ai-paper').addEventListener('click', function() {
+      enterFullscreenMode();
       document.getElementById('panel-paper').classList.add('hidden');
       document.getElementById('panel-refined-paper').classList.add('hidden');
       document.getElementById('panel-quick-paper').classList.add('hidden');
@@ -736,6 +770,7 @@
 
     // 从面包屑返回作业列表
     function showHomework() {
+      exitFullscreenMode();
       const panelHomework = document.getElementById('panel-homework');
       const panelOther = document.getElementById('panel-other');
       const panelAssign = document.getElementById('panel-assign');
@@ -749,6 +784,7 @@
 
     // 点击作业列表进入检查作业页
     function showCheckHomework() {
+      enterFullscreenMode();
       const panelHomework = document.getElementById('panel-homework');
       const panelAssign = document.getElementById('panel-assign');
       const panelPaper = document.getElementById('panel-paper');

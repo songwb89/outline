@@ -123,10 +123,10 @@
   </header>
 
   <!-- 内容区域 -->
-  <main class="flex flex-col h-[calc(100vh-64px)] p-6">
+  <main class="flex flex-col h-[calc(100vh-64px)] px-6 pb-6 pt-3">
     <div class="flex flex-1 min-h-0 gap-6">
       <!-- 左侧目录 -->
-      <div class="w-72 shrink-0 flex flex-col min-h-0">
+      <div class="w-72 shrink-0 flex flex-col min-h-0" id="left-sidebar">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
           <!-- 教材选择器 -->
           <div class="p-4 border-b border-gray-100">
@@ -1417,9 +1417,43 @@
     let currentChapterTitle = '';
     let currentSectionName = '';
 
+    // 进入全屏内容模式（隐藏左侧目录）
+    function enterFullscreenMode() {
+      const leftSidebar = document.getElementById('left-sidebar');
+      if (leftSidebar) leftSidebar.classList.add('hidden');
+    }
+
+    // 退出全屏内容模式（显示左侧目录）
+    function exitFullscreenMode() {
+      const leftSidebar = document.getElementById('left-sidebar');
+      if (leftSidebar) leftSidebar.classList.remove('hidden');
+    }
+
+    // 面包屑任务页：顶栏仅面包屑（无大盒子包裹），分隔线，下方主内容
+    function setRightContentBreadcrumbLayout(breadcrumbItemsHtml, mainBodyHtml) {
+      const rightContent = document.getElementById('right-content');
+      if (!rightContent) return;
+      rightContent.innerHTML = `
+        <div class="flex flex-col flex-1 min-h-0 h-full overflow-hidden -mx-6">
+          <div class="shrink-0 px-6 pt-2 pb-3">
+            <nav class="flex items-center gap-2 text-sm text-gray-600 flex-wrap [&_a]:text-gray-700 [&_a]:no-underline">
+              ${breadcrumbItemsHtml}
+            </nav>
+          </div>
+          <div class="h-px w-full bg-gray-200 shrink-0" aria-hidden="true"></div>
+          <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-gray-50">
+            <div class="p-4 sm:p-6">
+              ${mainBodyHtml}
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
     // 打开生成教案（改为在右侧内容区显示）
     function openGeneratePlanModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       // 获取当前选中的节次信息（如果还没有保存）
       if (!currentSectionName) {
@@ -1435,27 +1469,17 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <!-- 面包屑导航 -->
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">AI生成教案</span>
-            </nav>
-          </div>
-          <!-- AI生成内容区 -->
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/生成教案.png" alt="AI生成教案" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">AI生成教案</span>`,
+        `<img src="img/生成教案.png" alt="AI生成教案" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 返回到卡片视图
     function returnToCardView() {
+      exitFullscreenMode();
       if (currentChapterTitle && currentSectionName) {
         // 重新调用 updateRightContent 来恢复卡片视图
         updateRightContent(currentChapterTitle, currentSectionName);
@@ -1475,7 +1499,7 @@
 
     // 打开生成学案（改为在右侧内容区显示）
     function openGenerateStudyPlanModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
@@ -1489,21 +1513,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">AI生成学案</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/生成学案.png" alt="AI生成学案" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">AI生成学案</span>`,
+        `<img src="img/生成学案.png" alt="AI生成学案" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 关闭生成学案弹窗
@@ -1514,7 +1529,7 @@
 
     // 打开生成课件（改为在右侧内容区显示）
     function openGenerateCoursewareModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
@@ -1528,21 +1543,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">AI生成课件</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/生成课件.png" alt="AI生成课件" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">AI生成课件</span>`,
+        `<img src="img/生成课件.png" alt="AI生成课件" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 关闭生成课件弹窗
@@ -1553,7 +1559,7 @@
 
     // 打开模板活动（改为在右侧内容区显示）
     function openTemplateActivityModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
@@ -1567,21 +1573,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">创建模板活动</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/创建模板活动.png" alt="模板活动" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">创建模板活动</span>`,
+        `<img src="img/创建模板活动.png" alt="模板活动" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 关闭模板活动弹窗
@@ -1592,7 +1589,7 @@
 
     // 打开AI活动（改为在右侧内容区显示）
     function openAIActivityModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
@@ -1606,21 +1603,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">创建AI活动</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/创建AI活动.png" alt="AI活动" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">创建AI活动</span>`,
+        `<img src="img/创建AI活动.png" alt="AI活动" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 关闭AI活动弹窗
@@ -1631,7 +1619,7 @@
 
     // 打开AI生成语料（改为在右侧内容区显示）
     function openAICorpusModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
@@ -1645,21 +1633,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">AI生成教案</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/AI智能生成语料.png" alt="AI生成教案" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">AI生成教案</span>`,
+        `<img src="img/AI智能生成语料.png" alt="AI生成教案" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 关闭AI生成语料（保留用于兼容）
@@ -1670,7 +1649,7 @@
 
     // 打开随堂测（改为在右侧内容区显示）
     function openQuizModal() {
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
@@ -1684,23 +1663,14 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">创建随堂测</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="quiz-img-wrap" onclick="toggleQuizImg()" title="点击切换">
+              <span class="text-gray-700 font-medium">创建随堂测</span>`,
+        `<div role="button" tabindex="0" class="cursor-pointer rounded-lg overflow-hidden" id="quiz-img-wrap" onclick="toggleQuizImg()" title="点击切换">
               <img id="img-quiz" src="img/AI组卷1.png" alt="创建随堂测" class="w-full h-auto block">
-            </div>
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+            </div>`
+      );
     }
 
     // 切换随堂测图片
@@ -1825,7 +1795,7 @@
       // 关闭菜单
       document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
       
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       // 获取当前选中的节次信息（如果还没有保存）
       if (!currentSectionName) {
@@ -1841,23 +1811,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <!-- 面包屑导航 -->
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">编辑智能体：${agentName}</span>
-            </nav>
-          </div>
-          <!-- 编辑智能体内容区 -->
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/内容预览/重新设定智能体.png" alt="编辑智能体" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">编辑智能体：${agentName}</span>`,
+        `<img src="img/内容预览/重新设定智能体.png" alt="编辑智能体" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 打开编辑课件界面（在右侧内容区显示）
@@ -1865,7 +1824,7 @@
       // 关闭菜单
       document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
       
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       // 获取当前选中的节次信息（如果还没有保存）
       if (!currentSectionName) {
@@ -1881,23 +1840,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <!-- 面包屑导航 -->
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">编辑课件：${coursewareName}</span>
-            </nav>
-          </div>
-          <!-- 编辑课件内容区 -->
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/内容预览/编辑课件.png" alt="编辑课件" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">编辑课件：${coursewareName}</span>`,
+        `<img src="img/内容预览/编辑课件.png" alt="编辑课件" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 打开编辑教案界面（在右侧内容区显示）
@@ -1905,7 +1853,7 @@
       // 关闭菜单
       document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
       
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       // 获取当前选中的节次信息（如果还没有保存）
       if (!currentSectionName) {
@@ -1921,23 +1869,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <!-- 面包屑导航 -->
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">编辑教案：${lessonPlanName}</span>
-            </nav>
-          </div>
-          <!-- 编辑教案内容区 -->
-          <div class="flex-1 overflow-auto bg-gray-50 p-6">
-            <img src="img/内容预览/编辑教案.png" alt="编辑教案" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">编辑教案：${lessonPlanName}</span>`,
+        `<img src="img/内容预览/编辑教案.png" alt="编辑教案" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 打开编辑学案界面（在右侧内容区显示）
@@ -1945,7 +1882,7 @@
       // 关闭菜单
       document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
       
-      const rightContent = document.getElementById('right-content');
+      enterFullscreenMode();
       
       // 获取当前选中的节次信息（如果还没有保存）
       if (!currentSectionName) {
@@ -1961,23 +1898,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <!-- 面包屑导航 -->
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">编辑学案：${studyPlanName}</span>
-            </nav>
-          </div>
-          <!-- 编辑学案内容区 -->
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/内容预览/编辑学案.png" alt="编辑学案" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">编辑学案：${studyPlanName}</span>`,
+        `<img src="img/内容预览/编辑学案.png" alt="编辑学案" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     // 打开编辑活动界面（600x600弹窗 - 普通活动）
@@ -2086,8 +2012,7 @@
 
     // 打开创建智能体（改为在右侧内容区显示）
     function openAgentModal() {
-      const rightContent = document.getElementById('right-content');
-      
+      enterFullscreenMode();
       if (!currentSectionName) {
         const selectedSection = document.querySelector('.section-item.bg-blue-100');
         if (selectedSection) {
@@ -2100,21 +2025,12 @@
         }
       }
 
-      rightContent.innerHTML = `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-200/80 flex-shrink-0">
-            <nav class="flex items-center gap-2 text-sm text-gray-500">
-              <a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
+      setRightContentBreadcrumbLayout(
+        `<a href="#" onclick="returnToCardView(); return false;" class="hover:text-blue-600 no-underline transition-colors">${currentSectionName}</a>
               <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              <span class="text-gray-700 font-medium">创建智能体</span>
-            </nav>
-          </div>
-          <div class="flex-1 overflow-auto bg-gray-50 p-4">
-            <img src="img/创建智能体.png" alt="创建智能体" class="w-full h-auto block rounded-lg">
-          </div>
-        </div>
-      `;
-      lucide.createIcons();
+              <span class="text-gray-700 font-medium">创建智能体</span>`,
+        `<img src="img/创建智能体.png" alt="创建智能体" class="w-full h-auto block rounded-lg">`
+      );
     }
 
     const OFFICIAL_AGENTS = [
