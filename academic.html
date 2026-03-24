@@ -64,7 +64,7 @@
         </div>
       </div>
       <nav class="flex items-center gap-1">
-        <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
+        <a href="home.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
         <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
         <a href="teach.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能授课</a>
         <a href="evaluate.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能测评</a>
@@ -238,15 +238,6 @@
                   </select>
                 </div>
                 <div class="flex items-center gap-2">
-                  <label class="text-sm text-gray-600 shrink-0">点数状态：</label>
-                  <select id="tm-filter-point-status" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                    <option value="">全部</option>
-                    <option value="normal">正常</option>
-                    <option value="warning">无限制</option>
-                    <option value="over">已达上限</option>
-                  </select>
-                </div>
-                <div class="flex items-center gap-2">
                   <label class="text-sm text-gray-600 shrink-0">账号状态：</label>
                   <select id="tm-filter-account-status" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     <option value="">全部</option>
@@ -259,7 +250,7 @@
             </div>
             <div class="overflow-x-auto">
               <table class="class-table w-full text-sm text-gray-800 border-collapse">
-                <thead><tr class="border-b border-gray-200"><th class="px-4 py-3 text-center w-16 border-b border-gray-200 whitespace-nowrap">序号</th><th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">登录账号</th><th class="px-4 py-3 text-left min-w-[5rem] border-b border-gray-200">姓名</th><th class="px-4 py-3 text-center min-w-[8rem] border-b border-gray-200 whitespace-nowrap">手机号</th><th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">任教科目</th><th class="px-4 py-3 text-left min-w-[9rem] border-b border-gray-200">带教班级</th><th class="px-4 py-3 text-right min-w-[5rem] border-b border-gray-200 whitespace-nowrap">已消耗</th><th class="px-4 py-3 text-right min-w-[6rem] border-b border-gray-200 whitespace-nowrap">消耗上限</th><th class="px-4 py-3 text-right min-w-[5rem] border-b border-gray-200 whitespace-nowrap">剩余</th><th class="px-4 py-3 text-center min-w-[6rem] border-b border-gray-200 whitespace-nowrap">点数状态</th><th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">账号状态</th><th class="px-4 py-3 text-center min-w-[11rem] border-b border-gray-200 whitespace-nowrap">操作</th></tr></thead>
+                <thead><tr class="border-b border-gray-200"><th class="px-4 py-3 text-center w-16 border-b border-gray-200 whitespace-nowrap">序号</th><th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">登录账号</th><th class="px-4 py-3 text-left min-w-[5rem] border-b border-gray-200">姓名</th><th class="px-4 py-3 text-center min-w-[8rem] border-b border-gray-200 whitespace-nowrap">手机号</th><th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">任教科目</th><th class="px-4 py-3 text-left min-w-[9rem] border-b border-gray-200">带教班级</th><th class="px-4 py-3 text-right min-w-[5rem] border-b border-gray-200 whitespace-nowrap">已消耗</th><th class="px-4 py-3 text-right min-w-[6rem] border-b border-gray-200 whitespace-nowrap">可用额度</th><th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">账号状态</th><th class="px-4 py-3 text-center min-w-[11rem] border-b border-gray-200 whitespace-nowrap">操作</th></tr></thead>
                 <tbody id="tm-accounts-body"></tbody>
               </table>
             </div>
@@ -539,10 +530,10 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">点数上限（AI生成资源）</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">可用额度</label>
           <div class="flex items-center gap-2">
             <input type="number" id="ea-max-points" value="100" min="0" class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
-            <span class="text-sm text-gray-500">点（0表示无限制）</span>
+            <span class="text-sm text-gray-500">点</span>
           </div>
         </div>
       </div>
@@ -605,17 +596,13 @@
       </div>
       <!-- 统计 -->
       <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 gap-4">
           <div class="text-center">
             <div class="text-xs text-gray-500 mb-1">已消耗</div>
             <div class="text-lg font-bold text-orange-600" id="tdm-consumed">--</div>
           </div>
           <div class="text-center">
-            <div class="text-xs text-gray-500 mb-1">消耗上限</div>
-            <div class="text-lg font-bold text-gray-600" id="tdm-limit">--</div>
-          </div>
-          <div class="text-center">
-            <div class="text-xs text-gray-500 mb-1">剩余可用</div>
+            <div class="text-xs text-gray-500 mb-1">可用额度</div>
             <div class="text-lg font-bold text-emerald-600" id="tdm-remaining">--</div>
           </div>
         </div>
@@ -735,18 +722,11 @@
       const nameKw = (document.getElementById('tm-filter-name').value || '').trim().toLowerCase();
       const subjVal = document.getElementById('tm-filter-subject').value;
       const classVal = document.getElementById('tm-filter-class').value;
-      const pointStatus = document.getElementById('tm-filter-point-status').value;
       const accStatus = document.getElementById('tm-filter-account-status').value;
       tmAccFiltered = tmAccAll.filter(t => {
         if (nameKw && !t.teacherName.toLowerCase().includes(nameKw)) return false;
         if (subjVal && (!t.subjects || !t.subjects.some(s => s.name === subjVal))) return false;
         if (classVal && (!t.classes || !t.classes.some(c => c.name === classVal))) return false;
-        if (pointStatus) {
-          const st = pmConsumeStatus(t);
-          if (pointStatus === 'normal' && st.label !== '正常') return false;
-          if (pointStatus === 'warning' && st.label !== '无限制') return false;
-          if (pointStatus === 'over' && st.label !== '已达上限') return false;
-        }
         if (accStatus) {
           if (accStatus === 'disabled' && !t.disabled) return false;
           if (accStatus === 'normal' && t.disabled) return false;
@@ -761,7 +741,6 @@
       document.getElementById('tm-filter-name').value = '';
       document.getElementById('tm-filter-subject').value = '';
       document.getElementById('tm-filter-class').value = '';
-      document.getElementById('tm-filter-point-status').value = '';
       document.getElementById('tm-filter-account-status').value = '';
       tmAccApplyFilters();
     }
@@ -797,13 +776,12 @@
       const tbody = document.getElementById('tm-accounts-body');
       document.getElementById('tm-accounts-count').textContent = tmAccFiltered.length;
       if (pageData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
       } else {
         tbody.innerHTML = pageData.length === 0
-          ? '<tr><td colspan="12" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>'
+          ? '<tr><td colspan="10" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>'
           : pageData.map((t, i) => {
-          const status = pmConsumeStatus(t);
-          const remaining = t.maxPoints === null ? '无限制' : Math.max(0, t.maxPoints - t.consumed);
+          const available = Math.max(0, t.maxPoints - t.consumed);
           const no = start + i + 1;
           const phoneHtml = t.phone ? '<span class="font-mono text-xs">' + t.phone + '</span>' : '<span class="text-gray-400">未设置</span>';
           const subjectsHtml = t.subjects && t.subjects.length > 0
@@ -827,9 +805,7 @@
             '<td class="px-4 py-3">' + subjectsHtml + '</td>' +
             '<td class="px-4 py-3">' + classesHtml + '</td>' +
             '<td class="px-4 py-3 text-right font-medium text-orange-600">' + t.consumed + '</td>' +
-            '<td class="px-4 py-3 text-right text-gray-600">' + (t.maxPoints === null ? '无限制' : t.maxPoints) + '</td>' +
-            '<td class="px-4 py-3 text-right font-medium ' + (t.maxPoints === null ? 'text-gray-600' : 'text-emerald-600') + '">' + remaining + '</td>' +
-            '<td class="px-4 py-3 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + status.cls + '">' + status.label + '</span></td>' +
+            '<td class="px-4 py-3 text-right font-medium text-emerald-600">' + available + '</td>' +
             '<td class="px-4 py-3 text-center">' + accStatusHtml + '</td>' +
             '<td class="px-4 py-3 text-center">' +
               '<button type="button" onclick="openTeacherDetail(\'' + t.teacherId + '\')" class="text-blue-600 hover:text-blue-800 font-medium text-sm mr-2">明细</button>' +
@@ -891,7 +867,7 @@
       document.getElementById('ea-main-subject').value = mainSubj ? mainSubj.name : '';
       document.getElementById('ea-main-subject').removeAttribute('disabled');
       document.getElementById('ea-other-subject').value = otherSubj ? otherSubj.name : '';
-      document.getElementById('ea-max-points').value = t.maxPoints === null ? '0' : t.maxPoints;
+      document.getElementById('ea-max-points').value = t.maxPoints;
       eaCurrentTeacherId = teacherId;
       pmShowModal('modal-add-account');
       pmInitIcons();
@@ -905,7 +881,7 @@
       const phone = (document.getElementById('ea-phone').value || '').trim();
       const otherSubject = document.getElementById('ea-other-subject').value;
       const maxPointsRaw = document.getElementById('ea-max-points').value;
-      const maxPoints = maxPointsRaw === '' || maxPointsRaw === '0' ? null : parseInt(maxPointsRaw);
+      const maxPoints = maxPointsRaw === '' ? 0 : parseInt(maxPointsRaw);
       const subjects = [{ name: mainSubject, isMain: true }];
       if (otherSubject && otherSubject !== mainSubject) {
         subjects.push({ name: otherSubject, isMain: false });
@@ -997,9 +973,8 @@
 
       // 统计
       document.getElementById('tdm-consumed').textContent = t.consumed + ' 点';
-      document.getElementById('tdm-limit').textContent = t.maxPoints === null ? '无限制' : t.maxPoints + ' 点';
-      const remaining = t.maxPoints === null ? '无限制' : Math.max(0, t.maxPoints - t.consumed);
-      document.getElementById('tdm-remaining').textContent = remaining + ' 点';
+      const available = Math.max(0, t.maxPoints - t.consumed);
+      document.getElementById('tdm-remaining').textContent = available + ' 点';
 
       tdmAllRecords = getTeacherPointRecords(teacherId);
       document.getElementById('tdm-filter-type').value = '';

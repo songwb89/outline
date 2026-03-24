@@ -941,8 +941,7 @@
 
         function openAddPointsModal() {
             if (!sdmCurrentSchoolId) return;
-            const schools = getSchools();
-            const school = schools.find(s => s.schoolId === sdmCurrentSchoolId);
+            const school = spAllData.find(s => s.schoolId === sdmCurrentSchoolId);
             if (!school) return;
             apmCurrentSchoolId = sdmCurrentSchoolId;
             document.getElementById('apm-school-name').textContent = school.schoolName;
@@ -954,7 +953,6 @@
             document.getElementById('apm-remark').value = '';
             document.querySelector('input[name="apm-op-type"][value="purchase"]').checked = true;
             apmToggleFields();
-            pmHideModal('modal-school-detail');
             pmShowModal('modal-add-points');
             pmInitIcons();
         }
@@ -985,12 +983,11 @@
                 return;
             }
 
-            // 更新数据
-            const schools = getSchools();
-            const idx = schools.findIndex(s => s.schoolId === apmCurrentSchoolId);
+            // 更新 spAllData 中的数据
+            const idx = spAllData.findIndex(s => s.schoolId === apmCurrentSchoolId);
             if (idx === -1) return;
 
-            const school = schools[idx];
+            const school = spAllData[idx];
             let newRecord = {
                 id: 'spr' + Date.now(),
                 schoolId: apmCurrentSchoolId,
@@ -1007,28 +1004,35 @@
             };
 
             if (opType === 'deduct') {
-                schools[idx].consumed += points;
-                schools[idx].balance -= points;
+                spAllData[idx].consumed += points;
+                spAllData[idx].balance -= points;
             } else if (opType === 'purchase') {
-                schools[idx].purchasePoints += points;
-                schools[idx].balance += points;
+                spAllData[idx].purchasePoints += points;
+                spAllData[idx].balance += points;
             } else {
-                schools[idx].giftPoints += points;
-                schools[idx].balance += points;
+                spAllData[idx].giftPoints += points;
+                spAllData[idx].balance += points;
             }
 
+            // 同步到 localStorage
+            const schools = JSON.parse(localStorage.getItem('schools')) || [...seedSchools];
+            const si = schools.findIndex(s => s.schoolId === apmCurrentSchoolId);
+            if (si !== -1) {
+                schools[si] = { ...schools[si], ...spAllData[idx] };
+            } else {
+                schools.push({ ...spAllData[idx] });
+            }
             localStorage.setItem('schools', JSON.stringify(schools));
 
             // 保存流水
-            const records = getSchoolPointsRecords(apmCurrentSchoolId);
-            records.unshift(newRecord);
-            localStorage.setItem('schoolPointsRecords_' + apmCurrentSchoolId, JSON.stringify(records));
+            sdmAllRecords.unshift(newRecord);
+            localStorage.setItem('schoolPointsRecords_' + apmCurrentSchoolId, JSON.stringify(sdmAllRecords));
 
             pmHideModal('modal-add-points');
             pmToast('操作成功');
 
-            // 重新初始化列表
-            spInit();
+            // 重新渲染点数管理列表
+            spApplyFilters();
         }
 
         // ============================================================

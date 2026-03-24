@@ -30,7 +30,7 @@
 
       <!-- 中间导航 -->
       <nav class="flex items-center gap-1">
-        <a href="index.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
+        <a href="home.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">首页</a>
         <a href="prepare.html" class="px-4 py-2 text-sm text-white/80 rounded-lg transition-all hover:bg-white/20 hover:text-white no-underline">智能备课</a>
         <a href="teach.html" class="px-4 py-2 text-sm font-medium rounded-lg bg-white/20 transition-all hover:bg-white/30 no-underline text-white">
           智能授课
@@ -343,7 +343,7 @@
                       </div>
                     </div>
                   </div>
-                  <button onclick="window.open('present.html', '_blank')" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
+                  <button onclick="openClassSelectModal()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i>
                     上课
                   </button>
@@ -362,7 +362,7 @@
                       </div>
                     </div>
                   </div>
-                  <button onclick="window.open('present.html', '_blank')" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
+                  <button onclick="openClassSelectModal()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i>
                     上课
                   </button>
@@ -373,88 +373,88 @@
             <!-- 分隔线 -->
             <div class="border-t border-gray-200 my-6"></div>
 
-            <!-- 辅助教学工具 -->
+            <!-- 课堂互动 -->
             <div>
               <h3 class="text-sm font-medium text-gray-500 mb-3">课堂互动</h3>
-              <div class="space-y-2">
+              <div class="grid grid-cols-3 gap-3">
                 <!-- 随堂测 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-purple-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">《春》随堂测验</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">随堂测验</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs font-medium rounded-full">随堂测</span>
                       </div>
                     </div>
                   </div>
-                  <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                  <button onclick="openQuizPreview()" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors shrink-0 ml-2">
                     查看
                   </button>
                 </div>
 
                 <!-- 智能听写 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-pink-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="pen-tool" class="w-5 h-5 text-pink-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">词语听写练习</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">词语听写</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-pink-50 text-pink-600 text-xs font-medium rounded-full">听写</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <button onclick="openDictationGradingPreview()" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <button onclick="openDictationGradingPreview()" class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       批改
                     </button>
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                    <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>
                   </div>
                 </div>
 
-                <!-- 活动 -->
+                <!-- 小组协作 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-orange-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">小组协作</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">小组协作</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-xs font-medium rounded-full">活动</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-400">已使用 <span class="font-semibold text-gray-600">5</span> 次</span>
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <span class="text-xs text-gray-400">已用<span class="font-semibold text-gray-600">5</span>次</span>
+                    <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>
                   </div>
                 </div>
 
-                <!-- 抽奖 -->
+                <!-- 随机抽奖 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-yellow-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="gift" class="w-5 h-5 text-yellow-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">随机抽奖</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">随机抽奖</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-yellow-50 text-yellow-600 text-xs font-medium rounded-full">抽奖</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-400">已使用 <span class="font-semibold text-gray-600">12</span> 次</span>
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <span class="text-xs text-gray-400">已用<span class="font-semibold text-gray-600">12</span>次</span>
+                    <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>
                   </div>
@@ -462,47 +462,47 @@
 
                 <!-- 单词评测 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-indigo-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="spell-check" class="w-5 h-5 text-indigo-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">英语单词测试</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">单词测试</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full">单词评测</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <div role="button" tabindex="0" onclick="event.stopPropagation(); openTeachEvalRecordList('word');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTeachEvalRecordList('word');}" class="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
-                      <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-gray-500"></i>
-                      <span class="text-xs text-gray-500">已测评 <span class="font-semibold text-gray-600">8</span> 次</span>
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <div role="button" tabindex="0" onclick="event.stopPropagation(); openTeachEvalRecordList('word');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTeachEvalRecordList('word');}" class="flex items-center gap-1 px-1.5 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
+                      <i data-lucide="bar-chart-2" class="w-3 h-3 text-gray-500"></i>
+                      <span class="text-xs text-gray-500">已测评<span class="font-semibold text-gray-600">8</span>次</span>
                     </div>
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                    <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>
                   </div>
                 </div>
 
-                <!-- 对话评测 -->
+                <!-- 情景对话 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-teal-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="message-circle" class="w-5 h-5 text-teal-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">情景对话评测</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">情景对话</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-teal-50 text-teal-600 text-xs font-medium rounded-full">对话评测</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <div role="button" tabindex="0" onclick="event.stopPropagation(); openTeachEvalRecordList('dialogue');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTeachEvalRecordList('dialogue');}" class="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
-                      <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-gray-500"></i>
-                      <span class="text-xs text-gray-500">已测评 <span class="font-semibold text-gray-600">3</span> 次</span>
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <div role="button" tabindex="0" onclick="event.stopPropagation(); openTeachEvalRecordList('dialogue');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTeachEvalRecordList('dialogue');}" class="flex items-center gap-1 px-1.5 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
+                      <i data-lucide="bar-chart-2" class="w-3 h-3 text-gray-500"></i>
+                      <span class="text-xs text-gray-500">已测评<span class="font-semibold text-gray-600">3</span>次</span>
                     </div>
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                    <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>
                   </div>
@@ -510,47 +510,48 @@
 
                 <!-- 场景对话 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-rose-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="theater" class="w-5 h-5 text-rose-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">购物场景对话</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">购物场景</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-rose-50 text-rose-600 text-xs font-medium rounded-full">场景对话</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <div role="button" tabindex="0" onclick="event.stopPropagation(); openTeachEvalRecordList('scene');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTeachEvalRecordList('scene');}" class="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
-                      <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-gray-500"></i>
-                      <span class="text-xs text-gray-500">已测评 <span class="font-semibold text-gray-600">5</span> 次</span>
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <div role="button" tabindex="0" onclick="event.stopPropagation(); openTeachEvalRecordList('scene');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTeachEvalRecordList('scene');}" class="flex items-center gap-1 px-1.5 py-1 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 transition-colors">
+                      <i data-lucide="bar-chart-2" class="w-3 h-3 text-gray-500"></i>
+                      <span class="text-xs text-gray-500">已测评<span class="font-semibold text-gray-600">5</span>次</span>
                     </div>
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                    <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                       进入
                     </button>
                   </div>
                 </div>
 
-                <!-- 智能体 -->
+                <!-- AI 智能体 -->
                 <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-violet-300 transition-all">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center shrink-0">
                       <i data-lucide="bot" class="w-5 h-5 text-violet-600"></i>
                     </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-700">苏轼</span>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">苏轼 AI</span>
                       <div class="flex items-center gap-2 mt-0.5">
                         <span class="px-2 py-0.5 bg-violet-50 text-violet-600 text-xs font-medium rounded-full">智能体</span>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <button class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
-                      进入
-                    </button>
-                  </div>
+                  <button class="px-2 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors shrink-0 ml-2">
+                    进入
+                  </button>
                 </div>
+
+                <!-- 占位卡片（保持3的倍数布局） -->
+                <div class="hidden"></div>
               </div>
             </div>
 
@@ -986,6 +987,66 @@
     </div>
   </div>
 
+  <!-- 班级选择弹窗 -->
+  <div id="class-select-modal" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden border border-gray-100 animate-fadeIn">
+      <!-- 标题栏 -->
+      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
+          </div>
+          <h3 class="text-base font-semibold text-gray-800">选择班级</h3>
+        </div>
+        <button type="button" onclick="closeClassSelectModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 班级列表 -->
+      <div id="class-list-container" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+      <!-- 底部按钮 -->
+      <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-end gap-3 shrink-0 bg-gray-50">
+        <button type="button" onclick="skipClassSelect()" 
+                class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors">
+          跳过，稍后选择
+        </button>
+        <button type="button" id="enter-class-btn" onclick="enterClass()" disabled
+                class="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow">
+          进入上课
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 动画样式 -->
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+    .class-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: white;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .class-item:hover {
+      border-color: #93c5fd;
+      background: #eff6ff;
+    }
+    .class-item.selected {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+  </style>
+
   <!-- ESC关闭弹窗 -->
   <script>
     document.addEventListener('keydown', function(e) {
@@ -1009,6 +1070,11 @@
         closeSceneDialoguePreview();
         closeAgentPreview();
         closeDictationGradingPreview();
+        var classModal = document.getElementById('class-select-modal');
+        if (classModal && !classModal.classList.contains('hidden')) {
+          closeClassSelectModal();
+          return;
+        }
       }
     });
 
@@ -1046,6 +1112,80 @@
     document.getElementById('teach-eval-record-fullscreen-modal')?.addEventListener('click', function(e) {
       if (e.target === this) closeTeachEvalRecordFullscreen();
     });
+    document.getElementById('class-select-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeClassSelectModal();
+    });
+
+    // ====== 班级选择弹窗功能 ======
+    let selectedClassId = null;
+    let classList = [
+      { id: 1, name: '一年级(1)班', studentCount: 42 },
+      { id: 2, name: '一年级(2)班', studentCount: 40 },
+      { id: 3, name: '二年级(1)班', studentCount: 45 },
+      { id: 4, name: '二年级(2)班', studentCount: 43 },
+    ];
+
+    function openClassSelectModal(classes) {
+      if (classes) classList = classes;
+      selectedClassId = null;
+      document.getElementById('enter-class-btn').disabled = true;
+      renderClassList();
+      const modal = document.getElementById('class-select-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function renderClassList() {
+      const container = document.getElementById('class-list-container');
+      container.innerHTML = classList.map(cls => `
+        <div class="class-item ${selectedClassId === cls.id ? 'selected' : ''}" data-id="${cls.id}" onclick="selectClass(${cls.id})">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+              <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-600"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-gray-700">${cls.name}</div>
+              <div class="text-xs text-gray-400">${cls.studentCount} 名学生</div>
+            </div>
+          </div>
+          <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+            selectedClassId === cls.id ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
+          }">
+            ${selectedClassId === cls.id ? '<i data-lucide="check" class="w-3 h-3 text-white"></i>' : ''}
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function selectClass(id) {
+      selectedClassId = id;
+      document.getElementById('enter-class-btn').disabled = false;
+      renderClassList();
+    }
+
+    function filterClassList() {
+      renderClassList();
+    }
+
+    function skipClassSelect() {
+      selectedClassId = null;
+      closeClassSelectModal();
+      window.open('present.html', '_blank');
+    }
+
+    function enterClass() {
+      closeClassSelectModal();
+      const url = selectedClassId ? `present.html?classId=${selectedClassId}` : 'present.html';
+      window.open(url, '_blank');
+    }
+
+    function closeClassSelectModal() {
+      const modal = document.getElementById('class-select-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
   </script>
 </body>
 </html>
