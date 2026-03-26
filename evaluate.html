@@ -510,51 +510,75 @@
 
         const href = this.getAttribute('href');
         const menuTitle = this.querySelector('span')?.textContent || '';
-        const panelHomework = document.getElementById('panel-homework');
-        const panelOther = document.getElementById('panel-other');
-        const panelAssign = document.getElementById('panel-assign');
-        const panelPaper = document.getElementById('panel-paper');
-        const panelCheck = document.getElementById('panel-check');
-        const panelAnalysis = document.getElementById('panel-analysis');
-        const panelStudent = document.getElementById('panel-student');
-        const panelComprehensive = document.getElementById('panel-comprehensive');
-        const panelClassroomReview = document.getElementById('panel-classroom-review');
-        const panelRefinedPaper = document.getElementById('panel-refined-paper');
-        const panelQuickPaper = document.getElementById('panel-quick-paper');
-        const panelAiPaper = document.getElementById('panel-ai-paper');
-
-        // 隐藏所有面板
-        panelHomework.classList.add('hidden');
-        panelOther.classList.add('hidden');
-        panelAssign.classList.add('hidden');
-        panelPaper.classList.add('hidden');
-        if (panelRefinedPaper) panelRefinedPaper.classList.add('hidden');
-        if (panelQuickPaper) panelQuickPaper.classList.add('hidden');
-        if (panelAiPaper) panelAiPaper.classList.add('hidden');
-        if (panelCheck) panelCheck.classList.add('hidden');
-        if (panelAnalysis) panelAnalysis.classList.add('hidden');
-        if (panelStudent) panelStudent.classList.add('hidden');
-        if (panelComprehensive) panelComprehensive.classList.add('hidden');
-        if (panelClassroomReview) panelClassroomReview.classList.add('hidden');
-
-        if (href === '#homework' || menuTitle === '作业&批改') {
-          panelHomework.classList.remove('hidden');
-        } else if (href === '#paper' || menuTitle === '智能组卷') {
-          panelPaper.classList.remove('hidden');
-        } else if (href === '#analysis' || menuTitle === '数据分析') {
-          if (panelAnalysis) panelAnalysis.classList.remove('hidden');
-        } else if (href === '#student' || menuTitle === '学生管理') {
-          if (panelStudent) panelStudent.classList.remove('hidden');
-        } else if (href === '#comprehensive' || menuTitle === '综合评价') {
-          if (panelComprehensive) panelComprehensive.classList.remove('hidden');
-        } else if (href === '#classroom-review' || menuTitle === '课堂点评') {
-          if (panelClassroomReview) panelClassroomReview.classList.remove('hidden');
-        } else {
-          panelOther.classList.remove('hidden');
-        }
+        switchPanel(href, menuTitle);
         initIcons();
       });
     });
+
+    // 切换面板函数（供 hash 检测和菜单点击共用）
+    function switchPanel(href, menuTitle) {
+      const panelHomework = document.getElementById('panel-homework');
+      const panelOther = document.getElementById('panel-other');
+      const panelAssign = document.getElementById('panel-assign');
+      const panelPaper = document.getElementById('panel-paper');
+      const panelCheck = document.getElementById('panel-check');
+      const panelAnalysis = document.getElementById('panel-analysis');
+      const panelStudent = document.getElementById('panel-student');
+      const panelComprehensive = document.getElementById('panel-comprehensive');
+      const panelClassroomReview = document.getElementById('panel-classroom-review');
+      const panelRefinedPaper = document.getElementById('panel-refined-paper');
+      const panelQuickPaper = document.getElementById('panel-quick-paper');
+      const panelAiPaper = document.getElementById('panel-ai-paper');
+
+      // 隐藏所有面板
+      panelHomework.classList.add('hidden');
+      panelOther.classList.add('hidden');
+      panelAssign.classList.add('hidden');
+      panelPaper.classList.add('hidden');
+      if (panelRefinedPaper) panelRefinedPaper.classList.add('hidden');
+      if (panelQuickPaper) panelQuickPaper.classList.add('hidden');
+      if (panelAiPaper) panelAiPaper.classList.add('hidden');
+      if (panelCheck) panelCheck.classList.add('hidden');
+      if (panelAnalysis) panelAnalysis.classList.add('hidden');
+      if (panelStudent) panelStudent.classList.add('hidden');
+      if (panelComprehensive) panelComprehensive.classList.add('hidden');
+      if (panelClassroomReview) panelClassroomReview.classList.add('hidden');
+
+      if (href === '#homework' || menuTitle === '作业&批改') {
+        panelHomework.classList.remove('hidden');
+      } else if (href === '#paper' || menuTitle === '智能组卷') {
+        panelPaper.classList.remove('hidden');
+      } else if (href === '#analysis' || menuTitle === '数据分析') {
+        if (panelAnalysis) panelAnalysis.classList.remove('hidden');
+      } else if (href === '#student' || menuTitle === '学生管理') {
+        if (panelStudent) panelStudent.classList.remove('hidden');
+      } else if (href === '#comprehensive' || menuTitle === '综合评价') {
+        if (panelComprehensive) panelComprehensive.classList.remove('hidden');
+      } else if (href === '#classroom-review' || menuTitle === '课堂点评') {
+        if (panelClassroomReview) panelClassroomReview.classList.remove('hidden');
+      } else {
+        panelOther.classList.remove('hidden');
+      }
+    }
+
+    // 页面加载完成后检查 URL hash 并切换到对应菜单
+    function checkUrlHash() {
+      const hash = window.location.hash;
+      if (hash === '#student') {
+        exitFullscreenMode();
+        document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+        const studentMenuItem = document.querySelector('.menu-item[href="#student"]');
+        if (studentMenuItem) {
+          studentMenuItem.classList.add('active');
+        }
+        switchPanel('#student', '学生管理');
+        initIcons();
+      }
+    }
+
+    // 监听 hash 变化
+    window.addEventListener('hashchange', checkUrlHash);
+    checkUrlHash();
 
     // 智能组卷 - 一级标签切换
     function switchPaperTab(tab) {

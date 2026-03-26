@@ -89,7 +89,7 @@
               </div>
             </div>
           </h3>
-          <span class="text-sm text-gray-400">查看更多</span>
+          <a href="evaluate.html#student" class="text-sm text-gray-400 hover:text-blue-600 transition-colors cursor-pointer">查看更多</a>
         </div>
         <div class="p-4">
           <div class="space-y-2">
@@ -175,7 +175,7 @@
               </div>
             </div>
           </h3>
-          <span class="text-sm text-gray-400">查看更多</span>
+          <a href="evaluate.html" class="text-sm text-gray-400 hover:text-blue-600 transition-colors no-underline">查看更多</a>
         </div>
         <div class="p-4">
           <div class="space-y-2">
@@ -360,7 +360,7 @@
             <div>
               <div class="flex items-center gap-2 mb-3">
                 <i data-lucide="thumbs-down" class="w-4 h-4 text-red-500"></i>
-                <span class="text-sm font-medium text-gray-600">批评TOP5</span>
+                <span class="text-sm font-medium text-gray-600">待改进TOP5</span>
               </div>
               <div class="space-y-2">
                 <div class="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
@@ -597,5 +597,10 @@
       trendChart.resize();
     });
   </script>
+
+  <!-- DEBUG: 切换页面 -->
+  <div class="fixed bottom-4 right-4 z-50">
+    <a href="home-nodata.html" class="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-200 transition-colors">[ 切换：无数据 ]</a>
+  </div>
 </body>
 </html>
