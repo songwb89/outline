@@ -291,8 +291,8 @@
               <i data-lucide="users" class="h-5 w-5 shrink-0 text-white/95"></i>
               <span class="text-[11px] font-medium leading-tight text-neutral-400">点名</span>
             </button>
-            <button type="button" onclick="toggleFullScreen()" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="全屏">
-              <i data-lucide="maximize" class="h-5 w-5 shrink-0 text-white/95"></i>
+            <button type="button" onclick="toggleFullScreen()" id="fullscreen-btn" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="全屏">
+              <i data-lucide="maximize" id="fullscreen-icon" class="h-5 w-5 shrink-0 text-white/95"></i>
               <span class="text-[11px] font-medium leading-tight text-neutral-400">全屏</span>
             </button>
       </div>
@@ -334,6 +334,24 @@
     let isDirectoryOpen = false;
 
     // --- 全屏功能 ---
+    function updateFullscreenIcon() {
+      const icon = document.getElementById('fullscreen-icon');
+      const btn = document.getElementById('fullscreen-btn');
+      if (icon && btn) {
+        const span = btn.querySelector('span');
+        if (document.fullscreenElement) {
+          icon.setAttribute('data-lucide', 'minimize');
+          btn.title = '退出全屏';
+          if (span) span.textContent = '退出全屏';
+        } else {
+          icon.setAttribute('data-lucide', 'maximize');
+          btn.title = '全屏';
+          if (span) span.textContent = '全屏';
+        }
+        lucide.createIcons();
+      }
+    }
+
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
@@ -341,6 +359,9 @@
         if (document.exitFullscreen) document.exitFullscreen();
       }
     }
+
+    // 监听全屏状态变化
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
 
     // --- 初始化 ---
     document.addEventListener('DOMContentLoaded', () => {
