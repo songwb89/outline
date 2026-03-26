@@ -13,15 +13,15 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* 课件全屏显示 */
+    /* 课件全屏显示（高度扣除底部工具栏，始终完整显示在工具栏上方） */
     .slide-container {
       width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 60px);
       background-color: #000;
       position: relative;
       overflow: hidden;
     }
-    
+
     .slide-img {
       width: 100%;
       height: 100%;
@@ -31,6 +31,10 @@
     /* 淡入淡出动画 */
     .fade-enter { opacity: 0; }
     .fade-enter-active { opacity: 1; transition: opacity 0.3s ease; }
+
+    /* 底部工具栏：图标 + 文字，整块可点 */
+    .toolbar-tile svg,
+    .toolbar-tile [data-lucide] { pointer-events: none; }
   </style>
 </head>
 <body class="bg-black text-white overflow-hidden" onload="showToast()">
@@ -48,42 +52,250 @@
   <!-- 1. 课件主显示区 -->
   <div id="slide-container" class="slide-container">
     <img id="current-slide" onclick="nextSlide()" class="slide-img cursor-pointer" src="img/0.png" alt="Slide">
+  </div>
 
-    <!-- 右下角：操作按钮组 -->
-    <div class="absolute bottom-[10px] right-6 z-30">
-        <!-- 右侧工具栏：纵向排列 -->
-        <div class="flex flex-col gap-2">
-            <!-- 活动中心 -->
-            <button onclick="toggleActivityPanel()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="活动中心">
-              <i data-lucide="puzzle" class="w-5 h-5 text-white"></i>
+  <!-- 底部：翻页（工具栏上方，固定定位） -->
+  <div class="fixed bottom-[62px] right-60 z-40 -ml-[100px] flex items-center gap-1 px-4 h-10 rounded-full bg-neutral-500/40 backdrop-blur-sm border border-neutral-400/20 shadow-lg min-w-[6rem] justify-center">
+    <button onclick="prevSlide()" class="p-1 text-neutral-200 hover:text-white hover:bg-white/15 rounded-full transition-colors" title="上一页">
+      <i data-lucide="chevron-left" class="w-5 h-5 pointer-events-none"></i>
+    </button>
+    <span class="text-neutral-200 text-sm font-medium whitespace-nowrap min-w-[2.5rem] text-center"><span id="current-page-num">1</span>/<span id="total-page-num">4</span></span>
+    <button onclick="nextSlide()" class="p-1 text-neutral-200 hover:text-white hover:bg-white/15 rounded-full transition-colors" title="下一页">
+      <i data-lucide="chevron-right" class="w-5 h-5 pointer-events-none"></i>
+    </button>
+  </div>
+
+  <!-- 底部工具栏：上图标下文字，固定在页面最底部 -->
+  <div class="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-zinc-950 shadow-[0_-8px_32px_rgba(0,0,0,0.45)]">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-stretch justify-center gap-x-0 gap-y-1 px-2 py-1 sm:flex-nowrap">
+      <!-- 课堂互动 -->
+        <div class="flex items-stretch rounded-lg border border-white/[0.07] bg-black/25 px-0.5">
+          <!-- 听写 -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('dictation')" id="btn-dictation" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="听写">
+                <i data-lucide="pen-tool" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">听写</span>
+              </button>
+            <!-- 听写面板 -->
+            <div id="panel-dictation" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(380px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="pen-tool" class="w-4 h-4 text-emerald-400"></i>
+                  <span class="text-sm font-medium text-white">听写</span>
+                </div>
+                <button onclick="togglePanel('dictation')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                <div onclick="openDictationPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="pen-tool" class="w-5 h-5 text-emerald-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">第一单元词语听写</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-emerald-500/20 text-emerald-300 rounded">听写</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 随堂测 -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('quiz')" id="btn-quiz" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="随堂测">
+                <i data-lucide="clipboard-check" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">随堂测</span>
+              </button>
+            <!-- 随堂测面板 -->
+            <div id="panel-quiz" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(380px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="clipboard-check" class="w-4 h-4 text-purple-400"></i>
+                  <span class="text-sm font-medium text-white">随堂测</span>
+                </div>
+                <button onclick="togglePanel('quiz')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                <div onclick="openQuizPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">《春》随堂测验</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-purple-500/20 text-purple-300 rounded">随堂测</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 活动 -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('activity')" id="btn-activity" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="活动">
+                <i data-lucide="puzzle" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">活动</span>
+              </button>
+            <!-- 活动面板 -->
+            <div id="panel-activity" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(380px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="puzzle" class="w-4 h-4 text-orange-400"></i>
+                  <span class="text-sm font-medium text-white">活动</span>
+                </div>
+                <button onclick="togglePanel('activity')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                <div onclick="openActivityPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">选词填空游戏</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-orange-500/20 text-orange-300 rounded">活动</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 抽奖 -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('lottery')" id="btn-lottery" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="抽奖">
+                <i data-lucide="gift" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">抽奖</span>
+              </button>
+            <!-- 抽奖面板 -->
+            <div id="panel-lottery" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(380px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="gift" class="w-4 h-4 text-amber-400"></i>
+                  <span class="text-sm font-medium text-white">抽奖</span>
+                </div>
+                <button onclick="togglePanel('lottery')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                <div onclick="openLotteryPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="gift" class="w-5 h-5 text-amber-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">课堂随机抽奖</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-300 rounded">抽奖</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 口语（聚合入口） -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('speaking')" id="btn-speaking" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="口语">
+                <i data-lucide="mic" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">口语</span>
+              </button>
+            <!-- 口语面板（聚合） -->
+            <div id="panel-speaking" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(420px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="mic" class="w-4 h-4 text-cyan-400"></i>
+                  <span class="text-sm font-medium text-white">口语</span>
+                </div>
+                <button onclick="togglePanel('speaking')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 380px;">
+                <!-- 单词评测 -->
+                <div onclick="openWordEvaluationPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="spell-check" class="w-5 h-5 text-indigo-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">Unit 1 单词评测</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-indigo-500/20 text-indigo-300 rounded">单词评测</span>
+                  </div>
+                </div>
+                <!-- 对话评测 -->
+                <div onclick="openDialoguePreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-teal-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">Unit 2 对话评测</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-teal-500/20 text-teal-300 rounded">对话评测</span>
+                  </div>
+                </div>
+                <!-- 场景对话 -->
+                <div onclick="openSceneDialoguePreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="theater" class="w-5 h-5 text-rose-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">餐厅场景对话</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-rose-500/20 text-rose-300 rounded">场景对话</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 智能体 -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('agent')" id="btn-agent" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="智能体">
+                <i data-lucide="bot" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">智能体</span>
+              </button>
+            <!-- 智能体面板 -->
+            <div id="panel-agent" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(380px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="bot" class="w-4 h-4 text-violet-400"></i>
+                  <span class="text-sm font-medium text-white">智能体</span>
+                </div>
+                <button onclick="togglePanel('agent')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                <div onclick="openAgentPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="bot" class="w-5 h-5 text-purple-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">苏轼</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-violet-500/20 text-violet-300 rounded">智能体</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+      </div>
+
+      <div class="hidden h-9 w-px shrink-0 bg-white/10 self-center sm:block mx-0.5" aria-hidden="true"></div>
+
+      <!-- 课堂与演示 -->
+        <div class="flex items-stretch rounded-lg border border-white/[0.07] bg-black/25 px-0.5">
+            <button type="button" onclick="openReviewPreview()" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="点评">
+              <i data-lucide="trophy" class="h-5 w-5 shrink-0 text-white/95"></i>
+              <span class="text-[11px] font-medium leading-tight text-neutral-400">点评</span>
             </button>
-
-            <!-- 课堂点评 -->
-            <button onclick="openReviewPreview()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点评">
-            <i data-lucide="trophy" class="w-5 h-5 text-white"></i>
+            <button type="button" onclick="openRollcallPreview()" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="点名">
+              <i data-lucide="users" class="h-5 w-5 shrink-0 text-white/95"></i>
+              <span class="text-[11px] font-medium leading-tight text-neutral-400">点名</span>
             </button>
-
-            <!-- 课堂点名 -->
-            <button onclick="openRollcallPreview()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点名">
-            <i data-lucide="users" class="w-5 h-5 text-white"></i>
+            <button type="button" onclick="toggleFullScreen()" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="全屏">
+              <i data-lucide="maximize" class="h-5 w-5 shrink-0 text-white/95"></i>
+              <span class="text-[11px] font-medium leading-tight text-neutral-400">全屏</span>
             </button>
-
-            <!-- 全屏 -->
-            <button onclick="toggleFullScreen()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="全屏">
-            <i data-lucide="maximize" class="w-5 h-5 text-white"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- 底部居中：翻页控制条 -->
-    <div class="absolute bottom-[10px] left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 px-4 py-2 rounded-full bg-slate-600/40 backdrop-blur-sm border border-slate-400/25 shadow-lg min-w-[6rem] justify-center">
-      <button onclick="prevSlide()" class="p-1 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-colors" title="上一页">
-        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-      </button>
-      <span class="text-white text-sm font-medium whitespace-nowrap min-w-[2.5rem] text-center"><span id="current-page-num">1</span>/<span id="total-page-num">4</span></span>
-      <button onclick="nextSlide()" class="p-1 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-colors" title="下一页">
-        <i data-lucide="chevron-right" class="w-5 h-5"></i>
-      </button>
+      </div>
     </div>
   </div>
 
@@ -105,28 +317,6 @@
     </div>
   </div>
 
-  <!-- 活动面板（从右侧滑出） -->
-  <div id="activity-panel" class="fixed inset-y-0 right-0 w-[26rem] bg-neutral-900/95 backdrop-blur-2xl border-l border-neutral-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
-    <div class="px-5 py-4 border-b border-neutral-800 flex items-center justify-between gap-3">
-      <div>
-        <p class="text-lg font-semibold text-white">课堂互动</p>
-        <p class="text-sm text-neutral-400">选择活动开始互动</p>
-      </div>
-      <button onclick="toggleActivityPanel()" class="text-neutral-400 hover:text-white">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-    </div>
-    <div id="activity-panel-filters" class="px-5 py-3 border-b border-neutral-800">
-      <div class="flex items-center gap-2 bg-neutral-900/40 border border-neutral-800 rounded-full px-3 py-1.5">
-        <i data-lucide="search" class="w-4 h-4 text-neutral-400"></i>
-        <input id="activity-search" type="text" placeholder="搜索活动" class="flex-1 bg-transparent text-sm text-white focus:outline-none" />
-      </div>
-    </div>
-    <div id="activity-content" class="flex-1 overflow-y-auto p-5 space-y-3 no-scrollbar">
-      <!-- 活动卡片 -->
-    </div>
-  </div>
-
   <script>
     // --- 数据配置 ---
     const slides = [
@@ -137,93 +327,11 @@
       'img/4.png'
     ];
 
-    // 活动卡片数据（7种类型，图标和颜色参考 teach.html）
-    const activityItems = [
-      {
-        type: '随堂测',
-        title: '《春》随堂测验',
-        summary: '即时出题、自动批阅、错题回顾',
-        icon: 'clipboard-check',
-        color: 'purple',
-        bgClass: 'bg-purple-100',
-        iconClass: 'text-purple-600',
-        borderClass: 'border-purple-200'
-      },
-      {
-        type: '听写',
-        title: '词语听写练习',
-        summary: 'AI自动批改，实时反馈发音问题',
-        icon: 'pen-tool',
-        color: 'pink',
-        bgClass: 'bg-pink-100',
-        iconClass: 'text-pink-600',
-        borderClass: 'border-pink-200'
-      },
-      {
-        type: '活动',
-        title: '小组协作',
-        summary: '分组完成课件提示词卡',
-        icon: 'users',
-        color: 'orange',
-        bgClass: 'bg-orange-100',
-        iconClass: 'text-orange-600',
-        borderClass: 'border-orange-200'
-      },
-      {
-        type: '抽奖',
-        title: '随机抽奖',
-        summary: '随机抽取学生，增加课堂趣味',
-        icon: 'gift',
-        color: 'yellow',
-        bgClass: 'bg-yellow-100',
-        iconClass: 'text-yellow-600',
-        borderClass: 'border-yellow-200'
-      },
-      {
-        type: '单词评测',
-        title: '英语单词测试',
-        summary: '已测评 8 次 · 点击查看详情',
-        icon: 'spell-check',
-        color: 'indigo',
-        bgClass: 'bg-indigo-100',
-        iconClass: 'text-indigo-600',
-        borderClass: 'border-indigo-200'
-      },
-      {
-        type: '对话评测',
-        title: '情景对话评测',
-        summary: '已测评 3 次 · 点击查看详情',
-        icon: 'message-circle',
-        color: 'teal',
-        bgClass: 'bg-teal-100',
-        iconClass: 'text-teal-600',
-        borderClass: 'border-teal-200'
-      },
-      {
-        type: '场景对话',
-        title: '购物场景对话',
-        summary: '已测评 5 次 · 点击查看详情',
-        icon: 'theater',
-        color: 'rose',
-        bgClass: 'bg-rose-100',
-        iconClass: 'text-rose-600',
-        borderClass: 'border-rose-200'
-      },
-      {
-        type: '智能体',
-        title: '苏轼',
-        summary: '智能体 · 点击进入对话',
-        icon: 'bot',
-        color: 'purple',
-        bgClass: 'bg-purple-100',
-        iconClass: 'text-purple-600',
-        borderClass: 'border-purple-200'
-      }
-    ];
+    // 活动卡片数据（已拆分到独立面板，不再需要）
+    // const activityItems = [...]
 
     let currentSlideIndex = 0;
     let isDirectoryOpen = false;
-    let activityPanelOpen = false;
 
     // --- 全屏功能 ---
     function toggleFullScreen() {
@@ -239,9 +347,6 @@
       lucide.createIcons();
       renderDirectory();
       updateSlide();
-      initActivityPanel();
-
-      // 键盘翻页支持
       document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
         if (e.key === 'ArrowLeft') prevSlide();
@@ -312,95 +417,72 @@
       toggleDirectory();
     }
 
-    // --- 活动面板 ---
-    function initActivityPanel() {
-      renderActivityContent();
-      document.getElementById('activity-search').addEventListener('input', renderActivityContent);
-    }
+    // --- 面板切换（单入口面板） ---
+    let activePanel = null;
 
-    function toggleActivityPanel() {
-      const panel = document.getElementById('activity-panel');
-      activityPanelOpen = !activityPanelOpen;
-      panel.classList.toggle('translate-x-full', !activityPanelOpen);
-    }
+    function togglePanel(name) {
+      const panel = document.getElementById(`panel-${name}`);
+      const btn = document.getElementById(`btn-${name}`);
 
-    function renderActivityContent() {
-      const container = document.getElementById('activity-content');
-      const searchValue = document.getElementById('activity-search').value.trim().toLowerCase();
-
-      const filtered = activityItems.filter(item => {
-        return searchValue === '' || item.type.toLowerCase().includes(searchValue);
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<p class="text-sm text-neutral-400 text-center py-8">暂无匹配内容</p>';
+      // 如果点击的是当前已打开的面板，则关闭
+      if (activePanel === name) {
+        panel.classList.add('hidden');
+        btn.classList.remove('ring-2', 'ring-white/50');
+        activePanel = null;
         return;
       }
 
-      container.innerHTML = filtered.map(item => {
-        const hoverBorderMap = {
-          purple: 'hover:border-purple-400/60',
-          pink: 'hover:border-pink-400/60',
-          orange: 'hover:border-orange-400/60',
-          yellow: 'hover:border-yellow-400/60',
-          indigo: 'hover:border-indigo-400/60',
-          teal: 'hover:border-teal-400/60',
-          rose: 'hover:border-rose-400/60'
-        };
-        const hoverBorder = hoverBorderMap[item.color] || 'hover:border-neutral-500/60';
-        return `
-        <div onclick="openActivityPreview('${item.type}')" class="flex items-center justify-between bg-neutral-800/60 border border-neutral-700 rounded-xl p-4 cursor-pointer transition-all ${hoverBorder} hover:bg-neutral-700/60">
-          <div class="flex items-center gap-3">
-            <div class="w-11 h-11 ${item.bgClass} rounded-xl flex items-center justify-center shrink-0">
-              <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconClass}"></i>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-neutral-100">${item.title}</p>
-              <div class="flex items-center gap-1.5 mt-1">
-                <span class="px-2 py-0.5 ${item.bgClass} ${item.iconClass} text-xs font-medium rounded-full">${item.type}</span>
-              </div>
-            </div>
-          </div>
-          <i data-lucide="chevron-right" class="w-5 h-5 text-neutral-500 shrink-0"></i>
-        </div>
-      `}).join('');
-
-      lucide.createIcons();
-    }
-
-    // 打开活动预览
-    function openActivityPreview(type) {
-      // 关闭活动面板
-      toggleActivityPanel();
-
-      switch(type) {
-        case '随堂测':
-          document.getElementById('quiz-preview-modal').classList.remove('hidden');
-          break;
-        case '听写':
-          document.getElementById('dictation-preview-modal').classList.remove('hidden');
-          break;
-        case '活动':
-          document.getElementById('activity-preview-modal').classList.remove('hidden');
-          break;
-        case '抽奖':
-          document.getElementById('lottery-preview-modal').classList.remove('hidden');
-          break;
-        case '单词评测':
-          document.getElementById('word-evaluation-preview-modal').classList.remove('hidden');
-          break;
-        case '对话评测':
-          document.getElementById('dialogue-preview-modal').classList.remove('hidden');
-          break;
-        case '场景对话':
-          document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden');
-          break;
-        case '智能体':
-          document.getElementById('agent-preview-modal').classList.remove('hidden');
-          break;
+      // 关闭之前打开的面板
+      if (activePanel) {
+        const prevPanel = document.getElementById(`panel-${activePanel}`);
+        const prevBtn = document.getElementById(`btn-${activePanel}`);
+        if (prevPanel) prevPanel.classList.add('hidden');
+        if (prevBtn) prevBtn.classList.remove('ring-2', 'ring-white/50');
       }
+
+      // 打开新面板
+      panel.classList.remove('hidden');
+      btn.classList.add('ring-2', 'ring-white/50');
+      activePanel = name;
+
+      // 重新渲染图标
       lucide.createIcons();
     }
+
+    function closeActiveToolbarPanel() {
+      if (!activePanel) return;
+      const panel = document.getElementById(`panel-${activePanel}`);
+      const btn = document.getElementById(`btn-${activePanel}`);
+      if (panel) panel.classList.add('hidden');
+      if (btn) btn.classList.remove('ring-2', 'ring-white/50');
+      activePanel = null;
+    }
+
+    // 点击页面其他区域关闭面板
+    document.addEventListener('click', (e) => {
+      if (activePanel) {
+        const panel = document.getElementById(`panel-${activePanel}`);
+        const btn = document.getElementById(`btn-${activePanel}`);
+        if (!panel.contains(e.target) && !btn.contains(e.target)) {
+          panel.classList.add('hidden');
+          btn.classList.remove('ring-2', 'ring-white/50');
+          activePanel = null;
+        }
+      }
+    });
+
+    // 打开预览（会关闭面板）
+    function openDictationPreview() { activePanel = null; document.getElementById('panel-dictation').classList.add('hidden'); document.getElementById('btn-dictation').classList.remove('ring-2', 'ring-white/50'); document.getElementById('dictation-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openQuizPreview() { activePanel = null; document.getElementById('panel-quiz').classList.add('hidden'); document.getElementById('btn-quiz').classList.remove('ring-2', 'ring-white/50'); document.getElementById('quiz-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openActivityPreview() { activePanel = null; document.getElementById('panel-activity').classList.add('hidden'); document.getElementById('btn-activity').classList.remove('ring-2', 'ring-white/50'); document.getElementById('activity-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openLotteryPreview() { activePanel = null; document.getElementById('panel-lottery').classList.add('hidden'); document.getElementById('btn-lottery').classList.remove('ring-2', 'ring-white/50'); document.getElementById('lottery-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openWordEvaluationPreview() { activePanel = null; document.getElementById('panel-speaking').classList.add('hidden'); document.getElementById('btn-speaking').classList.remove('ring-2', 'ring-white/50'); document.getElementById('word-evaluation-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openDialoguePreview() { activePanel = null; document.getElementById('panel-speaking').classList.add('hidden'); document.getElementById('btn-speaking').classList.remove('ring-2', 'ring-white/50'); document.getElementById('dialogue-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openSceneDialoguePreview() { activePanel = null; document.getElementById('panel-speaking').classList.add('hidden'); document.getElementById('btn-speaking').classList.remove('ring-2', 'ring-white/50'); document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openAgentPreview() { activePanel = null; document.getElementById('panel-agent').classList.add('hidden'); document.getElementById('btn-agent').classList.remove('ring-2', 'ring-white/50'); document.getElementById('agent-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+
+    // 保留旧的（兼容）
+    function toggleActivityPanel() { togglePanel('activity'); }
 
     // 关闭预览函数
     function closeQuizPreview() { document.getElementById('quiz-preview-modal').classList.add('hidden'); }
@@ -576,6 +658,7 @@
     // ESC 键关闭所有弹窗
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
+        closeActiveToolbarPanel();
         closeQuizPreview();
         closeDictationPreview();
         closeActivityPreview();

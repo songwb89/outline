@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课件演示 - 奕兆科技</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    /* 隐藏滚动条 */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* 课件全屏显示 */
+    .slide-container {
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slide-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* 保持比例完整显示 */
+    }
+
+    /* 淡入淡出动画 */
+    .fade-enter { opacity: 0; }
+    .fade-enter-active { opacity: 1; transition: opacity 0.3s ease; }
+  </style>
+</head>
+<body class="bg-black text-white overflow-hidden" onload="showToast()">
+  <!-- 自定义提示弹窗 -->
+  <div id="custom-alert" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center">
+    <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-80 p-6 transform transition-all scale-100 text-center">
+      <p class="text-lg font-medium mb-6">活动已准备就绪</p>
+      <button onclick="closeCustomAlert()" class="px-8 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确定</button>
+    </div>
+  </div>
+
+  <!-- 无遮罩：首次点击页面任意处会自动进入全屏（浏览器要求必须有一次用户操作） -->
+  <div id="fullscreen-overlay" class="hidden"></div>
+
+  <!-- 1. 课件主显示区 -->
+  <div id="slide-container" class="slide-container">
+    <img id="current-slide" onclick="nextSlide()" class="slide-img cursor-pointer" src="img/0.png" alt="Slide">
+
+    <!-- 右下角：操作按钮组 -->
+    <div class="absolute bottom-[10px] right-6 z-30">
+        <!-- 右侧工具栏：纵向排列 -->
+        <div class="flex flex-col gap-2">
+            <!-- 活动中心 -->
+            <button onclick="toggleActivityPanel()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="活动中心">
+              <i data-lucide="puzzle" class="w-5 h-5 text-white"></i>
+            </button>
+
+            <!-- 课堂点评 -->
+            <button onclick="openReviewPreview()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点评">
+            <i data-lucide="trophy" class="w-5 h-5 text-white"></i>
+            </button>
+
+            <!-- 课堂点名 -->
+            <button onclick="openRollcallPreview()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="课堂点名">
+            <i data-lucide="users" class="w-5 h-5 text-white"></i>
+            </button>
+
+            <!-- 全屏 -->
+            <button onclick="toggleFullScreen()" class="p-2.5 bg-slate-600/40 hover:bg-slate-600/55 backdrop-blur-sm border border-slate-400/25 rounded-full shadow-lg transition-all hover:scale-110" title="全屏">
+            <i data-lucide="maximize" class="w-5 h-5 text-white"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 底部居中：翻页控制条 -->
+    <div class="absolute bottom-[10px] left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 px-4 py-2 rounded-full bg-slate-600/40 backdrop-blur-sm border border-slate-400/25 shadow-lg min-w-[6rem] justify-center">
+      <button onclick="prevSlide()" class="p-1 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-colors" title="上一页">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+      </button>
+      <span class="text-white text-sm font-medium whitespace-nowrap min-w-[2.5rem] text-center"><span id="current-page-num">1</span>/<span id="total-page-num">4</span></span>
+      <button onclick="nextSlide()" class="p-1 text-white/90 hover:text-white hover:bg-white/10 rounded-full transition-colors" title="下一页">
+        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 左侧边缘：箭头按钮，点击滑出目录（参考样式：深色六边形/标签，箭头） -->
+  <button onclick="toggleDirectory()" id="directory-trigger" class="fixed left-0 top-1/2 -translate-y-1/2 z-40 w-[18px] h-14 flex items-center justify-center bg-slate-700/70 hover:bg-slate-600/80 backdrop-blur-sm border border-l-0 border-slate-500/40 rounded-r-lg shadow-lg transition-colors" title="课件目录">
+    <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+  </button>
+
+  <!-- 6. 左侧滑出目录面板 -->
+  <div id="directory-panel" class="fixed inset-y-0 left-0 w-80 bg-gray-900/95 backdrop-blur-md border-r border-gray-700 z-40 transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+      <h2 class="text-lg font-bold">课件目录</h2>
+      <button onclick="toggleDirectory()" class="text-gray-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar" id="directory-list">
+      <!-- 动态生成缩略图 -->
+    </div>
+  </div>
+
+  <!-- 活动面板（从右侧滑出） -->
+  <div id="activity-panel" class="fixed inset-y-0 right-0 w-[26rem] bg-neutral-900/95 backdrop-blur-2xl border-l border-neutral-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <div class="px-5 py-4 border-b border-neutral-800 flex items-center justify-between gap-3">
+      <div>
+        <p class="text-lg font-semibold text-white">课堂互动</p>
+        <p class="text-sm text-neutral-400">选择活动开始互动</p>
+      </div>
+      <button onclick="toggleActivityPanel()" class="text-neutral-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div id="activity-panel-filters" class="px-5 py-3 border-b border-neutral-800">
+      <div class="flex items-center gap-2 bg-neutral-900/40 border border-neutral-800 rounded-full px-3 py-1.5">
+        <i data-lucide="search" class="w-4 h-4 text-neutral-400"></i>
+        <input id="activity-search" type="text" placeholder="搜索活动" class="flex-1 bg-transparent text-sm text-white focus:outline-none" />
+      </div>
+    </div>
+    <div id="activity-content" class="flex-1 overflow-y-auto p-5 space-y-3 no-scrollbar">
+      <!-- 活动卡片 -->
+    </div>
+  </div>
+
+  <script>
+    // --- 数据配置 ---
+    const slides = [
+      'img/0.png',
+      'img/1.png',
+      'img/2.png',
+      'img/3.png',
+      'img/4.png'
+    ];
+
+    // 活动卡片数据（7种类型，图标和颜色参考 teach.html）
+    const activityItems = [
+      {
+        type: '随堂测',
+        title: '《春》随堂测验',
+        summary: '即时出题、自动批阅、错题回顾',
+        icon: 'clipboard-check',
+        color: 'purple',
+        bgClass: 'bg-purple-100',
+        iconClass: 'text-purple-600',
+        borderClass: 'border-purple-200'
+      },
+      {
+        type: '听写',
+        title: '词语听写练习',
+        summary: 'AI自动批改，实时反馈发音问题',
+        icon: 'pen-tool',
+        color: 'pink',
+        bgClass: 'bg-pink-100',
+        iconClass: 'text-pink-600',
+        borderClass: 'border-pink-200'
+      },
+      {
+        type: '活动',
+        title: '小组协作',
+        summary: '分组完成课件提示词卡',
+        icon: 'users',
+        color: 'orange',
+        bgClass: 'bg-orange-100',
+        iconClass: 'text-orange-600',
+        borderClass: 'border-orange-200'
+      },
+      {
+        type: '抽奖',
+        title: '随机抽奖',
+        summary: '随机抽取学生，增加课堂趣味',
+        icon: 'gift',
+        color: 'yellow',
+        bgClass: 'bg-yellow-100',
+        iconClass: 'text-yellow-600',
+        borderClass: 'border-yellow-200'
+      },
+      {
+        type: '单词评测',
+        title: '英语单词测试',
+        summary: '已测评 8 次 · 点击查看详情',
+        icon: 'spell-check',
+        color: 'indigo',
+        bgClass: 'bg-indigo-100',
+        iconClass: 'text-indigo-600',
+        borderClass: 'border-indigo-200'
+      },
+      {
+        type: '对话评测',
+        title: '情景对话评测',
+        summary: '已测评 3 次 · 点击查看详情',
+        icon: 'message-circle',
+        color: 'teal',
+        bgClass: 'bg-teal-100',
+        iconClass: 'text-teal-600',
+        borderClass: 'border-teal-200'
+      },
+      {
+        type: '场景对话',
+        title: '购物场景对话',
+        summary: '已测评 5 次 · 点击查看详情',
+        icon: 'theater',
+        color: 'rose',
+        bgClass: 'bg-rose-100',
+        iconClass: 'text-rose-600',
+        borderClass: 'border-rose-200'
+      },
+      {
+        type: '智能体',
+        title: '苏轼',
+        summary: '智能体 · 点击进入对话',
+        icon: 'bot',
+        color: 'purple',
+        bgClass: 'bg-purple-100',
+        iconClass: 'text-purple-600',
+        borderClass: 'border-purple-200'
+      }
+    ];
+
+    let currentSlideIndex = 0;
+    let isDirectoryOpen = false;
+    let activityPanelOpen = false;
+
+    // --- 全屏功能 ---
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // --- 初始化 ---
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderDirectory();
+      updateSlide();
+      initActivityPanel();
+
+      // 键盘翻页支持
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+      });
+    });
+
+    // --- 核心功能 ---
+    function updateSlide() {
+      const img = document.getElementById('current-slide');
+      img.style.opacity = '0.5';
+      setTimeout(() => {
+        img.src = slides[currentSlideIndex];
+        img.style.opacity = '1';
+      }, 100);
+
+      document.getElementById('current-page-num').innerText = currentSlideIndex + 1;
+      document.getElementById('total-page-num').innerText = slides.length;
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < slides.length - 1) {
+        currentSlideIndex++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) {
+        currentSlideIndex--;
+        updateSlide();
+      }
+    }
+
+    // 目录相关
+    function toggleDirectory() {
+      const panel = document.getElementById('directory-panel');
+      const trigger = document.getElementById('directory-trigger');
+      isDirectoryOpen = !isDirectoryOpen;
+
+      if (isDirectoryOpen) {
+        panel.classList.remove('-translate-x-full');
+        trigger.classList.add('-translate-x-full');
+      } else {
+        panel.classList.add('-translate-x-full');
+        trigger.classList.remove('-translate-x-full');
+      }
+    }
+
+    function renderDirectory() {
+      const list = document.getElementById('directory-list');
+      list.innerHTML = slides.map((src, idx) => `
+        <div onclick="goToSlide(${idx})" class="flex gap-3 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors ${idx === currentSlideIndex ? 'bg-white/20 border border-white/30' : ''}">
+          <div class="w-24 h-16 bg-gray-800 rounded overflow-hidden shrink-0 border border-gray-600">
+            <img src="${src}" class="w-full h-full object-cover opacity-70 hover:opacity-100">
+          </div>
+          <div class="flex flex-col justify-center">
+            <span class="font-medium text-sm">第 ${idx + 1} 页</span>
+            <span class="text-xs text-gray-400">点击跳转</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function goToSlide(index) {
+      currentSlideIndex = index;
+      updateSlide();
+      renderDirectory();
+      toggleDirectory();
+    }
+
+    // --- 活动面板 ---
+    function initActivityPanel() {
+      renderActivityContent();
+      document.getElementById('activity-search').addEventListener('input', renderActivityContent);
+    }
+
+    function toggleActivityPanel() {
+      const panel = document.getElementById('activity-panel');
+      activityPanelOpen = !activityPanelOpen;
+      panel.classList.toggle('translate-x-full', !activityPanelOpen);
+    }
+
+    function renderActivityContent() {
+      const container = document.getElementById('activity-content');
+      const searchValue = document.getElementById('activity-search').value.trim().toLowerCase();
+
+      const filtered = activityItems.filter(item => {
+        return searchValue === '' || item.type.toLowerCase().includes(searchValue);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p class="text-sm text-neutral-400 text-center py-8">暂无匹配内容</p>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const hoverBorderMap = {
+          purple: 'hover:border-purple-400/60',
+          pink: 'hover:border-pink-400/60',
+          orange: 'hover:border-orange-400/60',
+          yellow: 'hover:border-yellow-400/60',
+          indigo: 'hover:border-indigo-400/60',
+          teal: 'hover:border-teal-400/60',
+          rose: 'hover:border-rose-400/60'
+        };
+        const hoverBorder = hoverBorderMap[item.color] || 'hover:border-neutral-500/60';
+        return `
+        <div onclick="openActivityPreview('${item.type}')" class="flex items-center justify-between bg-neutral-800/60 border border-neutral-700 rounded-xl p-4 cursor-pointer transition-all ${hoverBorder} hover:bg-neutral-700/60">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 ${item.bgClass} rounded-xl flex items-center justify-center shrink-0">
+              <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconClass}"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-neutral-100">${item.title}</p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <span class="px-2 py-0.5 ${item.bgClass} ${item.iconClass} text-xs font-medium rounded-full">${item.type}</span>
+              </div>
+            </div>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-neutral-500 shrink-0"></i>
+        </div>
+      `}).join('');
+
+      lucide.createIcons();
+    }
+
+    // 打开活动预览
+    function openActivityPreview(type) {
+      // 关闭活动面板
+      toggleActivityPanel();
+
+      switch(type) {
+        case '随堂测':
+          document.getElementById('quiz-preview-modal').classList.remove('hidden');
+          break;
+        case '听写':
+          document.getElementById('dictation-preview-modal').classList.remove('hidden');
+          break;
+        case '活动':
+          document.getElementById('activity-preview-modal').classList.remove('hidden');
+          break;
+        case '抽奖':
+          document.getElementById('lottery-preview-modal').classList.remove('hidden');
+          break;
+        case '单词评测':
+          document.getElementById('word-evaluation-preview-modal').classList.remove('hidden');
+          break;
+        case '对话评测':
+          document.getElementById('dialogue-preview-modal').classList.remove('hidden');
+          break;
+        case '场景对话':
+          document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden');
+          break;
+        case '智能体':
+          document.getElementById('agent-preview-modal').classList.remove('hidden');
+          break;
+      }
+      lucide.createIcons();
+    }
+
+    // 关闭预览函数
+    function closeQuizPreview() { document.getElementById('quiz-preview-modal').classList.add('hidden'); }
+    function closeDictationPreview() { document.getElementById('dictation-preview-modal').classList.add('hidden'); }
+    function closeActivityPreview() { document.getElementById('activity-preview-modal').classList.add('hidden'); }
+    function closeLotteryPreview() { document.getElementById('lottery-preview-modal').classList.add('hidden'); }
+    function closeWordEvaluationPreview() { document.getElementById('word-evaluation-preview-modal').classList.add('hidden'); }
+    function closeDialoguePreview() { document.getElementById('dialogue-preview-modal').classList.add('hidden'); }
+    function closeSceneDialoguePreview() { document.getElementById('scene-dialogue-preview-modal').classList.add('hidden'); }
+    function closeAgentPreview() { document.getElementById('agent-preview-modal').classList.add('hidden'); }
+
+    // 打开课堂点评预览
+    function openReviewPreview() {
+      document.getElementById('review-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭课堂点评预览
+    function closeReviewPreview() {
+      document.getElementById('review-preview-modal').classList.add('hidden');
+    }
+
+    // 打开课堂点名预览
+    function openRollcallPreview() {
+      document.getElementById('rollcall-preview-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // 关闭课堂点名预览
+    function closeRollcallPreview() {
+      document.getElementById('rollcall-preview-modal').classList.add('hidden');
+    }
+
+    function openToolPanel(toolName) {
+      const alertBox = document.getElementById('custom-alert');
+      alertBox.querySelector('p').innerText = `${toolName} 已准备就绪`;
+      alertBox.classList.remove('hidden');
+    }
+
+    function closeCustomAlert() {
+      document.getElementById('custom-alert').classList.add('hidden');
+    }
+  </script>
+  <!-- Toast 提示 -->
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-slate-800/90 backdrop-blur-sm border border-slate-600/50 rounded-xl shadow-2xl opacity-0 pointer-events-none transition-opacity duration-300">
+    <p class="text-lg text-center">⬅️ ➡️ 键盘左右键切换上下页</p>
+  </div>
+
+  <!-- 预览弹窗：随堂测 -->
+  <div id="quiz-preview-modal" class="fixed inset-0 z-[100] bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[700px] h-[800px] overflow-hidden flex flex-col">
+      <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">随堂测</h3>
+        <button onclick="closeQuizPreview()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-auto p-3 bg-gray-50">
+        <img src="img/内容预览/预览随堂测.png" alt="预览随堂测" class="w-full h-auto object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：听写（全屏） -->
+  <div id="dictation-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDictationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/听写.png" alt="听写" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：活动 -->
+  <div id="activity-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeActivityPreview()" class="absolute -top-10 right-0 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/预览活动.png" alt="预览活动" class="max-w-full max-h-[90vh] object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：抽奖活动（全屏） -->
+  <div id="lottery-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeLotteryPreview()" class="absolute top-4 right-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/抽奖活动.png" alt="抽奖活动" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：单词评测（全屏） -->
+  <div id="word-evaluation-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeWordEvaluationPreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/单词评测.png" alt="单词评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：对话评测（全屏） -->
+  <div id="dialogue-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/对话评测.png" alt="对话评测" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：场景对话（全屏） -->
+  <div id="scene-dialogue-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center">
+      <button onclick="closeSceneDialoguePreview()" class="absolute top-4 left-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/内容预览/场景对话.png" alt="场景对话" class="w-full h-full object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：智能体（全屏遮罩） -->
+  <div id="agent-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center">
+      <div class="flex-1"></div>
+      <div class="flex items-center justify-center">
+        <div class="w-96 h-96 rounded-full overflow-hidden border-4 border-white shadow-xl">
+          <img src="img/内容预览/人物形象.png" alt="人物形象" class="w-full h-full object-cover">
+        </div>
+      </div>
+      <div class="flex-1 flex items-center justify-end pr-8">
+        <div class="relative">
+          <button onclick="closeAgentPreview()" class="absolute top-0 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10 -mr-4 -mt-4">
+            <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+          </button>
+          <img src="img/内容预览/对话面板.png" alt="对话面板" class="max-w-lg max-h-[90vh] object-contain">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗：课堂点评 -->
+  <div id="review-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[85vh]">
+      <button onclick="closeReviewPreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/点评.png" alt="课堂点评" class="max-w-full max-h-[85vh] object-contain">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：课堂点名 -->
+  <div id="rollcall-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center">
+    <div class="relative max-w-[90vw] max-h-[85vh]">
+      <button onclick="closeRollcallPreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/点名.png" alt="课堂点名" class="max-w-full max-h-[85vh] object-contain">
+    </div>
+  </div>
+
+  <script>
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.remove('opacity-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+      }, 3000);
+    }
+
+    // ESC 键关闭所有弹窗
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeQuizPreview();
+        closeDictationPreview();
+        closeActivityPreview();
+        closeLotteryPreview();
+        closeWordEvaluationPreview();
+        closeDialoguePreview();
+        closeSceneDialoguePreview();
+        closeAgentPreview();
+        closeReviewPreview();
+        closeRollcallPreview();
+        closeCustomAlert();
+      }
+    });
+
+    // 点击背景关闭弹窗
+    document.getElementById('quiz-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeQuizPreview(); });
+    document.getElementById('dictation-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeDictationPreview(); });
+    document.getElementById('activity-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeActivityPreview(); });
+    document.getElementById('lottery-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeLotteryPreview(); });
+    document.getElementById('word-evaluation-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeWordEvaluationPreview(); });
+    document.getElementById('dialogue-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeDialoguePreview(); });
+    document.getElementById('scene-dialogue-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeSceneDialoguePreview(); });
+    document.getElementById('agent-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeAgentPreview(); });
+    document.getElementById('review-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeReviewPreview(); });
+    document.getElementById('rollcall-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeRollcallPreview(); });
+  </script>
+  <!-- 校本资源全屏组件 -->
+  <script src="school-resource-modal.js"></script>
+  </body>
+</html>
