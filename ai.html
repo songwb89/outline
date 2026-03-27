@@ -93,9 +93,15 @@
       <!-- 卡片网格：参考三列布局，小屏自动换行 -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5">
         <!-- 分组标题：智能助手 -->
-        <div class="col-span-full mb-2">
-          <h2 class="text-lg font-bold text-gray-800">智能助手</h2>
-          <p class="text-sm text-gray-500 mt-1">各类教学文档与方案智能生成</p>
+        <div class="col-span-full flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800">智能助手</h2>
+            <p class="text-sm text-gray-500 mt-1">各类教学文档与方案智能生成</p>
+          </div>
+          <button type="button" id="btn-assistant-history" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition-colors border-0 cursor-pointer">
+            <i data-lucide="history" class="w-4 h-4"></i>
+            生成记录
+          </button>
         </div>
 
       <!-- 智能助手卡片 -->
@@ -440,11 +446,158 @@
         </div>
       </div>
     </section>
+
+    <!-- ========== 视图：助手历史记录 ========== -->
+    <section id="view-assistant-history" class="view-assistant-history view-hidden w-full max-w-none bg-gray-50 min-h-[calc(100vh-64px)]">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-assistant-history" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span class="text-gray-700 font-medium">助手生成记录</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-8 pt-4">
+        <div class="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
+          <!-- 标签切换 -->
+          <div class="inline-flex flex-wrap items-center gap-2 mb-6">
+            <button type="button" id="tab-assistant-all" class="assistant-history-tab px-4 py-2 rounded-lg font-medium border-0 cursor-pointer bg-blue-600 text-white text-sm">全部</button>
+            <button type="button" id="tab-assistant-workplan" class="assistant-history-tab px-4 py-2 rounded-lg font-medium border-0 cursor-pointer bg-gray-100 text-gray-600 text-sm hover:bg-gray-200">教学工作计划</button>
+            <button type="button" id="tab-assistant-activity" class="assistant-history-tab px-4 py-2 rounded-lg font-medium border-0 cursor-pointer bg-gray-100 text-gray-600 text-sm hover:bg-gray-200">校园活动策划</button>
+            <button type="button" id="tab-assistant-speech" class="assistant-history-tab px-4 py-2 rounded-lg font-medium border-0 cursor-pointer bg-gray-100 text-gray-600 text-sm hover:bg-gray-200">家长会发言稿</button>
+          </div>
+
+          <!-- 记录列表 -->
+          <div id="assistant-history-list" class="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(400px,1fr))]">
+
+            <!-- 教学工作计划 -->
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white shadow-inner shrink-0">
+                  <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                </div>
+                <div class="min-w-0 flex-1 flex flex-col">
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">教学工作计划</span>
+                    <button type="button" class="shrink-0 -mr-1 -mt-0.5 w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 border-0 cursor-default flex items-center justify-center text-lg leading-none font-light" aria-label="更多" title="更多">…</button>
+                  </div>
+                  <h3 class="mt-2 text-[15px] font-semibold text-gray-900 leading-snug">三年级数学上学期教学计划</h3>
+                  <p class="mt-1 text-xs text-gray-400">2026-03-27 15:45</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 校园活动策划 -->
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-inner shrink-0">
+                  <i data-lucide="scroll-text" class="w-6 h-6"></i>
+                </div>
+                <div class="min-w-0 flex-1 flex flex-col">
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">校园活动策划</span>
+                    <button type="button" class="shrink-0 -mr-1 -mt-0.5 w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 border-0 cursor-default flex items-center justify-center text-lg leading-none font-light" aria-label="更多" title="更多">…</button>
+                  </div>
+                  <h3 class="mt-2 text-[15px] font-semibold text-gray-900 leading-snug">春季运动会活动方案</h3>
+                  <p class="mt-1 text-xs text-gray-400">2026-03-26 10:20</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 家长会发言稿 -->
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white shadow-inner shrink-0">
+                  <i data-lucide="file-user" class="w-6 h-6"></i>
+                </div>
+                <div class="min-w-0 flex-1 flex flex-col">
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">家长会发言稿</span>
+                    <button type="button" class="shrink-0 -mr-1 -mt-0.5 w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 border-0 cursor-default flex items-center justify-center text-lg leading-none font-light" aria-label="更多" title="更多">…</button>
+                  </div>
+                  <h3 class="mt-2 text-[15px] font-semibold text-gray-900 leading-snug">一年级新生家长会发言稿</h3>
+                  <p class="mt-1 text-xs text-gray-400">2026-03-25 09:08</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 教学工作计划 -->
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white shadow-inner shrink-0">
+                  <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                </div>
+                <div class="min-w-0 flex-1 flex flex-col">
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">教学工作计划</span>
+                    <button type="button" class="shrink-0 -mr-1 -mt-0.5 w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 border-0 cursor-default flex items-center justify-center text-lg leading-none font-light" aria-label="更多" title="更多">…</button>
+                  </div>
+                  <h3 class="mt-2 text-[15px] font-semibold text-gray-900 leading-snug">五年级语文下学期教学计划</h3>
+                  <p class="mt-1 text-xs text-gray-400">2026-03-24 16:33</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 校园活动策划 -->
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-inner shrink-0">
+                  <i data-lucide="scroll-text" class="w-6 h-6"></i>
+                </div>
+                <div class="min-w-0 flex-1 flex flex-col">
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">校园活动策划</span>
+                    <button type="button" class="shrink-0 -mr-1 -mt-0.5 w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 border-0 cursor-default flex items-center justify-center text-lg leading-none font-light" aria-label="更多" title="更多">…</button>
+                  </div>
+                  <h3 class="mt-2 text-[15px] font-semibold text-gray-900 leading-snug">六一儿童节文艺汇演方案</h3>
+                  <p class="mt-1 text-xs text-gray-400">2026-03-23 14:00</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 家长会发言稿 -->
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex gap-4 items-start">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white shadow-inner shrink-0">
+                  <i data-lucide="file-user" class="w-6 h-6"></i>
+                </div>
+                <div class="min-w-0 flex-1 flex flex-col">
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">家长会发言稿</span>
+                    <button type="button" class="shrink-0 -mr-1 -mt-0.5 w-7 h-7 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 border-0 cursor-default flex items-center justify-center text-lg leading-none font-light" aria-label="更多" title="更多">…</button>
+                  </div>
+                  <h3 class="mt-2 text-[15px] font-semibold text-gray-900 leading-snug">期中考试成绩分析家长会发言稿</h3>
+                  <p class="mt-1 text-xs text-gray-400">2026-03-22 18:12</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 视图：助手生成记录详情（截图原型） ========== -->
+    <section id="view-assistant-record-detail" class="view-assistant-record-detail view-hidden w-full max-w-none bg-gray-50 min-h-[calc(100vh-64px)]">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-assistant-record-detail" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-assistant-history-from-detail" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">助手生成记录</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span class="text-gray-700 font-medium">生成详情</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-8 pt-4">
+        <img src="img/助手记录.png" alt="助手生成记录详情" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
+      </div>
+    </section>
   </main>
 
   <script>
     function hideAllAssistantViews() {
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -495,6 +648,8 @@
       var t = tab === 'favorite' ? 'favorite' : 'task';
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -513,6 +668,8 @@
       photoQaActiveTab = fromFavorite ? 'favorite' : 'task';
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -539,6 +696,8 @@
     function showDigitalHuman() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
       document.getElementById('view-ai-explain-question').classList.add('view-hidden');
@@ -556,6 +715,8 @@
 
     function showAiHome() {
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -572,9 +733,95 @@
       lucide.createIcons();
     }
 
+    var assistantHistoryActiveTab = 'all';
+
+    function setAssistantHistoryTab(tab) {
+      assistantHistoryActiveTab = tab;
+      var tabs = ['all', 'workplan', 'activity', 'speech'];
+      var tabIds = ['tab-assistant-all', 'tab-assistant-workplan', 'tab-assistant-activity', 'tab-assistant-speech'];
+      tabIds.forEach(function(id) {
+        var btn = document.getElementById(id);
+        if (btn) {
+          if (btn.id === 'tab-assistant-' + tab) {
+            btn.classList.add('bg-blue-600', 'text-white');
+            btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+          } else {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+          }
+        }
+      });
+
+      var list = document.getElementById('assistant-history-list');
+      var cards = list.querySelectorAll(':scope > div');
+      var categoryMap = { workplan: '教学工作计划', activity: '校园活动策划', speech: '家长会发言稿' };
+      cards.forEach(function(card) {
+        var spans = card.querySelectorAll('span');
+        var text = '';
+        for (var i = 0; i < spans.length; i++) {
+          if (spans[i].className.indexOf('rounded-full') !== -1) {
+            text = spans[i].textContent.trim();
+            break;
+          }
+        }
+        if (tab === 'all') {
+          card.classList.remove('view-hidden');
+        } else {
+          var target = categoryMap[tab] || '';
+          card.classList.toggle('view-hidden', text !== target);
+        }
+      });
+
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#assistant-history/' + tab);
+      }
+    }
+
+    function showAssistantHistory(tab) {
+      var t = tab || 'all';
+      assistantHistoryActiveTab = t;
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.remove('view-hidden');
+      setAssistantHistoryTab(t);
+      lucide.createIcons();
+    }
+
+    function showAssistantRecordDetail() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#assistant-record-detail');
+      }
+      lucide.createIcons();
+    }
+
     function showAssistantScene(sceneName) {
       if (!sceneName) return;
       document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -610,6 +857,8 @@
     function showAiExplain() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
       document.getElementById('view-ai-explain-question').classList.add('view-hidden');
@@ -628,6 +877,8 @@
     function showAiExplainRecords() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-question').classList.add('view-hidden');
@@ -646,6 +897,8 @@
     function showQuestionExplain() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -664,6 +917,8 @@
     function showAiPictureBook() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -682,6 +937,8 @@
     function showMyPictureBooks() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -700,6 +957,8 @@
     function showAiLecture() {
       document.getElementById('view-ai-home').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.add('view-hidden');
@@ -749,6 +1008,27 @@
     bindEvent('breadcrumb-ai-zone-lecture', 'click', showAiHome);
     bindEvent('btn-ai-explain-records', 'click', showAiExplainRecords);
     bindEvent('breadcrumb-ai-zone-scene', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-assistant-history', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-assistant-record-detail', 'click', showAiHome);
+    bindEvent('breadcrumb-back-assistant-history-from-detail', 'click', function () { showAssistantHistory(assistantHistoryActiveTab); });
+    bindEvent('btn-assistant-history', 'click', function() { showAssistantHistory('all'); });
+    bindEvent('tab-assistant-all', 'click', function() { setAssistantHistoryTab('all'); });
+    bindEvent('tab-assistant-workplan', 'click', function() { setAssistantHistoryTab('workplan'); });
+    bindEvent('tab-assistant-activity', 'click', function() { setAssistantHistoryTab('activity'); });
+    bindEvent('tab-assistant-speech', 'click', function() { setAssistantHistoryTab('speech'); });
+    (function () {
+      var list = document.getElementById('assistant-history-list');
+      if (!list) return;
+      list.addEventListener('click', function (e) {
+        if (e.target.closest('button')) return;
+        var card = e.target;
+        while (card && card.parentElement !== list) {
+          card = card.parentElement;
+        }
+        if (!card || card === list) return;
+        showAssistantRecordDetail();
+      });
+    })();
     (function () {
       var wrap = document.getElementById('wrap-ai-explain-records-img');
       if (!wrap) return;
@@ -792,6 +1072,17 @@
       if (hash === '#photo-qa') {
         showPhotoQa('task');
         return;
+      }
+      if (hash === '#assistant-record-detail') {
+        showAssistantRecordDetail();
+        return;
+      }
+      if (hash.indexOf('#assistant-history/') === 0) {
+        var assistantTab = hash.slice('#assistant-history/'.length);
+        if (assistantTab === 'all' || assistantTab === 'workplan' || assistantTab === 'activity' || assistantTab === 'speech') {
+          showAssistantHistory(assistantTab);
+          return;
+        }
       }
       if (hash.indexOf('#assistant/') === 0) {
         var name = decodeURIComponent(hash.slice('#assistant/'.length));
