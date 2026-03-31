@@ -1,0 +1,8 @@
+{
+  "docs": [
+    { "name": "平台框架调整5.0", "file": "平台框架调整.md" }
+  ],
+  "pageMapping": {
+    "prepare.html": "平台框架调整.md"
+  }
+}
