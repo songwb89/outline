@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的资源 - 奕兆科技</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js 用于下拉菜单交互 -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f3ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+          }
+        }
+      }
+    }
+  </script>
+
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+
+  <style>
+    /* 侧栏：蓝色背景，图标与文字同行白色 */
+    .sidebar-blue {
+      background: linear-gradient(180deg, #3b5bdb 0%, #2563eb 50%, #1d4ed8 100%);
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 10px;
+      margin: 4px 12px;
+      transition: background-color 0.2s;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    .sidebar-item.active {
+      background: rgba(255,255,255,0.25);
+    }
+    .sidebar-item i { color: #fff; }
+    .sidebar-item svg { color: #fff; }
+    /* 内容区标签：未选中白底浅蓝边框深蓝字，选中浅蓝底白字 */
+    .content-tab {
+      padding: 8px 20px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 500;
+      background: #fff;
+      border: 1px solid #93c5fd;
+      color: #1d4ed8;
+    }
+    .content-tab.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+    /* 课件卡片：参考图布局，120px 宽 */
+    .resource-card {
+      width: 120px;
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      transition: box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .resource-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .resource-card-thumb {
+      height: 100px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+    .resource-card-thumb .thumb-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fed7aa 0%, #fecaca 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .resource-card-thumb .thumb-circle svg { color: #ea580c; }
+    /* 在线课件 */
+    .resource-card-thumb .thumb-circle.card-online {
+      background: linear-gradient(135deg, #bae6fd 0%, #7dd3fc 100%);
+    }
+    .resource-card-thumb .thumb-circle.card-online svg { color: #fff; }
+    /* 本地课件 */
+    .resource-card-thumb .thumb-circle.card-local {
+      background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
+    }
+    .resource-card-thumb .thumb-circle.card-local svg { color: #fff; }
+    .resource-card-tag {
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: #60a5fa;
+      color: #fff;
+    }
+    /* 修改：更多按钮容器，用于定位下拉菜单 */
+    .resource-card-more-container {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+    }
+    .resource-card-more {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+    }
+    .resource-card-more:hover { background: #d1d5db; }
+    .resource-card-more svg { width: 12px; height: 12px; }
+    .resource-card-title {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #1f2937;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="h-screen flex flex-col">
+    <!-- 顶部导航栏（与 ktfx_center.html 完全一致） -->
+    <header class="bg-white border-b border-gray-200 z-50 shadow-sm flex-shrink-0">
+      <div class="px-6 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <span class="text-base font-semibold text-gray-800">奕兆科技</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center cursor-default">
+            <i data-lucide="user" class="w-4 h-4 text-white"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主布局：左侧一级菜单 + 右侧内容区 -->
+    <div class="flex-1 flex min-h-0">
+      <!-- 左侧侧栏（一级菜单）蓝色背景 -->
+      <aside class="w-56 flex-shrink-0 sidebar-blue flex flex-col py-4">
+        <a href="#" class="sidebar-item">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+          <span>智教中心</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="message-square" class="w-5 h-5 text-white"></i>
+          <span>智能教学</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="clipboard-check" class="w-5 h-5 text-white"></i>
+          <span>作业&批改</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+          <span>智能组卷</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="trending-up" class="w-5 h-5 text-white"></i>
+          <span>数据分析</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="list-checks" class="w-5 h-5 text-white"></i>
+          <span>学生管理</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="monitor" class="w-5 h-5 text-white"></i>
+          <span>AI创作</span>
+        </a>
+        <a href="#" class="sidebar-item active bg-white/20">
+          <i data-lucide="folder-open" class="w-5 h-5 text-white"></i>
+          <span>我的资源</span>
+        </a>
+      </aside>
+
+      <!-- 右侧内容区（浅灰背景） -->
+      <main class="flex-1 flex flex-col overflow-hidden bg-[#f0f2f5]">
+        <!-- 标签栏 + 右侧按钮同一行 -->
+        <div class="bg-[#f0f2f5] px-6 pt-5 pb-3 flex items-center justify-between gap-4 flex-wrap">
+          <div class="flex gap-3 flex-wrap">
+            <span class="content-tab">教案</span>
+            <span class="content-tab">学案</span>
+            <span class="content-tab active">课件</span>
+            <span class="content-tab">智能助手</span>
+            <span class="content-tab">共享资源</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="p-2 rounded-lg hover:bg-gray-200/80 text-gray-600" title="新建文件夹">
+              <i data-lucide="folder-plus" class="w-5 h-5"></i>
+            </button>
+            <button class="p-2 rounded-lg hover:bg-gray-200/80 text-gray-600" title="排序">
+              <i data-lucide="arrow-up-down" class="w-5 h-5"></i>
+            </button>
+            <button class="px-4 py-2 bg-white border border-blue-300 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-50">
+              批量操作
+            </button>
+            <!-- 新增课件下拉按钮 -->
+            <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+              <button
+                @click="open = !open"
+                class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 flex items-center gap-2"
+              >
+                <span>新增课件</span>
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+              </button>
+              <!-- 下拉菜单 -->
+              <div
+                x-show="open"
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-[100]"
+                style="display: none;"
+              >
+                <a href="#" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                  <i data-lucide="globe" class="w-4 h-4"></i>
+                  <span>创建在线课件</span>
+                </a>
+                <a href="#" @click="open = false; setTimeout(openUploadModal, 50)" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                  <i data-lucide="upload" class="w-4 h-4"></i>
+                  <span>上传本地课件</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 可滚动内容 -->
+        <div class="flex-1 overflow-auto p-6">
+          <!-- 课件 + 文件夹 -->
+          <div class="mb-6">
+            <div class="flex items-center gap-2 text-gray-800 font-medium mb-3">
+              <span class="w-3 h-3 bg-gray-800 rounded-sm"></span>
+              <span>课件</span>
+            </div>
+            <div class="flex items-center gap-2 text-gray-700 font-medium mb-4">
+              <i data-lucide="folder" class="w-4 h-4 text-gray-600"></i>
+              <span>文件夹</span>
+            </div>
+            <div class="flex flex-wrap gap-4">
+              <div class="w-[120px]">
+                <div class="flex items-center justify-center h-[100px] p-3 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-50 cursor-pointer">
+                  <i data-lucide="folder" class="w-12 h-10 text-amber-500"></i>
+                </div>
+                <p class="mt-2 text-xs text-gray-800">一年级</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 教学资料 + 课件卡片 -->
+          <div>
+            <div class="flex items-center gap-2 text-gray-700 font-medium mb-4">
+              <span class="w-3 h-3 bg-gray-700 rounded-sm"></span>
+              <span>教学资料</span>
+            </div>
+            <div id="courseware-list" class="flex flex-wrap gap-4">
+              
+              <!-- 卡片 1 -->
+              <div class="w-[120px]">
+                <div class="resource-card">
+                  <div class="resource-card-thumb">
+                    <span class="resource-card-tag">课件</span>
+                    <!-- 更多操作按钮 + 下拉菜单 -->
+                    <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                      <button type="button" class="resource-card-more" @click="open = !open">
+                        <i data-lucide="more-horizontal"></i>
+                      </button>
+                      <!-- 下拉菜单 -->
+                      <div
+                        x-show="open"
+                        x-transition
+                        class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                        style="display: none;"
+                      >
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                          <span>重命名</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="share-2" class="w-4 h-4"></i>
+                          <span>共享</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>移动/复制</span>
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          <span>删除</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="thumb-circle card-online">
+                      <i data-lucide="globe" class="w-7 h-7"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-card-title">18中国人失掉自信力了吗/鲁迅</p>
+              </div>
+
+              <!-- 卡片 2 -->
+              <div class="w-[120px]">
+                <div class="resource-card">
+                  <div class="resource-card-thumb">
+                    <span class="resource-card-tag">课件</span>
+                    <!-- 更多操作按钮 + 下拉菜单 -->
+                    <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                      <button type="button" class="resource-card-more" @click="open = !open">
+                        <i data-lucide="more-horizontal"></i>
+                      </button>
+                      <!-- 下拉菜单 -->
+                      <div
+                        x-show="open"
+                        x-transition
+                        class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                        style="display: none;"
+                      >
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                          <span>重命名</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="share-2" class="w-4 h-4"></i>
+                          <span>共享</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>移动/复制</span>
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          <span>删除</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="thumb-circle card-online">
+                      <i data-lucide="globe" class="w-7 h-7"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-card-title">12*与朱元思书/吴均</p>
+              </div>
+
+              <!-- 卡片 3 -->
+              <div class="w-[120px]">
+                <div class="resource-card">
+                  <div class="resource-card-thumb">
+                    <span class="resource-card-tag">课件</span>
+                    <!-- 更多操作按钮 + 下拉菜单 -->
+                    <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                      <button type="button" class="resource-card-more" @click="open = !open">
+                        <i data-lucide="more-horizontal"></i>
+                      </button>
+                      <!-- 下拉菜单 -->
+                      <div
+                        x-show="open"
+                        x-transition
+                        class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                        style="display: none;"
+                      >
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                          <span>重命名</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="share-2" class="w-4 h-4"></i>
+                          <span>共享</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>移动/复制</span>
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          <span>删除</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="thumb-circle card-local">
+                      <i data-lucide="presentation" class="w-7 h-7"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-card-title">3相似多边形</p>
+              </div>
+
+              <!-- 卡片 4 -->
+              <div class="w-[120px]">
+                <div class="resource-card">
+                  <div class="resource-card-thumb">
+                    <span class="resource-card-tag bg-red-100 text-red-700">违规</span>
+                    <!-- 更多操作按钮 + 下拉菜单 -->
+                    <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                      <button type="button" class="resource-card-more" @click="open = !open">
+                        <i data-lucide="more-horizontal"></i>
+                      </button>
+                      <!-- 下拉菜单 -->
+                      <div
+                        x-show="open"
+                        x-transition
+                        class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                        style="display: none;"
+                      >
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                          <span>重命名</span>
+                        </button>
+                        <!-- 违规状态：禁用 共享 -->
+                        <button
+                          class="w-full flex items-center gap-2 px-3 py-2 text-gray-400 cursor-not-allowed opacity-60 pointer-events-none"
+                          disabled
+                        >
+                          <i data-lucide="share-2" class="w-4 h-4"></i>
+                          <span>共享</span>
+                        </button>
+                        <!-- 违规状态：禁用 移动/复制 -->
+                        <button
+                          class="w-full flex items-center gap-2 px-3 py-2 text-gray-400 cursor-not-allowed opacity-60 pointer-events-none"
+                          disabled
+                        >
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>移动/复制</span>
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <!-- 违规状态：可申请人工审核 -->
+                        <button
+                          class="w-full flex items-center gap-2 px-3 py-2 text-orange-600 hover:bg-orange-50"
+                          onclick="handleAppeal(this)"
+                        >
+                          <i data-lucide="shield-question" class="w-4 h-4"></i>
+                          <span>申请人工审核</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          <span>删除</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="thumb-circle card-local">
+                      <i data-lucide="presentation" class="w-7 h-7"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-card-title">金木水火土</p>
+              </div>
+
+              <!-- 卡片 5 -->
+              <div class="w-[120px]">
+                <div class="resource-card">
+                  <div class="resource-card-thumb">
+                    <span class="resource-card-tag">课件</span>
+                    <!-- 更多操作按钮 + 下拉菜单 -->
+                    <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                      <button type="button" class="resource-card-more" @click="open = !open">
+                        <i data-lucide="more-horizontal"></i>
+                      </button>
+                      <!-- 下拉菜单 -->
+                      <div
+                        x-show="open"
+                        x-transition
+                        class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                        style="display: none;"
+                      >
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                          <span>重命名</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="share-2" class="w-4 h-4"></i>
+                          <span>共享</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>移动/复制</span>
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          <span>删除</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="thumb-circle card-local">
+                      <i data-lucide="presentation" class="w-7 h-7"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-card-title">桥</p>
+              </div>
+
+              <!-- 卡片 6 -->
+              <div class="w-[120px]">
+                <div class="resource-card">
+                  <div class="resource-card-thumb">
+                    <span class="resource-card-tag">课件</span>
+                    <!-- 更多操作按钮 + 下拉菜单 -->
+                    <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                      <button type="button" class="resource-card-more" @click="open = !open">
+                        <i data-lucide="more-horizontal"></i>
+                      </button>
+                      <!-- 下拉菜单 -->
+                      <div
+                        x-show="open"
+                        x-transition
+                        class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                        style="display: none;"
+                      >
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                          <span>重命名</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="share-2" class="w-4 h-4"></i>
+                          <span>共享</span>
+                        </button>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>移动/复制</span>
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          <span>删除</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="thumb-circle card-local">
+                      <i data-lucide="presentation" class="w-7 h-7"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="resource-card-title">我上学了</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2"></div>
+
+  <!-- 上传弹窗 -->
+  <div id="upload-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl w-[480px] shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-800">上传本地课件</h3>
+        <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-8">
+        <!-- 分类标签选择区 -->
+        <div class="mb-6 space-y-3">
+          <!-- 科目 -->
+          <div class="flex items-center gap-3">
+            <span class="w-14 text-sm text-gray-600 flex-shrink-0">科目</span>
+            <div class="relative flex-1">
+              <div id="subject-selector" onclick="toggleDropdown('subject')" class="h-9 px-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between cursor-pointer hover:border-blue-300 transition">
+                <span id="subject-value" class="text-sm text-gray-800">语文</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="clearSelection(event, 'subject')" class="hidden subject-clear p-0.5 hover:bg-gray-100 rounded"><i data-lucide="x" class="w-3 h-3 text-gray-400"></i></button>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                </div>
+              </div>
+              <div id="subject-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                <div class="py-1">
+                  <div onclick="selectSubject('语文')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>语文</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden subject-check-语文"></i>
+                  </div>
+                  <div onclick="selectSubject('数学')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>数学</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden subject-check-数学"></i>
+                  </div>
+                  <div onclick="selectSubject('英语')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>英语</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden subject-check-英语"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 年级 -->
+          <div class="flex items-center gap-3">
+            <span class="w-14 text-sm text-gray-600 flex-shrink-0">年级</span>
+            <div class="relative flex-1">
+              <div id="grade-selector" onclick="toggleCascade('grade')" class="h-9 px-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between cursor-pointer hover:border-blue-300 transition">
+                <span id="grade-value" class="text-sm text-gray-800">一年级 / 一年级上</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="clearSelection(event, 'grade')" class="hidden grade-clear p-0.5 hover:bg-gray-100 rounded"><i data-lucide="x" class="w-3 h-3 text-gray-400"></i></button>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                </div>
+              </div>
+              <div id="grade-cascade" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <div class="flex">
+                  <div class="w-1/2 border-r border-gray-100 max-h-48 overflow-y-auto">
+                    <div onclick="selectGradeMain('一年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-一年级">
+                      <span>一年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('二年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-二年级">
+                      <span>二年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('三年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-三年级">
+                      <span>三年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('四年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-四年级">
+                      <span>四年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('五年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-五年级">
+                      <span>五年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('六年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-六年级">
+                      <span>六年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('七年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-七年级">
+                      <span>七年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('八年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-八年级">
+                      <span>八年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                    <div onclick="selectGradeMain('九年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between grade-main-九年级">
+                      <span>九年级</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+                    </div>
+                  </div>
+                  <div class="w-1/2 max-h-48 overflow-y-auto">
+                    <div id="grade-sub-list" class="py-1">
+                      <div class="px-3 py-2 text-sm text-gray-400 text-center">请先选择年级</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 教材版本 -->
+          <div class="flex items-center gap-3">
+            <span class="w-14 text-sm text-gray-600 flex-shrink-0">教材版本</span>
+            <div class="relative flex-1">
+              <div id="version-selector" onclick="toggleDropdown('version')" class="h-9 px-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between cursor-pointer hover:border-blue-300 transition">
+                <span id="version-value" class="text-sm text-gray-800">统编版 (2016)</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="clearSelection(event, 'version')" class="hidden version-clear p-0.5 hover:bg-gray-100 rounded"><i data-lucide="x" class="w-3 h-3 text-gray-400"></i></button>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                </div>
+              </div>
+              <div id="version-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                <div class="py-1">
+                  <div onclick="selectVersion('统编版 (2016)')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>统编版 (2016)</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-统编版 (2016)"></i>
+                  </div>
+                  <div onclick="selectVersion('统编版 (2024)')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>统编版 (2024)</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-统编版 (2024)"></i>
+                  </div>
+                  <div onclick="selectVersion('统编版 (五四学制)')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>统编版 (五四学制)</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-统编版 (五四学制)"></i>
+                  </div>
+                  <div onclick="selectVersion('统编版 听说')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>统编版 听说</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-统编版 听说"></i>
+                  </div>
+                  <div onclick="selectVersion('人教版')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>人教版</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-人教版"></i>
+                  </div>
+                  <div onclick="selectVersion('北师大版')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>北师大版</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-北师大版"></i>
+                  </div>
+                  <div onclick="selectVersion('苏教版')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>苏教版</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-苏教版"></i>
+                  </div>
+                  <div onclick="selectVersion('沪教版')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                    <span>沪教版</span>
+                    <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden version-check-沪教版"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 单元 -->
+          <div class="flex items-center gap-3">
+            <span class="w-14 text-sm text-gray-600 flex-shrink-0">单元</span>
+            <div class="relative flex-1">
+              <div id="course-selector" onclick="toggleCascade('course')" class="h-9 px-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between cursor-pointer hover:border-blue-300 transition">
+                <span id="course-value" class="text-sm text-gray-400">请选择单元</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="clearSelection(event, 'course')" class="hidden course-clear p-0.5 hover:bg-gray-100 rounded"><i data-lucide="x" class="w-3 h-3 text-gray-400"></i></button>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                </div>
+              </div>
+              <div id="course-cascade" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <div class="flex">
+                  <div id="course-main-list" class="w-1/2 border-r border-gray-100 max-h-48 overflow-y-auto py-1">
+                    <!-- 单元列表 -->
+                  </div>
+                  <div class="w-1/2 max-h-48 overflow-y-auto">
+                    <div id="course-sub-list" class="py-1">
+                      <div class="px-3 py-2 text-sm text-gray-400 text-center">请先选择单元</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 拖拽上传区域 -->
+        <div 
+          id="drop-zone"
+          class="border-2 border-dashed border-blue-200 rounded-xl bg-blue-50/50 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center py-10 cursor-pointer"
+          onclick="document.getElementById('file-input').click()"
+        >
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 text-blue-500">
+            <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+          </div>
+          <p class="text-gray-700 font-medium mb-1">点击或拖拽文件到此处上传</p>
+          <p class="text-xs text-gray-400">支持 .ppt, .pptx 格式</p>
+          <input type="file" id="file-input" class="hidden" accept=".ppt,.pptx" onchange="handleFileSelect(event)">
+        </div>
+        <div id="file-info" class="hidden mt-4 p-4 bg-gray-50 rounded-lg">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-orange-100 text-orange-500 rounded flex items-center justify-center">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <p id="filename" class="text-sm font-medium text-gray-800"></p>
+                <p id="filesize" class="text-xs text-gray-400"></p>
+              </div>
+            </div>
+            <button onclick="cancelUpload()" class="text-gray-400 hover:text-gray-600 text-sm">取消</button>
+          </div>
+          <!-- 进度条 -->
+          <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+            <div id="progress-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+          <p id="progress-text" class="text-xs text-right text-gray-400">0%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // 违规资源点击提示
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.resource-card').forEach(card => {
+        const tag = card.querySelector('.resource-card-tag');
+        const thumb = card.querySelector('.thumb-circle');
+        
+        // 违规资源：禁止点击
+        if (tag && tag.textContent.includes('违规')) {
+          card.style.cursor = 'not-allowed';
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            showToast('该资源违规下架，如有问题请申请人工审核', 'info');
+          });
+        } 
+        // 本地课件：点击跳转预览页
+        else if (thumb && thumb.classList.contains('card-local')) {
+          card.style.cursor = 'pointer';
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            window.location.href = 'local-courseware-preview.html';
+          });
+        }
+      });
+    });
+
+    // 上传弹窗逻辑
+    const modal = document.getElementById('upload-modal');
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileInfo = document.getElementById('file-info');
+    let selectedFile = null;
+
+    function openUploadModal() {
+      modal.classList.remove('hidden');
+      resetUploadUI();
+    }
+
+    function closeUploadModal() {
+      modal.classList.add('hidden');
+    }
+
+    function resetUploadUI() {
+      fileInput.value = '';
+      dropZone.classList.remove('hidden');
+      fileInfo.classList.add('hidden');
+      selectedFile = null;
+      // 重置选择器 - 科目/年级/教材版本保持默认值，只重置课程
+      document.getElementById('subject-value').textContent = currentSelections.subject || '语文';
+      document.getElementById('subject-value').classList.remove('text-gray-400');
+      document.getElementById('subject-value').classList.add('text-gray-800');
+      document.querySelectorAll('[id^="subject-check-"]').forEach(el => el.classList.add('hidden'));
+      const subjectVal = currentSelections.subject || '语文';
+      document.querySelector('.subject-check-' + subjectVal)?.classList.remove('hidden');
+      document.querySelector('.subject-clear')?.classList.remove('hidden');
+
+      const gradeMain = currentSelections.grade || '一年级';
+      const gradeSub = currentSelections.gradeSub || '一年级上';
+      document.getElementById('grade-value').textContent = gradeMain + ' / ' + gradeSub;
+      document.getElementById('grade-value').classList.remove('text-gray-400');
+      document.getElementById('grade-value').classList.add('text-gray-800');
+      document.querySelector('.grade-main-' + gradeMain)?.classList.add('bg-gray-50', 'text-blue-600');
+      // 重建年级子列表并选中
+      const gradeSubList = document.getElementById('grade-sub-list');
+      const gradeSubs = gradeSubData[gradeMain] || [];
+      gradeSubList.innerHTML = gradeSubs.map(sub => `
+        <div onclick="selectGradeSub('${sub}', '${gradeMain}')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between grade-sub-${sub}">
+          <span>${sub}</span>
+          <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden"></i>
+        </div>
+      `).join('');
+      const activeSub = gradeSubList.querySelector('.grade-sub-' + gradeSub);
+      if (activeSub) {
+        activeSub.classList.add('bg-blue-50', 'text-blue-600');
+        activeSub.querySelector('i').classList.remove('hidden');
+      }
+      document.querySelector('.grade-clear')?.classList.remove('hidden');
+
+      const versionVal = currentSelections.version || '统编版 (2016)';
+      document.getElementById('version-value').textContent = versionVal;
+      document.getElementById('version-value').classList.remove('text-gray-400');
+      document.getElementById('version-value').classList.add('text-gray-800');
+      document.querySelectorAll('[id^="version-check-"]').forEach(el => el.classList.add('hidden'));
+      document.querySelector('.version-check-' + versionVal)?.classList.remove('hidden');
+      document.querySelector('.version-clear')?.classList.remove('hidden');
+
+      // 课程需要真正重置
+      currentSelections.course = '';
+      currentSelections.courseSub = '';
+      document.getElementById('course-value').textContent = '请选择单元';
+      document.getElementById('course-value').classList.add('text-gray-400');
+      document.getElementById('course-value').classList.remove('text-gray-800');
+      document.getElementById('course-sub-list').innerHTML = '<div class="px-3 py-2 text-sm text-gray-400 text-center">请先选择单元</div>';
+      document.querySelectorAll('.course-main-item').forEach(el => el.classList.remove('bg-blue-50', 'text-blue-600'));
+      document.querySelector('.course-clear')?.classList.add('hidden');
+      // 恢复默认选择器的值
+      currentSelections = { subject: '语文', grade: '一年级', gradeSub: '一年级上', version: '统编版 (2016)', course: '', courseSub: '' };
+      lucide.createIcons();
+    }
+
+    // 选择器数据
+    const gradeSubData = {
+      '一年级': ['一年级上', '一年级下'],
+      '二年级': ['二年级上', '二年级下'],
+      '三年级': ['三年级上', '三年级下'],
+      '四年级': ['四年级上', '四年级下'],
+      '五年级': ['五年级上', '五年级下'],
+      '六年级': ['六年级上', '六年级下'],
+      '七年级': ['七年级上', '七年级下'],
+      '八年级': ['八年级上', '八年级下'],
+      '九年级': ['九年级上', '九年级下']
+    };
+
+    const courseMainData = [
+      { name: '我上学了', sub: ['我爱我学校', '认识新同学', '学习用品', '整理书包'] },
+      { name: '识字 (一)', sub: ['1 天地人', '2 金木水火土', '3 口耳目', '4 日月水火', '5 对韵歌', '语文园地一'] },
+      { name: '汉语拼音', sub: ['1 a o e', '2 i u ü', '3 b p m f', '4 d t n l', '5 g k h', '6 j q x', '7 z c s', '8 zh ch sh r', '9 ai ei ui', '10 ao ou iu', '11 ie üe er', '12 an en in un ün', '13 整体认读音节', '语文园地三'] },
+      { name: '课文 (一)', sub: ['1 秋天', '2 小小的船', '3 江南', '4 四季', '口语交际: 我们做朋友', '语文园地四'] },
+      { name: '识字 (二)', sub: ['1 场景歌', '2 树', '3 拍手歌', '4 田家四季歌', '语文园地五'] },
+      { name: '课文 (二)', sub: ['1 坐井观天', '2 寒号鸟', '3 我要的是葫芦', '口语交际: 商量', '语文园地六', '4 刻舟求剑', '5 跳水', '语文园地七', '6 大禹治水', '7 吕氏春秋', '8 世说新语', '语文园地八'] }
+    ];
+
+    const courseMainDataHigh = [
+      { name: '第一单元', sub: ['1 草原', '2 丝绸之路', '3 白杨', '4* 把铁路修到拉萨去', '口语交际: 演讲', '习作: 变形记', '语文园地一'] },
+      { name: '第二单元', sub: ['5 古诗三首', '6 草船借箭', '7* 猴王出世', '8* 红楼梦', '口语交际: 怎么表演课本剧', '习作: 写读后感', '语文园地二'] }
+    ];
+
+    // 初始化默认值（年级默认一年级/一年级上）
+    let currentSelections = { subject: '语文', grade: '一年级', gradeSub: '一年级上', version: '统编版 (2016)', course: '', courseSub: '' };
+
+    // 页面加载后设置默认值的显示
+    document.addEventListener('DOMContentLoaded', () => {
+      // 设置科目默认勾选
+      document.querySelector('.subject-check-语文')?.classList.remove('hidden');
+      // 设置年级默认选中状态
+      document.querySelector('.grade-main-一年级')?.classList.add('bg-gray-50', 'text-blue-600');
+      const gradeSubList = document.getElementById('grade-sub-list');
+      const gradeSubs = gradeSubData['一年级'] || [];
+      gradeSubList.innerHTML = gradeSubs.map(sub => `
+        <div onclick="selectGradeSub('${sub}', '一年级')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between grade-sub-${sub}">
+          <span>${sub}</span>
+          <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden"></i>
+        </div>
+      `).join('');
+      // 年级子项默认选中
+      const firstGradeSub = gradeSubList.querySelector('.grade-sub-一年级上');
+      if (firstGradeSub) {
+        firstGradeSub.classList.add('bg-blue-50', 'text-blue-600');
+        firstGradeSub.querySelector('i').classList.remove('hidden');
+      }
+      // 设置教材版本默认勾选
+      document.querySelector('.version-check-统编版 (2016)')?.classList.remove('hidden');
+      // 显示清除按钮
+      document.querySelector('.subject-clear')?.classList.remove('hidden');
+      document.querySelector('.grade-clear')?.classList.remove('hidden');
+      document.querySelector('.version-clear')?.classList.remove('hidden');
+      lucide.createIcons();
+    });
+
+    // 清除选择
+    function clearSelection(e, type) {
+      e.stopPropagation();
+      if (type === 'subject') {
+        currentSelections.subject = '';
+        document.getElementById('subject-value').textContent = '请选择科目';
+        document.getElementById('subject-value').classList.add('text-gray-400');
+        document.getElementById('subject-value').classList.remove('text-gray-800');
+        document.querySelectorAll('[id^="subject-check-"]').forEach(el => el.classList.add('hidden'));
+        document.querySelector('.subject-clear')?.classList.add('hidden');
+      } else if (type === 'grade') {
+        currentSelections.grade = '';
+        currentSelections.gradeSub = '';
+        document.getElementById('grade-value').textContent = '请选择年级';
+        document.getElementById('grade-value').classList.add('text-gray-400');
+        document.getElementById('grade-value').classList.remove('text-gray-800');
+        document.getElementById('grade-sub-list').innerHTML = '<div class="px-3 py-2 text-sm text-gray-400 text-center">请先选择年级</div>';
+        document.querySelectorAll('.grade-main-一年级, .grade-main-二年级, .grade-main-三年级, .grade-main-四年级, .grade-main-五年级, .grade-main-六年级, .grade-main-七年级, .grade-main-八年级, .grade-main-九年级').forEach(el => {
+          el.classList.remove('bg-gray-50', 'text-blue-600');
+        });
+        document.querySelector('.grade-clear')?.classList.add('hidden');
+      } else if (type === 'version') {
+        currentSelections.version = '';
+        document.getElementById('version-value').textContent = '请选择教材版本';
+        document.getElementById('version-value').classList.add('text-gray-400');
+        document.getElementById('version-value').classList.remove('text-gray-800');
+        document.querySelectorAll('[id^="version-check-"]').forEach(el => el.classList.add('hidden'));
+        document.querySelector('.version-clear')?.classList.add('hidden');
+      } else if (type === 'course') {
+        currentSelections.course = '';
+        currentSelections.courseSub = '';
+        document.getElementById('course-value').textContent = '请选择单元';
+        document.getElementById('course-value').classList.add('text-gray-400');
+        document.getElementById('course-value').classList.remove('text-gray-800');
+        document.getElementById('course-sub-list').innerHTML = '<div class="px-3 py-2 text-sm text-gray-400 text-center">请先选择单元</div>';
+        document.querySelectorAll('.course-main-item').forEach(el => el.classList.remove('bg-blue-50', 'text-blue-600'));
+        document.querySelector('.course-clear')?.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    // 切换下拉框
+    function toggleDropdown(type) {
+      const dropdown = document.getElementById(type + '-dropdown');
+      const cascade = document.getElementById(type + '-cascade');
+      if (dropdown) dropdown.classList.toggle('hidden');
+      if (cascade) cascade.classList.add('hidden');
+    }
+
+    // 切换级联选择
+    function toggleCascade(type) {
+      const cascade = document.getElementById(type + '-cascade');
+      const dropdown = document.getElementById(type + '-dropdown');
+      if (cascade) cascade.classList.toggle('hidden');
+      if (dropdown) dropdown.classList.add('hidden');
+      // 课程：每次展开都确保左侧一级列表有数据
+      if (type === 'course') {
+        initCourseMainList();
+      }
+    }
+
+    // 初始化课程主列表（一级：单元/模块）
+    function initCourseMainList() {
+      const list = document.getElementById('course-main-list');
+      const allMain = [...courseMainData, ...courseMainDataHigh];
+      list.innerHTML = allMain.map((item) => `
+        <div data-course-main="${escapeAttr(item.name)}" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-between course-main-item">
+          <span>${escapeHtml(item.name)}</span>
+          <i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>
+        </div>
+      `).join('');
+      list.querySelectorAll('.course-main-item').forEach(el => {
+        el.addEventListener('click', () => selectCourseMain(el.getAttribute('data-course-main')));
+      });
+      lucide.createIcons();
+    }
+    function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    // 选择科目
+    function selectSubject(value) {
+      currentSelections.subject = value;
+      document.getElementById('subject-value').textContent = value;
+      document.getElementById('subject-value').classList.remove('text-gray-400');
+      document.getElementById('subject-value').classList.add('text-gray-800');
+      document.querySelectorAll('[id^="subject-check-"]').forEach(el => el.classList.add('hidden'));
+      document.querySelector('.subject-check-' + value)?.classList.remove('hidden');
+      document.getElementById('subject-dropdown').classList.add('hidden');
+      document.querySelector('.subject-clear')?.classList.remove('hidden');
+    }
+
+    // 选择年级主项
+    function selectGradeMain(value) {
+      document.querySelectorAll('[class^="grade-main-"]').forEach(el => {
+        el.classList.remove('bg-gray-50', 'text-blue-600');
+      });
+      document.querySelector('.grade-main-' + value).classList.add('bg-gray-50', 'text-blue-600');
+      
+      const subList = document.getElementById('grade-sub-list');
+      const subs = gradeSubData[value] || [];
+      currentSelections.grade = value;
+      currentSelections.gradeSub = '';
+      
+      subList.innerHTML = subs.map(sub => `
+        <div onclick="selectGradeSub('${sub}', '${value}')" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between grade-sub-${sub}">
+          <span>${sub}</span>
+          <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden"></i>
+        </div>
+      `).join('');
+      
+      // 恢复已选的子项高亮
+      if (currentSelections.gradeSub) {
+        const subEl = document.querySelector('.grade-sub-' + currentSelections.gradeSub);
+        if (subEl) {
+          subEl.classList.add('bg-blue-50', 'text-blue-600');
+          subEl.querySelector('i').classList.remove('hidden');
+        }
+      }
+      
+      lucide.createIcons();
+    }
+
+    // 选择年级子项
+    function selectGradeSub(value, mainValue) {
+      currentSelections.grade = mainValue;
+      currentSelections.gradeSub = value;
+      document.getElementById('grade-value').textContent = mainValue + ' / ' + value;
+      document.getElementById('grade-value').classList.remove('text-gray-400');
+      document.getElementById('grade-value').classList.add('text-gray-800');
+      document.getElementById('grade-cascade').classList.add('hidden');
+      document.querySelector('.grade-clear')?.classList.remove('hidden');
+    }
+
+    // 选择教材版本
+    function selectVersion(value) {
+      currentSelections.version = value;
+      document.getElementById('version-value').textContent = value;
+      document.getElementById('version-value').classList.remove('text-gray-400');
+      document.getElementById('version-value').classList.add('text-gray-800');
+      document.querySelectorAll('[id^="version-check-"]').forEach(el => el.classList.add('hidden'));
+      document.querySelector('.version-check-' + value)?.classList.remove('hidden');
+      document.getElementById('version-dropdown').classList.add('hidden');
+      document.querySelector('.version-clear')?.classList.remove('hidden');
+    }
+
+    // 选择课程主项
+    function selectCourseMain(value) {
+      document.querySelectorAll('.course-main-item').forEach(el => {
+        el.classList.remove('bg-blue-50', 'text-blue-600');
+        if (el.getAttribute('data-course-main') === value) el.classList.add('bg-blue-50', 'text-blue-600');
+      });
+
+      const courseData = courseMainData.find(c => c.name === value) || courseMainDataHigh.find(c => c.name === value);
+      const subList = document.getElementById('course-sub-list');
+      const subs = courseData ? courseData.sub : [];
+      currentSelections.course = value;
+      currentSelections.courseSub = '';
+
+      subList.innerHTML = subs.map(sub => {
+        const subEsc = escapeAttr(sub);
+        const valueEsc = escapeAttr(value);
+        return `<div data-course-sub="${subEsc}" data-course-main="${valueEsc}" class="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer flex items-center justify-between course-sub-item">
+          <span>${escapeHtml(sub)}</span>
+          <i data-lucide="check" class="w-4 h-4 text-blue-500 hidden"></i>
+        </div>`;
+      }).join('');
+
+      subList.querySelectorAll('.course-sub-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const sub = el.getAttribute('data-course-sub');
+          const main = el.getAttribute('data-course-main');
+          selectCourseSub(sub, main);
+        });
+      });
+
+      lucide.createIcons();
+    }
+
+    // 选择课程子项
+    function selectCourseSub(value, mainValue) {
+      currentSelections.course = mainValue;
+      currentSelections.courseSub = value;
+      document.getElementById('course-value').textContent = mainValue + ' / ' + value;
+      document.getElementById('course-value').classList.remove('text-gray-400');
+      document.getElementById('course-value').classList.add('text-gray-800');
+      document.getElementById('course-cascade').classList.add('hidden');
+      document.querySelector('.course-clear')?.classList.remove('hidden');
+    }
+
+    // 点击其他地方关闭下拉
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#subject-selector') && !e.target.closest('#subject-dropdown')) {
+        document.getElementById('subject-dropdown')?.classList.add('hidden');
+      }
+      if (!e.target.closest('#grade-selector') && !e.target.closest('#grade-cascade')) {
+        document.getElementById('grade-cascade')?.classList.add('hidden');
+      }
+      if (!e.target.closest('#version-selector') && !e.target.closest('#version-dropdown')) {
+        document.getElementById('version-dropdown')?.classList.add('hidden');
+      }
+      if (!e.target.closest('#course-selector') && !e.target.closest('#course-cascade')) {
+        document.getElementById('course-cascade')?.classList.add('hidden');
+      }
+    });
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const validTypes = ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+      const validExts = ['.ppt', '.pptx'];
+      const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+      if (!validExts.includes(ext)) {
+        showToast('仅支持 .ppt, .pptx 格式', 'error');
+        return;
+      }
+
+      selectedFile = file;
+      document.getElementById('filename').textContent = file.name;
+      document.getElementById('filesize').textContent = formatSize(file.size);
+      
+      dropZone.classList.add('hidden');
+      fileInfo.classList.remove('hidden');
+      
+      // 选择文件后立即开始上传
+      startUpload();
+    }
+
+    function cancelUpload() {
+      selectedFile = null;
+      resetUploadUI();
+    }
+
+    function startUpload() {
+      if (!selectedFile) return;
+
+      // 模拟上传进度条
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+      let progress = 0;
+      
+      // 清除之前的定时器（如果有）
+      if (window.uploadInterval) clearInterval(window.uploadInterval);
+
+      window.uploadInterval = setInterval(() => {
+        progress += Math.random() * 10; // 随机增加进度
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(window.uploadInterval);
+          
+          // 上传完成
+          setTimeout(() => {
+            closeUploadModal();
+            showToast('上传成功，课件已进入安全检测流程', 'success');
+            addNewCoursewareItem(selectedFile.name);
+          }, 500);
+        }
+        
+        progressBar.style.width = progress + '%';
+        progressText.textContent = Math.floor(progress) + '%';
+      }, 200);
+    }
+
+    function addNewCoursewareItem(name) {
+      const container = document.getElementById('courseware-list'); // 找到课件列表容器
+      // 生成唯一ID
+      const id = 'courseware-' + Date.now();
+      
+      // 创建新卡片 HTML
+      // 检测中状态：复用 resource-card-tag 位置，但修改样式（增加 animate-pulse 动画）
+      const html = `
+        <div id="${id}" class="w-[120px] opacity-0 transition-opacity duration-500">
+          <div class="resource-card">
+            <div class="resource-card-thumb">
+              <span class="resource-card-tag bg-yellow-100 text-yellow-700">
+                <span class="w-1 h-1 bg-yellow-500 rounded-full animate-pulse mr-1"></span>
+                检测中
+              </span>
+              <div class="resource-card-more-container" x-data="{ open: false }" @click.outside="open = false">
+                <button type="button" class="resource-card-more" @click="open = !open">
+                  <i data-lucide="more-horizontal"></i>
+                </button>
+                <div
+                  x-show="open"
+                  x-transition
+                  class="absolute right-0 mt-1 w-36 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-[100] text-sm"
+                  style="display: none;"
+                >
+                  <button class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    <span>重命名</span>
+                  </button>
+                  <!-- 检测中状态：禁用 共享 -->
+                  <button
+                    class="w-full flex items-center gap-2 px-3 py-2 text-gray-400 cursor-not-allowed opacity-60 pointer-events-none"
+                    data-role="share"
+                    disabled
+                  >
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    <span>共享</span>
+                  </button>
+                  <!-- 检测中状态：禁用 移动/复制 -->
+                  <button
+                    class="w-full flex items-center gap-2 px-3 py-2 text-gray-400 cursor-not-allowed opacity-60 pointer-events-none"
+                    data-role="move-copy"
+                    disabled
+                  >
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span>移动/复制</span>
+                  </button>
+                  <div class="h-px bg-gray-100 my-1"></div>
+                  <button class="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <span>删除</span>
+                  </button>
+                </div>
+              </div>
+              <div class="thumb-circle card-local">
+                <i data-lucide="file-text" class="w-7 h-7"></i>
+              </div>
+            </div>
+          </div>
+          <p class="resource-card-title">${name}</p>
+        </div>
+      `;
+
+      // 追加到列表末尾
+      container.insertAdjacentHTML('beforeend', html);
+      
+      // 重新渲染图标
+      lucide.createIcons();
+
+      // 淡入显示（否则一直是 opacity-0 看不见）
+      const item = document.getElementById(id);
+      if (item) {
+        requestAnimationFrame(() => {
+          item.classList.remove('opacity-0');
+          item.classList.add('opacity-100');
+        });
+      }
+
+      // 10秒后模拟检测通过
+      setTimeout(() => {
+        const item = document.getElementById(id);
+        if (item) {
+          // 恢复显示"课件"标签
+          const tag = item.querySelector('.resource-card-tag');
+          if (tag) {
+            tag.className = 'resource-card-tag'; // 恢复默认样式（蓝色背景）
+            tag.textContent = '课件';
+          }
+          // 检测完成：恢复 共享 / 移动 按钮可用
+          const shareBtn = item.querySelector('[data-role="share"]');
+          if (shareBtn) {
+            shareBtn.disabled = false;
+            shareBtn.className = 'w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50';
+          }
+          const moveCopyBtn = item.querySelector('[data-role="move-copy"]');
+          if (moveCopyBtn) {
+            moveCopyBtn.disabled = false;
+            moveCopyBtn.className = 'w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50';
+          }
+        }
+      }, 10000);
+    }
+
+    function showToast(message, type = 'info') {
+      try {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+
+        const colors = {
+          success: 'bg-green-500',
+          error: 'bg-red-500',
+          info: 'bg-blue-500'
+        };
+
+        const icons = {
+          success: 'check-circle',
+          error: 'alert-circle',
+          info: 'info'
+        };
+
+        toast.className = `${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0`;
+        toast.innerHTML = `
+          <i data-lucide="${icons[type]}" class="w-5 h-5"></i>
+          <span class="text-sm font-medium">${message}</span>
+        `;
+
+        container.appendChild(toast);
+
+        // 单独调用 lucide，失败不影响 toast 显示
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          lucide.createIcons();
+        }
+
+        // Animation
+        requestAnimationFrame(() => {
+          toast.classList.remove('translate-x-full', 'opacity-0');
+        });
+
+        // Remove after 3s
+        setTimeout(() => {
+          toast.classList.add('translate-x-full', 'opacity-0');
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      } catch (e) {
+        console.error('showToast error:', e);
+      }
+    }
+
+    // 申请人工审核
+    function handleAppeal(btn) {
+      // 先显示提示
+      showToast('已提交人工审核申请，请耐心等待', 'info');
+      
+      // 找到当前卡片区域
+      const card = btn.closest('.resource-card');
+      if (card) {
+        // 1. 修改状态标签为 "待审核"
+        const tag = card.querySelector('.resource-card-tag');
+        if (tag) {
+          tag.textContent = '待审核';
+          tag.className = 'resource-card-tag bg-yellow-100 text-yellow-700'; // 黄色警示
+        }
+        
+        // 2. 禁用 "申请人工审核" 按钮
+        btn.classList.add('text-gray-400', 'cursor-not-allowed', 'opacity-60', 'pointer-events-none');
+        btn.classList.remove('text-orange-600', 'hover:bg-orange-50');
+        btn.onclick = null; // 移除点击事件
+      }
+
+      // 找到当前按钮所属的下拉菜单容器，关闭它
+      // 延迟一下执行，确保 toast 先显示
+      setTimeout(() => {
+        const dropdown = btn.closest('.resource-card-more-container');
+        if (dropdown) {
+          // 关闭下拉菜单
+          const menu = dropdown.querySelector('[x-show="open"]');
+          if (menu) {
+            menu.style.display = 'none';
+          }
+        }
+      }, 10);
+    }
+
+    function formatSize(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // 拖拽事件
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-blue-500', 'bg-blue-50');
+    });
+    dropZone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        // 触发 change 事件
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+      }
+    });
+  </script>
+</body>
+</html>

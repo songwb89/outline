@@ -7,7 +7,7 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
   <style>
     .ai-tool-card {
       transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
@@ -228,6 +228,21 @@
             <h2 class="text-base font-semibold text-gray-900">拍题答疑</h2>
             <p class="text-sm text-gray-500 mt-2 leading-relaxed">
               拍照上传题目，获取 AI 分步解析与答疑，支持任务与收藏管理。
+            </p>
+          </div>
+        </div>
+      </button>
+
+      <!-- 课堂分析（跳转 class-report.html） -->
+      <button type="button" id="btn-open-class-analysis" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-cyan-400 to-blue-600 text-white shadow-inner">
+            <i data-lucide="bar-chart-2" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">课堂分析</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              多维度课堂分析，追踪学生专注度，智能生成评价与改进建议。
             </p>
           </div>
         </div>
@@ -989,6 +1004,7 @@
     bindEvent('btn-open-ai-picture-book', 'click', showAiPictureBook);
     bindEvent('btn-open-ai-lecture', 'click', showAiLecture);
     bindEvent('btn-open-photo-qa', 'click', function () { showPhotoQa('task'); });
+    bindEvent('btn-open-class-analysis', 'click', function() { window.location.href = 'class-report.html'; });
     bindEvent('breadcrumb-ai-zone-photo-qa', 'click', showAiHome);
     bindEvent('breadcrumb-ai-zone-photo-qa-ai', 'click', showAiHome);
     bindEvent('breadcrumb-back-photo-qa', 'click', function () { showPhotoQa(photoQaActiveTab); });

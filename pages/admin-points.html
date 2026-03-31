@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>院校点数管理 - 运营平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                            800: '#3730a3', 900: '#312e81',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            color: white; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10000;
+            display: flex; align-items: center; gap: 12px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+        .toast.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        .toast.toast-success { background: #10b981; }
+        .toast.toast-info { background: #3b82f6; }
+        .toast.toast-error { background: #ef4444; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        .pm-modal-overlay { background: rgba(0,0,0,0.45); }
+        .pm-modal-content { transition: transform 0.2s ease, opacity 0.2s ease; transform: scale(1); }
+        .admin-nav-subitem { transition: all 0.15s ease; }
+        .admin-nav-subitem:hover { background-color: #eef2ff; color: #4f46e5; }
+        .admin-nav-subitem.active { background-color: #e0e7ff; color: #4f46e5; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="text-base font-semibold text-gray-800">运营平台</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">A</div>
+                <span class="text-sm text-gray-700 font-medium">管理员</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-57px)]">
+
+        <!-- 左侧菜单 -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <nav class="flex-1 overflow-y-auto py-4">
+                <!-- 一级菜单：用户管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" id="nav-user-group" data-group="panel-user,panel-school-points" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
+                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
+                        <span>用户管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div id="nav-user-children" class="ml-4 mt-1 space-y-0.5">
+                        <a href="admin-school.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="building-2" class="w-4 h-4"></i>
+                            <span>学校管理</span>
+                        </a>
+                        <button type="button" id="nav-school-points" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="coins" class="w-4 h-4"></i>
+                            <span>点数管理</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 一级菜单：业务数据 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" id="nav-data-group" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
+                        <i data-lucide="database" class="w-5 h-5 text-gray-400"></i>
+                        <span>业务数据</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div id="nav-data-children" class="ml-4 mt-1 space-y-0.5 hidden">
+                        <a href="admin-courseware.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="presentation" class="w-4 h-4"></i>
+                            <span>课件管理</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <!-- ==================== 面板: 院校点数管理 ==================== -->
+            <div id="panel-school-points" class="admin-panel">
+                <div class="px-6 pt-6 overflow-y-auto flex-1">
+
+                    <div class="mb-6 flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-semibold text-gray-900">院校点数管理</h1>
+                            <p class="text-sm text-gray-500 mt-1">管理各院校的点数值，支持查看明细与增减操作</p>
+                        </div>
+                        <button type="button" onclick="openDeductionConfigModal()" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            扣点配置
+                        </button>
+                    </div>
+
+                    <!-- 筛选区 -->
+                    <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                        <div class="flex flex-wrap items-end gap-x-6 gap-y-3">
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校名称</label>
+                                <input type="text" id="sp-filter-name" placeholder="请输入学校名称" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-44">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校编码</label>
+                                <input type="text" id="sp-filter-code" placeholder="请输入学校编码" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-36">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-medium text-gray-600 whitespace-nowrap">状态</label>
+                                <select id="sp-filter-status" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[130px]">
+                                    <option value="">全部</option>
+                                    <option value="normal" selected>正常</option>
+                                    <option value="low">余额不足</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="spApplyFilters()" class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                                <i data-lucide="search" class="w-4 h-4"></i>查询
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 数据表格 -->
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 300px); min-height: 300px;">
+                        <div class="overflow-x-auto overflow-y-auto flex-1">
+                            <table class="w-full min-w-[900px]">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">购买点数</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">赠送点数</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">已消耗</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">剩余点数</th>
+                                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sp-table-body" class="bg-white divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4 bg-white flex-shrink-0">
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <span>共 <span id="sp-total-count" class="font-medium">0</span> 所学校</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="sp-prev" onclick="spGoPage(spCurPage - 1)" class="p-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                                <div id="sp-pages" class="flex items-center gap-1"></div>
+                                <button type="button" id="sp-next" onclick="spGoPage(spCurPage + 1)" class="p-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== 弹窗: 院校点数明细 ==================== -->
+    <div id="modal-school-detail" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-school-detail')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 900px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <div>
+                    <h3 class="font-semibold text-gray-800" id="sdm-title">院校点数明细</h3>
+                    <p class="text-xs text-gray-500 mt-0.5" id="sdm-subtitle">--</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openAddPointsModal()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>增减点数
+                    </button>
+                    <button type="button" onclick="pmHideModal('modal-school-detail')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">购买点数</div>
+                        <div class="text-lg font-bold text-blue-600" id="sdm-purchase">--</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">赠送点数</div>
+                        <div class="text-lg font-bold text-purple-600" id="sdm-gift">--</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">已消耗</div>
+                        <div class="text-lg font-bold text-orange-600" id="sdm-consumed">--</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">剩余点数</div>
+                        <div class="text-lg font-bold text-emerald-600" id="sdm-balance">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-3 border-b border-gray-100 flex flex-wrap items-end gap-3 shrink-0">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-600 whitespace-nowrap">类型</label>
+                    <select id="sdm-filter-type" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-primary-500 outline-none min-w-[90px]">
+                        <option value="">全部</option>
+                        <option value="purchase">购买</option>
+                        <option value="gift">赠送</option>
+                        <option value="consume">消费</option>
+                        <option value="deduct">扣减</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-600 whitespace-nowrap">教师</label>
+                    <select id="sdm-filter-teacher" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-primary-500 outline-none min-w-[100px]">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-600 whitespace-nowrap">日期</label>
+                    <input type="date" id="sdm-filter-from" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-primary-500 outline-none" />
+                    <span class="text-gray-400 text-xs">~</span>
+                    <input type="date" id="sdm-filter-to" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-primary-500 outline-none" />
+                </div>
+                <button type="button" onclick="sdmApplyFilters()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors">查询</button>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <table class="w-full min-w-[700px]">
+                    <thead class="bg-gray-50 sticky top-0 z-10">
+                        <tr>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th>
+                            <th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">类型</th>
+                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th>
+                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">余额</th>
+                            <th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">教师/合同</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">来源/理由</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sdm-table-body" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+            <div class="px-6 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="text-xs text-gray-600">共 <span id="sdm-count" class="font-medium">0</span> 条</div>
+                <div class="flex items-center gap-1">
+                    <button type="button" id="sdm-prev" onclick="sdmGoPage(sdmCurPage - 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-primary-500 hover:text-primary-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+                    <div id="sdm-pages" class="flex items-center gap-0.5"></div>
+                    <button type="button" id="sdm-next" onclick="sdmGoPage(sdmCurPage + 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-primary-500 hover:text-primary-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗: 增减院校点数 ==================== -->
+    <div id="modal-add-points" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-add-points')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden" style="transform: scale(0.95);">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="font-semibold text-gray-800">增减院校点数</h3>
+                <button type="button" onclick="pmHideModal('modal-add-points')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-5 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <div class="flex items-center justify-between text-sm mb-1.5">
+                        <span class="text-gray-500">学校</span>
+                        <span class="font-medium text-gray-800" id="apm-school-name">--</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">当前剩余</span>
+                        <span class="font-bold text-emerald-600" id="apm-current-balance">--</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">操作类型</label>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="apm-op-type" value="purchase" checked class="sr-only peer" onchange="apmToggleFields()">
+                            <div class="text-center py-2.5 border-2 border-blue-300 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white transition-all">购买（增加）</div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="apm-op-type" value="gift" class="sr-only peer" onchange="apmToggleFields()">
+                            <div class="text-center py-2.5 border-2 border-purple-300 rounded-lg text-sm font-medium text-purple-600 bg-purple-50 peer-checked:border-purple-600 peer-checked:bg-purple-600 peer-checked:text-white transition-all">赠送（增加）</div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="apm-op-type" value="deduct" class="sr-only peer" onchange="apmToggleFields()">
+                            <div class="text-center py-2.5 border-2 border-red-300 rounded-lg text-sm font-medium text-red-600 bg-red-50 peer-checked:border-red-600 peer-checked:bg-red-600 peer-checked:text-white transition-all">扣减（减少）</div>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">点数 <span class="text-red-500">*</span></label>
+                    <input type="number" id="apm-points" min="1" placeholder="请输入点数数量" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                </div>
+                <div id="apm-contract-fields">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1.5">合同编号</label>
+                            <input type="text" id="apm-contract-no" placeholder="如HT-20260301" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1.5">合同金额</label>
+                            <input type="number" id="apm-contract-amount" min="0" placeholder="单位：元" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-xs font-medium text-gray-700 mb-1.5">合同日期</label>
+                        <input type="date" id="apm-contract-date" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                    </div>
+                </div>
+                <div id="apm-remark-field" class="mb-6 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">理由/备注 <span class="text-red-500">*</span></label>
+                    <textarea id="apm-remark" rows="3" placeholder="请输入操作理由，必填" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none"></textarea>
+                </div>
+                <div class="flex items-center justify-end gap-3">
+                    <button type="button" onclick="pmHideModal('modal-add-points')" class="px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">取消</button>
+                    <button type="button" onclick="confirmAddPoints()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗: 扣点配置 ==================== -->
+    <div id="modal-deduction-config" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-deduction-config')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 500px; display: flex; flex-direction: column;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">扣点配置</h3>
+                <button type="button" onclick="pmHideModal('modal-deduction-config')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 space-y-4 overflow-y-auto">
+                <p class="text-sm text-gray-500">设置各类生成功能每次消耗的点数</p>
+                <div class="flex items-center gap-4">
+                    <label class="w-28 text-sm font-medium text-gray-700">生成活动</label>
+                    <input type="number" id="dc-activity" value="2" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <span class="text-sm text-gray-500">点/次</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <label class="w-28 text-sm font-medium text-gray-700">生成绘本</label>
+                    <input type="number" id="dc-book" value="2" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <span class="text-sm text-gray-500">点/次</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <label class="w-28 text-sm font-medium text-gray-700">生成课件</label>
+                    <input type="number" id="dc-courseware" value="1" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <span class="text-sm text-gray-500">点/次</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <label class="w-28 text-sm font-medium text-gray-700">生成数字人</label>
+                    <input type="number" id="dc-avatar" value="2" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <span class="text-sm text-gray-500">点/次</span>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('modal-deduction-config')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="saveDeductionConfig()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="points-manage.js"></script>
+    <script>
+        // 菜单展开/收起
+        document.getElementById('nav-user-group').addEventListener('click', function() {
+            const children = document.getElementById('nav-user-children');
+            if (children) children.classList.toggle('hidden');
+            lucide.createIcons();
+        });
+        document.getElementById('nav-data-group').addEventListener('click', function() {
+            const children = document.getElementById('nav-data-children');
+            if (children) children.classList.toggle('hidden');
+            lucide.createIcons();
+        });
+
+        // ============================================================
+        // 院校点数管理
+        // ============================================================
+        let spAllData = [];
+        let spFiltered = [];
+        let spCurPage = 1;
+        const spPageSize = 10;
+        let sdmCurrentSchoolId = null;
+
+        function spInit() {
+            const institutions = JSON.parse(localStorage.getItem('institutions')) || [];
+            spAllData = institutions.map(inst => {
+                const cached = getSchools().find(s => s.schoolCode === inst.schoolCode);
+                return {
+                    schoolId: inst.id,
+                    schoolCode: inst.schoolCode || '',
+                    schoolName: inst.username || '',
+                    purchasePoints: cached ? cached.purchasePoints : Math.floor(Math.random() * 50000),
+                    giftPoints: cached ? cached.giftPoints : Math.floor(Math.random() * 5000),
+                    consumed: cached ? cached.consumed : Math.floor(Math.random() * 2000),
+                    balance: cached ? cached.balance : Math.floor(Math.random() * 30000),
+                    disabled: inst.disabled
+                };
+            });
+            spApplyFilters();
+            pmInitIcons();
+        }
+
+        // 扣点配置相关
+        let deductionConfig = {
+            activity: 2, book: 2, courseware: 1, avatar: 2
+        };
+
+        function openDeductionConfigModal() {
+            document.getElementById('dc-activity').value = deductionConfig.activity;
+            document.getElementById('dc-book').value = deductionConfig.book;
+            document.getElementById('dc-courseware').value = deductionConfig.courseware;
+            document.getElementById('dc-avatar').value = deductionConfig.avatar;
+            document.getElementById('modal-deduction-config').classList.remove('hidden');
+            pmInitIcons();
+        }
+
+        function saveDeductionConfig() {
+            const activity = document.getElementById('dc-activity').value.trim();
+            const book = document.getElementById('dc-book').value.trim();
+            const courseware = document.getElementById('dc-courseware').value.trim();
+            const avatar = document.getElementById('dc-avatar').value.trim();
+            if (activity === '' || book === '' || courseware === '' || avatar === '') {
+                pmToast('请填写所有扣点配置项', 'error'); return;
+            }
+            const activityNum = parseInt(activity);
+            const bookNum = parseInt(book);
+            const coursewareNum = parseInt(courseware);
+            const avatarNum = parseInt(avatar);
+            if (isNaN(activityNum) || isNaN(bookNum) || isNaN(coursewareNum) || isNaN(avatarNum)) {
+                pmToast('扣点数必须为整数', 'error'); return;
+            }
+            deductionConfig.activity = activityNum;
+            deductionConfig.book = bookNum;
+            deductionConfig.courseware = coursewareNum;
+            deductionConfig.avatar = avatarNum;
+            pmHideModal('modal-deduction-config');
+            pmToast('扣点配置已保存');
+        }
+
+        function spApplyFilters() {
+            const name = (document.getElementById('sp-filter-name').value || '').toLowerCase();
+            const code = (document.getElementById('sp-filter-code').value || '').toLowerCase();
+            const status = document.getElementById('sp-filter-status').value;
+            spFiltered = spAllData.filter(s => {
+                if (name && !s.schoolName.toLowerCase().includes(name)) return false;
+                if (code && !s.schoolCode.toLowerCase().includes(code)) return false;
+                if (status === 'normal' && (s.balance <= 0 || s.disabled)) return false;
+                if (status === 'low' && (s.balance > 0 || s.disabled)) return false;
+                return true;
+            });
+            spCurPage = 1;
+            spRender();
+        }
+
+        function spRender() {
+            const start = (spCurPage - 1) * spPageSize;
+            const pageData = spFiltered.slice(start, start + spPageSize);
+            const totalPages = Math.max(1, Math.ceil(spFiltered.length / spPageSize));
+            const tbody = document.getElementById('sp-table-body');
+            document.getElementById('sp-total-count').textContent = spFiltered.length;
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
+            } else {
+                tbody.innerHTML = pageData.map((s, i) => {
+                    const no = start + i + 1;
+                    const balanceStatus = s.balance <= 0
+                        ? '<span class="px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-700">余额不足</span>'
+                        : '<span class="px-2 py-0.5 text-xs font-medium rounded bg-green-100 text-green-700">正常</span>';
+                    return '<tr class="hover:bg-gray-50/80">' +
+                        '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">' + no + '</td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap"><span class="font-medium text-gray-900">' + s.schoolName + '</span><span class="ml-1 text-xs text-gray-400 font-mono">(' + s.schoolCode + ')</span></td>' +
+                        '<td class="px-4 py-3 text-right text-sm text-blue-600 font-medium">' + s.purchasePoints.toLocaleString() + '</td>' +
+                        '<td class="px-4 py-3 text-right text-sm text-purple-600 font-medium">' + s.giftPoints.toLocaleString() + '</td>' +
+                        '<td class="px-4 py-3 text-right text-sm text-orange-600 font-medium">' + s.consumed.toLocaleString() + '</td>' +
+                        '<td class="px-4 py-3 text-right text-sm font-bold text-emerald-600">' + s.balance.toLocaleString() + '</td>' +
+                        '<td class="px-4 py-3 text-center whitespace-nowrap">' + balanceStatus + '</td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap text-sm"><button type="button" onclick="openSchoolDetail(\'' + s.schoolId + '\')" class="text-primary-600 hover:text-primary-800 font-medium">管理</button></td></tr>';
+                }).join('');
+            }
+
+            document.getElementById('sp-prev').disabled = spCurPage <= 1;
+            document.getElementById('sp-next').disabled = spCurPage >= totalPages;
+            const pagesEl = document.getElementById('sp-pages');
+            pagesEl.innerHTML = '';
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = i;
+                btn.className = i === spCurPage
+                    ? 'min-w-[32px] px-2 py-1 rounded text-xs font-semibold bg-primary-600 text-white'
+                    : 'min-w-[32px] px-2 py-1 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+                btn.onclick = () => spGoPage(i);
+                pagesEl.appendChild(btn);
+            }
+            pmInitIcons();
+        }
+
+        function spGoPage(page) {
+            const totalPages = Math.max(1, Math.ceil(spFiltered.length / spPageSize));
+            if (page < 1 || page > totalPages) return;
+            spCurPage = page;
+            spRender();
+        }
+
+        // ============================================================
+        // 院校点数明细弹窗
+        // ============================================================
+        let sdmAllRecords = [];
+        let sdmFiltered = [];
+        let sdmCurPage = 1;
+        const sdmPageSize = 10;
+
+        function openSchoolDetail(schoolId) {
+            sdmCurrentSchoolId = schoolId;
+            const school = spAllData.find(s => s.schoolId === schoolId);
+            if (!school) return;
+
+            document.getElementById('sdm-title').textContent = school.schoolName + ' - 点数明细';
+            document.getElementById('sdm-subtitle').textContent = '学校编码：' + school.schoolCode;
+            document.getElementById('sdm-purchase').textContent = school.purchasePoints.toLocaleString();
+            document.getElementById('sdm-gift').textContent = school.giftPoints.toLocaleString();
+            document.getElementById('sdm-consumed').textContent = school.consumed.toLocaleString();
+            document.getElementById('sdm-balance').textContent = school.balance.toLocaleString();
+
+            const teachers = getTeacherPoints();
+            const teacherOpts = '<option value="">全部</option>' + teachers.map(t => '<option value="' + t.teacherId + '">' + t.teacherName + '</option>').join('');
+            document.getElementById('sdm-filter-teacher').innerHTML = teacherOpts;
+
+            sdmAllRecords = [
+                { id: 'r1', schoolId: schoolId, type: 'purchase', points: school.purchasePoints, balance: school.purchasePoints + school.giftPoints, teacherId: null, source: '合同购买', contractNo: 'HT-20260301', contractDate: '2026-03-01', contractAmount: 5000, remark: null, createdAt: '2026-03-01 09:00:00' },
+                { id: 'r2', schoolId: schoolId, type: 'gift', points: school.giftPoints, balance: school.purchasePoints + school.giftPoints, teacherId: null, source: '促销活动赠送', contractNo: null, contractDate: null, contractAmount: null, remark: '新用户首月赠送', createdAt: '2026-03-02 10:30:00' },
+                { id: 'r3', schoolId: schoolId, type: 'consume', points: -15, balance: school.balance + 15, teacherId: 't001', source: '生成绘本', resourceName: '丑小鸭的故事', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-03 14:20:00' },
+                { id: 'r4', schoolId: schoolId, type: 'consume', points: -20, balance: school.balance + 35, teacherId: 't002', source: '生成课件', resourceName: 'Unit 3 课件', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-04 08:15:00' },
+                { id: 'r5', schoolId: schoolId, type: 'consume', points: -10, balance: school.balance + 45, teacherId: 't003', source: '生成数字人', resourceName: '数学老师数字人', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-05 16:40:00' },
+                { id: 'r6', schoolId: schoolId, type: 'consume', points: -30, balance: school.balance + 75, teacherId: 't001', source: '生成活动', resourceName: '消防安全演练', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-06 11:05:00' },
+                { id: 'r7', schoolId: schoolId, type: 'deduct', points: -50, balance: school.balance + 125, teacherId: null, source: '账户调整', contractNo: null, contractDate: null, contractAmount: null, remark: '重复充值退款', createdAt: '2026-03-10 09:00:00' },
+                { id: 'r8', schoolId: schoolId, type: 'consume', points: -25, balance: school.balance + 150, teacherId: 't004', source: '生成绘本', resourceName: '小红帽的故事', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-12 15:30:00' },
+                { id: 'r9', schoolId: schoolId, type: 'consume', points: -15, balance: school.balance + 165, teacherId: 't002', source: '生成课件', resourceName: '拼音教学课件', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-15 10:20:00' },
+                { id: 'r10', schoolId: schoolId, type: 'consume', points: -20, balance: school.balance + 185, teacherId: 't005', source: '生成数字人', resourceName: '英语老师数字人', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-18 09:45:00' },
+            ];
+
+            document.getElementById('sdm-filter-type').value = '';
+            document.getElementById('sdm-filter-from').value = '';
+            document.getElementById('sdm-filter-to').value = '';
+            sdmFiltered = [...sdmAllRecords];
+            sdmCurPage = 1;
+            sdmRender();
+            pmShowModal('modal-school-detail');
+            pmInitIcons();
+        }
+
+        function sdmApplyFilters() {
+            const type = document.getElementById('sdm-filter-type').value;
+            const teacher = document.getElementById('sdm-filter-teacher').value;
+            const from = document.getElementById('sdm-filter-from').value;
+            const to = document.getElementById('sdm-filter-to').value;
+            sdmFiltered = sdmAllRecords.filter(r => {
+                if (type && r.type !== type) return false;
+                if (teacher && r.teacherId !== teacher) return false;
+                if (from && r.createdAt < from) return false;
+                if (to && r.createdAt > to + ' 23:59:59') return false;
+                return true;
+            });
+            sdmCurPage = 1;
+            sdmRender();
+        }
+
+        function sdmRender() {
+            const start = (sdmCurPage - 1) * sdmPageSize;
+            const pageData = sdmFiltered.slice(start, start + sdmPageSize);
+            const totalPages = Math.max(1, Math.ceil(sdmFiltered.length / sdmPageSize));
+            const tbody = document.getElementById('sdm-table-body');
+            document.getElementById('sdm-count').textContent = sdmFiltered.length;
+            const teachers = getTeacherPoints();
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
+            } else {
+                tbody.innerHTML = pageData.map(r => {
+                    const typeInfo = pmRecordTypeLabel(r.type);
+                    let subInfo = '-';
+                    if (r.type === 'consume' && r.teacherId) {
+                        const t = teachers.find(x => x.teacherId === r.teacherId);
+                        subInfo = t ? t.teacherName + '(' + t.account + ')' : '-';
+                    } else if (r.type === 'purchase' && r.contractNo) {
+                        subInfo = r.contractNo;
+                    }
+                    return '<tr class="hover:bg-gray-50/60">' +
+                        '<td class="px-4 py-2.5 text-gray-500 whitespace-nowrap text-xs">' + r.createdAt.substring(0, 16) + '</td>' +
+                        '<td class="px-4 py-2.5 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
+                        '<td class="px-4 py-2.5 text-right font-semibold ' + (r.points >= 0 ? 'text-blue-600' : 'text-orange-600') + '">' + (r.points >= 0 ? '+' : '') + r.points + '</td>' +
+                        '<td class="px-4 py-2.5 text-right text-gray-600">' + r.balance + '</td>' +
+                        '<td class="px-4 py-2.5 text-center text-gray-700">' + subInfo + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-600">' + (r.source || '-') + (r.resourceName ? ' (' + r.resourceName + ')' : '') + (r.remark ? ' <span class="text-gray-400">(' + r.remark + ')</span>' : '') + '</td></tr>';
+                }).join('');
+            }
+
+            document.getElementById('sdm-prev').disabled = sdmCurPage <= 1;
+            document.getElementById('sdm-next').disabled = sdmCurPage >= totalPages;
+            const pagesEl = document.getElementById('sdm-pages');
+            pagesEl.innerHTML = '';
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = i;
+                btn.className = i === sdmCurPage
+                    ? 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-semibold bg-primary-600 text-white'
+                    : 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+                btn.onclick = () => sdmGoPage(i);
+                pagesEl.appendChild(btn);
+            }
+            pmInitIcons();
+        }
+
+        function sdmGoPage(page) {
+            const totalPages = Math.max(1, Math.ceil(sdmFiltered.length / sdmPageSize));
+            if (page < 1 || page > totalPages) return;
+            sdmCurPage = page;
+            sdmRender();
+        }
+
+        // ============================================================
+        // 增减院校点数弹窗
+        // ============================================================
+        let apmCurrentSchoolId = null;
+
+        function openAddPointsModal() {
+            if (!sdmCurrentSchoolId) return;
+            const school = spAllData.find(s => s.schoolId === sdmCurrentSchoolId);
+            if (!school) return;
+            apmCurrentSchoolId = sdmCurrentSchoolId;
+            document.getElementById('apm-school-name').textContent = school.schoolName;
+            document.getElementById('apm-current-balance').textContent = school.balance.toLocaleString() + ' 点';
+            document.getElementById('apm-points').value = '';
+            document.getElementById('apm-contract-no').value = '';
+            document.getElementById('apm-contract-amount').value = '';
+            document.getElementById('apm-contract-date').value = '';
+            document.getElementById('apm-remark').value = '';
+            document.querySelector('input[name="apm-op-type"][value="purchase"]').checked = true;
+            apmToggleFields();
+            pmShowModal('modal-add-points');
+            pmInitIcons();
+        }
+
+        function apmToggleFields() {
+            const opType = document.querySelector('input[name="apm-op-type"]:checked').value;
+            const contractFields = document.getElementById('apm-contract-fields');
+            const remarkField = document.getElementById('apm-remark-field');
+            if (opType === 'purchase') {
+                contractFields.classList.remove('hidden');
+                remarkField.classList.add('hidden');
+            } else {
+                contractFields.classList.add('hidden');
+                remarkField.classList.remove('hidden');
+            }
+        }
+
+        function confirmAddPoints() {
+            const points = parseInt(document.getElementById('apm-points').value);
+            if (!points || points <= 0) { pmToast('请输入有效的点数（大于0）', 'error'); return; }
+            const opType = document.querySelector('input[name="apm-op-type"]:checked').value;
+            const remark = (document.getElementById('apm-remark').value || '').trim();
+            if ((opType === 'gift' || opType === 'deduct') && !remark) { pmToast('请填写操作理由', 'error'); return; }
+
+            const idx = spAllData.findIndex(s => s.schoolId === apmCurrentSchoolId);
+            if (idx === -1) return;
+            const school = spAllData[idx];
+            let newRecord = {
+                id: 'spr' + Date.now(), schoolId: apmCurrentSchoolId, type: opType,
+                points: opType === 'deduct' ? -points : points,
+                balance: opType === 'deduct' ? school.balance - points : school.balance + points,
+                teacherId: null,
+                source: opType === 'purchase' ? '合同#' + (document.getElementById('apm-contract-no').value || '手工录入') : remark,
+                contractNo: opType === 'purchase' ? document.getElementById('apm-contract-no').value : null,
+                contractDate: opType === 'purchase' ? document.getElementById('apm-contract-date').value : null,
+                contractAmount: opType === 'purchase' ? (parseFloat(document.getElementById('apm-contract-amount').value) || null) : null,
+                remark: remark || null,
+                createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+
+            if (opType === 'deduct') { spAllData[idx].consumed += points; spAllData[idx].balance -= points; }
+            else if (opType === 'purchase') { spAllData[idx].purchasePoints += points; spAllData[idx].balance += points; }
+            else { spAllData[idx].giftPoints += points; spAllData[idx].balance += points; }
+
+            const schools = JSON.parse(localStorage.getItem('schools')) || [...seedSchools];
+            const si = schools.findIndex(s => s.schoolId === apmCurrentSchoolId);
+            if (si !== -1) schools[si] = { ...schools[si], ...spAllData[idx] };
+            else schools.push({ ...spAllData[idx] });
+            localStorage.setItem('schools', JSON.stringify(schools));
+
+            sdmAllRecords.unshift(newRecord);
+            localStorage.setItem('schoolPointsRecords_' + apmCurrentSchoolId, JSON.stringify(sdmAllRecords));
+
+            pmHideModal('modal-add-points');
+            pmToast('操作成功');
+            spApplyFilters();
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            spInit();
+            pmInitIcons();
+        });
+    </script>
+</body>
+</html>

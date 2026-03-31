@@ -7,7 +7,7 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
   <style>
     .stat-card:hover {
       transform: translateY(-2px);
@@ -509,6 +509,96 @@
           <div class="flex-1 min-h-0 overflow-y-auto p-6" id="content-area">
             <!-- 紧凑卡片网格 -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <!-- 新增：课件 - 故乡 -->
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-green-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openCoursewarePreview()">
+                <!-- 状态标签 -->
+                <div class="absolute top-3.5 right-12 z-10">
+                  <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">检测中</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="presentation" class="w-5 h-5 text-green-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-green-600 transition-colors">《故乡》PPT课件</h4>
+                    <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <span class="px-2 py-0.5 bg-green-50 text-green-600 text-xs font-medium rounded-full">课件</span>
+                      <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">本地上传</span>
+                      <span class="text-xs text-gray-400">3月31日</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
+                  <i data-lucide="ellipsis" class="w-4 h-4"></i>
+                </button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
+                </div>
+              </div>
+
+              <!-- 新增：教案 - 故乡 -->
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openLessonPlanPreview()">
+                <!-- 状态标签 -->
+                <div class="absolute top-3.5 right-12 z-10">
+                  <span class="px-2 py-0.5 bg-red-100 text-red-600 text-xs font-semibold rounded-full">违规</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-blue-600 transition-colors">《故乡》教学设计</h4>
+                    <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">教案</span>
+                      <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">本地上传</span>
+                      <span class="text-xs text-gray-400">3月31日</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
+                  <i data-lucide="ellipsis" class="w-4 h-4"></i>
+                </button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
+                </div>
+              </div>
+
+              <!-- 新增：学案 - 故乡 -->
+              <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openStudyPlanPreview()">
+                <!-- 状态标签 -->
+                <div class="absolute top-3.5 right-12 z-10">
+                  <span class="px-2 py-0.5 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">待审核</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="book-open" class="w-5 h-5 text-cyan-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-cyan-600 transition-colors">《故乡》学案</h4>
+                    <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <span class="px-2 py-0.5 bg-cyan-50 text-cyan-600 text-xs font-medium rounded-full">学案</span>
+                      <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">本地上传</span>
+                      <span class="text-xs text-gray-400">3月31日</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
+                  <i data-lucide="ellipsis" class="w-4 h-4"></i>
+                </button>
+                <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
+                </div>
+              </div>
+
               <!-- 教案 -->
               <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openLessonPlanPreview()">
                 <div class="flex items-start gap-3">

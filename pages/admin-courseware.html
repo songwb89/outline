@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课件管理 - 运营平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        }
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            color: white; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 10000; display: flex; align-items: center; gap: 12px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+        .toast.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        .toast.toast-success { background: #10b981; }
+        .toast.toast-error { background: #ef4444; }
+        .toast.toast-info { background: #3b82f6; }
+        .toast.toast-warning { background: #f59e0b; }
+        .toast i { width: 20px; height: 20px; flex-shrink: 0; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        #previewContent img { max-width: 100%; height: auto; object-fit: contain; display: block; margin-left: auto; margin-right: auto; }
+        .admin-nav-item {
+            transition: all 0.2s ease;
+        }
+        .admin-nav-item:hover {
+            background-color: #eef2ff;
+            color: #4f46e5;
+        }
+        .admin-nav-item.active {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+        .admin-nav-subitem {
+            transition: all 0.15s ease;
+        }
+        .admin-nav-subitem:hover {
+            background-color: #eef2ff;
+            color: #4f46e5;
+        }
+        .admin-nav-subitem.active {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+        .admin-nav-group > .admin-nav-group-btn.active {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+        .admin-nav-group > .admin-nav-group-btn.active .group-arrow {
+            transform: rotate(90deg);
+        }
+        .group-arrow {
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="text-base font-semibold text-gray-800">运营平台</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">A</div>
+                <span class="text-sm text-gray-700 font-medium">管理员</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-57px)]">
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <nav class="flex-1 overflow-y-auto py-4">
+
+                <!-- 一级菜单：用户管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" id="nav-user-group" data-group="panel-user,panel-school-points" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
+                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
+                        <span>用户管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div id="nav-user-children" class="ml-4 mt-1 space-y-0.5">
+                        <a href="admin-school.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="building-2" class="w-4 h-4"></i>
+                            <span>学校管理</span>
+                        </a>
+                        <a href="admin-points.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="coins" class="w-4 h-4"></i>
+                            <span>点数管理</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一级菜单：业务数据 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" id="nav-data-group" data-group="panel-courseware,panel-survey" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
+                        <i data-lucide="database" class="w-5 h-5 text-gray-400"></i>
+                        <span>业务数据</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div id="nav-data-children" class="ml-4 mt-1 space-y-0.5">
+                        <a href="admin-courseware.html" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="presentation" class="w-4 h-4"></i>
+                            <span>课件管理</span>
+                        </a>
+                    </div>
+                </div>
+
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <div class="px-6 pt-6 overflow-y-auto flex-1">
+                <div class="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">课件管理</h1>
+                    </div>
+                </div>
+
+                <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div class="flex items-center gap-6 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">关键词</label>
+                            <input type="text" id="filterKeyword" onkeyup="applyFilters()" placeholder="课件名称 / 创建人" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-56">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">状态</label>
+                            <select id="filterStatus" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                                <option value="">全部</option>
+                                <option value="normal">正常</option>
+                                <option value="checking">检测中</option>
+                                <option value="violation">违规</option>
+                                <option value="pending">待审核</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校编码</label>
+                            <select id="filterSchool" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                                <option value="">全部</option>
+                                <option value="10001">10001</option>
+                                <option value="10002">10002</option>
+                                <option value="10003">10003</option>
+                                <option value="10004">10004</option>
+                            </select>
+                        </div>
+                        <button onclick="resetFilters()" class="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">重置</button>
+                        <button onclick="applyFilters()" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded text-sm font-medium transition-all flex items-center gap-2">
+                            <i data-lucide="search" class="w-4 h-4"></i>查询
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 250px);">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-900">课件列表</span>
+                            <span class="text-xs text-gray-500">共 <span id="totalCountTop">0</span> 条</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto overflow-y-auto flex-1">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-80">课件名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">页数</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建人</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校编码</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coursewareTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-white flex-shrink-0">
+                        <div class="text-sm text-gray-600">共 <span id="totalCount">0</span> 条，每页 <span id="pageSize">10</span> 条</div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" onclick="goToPreviousPage()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <i data-lucide="chevron-left" class="w-4 h-4 inline"></i>上一页
+                            </button>
+                            <div class="flex items-center gap-1" id="pageNumbers"></div>
+                            <button id="nextBtn" onclick="goToNextPage()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                下一页<i data-lucide="chevron-right" class="w-4 h-4 inline"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Preview Modal：限制内容区宽度，保证一页能完整显示 -->
+    <div id="previewModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex flex-col items-center p-4 md:p-6 transition-all">
+        <div class="w-full flex justify-between items-center mb-4 text-white" style="max-width: min(90vw, 1280px);">
+            <h2 class="text-xl font-semibold">课件预览</h2>
+            <button onclick="closePreviewModal()" class="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+        </div>
+        <div id="previewContent" class="flex-1 overflow-y-auto overflow-x-hidden bg-white rounded-lg p-4 md:p-6 space-y-6 shadow-2xl w-full" style="max-width: min(90vw, 1280px);">
+            <!-- Images will be injected here -->
+        </div>
+    </div>
+
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-orange-100 to-red-100">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-600"></i>
+                </div>
+                <h3 id="confirmTitle" class="text-xl font-semibold text-gray-900 mb-2">确认操作</h3>
+                <p id="confirmMessage" class="text-gray-500">确定要执行此操作吗？</p>
+            </div>
+            <div class="px-6 pb-6 flex gap-3">
+                <button onclick="closeConfirmModal(false)" class="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">取消</button>
+                <button onclick="closeConfirmModal(true)" class="flex-1 px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 rounded-xl shadow-lg shadow-red-500/25 transition-all">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 审核弹窗 -->
+    <div id="reviewModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-fade-in-up relative">
+            <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="p-6 text-center">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50">
+                    <i data-lucide="clipboard-check" class="w-8 h-8 text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">审核课件</h3>
+                <p id="reviewCoursewareName" class="text-gray-500 mb-4 font-medium"></p>
+                <p class="text-sm text-gray-500">请选择审核结果</p>
+            </div>
+            <div class="px-6 pb-6 flex gap-3">
+                <button onclick="handleReview('reject')" class="flex-1 px-4 py-3 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="x-circle" class="w-4 h-4"></i> 不通过
+                </button>
+                <button onclick="handleReview('approve')" class="flex-1 px-4 py-3 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> 通过
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultCoursewares = [
+            { id: 'cw_001', name: 'Unit 1 Hello', pages: 12, status: 'normal', creator: '王老师', schoolCode: '10001', createdAt: '2026-03-01T09:30:00' },
+            { id: 'cw_002', name: 'Math Basics - Geometry', pages: 25, status: 'checking', creator: '李老师', schoolCode: '10002', createdAt: '2026-03-03T10:00:00' },
+            { id: 'cw_003', name: 'Science Grade 5', pages: 18, status: 'violation', creator: '陈老师', schoolCode: '10003', createdAt: '2026-01-15T09:00:00' },
+            { id: 'cw_004', name: 'History Project', pages: 8, status: 'pending', creator: '王老师', schoolCode: '10004', createdAt: '2026-03-05T14:05:00' },
+            { id: 'cw_005', name: 'English Vocabulary', pages: 30, status: 'normal', creator: '张老师', schoolCode: '10001', createdAt: '2026-02-20T11:20:00' },
+        ];
+
+        let coursewares = defaultCoursewares;
+        let filteredCoursewares = coursewares;
+        
+        const schoolMap = {
+            '10001': '北京市第一小学',
+            '10002': '上海市实验中学',
+            '10003': '广州市华南附中',
+            '10004': '深圳市南山学校',
+        };
+
+        function getSchoolName(code) {
+            return schoolMap[code] || code;
+        }
+
+        const pageSize = 10;
+        let currentPage = 1;
+        let confirmCallback = null;
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDateTime(dateTimeStr) {
+            if (!dateTimeStr) return '-';
+            const date = new Date(dateTimeStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        }
+
+        function statusBadge(status) {
+            if (status === 'normal') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">正常</span>';
+            if (status === 'checking') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">检测中</span>';
+            if (status === 'violation') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">违规</span>';
+            if (status === 'pending') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">待审核</span>';
+            return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">-</span>';
+        }
+
+        function getTotalPages() { return Math.ceil(filteredCoursewares.length / pageSize) || 1; }
+        
+        function getCurrentPageData() {
+            const start = (currentPage - 1) * pageSize;
+            return filteredCoursewares.slice(start, start + pageSize);
+        }
+
+        function applyFilters() {
+            const keyword = document.getElementById('filterKeyword').value.trim().toLowerCase();
+            const status = document.getElementById('filterStatus').value;
+            const schoolCode = document.getElementById('filterSchool').value;
+            filteredCoursewares = coursewares.filter(cw => {
+                const matchKeyword = !keyword || (cw.name + ' ' + cw.creator).toLowerCase().includes(keyword);
+                const matchStatus = !status || cw.status === status;
+                const matchSchool = !schoolCode || cw.schoolCode === schoolCode;
+                return matchKeyword && matchStatus && matchSchool;
+            });
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterKeyword').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterSchool').value = '';
+            filteredCoursewares = coursewares;
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = getTotalPages();
+            const totalCount = filteredCoursewares.length;
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('totalCountTop').textContent = totalCount;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            pageNumbersContainer.innerHTML = '';
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+            if (startPage > 1) {
+                const btn = document.createElement('button');
+                btn.textContent = '1';
+                btn.onclick = () => goToPage(1);
+                btn.className = 'px-2 py-1 rounded text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all';
+                pageNumbersContainer.appendChild(btn);
+                if (startPage > 2) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.className = 'px-2 py-1 text-gray-500';
+                    pageNumbersContainer.appendChild(dots);
+                }
+            }
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                btn.className = i === currentPage
+                    ? 'px-2 py-1 rounded text-sm font-medium bg-primary-600 text-white transition-all'
+                    : 'px-2 py-1 rounded text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all';
+                pageNumbersContainer.appendChild(btn);
+            }
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.className = 'px-2 py-1 text-gray-500';
+                    pageNumbersContainer.appendChild(dots);
+                }
+                const btn = document.createElement('button');
+                btn.textContent = totalPages;
+                btn.onclick = () => goToPage(totalPages);
+                btn.className = 'px-2 py-1 rounded text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all';
+                pageNumbersContainer.appendChild(btn);
+            }
+        }
+        
+        function goToPage(page) {
+            const totalPages = getTotalPages();
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+                updatePagination();
+                document.querySelector('table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        function goToPreviousPage() { if (currentPage > 1) goToPage(currentPage - 1); }
+        function goToNextPage() { if (currentPage < getTotalPages()) goToPage(currentPage + 1); }
+
+        function renderTable() {
+            const tbody = document.getElementById('coursewareTableBody');
+            const pageData = getCurrentPageData();
+            const startIndex = (currentPage - 1) * pageSize;
+            if (!pageData.length) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-16">
+                            <div class="text-center">
+                                <div class="w-14 h-14 mx-auto rounded-2xl bg-primary-50 flex items-center justify-center">
+                                    <i data-lucide="presentation" class="w-7 h-7 text-primary-600"></i>
+                                </div>
+                                <div class="mt-4 text-sm font-semibold text-gray-900">暂无课件</div>
+                            </div>
+                        </td>
+                    </tr>`;
+                if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+                return;
+            }
+            tbody.innerHTML = pageData.map((cw, index) => {
+                const rowNumber = startIndex + index + 1;
+                const canReview = cw.status === 'violation' || cw.status === 'pending';
+                return `
+                    <tr class="hover:bg-gray-50" data-id="${cw.id}">
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${rowNumber}</div></td>
+                        <td class="px-6 py-4 w-80">
+                            <div class="text-sm font-medium text-gray-900 truncate" title="${cw.name}">${cw.name}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${cw.pages} 页</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap">${statusBadge(cw.status)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${cw.creator}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${cw.schoolCode || '-'}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${formatDate(cw.createdAt)}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center gap-2">
+                                <button onclick="openPreviewModal('${cw.id}')" class="text-blue-600 hover:text-blue-800 font-medium">查看</button>
+                                <button onclick="deleteCourseware('${cw.id}')" class="text-red-600 hover:text-red-800">删除</button>
+                                ${canReview ? `<button onclick="reviewCourseware('${cw.id}')" class="text-green-600 hover:text-green-800">审核</button>` : ''}
+                            </div>
+                        </td>
+                    </tr>`;
+            }).join('');
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        }
+
+        function deleteCourseware(id) {
+            const cw = coursewares.find(c => c.id === id);
+            if (!cw) return;
+            showConfirm('删除课件', `确定删除「${cw.name}」吗？此操作不可恢复。`, (confirmed) => {
+                if (!confirmed) return;
+                coursewares = coursewares.filter(c => c.id !== id);
+                applyFilters();
+                showToast('已删除课件', 'success');
+            });
+        }
+
+        let currentReviewId = null;
+
+        function reviewCourseware(id) {
+            const cw = coursewares.find(c => c.id === id);
+            if (!cw) return;
+            currentReviewId = id;
+            document.getElementById('reviewCoursewareName').textContent = cw.name;
+            document.getElementById('reviewModal').classList.remove('hidden');
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.add('hidden');
+            currentReviewId = null;
+        }
+
+        function handleReview(action) {
+            if (!currentReviewId) return;
+            const cw = coursewares.find(c => c.id === currentReviewId);
+            if (!cw) return;
+
+            if (action === 'approve') {
+                cw.status = 'normal';
+                showToast('审核通过', 'success');
+            } else if (action === 'reject') {
+                cw.status = 'violation';
+                showToast('审核不通过', 'warning');
+            }
+
+            closeReviewModal();
+            applyFilters();
+        }
+
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirmModal').classList.remove('hidden');
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        }
+        function closeConfirmModal(confirmed) {
+            document.getElementById('confirmModal').classList.add('hidden');
+            if (confirmCallback) { confirmCallback(confirmed); confirmCallback = null; }
+        }
+
+        function openPreviewModal(id) {
+            const cw = coursewares.find(c => c.id === id);
+            if (!cw) return;
+
+            const modal = document.getElementById('previewModal');
+            const content = document.getElementById('previewContent');
+            
+            // Clear previous content
+            content.innerHTML = '';
+            
+            // Generate mock images based on pages
+            // Using the images from local-courseware-preview as placeholders
+            for (let i = 0; i < cw.pages; i++) {
+                // Use placeholder images (0-3 cycling)
+                const imgIndex = i % 4; 
+                const div = document.createElement('div');
+                div.className = 'flex justify-center';
+                div.innerHTML = `
+                    <img src="img/${imgIndex}.png" class="max-w-full h-auto rounded shadow-lg border border-gray-200" alt="Slide ${i + 1}">
+                `;
+                content.appendChild(div);
+            }
+
+            modal.classList.remove('hidden');
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            let iconName;
+            if (type === 'success') { toast.classList.add('toast-success'); iconName = 'check-circle'; }
+            else if (type === 'error') { toast.classList.add('toast-error'); iconName = 'alert-circle'; }
+            else if (type === 'info') { toast.classList.add('toast-info'); iconName = 'info'; }
+            else if (type === 'warning') { toast.classList.add('toast-warning'); iconName = 'alert-triangle'; }
+            else { toast.classList.add('toast-success'); iconName = 'check-circle'; }
+            toast.innerHTML = `<i data-lucide="${iconName}"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleSystemMenu() {
+            const subMenu = document.getElementById('systemSubMenu');
+            const icon = document.getElementById('systemMenuIcon');
+            subMenu.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // ============================================================
+        // 导航初始化
+        // ============================================================
+        function initNavigation() {
+            document.querySelectorAll('.admin-nav-group-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const children = document.getElementById(this.id.replace('-group', '') + '-children');
+                    if (children) {
+                        children.classList.toggle('hidden');
+                        // 不切换按钮的 active 状态，仅展开收起
+                        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initNavigation();
+            renderTable();
+            updatePagination();
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
