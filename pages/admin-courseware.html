@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>课件管理 - 运营平台</title>
+    <title>文件管理 - 运营平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.min.js"></script>
     <script>
@@ -132,8 +132,8 @@
                     </button>
                     <div id="nav-data-children" class="ml-4 mt-1 space-y-0.5">
                         <a href="admin-courseware.html" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="presentation" class="w-4 h-4"></i>
-                            <span>课件管理</span>
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>文件管理</span>
                         </a>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
             <div class="px-6 pt-6 overflow-y-auto flex-1">
                 <div class="mb-6 flex items-start justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-semibold text-gray-900">课件管理</h1>
+                        <h1 class="text-2xl font-semibold text-gray-900">文件管理</h1>
                     </div>
                 </div>
 
@@ -153,7 +153,28 @@
                     <div class="flex items-center gap-6 flex-wrap">
                         <div class="flex items-center gap-2">
                             <label class="text-xs font-medium text-gray-600 whitespace-nowrap">关键词</label>
-                            <input type="text" id="filterKeyword" onkeyup="applyFilters()" placeholder="课件名称 / 创建人" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-56">
+                            <input type="text" id="filterKeyword" onkeyup="applyFilters()" placeholder="资源名称 / 创建人" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-56">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">资源类型</label>
+                            <select id="filterType" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                                <option value="">全部</option>
+                                <option value="courseware">课件</option>
+                                <option value="lesson">教案</option>
+                                <option value="study">学案</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">文件格式</label>
+                            <select id="filterFormat" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                                <option value="">全部</option>
+                                <option value="doc">doc</option>
+                                <option value="docx">docx</option>
+                                <option value="pdf">pdf</option>
+                                <option value="ppt">ppt</option>
+                                <option value="pptx">pptx</option>
+                                <option value="txt">txt</option>
+                            </select>
                         </div>
                         <div class="flex items-center gap-2">
                             <label class="text-xs font-medium text-gray-600 whitespace-nowrap">状态</label>
@@ -166,14 +187,8 @@
                             </select>
                         </div>
                         <div class="flex items-center gap-2">
-                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校编码</label>
-                            <select id="filterSchool" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
-                                <option value="">全部</option>
-                                <option value="10001">10001</option>
-                                <option value="10002">10002</option>
-                                <option value="10003">10003</option>
-                                <option value="10004">10004</option>
-                            </select>
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校</label>
+                            <input type="text" id="filterSchool" onkeyup="applyFilters()" placeholder="输入学校名称" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-40">
                         </div>
                         <button onclick="resetFilters()" class="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">重置</button>
                         <button onclick="applyFilters()" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded text-sm font-medium transition-all flex items-center gap-2">
@@ -185,7 +200,7 @@
                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 250px);">
                     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-semibold text-gray-900">课件列表</span>
+                            <span class="text-sm font-semibold text-gray-900">资源列表</span>
                             <span class="text-xs text-gray-500">共 <span id="totalCountTop">0</span> 条</span>
                         </div>
                     </div>
@@ -194,11 +209,12 @@
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-80">课件名称</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">页数</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-64">资源名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">资源类型</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">文件格式</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建人</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校编码</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建时间</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
                                 </tr>
@@ -226,7 +242,7 @@
     <!-- Preview Modal：限制内容区宽度，保证一页能完整显示 -->
     <div id="previewModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex flex-col items-center p-4 md:p-6 transition-all">
         <div class="w-full flex justify-between items-center mb-4 text-white" style="max-width: min(90vw, 1280px);">
-            <h2 class="text-xl font-semibold">课件预览</h2>
+            <h2 class="text-xl font-semibold">资源预览</h2>
             <button onclick="closePreviewModal()" class="p-2 hover:bg-white/10 rounded-full transition-colors">
                 <i data-lucide="x" class="w-8 h-8"></i>
             </button>
@@ -262,7 +278,7 @@
                 <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50">
                     <i data-lucide="clipboard-check" class="w-8 h-8 text-blue-600"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">审核课件</h3>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">审核文件</h3>
                 <p id="reviewCoursewareName" class="text-gray-500 mb-4 font-medium"></p>
                 <p class="text-sm text-gray-500">请选择审核结果</p>
             </div>
@@ -279,11 +295,14 @@
 
     <script>
         const defaultCoursewares = [
-            { id: 'cw_001', name: 'Unit 1 Hello', pages: 12, status: 'normal', creator: '王老师', schoolCode: '10001', createdAt: '2026-03-01T09:30:00' },
-            { id: 'cw_002', name: 'Math Basics - Geometry', pages: 25, status: 'checking', creator: '李老师', schoolCode: '10002', createdAt: '2026-03-03T10:00:00' },
-            { id: 'cw_003', name: 'Science Grade 5', pages: 18, status: 'violation', creator: '陈老师', schoolCode: '10003', createdAt: '2026-01-15T09:00:00' },
-            { id: 'cw_004', name: 'History Project', pages: 8, status: 'pending', creator: '王老师', schoolCode: '10004', createdAt: '2026-03-05T14:05:00' },
-            { id: 'cw_005', name: 'English Vocabulary', pages: 30, status: 'normal', creator: '张老师', schoolCode: '10001', createdAt: '2026-02-20T11:20:00' },
+            { id: 'cw_001', name: 'Unit 1 Hello', type: 'courseware', format: 'pptx', status: 'normal', creator: '王老师', schoolCode: '10001', createdAt: '2026-03-01T09:30:00' },
+            { id: 'cw_002', name: 'Math Basics - Geometry', type: 'courseware', format: 'pdf', status: 'checking', creator: '李老师', schoolCode: '10002', createdAt: '2026-03-03T10:00:00' },
+            { id: 'cw_003', name: 'Science Grade 5', type: 'lesson', format: 'doc', status: 'violation', creator: '陈老师', schoolCode: '10003', createdAt: '2026-01-15T09:00:00' },
+            { id: 'cw_004', name: 'History Project', type: 'study', format: 'docx', status: 'pending', creator: '王老师', schoolCode: '10004', createdAt: '2026-03-05T14:05:00' },
+            { id: 'cw_005', name: 'English Vocabulary', type: 'courseware', format: 'ppt', status: 'normal', creator: '张老师', schoolCode: '10001', createdAt: '2026-02-20T11:20:00' },
+            { id: 'cw_006', name: '物理实验指导', type: 'lesson', format: 'pdf', status: 'normal', creator: '赵老师', schoolCode: '10002', createdAt: '2026-03-10T08:00:00' },
+            { id: 'cw_007', name: '化学预习资料', type: 'study', format: 'txt', status: 'pending', creator: '孙老师', schoolCode: '10003', createdAt: '2026-03-12T10:30:00' },
+            { id: 'cw_008', name: '数学公式总结', type: 'study', format: 'pptx', status: 'normal', creator: '周老师', schoolCode: '10001', createdAt: '2026-03-08T15:00:00' },
         ];
 
         let coursewares = defaultCoursewares;
@@ -332,6 +351,26 @@
             return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">-</span>';
         }
 
+        function typeBadge(type) {
+            if (type === 'courseware') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-700">课件</span>';
+            if (type === 'lesson') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-teal-100 text-teal-700">教案</span>';
+            if (type === 'study') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700">学案</span>';
+            return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">-</span>';
+        }
+
+        function formatBadge(format) {
+            const formatColors = {
+                'doc': 'bg-blue-100 text-blue-700',
+                'docx': 'bg-blue-100 text-blue-700',
+                'pdf': 'bg-red-100 text-red-700',
+                'ppt': 'bg-orange-100 text-orange-700',
+                'pptx': 'bg-orange-100 text-orange-700',
+                'txt': 'bg-gray-100 text-gray-700'
+            };
+            const colorClass = formatColors[format] || 'bg-gray-100 text-gray-700';
+            return `<span class="px-2 py-1 text-xs font-medium rounded uppercase ${colorClass}">${format}</span>`;
+        }
+
         function getTotalPages() { return Math.ceil(filteredCoursewares.length / pageSize) || 1; }
         
         function getCurrentPageData() {
@@ -341,13 +380,17 @@
 
         function applyFilters() {
             const keyword = document.getElementById('filterKeyword').value.trim().toLowerCase();
+            const type = document.getElementById('filterType').value;
+            const format = document.getElementById('filterFormat').value;
             const status = document.getElementById('filterStatus').value;
-            const schoolCode = document.getElementById('filterSchool').value;
+            const school = document.getElementById('filterSchool').value.trim().toLowerCase();
             filteredCoursewares = coursewares.filter(cw => {
                 const matchKeyword = !keyword || (cw.name + ' ' + cw.creator).toLowerCase().includes(keyword);
+                const matchType = !type || cw.type === type;
+                const matchFormat = !format || cw.format === format;
                 const matchStatus = !status || cw.status === status;
-                const matchSchool = !schoolCode || cw.schoolCode === schoolCode;
-                return matchKeyword && matchStatus && matchSchool;
+                const matchSchool = !school || getSchoolName(cw.schoolCode).toLowerCase().includes(school);
+                return matchKeyword && matchType && matchFormat && matchStatus && matchSchool;
             });
             currentPage = 1;
             renderTable();
@@ -356,6 +399,8 @@
 
         function resetFilters() {
             document.getElementById('filterKeyword').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterFormat').value = '';
             document.getElementById('filterStatus').value = '';
             document.getElementById('filterSchool').value = '';
             filteredCoursewares = coursewares;
@@ -432,12 +477,12 @@
             if (!pageData.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="px-6 py-16">
+                        <td colspan="9" class="px-6 py-16">
                             <div class="text-center">
                                 <div class="w-14 h-14 mx-auto rounded-2xl bg-primary-50 flex items-center justify-center">
-                                    <i data-lucide="presentation" class="w-7 h-7 text-primary-600"></i>
+                                    <i data-lucide="book-open" class="w-7 h-7 text-primary-600"></i>
                                 </div>
-                                <div class="mt-4 text-sm font-semibold text-gray-900">暂无课件</div>
+                                <div class="mt-4 text-sm font-semibold text-gray-900">暂无文件</div>
                             </div>
                         </td>
                     </tr>`;
@@ -446,17 +491,18 @@
             }
             tbody.innerHTML = pageData.map((cw, index) => {
                 const rowNumber = startIndex + index + 1;
-                const canReview = cw.status === 'violation' || cw.status === 'pending';
+                const canReview = cw.status === 'pending';
                 return `
                     <tr class="hover:bg-gray-50" data-id="${cw.id}">
                         <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${rowNumber}</div></td>
-                        <td class="px-6 py-4 w-80">
+                        <td class="px-6 py-4 w-64">
                             <div class="text-sm font-medium text-gray-900 truncate" title="${cw.name}">${cw.name}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${cw.pages} 页</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap">${typeBadge(cw.type)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${formatBadge(cw.format)}</td>
                         <td class="px-6 py-4 whitespace-nowrap">${statusBadge(cw.status)}</td>
                         <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${cw.creator}</div></td>
-                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${cw.schoolCode || '-'}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${getSchoolName(cw.schoolCode)}</div></td>
                         <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">${formatDate(cw.createdAt)}</div></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center gap-2">
@@ -473,11 +519,11 @@
         function deleteCourseware(id) {
             const cw = coursewares.find(c => c.id === id);
             if (!cw) return;
-            showConfirm('删除课件', `确定删除「${cw.name}」吗？此操作不可恢复。`, (confirmed) => {
+            showConfirm('删除资源', `确定删除「${cw.name}」吗？此操作不可恢复。`, (confirmed) => {
                 if (!confirmed) return;
                 coursewares = coursewares.filter(c => c.id !== id);
                 applyFilters();
-                showToast('已删除课件', 'success');
+                showToast('已删除资源', 'success');
             });
         }
 
@@ -533,21 +579,14 @@
             const modal = document.getElementById('previewModal');
             const content = document.getElementById('previewContent');
             
-            // Clear previous content
-            content.innerHTML = '';
-            
-            // Generate mock images based on pages
-            // Using the images from local-courseware-preview as placeholders
-            for (let i = 0; i < cw.pages; i++) {
-                // Use placeholder images (0-3 cycling)
-                const imgIndex = i % 4; 
-                const div = document.createElement('div');
-                div.className = 'flex justify-center';
-                div.innerHTML = `
-                    <img src="img/${imgIndex}.png" class="max-w-full h-auto rounded shadow-lg border border-gray-200" alt="Slide ${i + 1}">
-                `;
-                content.appendChild(div);
-            }
+            content.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-20">
+                    <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mb-6">
+                        <i data-lucide="file-text" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-600">此处显示文件预览</h3>
+                </div>
+            `;
 
             modal.classList.remove('hidden');
             if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
@@ -607,5 +646,6 @@
             if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
         });
     </script>
+    <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
 </body>
 </html>

@@ -2543,6 +2543,13 @@
     let uploadTimer = null;
     let isUploading = false;
 
+    // 文件大小限制（字节）
+    const FILE_SIZE_LIMITS = {
+      '课件': 300 * 1024 * 1024,  // 300MB
+      '教案': 50 * 1024 * 1024,   // 50MB
+      '学案': 50 * 1024 * 1024    // 50MB
+    };
+
     // 打开上传弹窗
     function openUploadModal(type) {
       currentUploadType = type;
@@ -2550,10 +2557,10 @@
       const hint = document.getElementById('upload-hint');
       const fileInput = document.getElementById('file-input');
       if (type === '课件') {
-        hint.textContent = '支持 ppt、pptx 格式';
+        hint.textContent = '支持 ppt、pptx 格式，不超过 300MB';
         fileInput.accept = '.ppt,.pptx';
       } else {
-        hint.textContent = '支持 doc、docx、pdf、ppt、pptx、txt 格式';
+        hint.textContent = '支持 doc、docx、pdf、ppt、pptx、txt 格式，不超过 50MB';
         fileInput.accept = '.doc,.docx,.pdf,.ppt,.pptx,.txt';
       }
       document.getElementById('upload-modal').classList.remove('hidden');
@@ -2573,6 +2580,14 @@
         const ext = file.name.split('.').pop().toLowerCase();
         if (!['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) {
           showToast('不支持的文件格式，请上传 PDF、Word 或 PPT 文件', 'error');
+          input.value = '';
+          return;
+        }
+        // 文件大小校验
+        const maxSize = FILE_SIZE_LIMITS[currentUploadType] || 50 * 1024 * 1024;
+        if (file.size > maxSize) {
+          const limitMB = maxSize / (1024 * 1024);
+          showToast('文件大小超过限制，请上传不超过 ' + limitMB + 'MB 的文件', 'error');
           input.value = '';
           return;
         }

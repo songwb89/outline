@@ -1,8 +1,10 @@
 {
   "docs": [
-    { "name": "平台框架调整5.0", "file": "平台框架调整.md" }
+    { "name": "智能授课", "file": "智能授课.md" },
+    { "name": "文件管理", "file": "文件管理.md" }
   ],
   "pageMapping": {
-    "prepare.html": "平台框架调整.md"
+    "prepare.html": "智能授课.md",
+    "admin-courseware.html": "文件管理.md"
   }
 }
