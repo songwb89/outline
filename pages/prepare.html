@@ -347,6 +347,9 @@
       }
     }
 
+    // 禁用状态列表
+    const DISABLED_STATUSES = ['检测中', '违规', '待审核'];
+
     // 卡片更多菜单切换
     function toggleCardMenu(btn) {
       const menu = btn.nextElementSibling;
@@ -355,6 +358,24 @@
         if (m !== menu) m.classList.add('hidden');
       });
       menu.classList.toggle('hidden');
+      // 根据卡片状态动态更新下载/共享按钮状态
+      const card = btn.closest('.group');
+      const statusBadge = card.querySelector('.absolute.top-3\\.5.right-12 span');
+      const isDisabled = statusBadge && DISABLED_STATUSES.includes(statusBadge.textContent.trim());
+      menu.querySelectorAll('button').forEach(b => {
+        const txt = b.textContent.trim();
+        if (txt === '下载' || txt === '共享') {
+          if (isDisabled) {
+            b.classList.add('text-gray-400', 'cursor-not-allowed');
+            b.classList.remove('hover:bg-gray-50');
+            b.disabled = true;
+          } else {
+            b.classList.remove('text-gray-400', 'cursor-not-allowed');
+            b.classList.add('hover:bg-gray-50');
+            b.disabled = false;
+          }
+        }
+      });
     }
 
     // 卡片操作
@@ -638,8 +659,8 @@
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditLessonPlan('《春》教学教案')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -664,8 +685,8 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -690,8 +711,8 @@
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditCoursewareModal('《春》PPT课件')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -716,8 +737,8 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -742,8 +763,8 @@
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditStudyPlanModal('《春》导学案')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -768,8 +789,8 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -794,7 +815,7 @@
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditAIActivityModal()">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -819,7 +840,7 @@
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditActivityModal('AI汉字活动')">编辑</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -866,8 +887,8 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">下载</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -914,7 +935,7 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditWordSetModal()">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -938,7 +959,7 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditDialogueModal()">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -962,7 +983,7 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditSceneModal()">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>
@@ -986,7 +1007,7 @@
                 </button>
                 <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
                   <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation(); openEditAgentModal('苏轼')">编辑</button>
-                  <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled onclick="event.stopPropagation()">共享</button>
+                  <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
                   <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
                 </div>
               </div>

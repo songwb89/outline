@@ -233,6 +233,21 @@
         </div>
       </button>
 
+      <!-- 智能批改（进入子界面） -->
+      <button type="button" id="btn-open-ai-grading" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
+        <div class="flex gap-4">
+          <div class="ai-icon-box bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-inner">
+            <i data-lucide="clipboard-check" class="w-7 h-7"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-semibold text-gray-900">智能批改</h2>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              上传学生作业图片，AI 智能识别与批改，大幅提升教师工作效率。
+            </p>
+          </div>
+        </div>
+      </button>
+
       <!-- 课堂分析（跳转 class-report.html） -->
       <button type="button" id="btn-open-class-analysis" class="ai-tool-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer block w-full text-left font-sans ring-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
         <div class="flex gap-4">
@@ -425,6 +440,38 @@
             <img src="img/拍题答疑-AI解析.png" alt="AI解析" class="w-full h-auto block" />
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ========== 视图：智能批改（截图原型） ========== -->
+    <section id="view-ai-grading" class="view-ai-grading view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-grading" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+          <span class="text-gray-700 font-medium">智能批改</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <div id="wrap-ai-grading-list-img" role="button" tabindex="0" class="cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 overflow-hidden" title="点击进入作业批改详情">
+          <img src="img/智能批改.png" alt="智能批改" class="w-full h-auto block pointer-events-none" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 视图：智能批改 - 作业详情（截图原型） ========== -->
+    <section id="view-ai-grading-detail" class="view-ai-grading-detail view-hidden w-full max-w-none">
+      <div class="border-b border-slate-200/80 py-1.5 flex-shrink-0 px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 flex-wrap" aria-label="面包屑">
+          <button type="button" id="breadcrumb-ai-zone-grading-detail" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">AI专区</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <button type="button" id="breadcrumb-back-ai-grading" class="hover:text-blue-600 bg-transparent border-0 p-0 cursor-pointer text-sm text-gray-500">智能批改</button>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+          <span id="breadcrumb-grading-title" class="text-gray-700 font-medium">作业标题</span>
+        </nav>
+      </div>
+      <div class="px-6 pb-6 mt-4">
+        <img id="ai-grading-detail-img" src="img/智能批改详情.png" alt="智能批改详情" class="w-full h-auto block rounded-lg border border-gray-200/80 shadow-sm" />
       </div>
     </section>
 
@@ -622,6 +669,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
     }
 
     var photoQaActiveTab = 'task';
@@ -673,6 +722,8 @@
       document.getElementById('view-my-picture-books').classList.add('view-hidden');
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.remove('view-hidden');
       setPhotoQaTab(t);
       lucide.createIcons();
@@ -693,6 +744,8 @@
       document.getElementById('view-my-picture-books').classList.add('view-hidden');
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.remove('view-hidden');
       var btnCollect = document.getElementById('btn-photo-qa-collect');
       var btnUncollect = document.getElementById('btn-photo-qa-uncollect');
@@ -721,9 +774,57 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-digital-human').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#digital-human');
+      }
+      lucide.createIcons();
+    }
+
+    function showAiGrading() {
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.remove('view-hidden');
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-grading');
+      }
+      lucide.createIcons();
+    }
+
+    function showAiGradingDetail(title) {
+      var t = title || '作业标题';
+      document.getElementById('view-ai-home').classList.add('view-hidden');
+      document.getElementById('view-assistant-scene').classList.add('view-hidden');
+      document.getElementById('view-assistant-history').classList.add('view-hidden');
+      document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
+      document.getElementById('view-digital-human').classList.add('view-hidden');
+      document.getElementById('view-ai-explain').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-records').classList.add('view-hidden');
+      document.getElementById('view-ai-explain-question').classList.add('view-hidden');
+      document.getElementById('view-ai-picture-book').classList.add('view-hidden');
+      document.getElementById('view-my-picture-books').classList.add('view-hidden');
+      document.getElementById('view-ai-lecture').classList.add('view-hidden');
+      document.getElementById('view-photo-qa').classList.add('view-hidden');
+      document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.remove('view-hidden');
+      document.getElementById('breadcrumb-grading-title').textContent = t;
+      if (history.replaceState) {
+        history.replaceState(null, '', 'ai.html#ai-grading/' + encodeURIComponent(t));
       }
       lucide.createIcons();
     }
@@ -741,6 +842,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-ai-home').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html');
@@ -806,6 +909,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-assistant-record-detail').classList.add('view-hidden');
       document.getElementById('view-assistant-history').classList.remove('view-hidden');
       setAssistantHistoryTab(t);
@@ -825,6 +930,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-assistant-record-detail').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#assistant-record-detail');
@@ -846,6 +953,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-assistant-scene').classList.remove('view-hidden');
       document.getElementById('breadcrumb-scene-name').textContent = sceneName;
       var toolbarTitle = document.getElementById('assistant-toolbar-name');
@@ -882,6 +991,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-ai-explain').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#ai-explain');
@@ -902,6 +1013,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-ai-explain-records').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#ai-explain-records');
@@ -922,6 +1035,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-ai-explain-question').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#ai-explain-question');
@@ -942,6 +1057,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-ai-picture-book').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#ai-picture-book');
@@ -962,6 +1079,8 @@
       document.getElementById('view-ai-lecture').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-my-picture-books').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#my-picture-books');
@@ -982,6 +1101,8 @@
       document.getElementById('view-my-picture-books').classList.add('view-hidden');
       document.getElementById('view-photo-qa').classList.add('view-hidden');
       document.getElementById('view-photo-qa-ai-analysis').classList.add('view-hidden');
+      document.getElementById('view-ai-grading').classList.add('view-hidden');
+      document.getElementById('view-ai-grading-detail').classList.add('view-hidden');
       document.getElementById('view-ai-lecture').classList.remove('view-hidden');
       if (history.replaceState) {
         history.replaceState(null, '', 'ai.html#ai-lecture');
@@ -1003,6 +1124,7 @@
     bindEvent('btn-open-ai-explain', 'click', showAiExplain);
     bindEvent('btn-open-ai-picture-book', 'click', showAiPictureBook);
     bindEvent('btn-open-ai-lecture', 'click', showAiLecture);
+    bindEvent('btn-open-ai-grading', 'click', showAiGrading);
     bindEvent('btn-open-photo-qa', 'click', function () { showPhotoQa('task'); });
     bindEvent('btn-open-class-analysis', 'click', function() { window.location.href = 'class-report.html'; });
     bindEvent('breadcrumb-ai-zone-photo-qa', 'click', showAiHome);
@@ -1022,6 +1144,9 @@
     bindEvent('breadcrumb-ai-zone-my-picture-books', 'click', showAiHome);
     bindEvent('breadcrumb-back-ai-picture-book', 'click', showAiPictureBook);
     bindEvent('breadcrumb-ai-zone-lecture', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-grading', 'click', showAiHome);
+    bindEvent('breadcrumb-ai-zone-grading-detail', 'click', showAiHome);
+    bindEvent('breadcrumb-back-ai-grading', 'click', showAiGrading);
     bindEvent('btn-ai-explain-records', 'click', showAiExplainRecords);
     bindEvent('breadcrumb-ai-zone-scene', 'click', showAiHome);
     bindEvent('breadcrumb-ai-zone-assistant-history', 'click', showAiHome);
@@ -1070,6 +1195,18 @@
       }
       bindImgWrap('wrap-photo-qa-task-img', 'task');
       bindImgWrap('wrap-photo-qa-favorite-img', 'favorite');
+    })();
+    (function () {
+      var wrap = document.getElementById('wrap-ai-grading-list-img');
+      if (wrap) {
+        wrap.addEventListener('click', function () { showAiGradingDetail('4.01作业'); });
+        wrap.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showAiGradingDetail('4.01作业');
+          }
+        });
+      }
     })();
 
     function applyHashRoute() {
@@ -1133,6 +1270,16 @@
       }
       if (hash === '#ai-explain') {
         showAiExplain();
+        return;
+      }
+      if (hash.indexOf('#ai-grading/') === 0) {
+        var gradingTitle = decodeURIComponent(hash.slice('#ai-grading/'.length));
+        showAiGradingDetail(gradingTitle || '4.01作业');
+        return;
+      }
+      if (hash === '#ai-grading') {
+        showAiGrading();
+        return;
       }
     }
 

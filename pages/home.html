@@ -84,7 +84,7 @@
             <div class="relative group">
               <i data-lucide="info" class="w-4 h-4 text-gray-400 cursor-pointer"></i>
               <div class="absolute left-0 top-full mt-1 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                近5次作业得分率
+                近5次作业得分率低于70%
                 <div class="absolute -top-1 left-3 w-2 h-2 bg-gray-800 rotate-45"></div>
               </div>
             </div>
@@ -98,7 +98,7 @@
                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">赵</div>
                 <div>
                   <div class="text-sm font-medium text-gray-800">赵强</div>
-                  <div class="text-xs text-gray-500">三年级(3)班</div>
+                  <div class="text-xs text-gray-500">三年级(3)班（语文）</div>
                 </div>
               </div>
               <div class="text-right">
@@ -111,7 +111,7 @@
                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">陈</div>
                 <div>
                   <div class="text-sm font-medium text-gray-800">陈思</div>
-                  <div class="text-xs text-gray-500">四年级(2)班</div>
+                  <div class="text-xs text-gray-500">四年级(2)班（语文）</div>
                 </div>
               </div>
               <div class="text-right">
@@ -124,7 +124,7 @@
                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">张</div>
                 <div>
                   <div class="text-sm font-medium text-gray-800">张伟</div>
-                  <div class="text-xs text-gray-500">四年级(1)班</div>
+                  <div class="text-xs text-gray-500">四年级(1)班（语文）</div>
                 </div>
               </div>
               <div class="text-right">
@@ -137,7 +137,7 @@
                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">王</div>
                 <div>
                   <div class="text-sm font-medium text-gray-800">王小红</div>
-                  <div class="text-xs text-gray-500">三年级(2)班</div>
+                  <div class="text-xs text-gray-500">三年级(2)班（语文）</div>
                 </div>
               </div>
               <div class="text-right">
@@ -150,7 +150,7 @@
                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-medium text-sm">李</div>
                 <div>
                   <div class="text-sm font-medium text-gray-800">李明</div>
-                  <div class="text-xs text-gray-500">三年级(1)班</div>
+                  <div class="text-xs text-gray-500">三年级(1)班（语文）</div>
                 </div>
               </div>
               <div class="text-right">
@@ -230,12 +230,12 @@
             模块掌握度
           </h3>
           <select id="gradeSelect" class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
-            <option value="1-1">一年级一班</option>
-            <option value="1-2">一年级二班</option>
-            <option value="2-1" selected>二年级一班</option>
-            <option value="2-2">二年级二班</option>
-            <option value="3-1">三年级一班</option>
-            <option value="3-2">三年级二班</option>
+            <option value="1-1-语文" selected>一年级一班（语文）</option>
+            <option value="1-2-语文">一年级二班（语文）</option>
+            <option value="2-1-语文">二年级一班（语文）</option>
+            <option value="2-2-语文">二年级二班（语文）</option>
+            <option value="3-1-语文">三年级一班（语文）</option>
+            <option value="3-2-语文">三年级二班（语文）</option>
           </select>
         </div>
         <div class="p-4">
@@ -417,12 +417,12 @@
             得分率趋势分析
           </h3>
           <select id="trendGradeSelect" class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="2-1" selected>二年级一班</option>
-            <option value="1-1">一年级一班</option>
-            <option value="1-2">一年级二班</option>
-            <option value="2-2">二年级二班</option>
-            <option value="3-1">三年级一班</option>
-            <option value="3-2">三年级二班</option>
+            <option value="1-1-语文" selected>一年级一班（语文）</option>
+            <option value="1-2-语文">一年级二班（语文）</option>
+            <option value="2-1-语文">二年级一班（语文）</option>
+            <option value="2-2-语文">二年级二班（语文）</option>
+            <option value="3-1-语文">三年级一班（语文）</option>
+            <option value="3-2-语文">三年级二班（语文）</option>
           </select>
         </div>
         <div class="p-4">
@@ -520,12 +520,12 @@
 
     // 不同班级的趋势数据
     var trendData = {
-      '2-1': [72, 75, 78, 77, 82, 85],
-      '1-1': [70, 72, 75, 73, 78, 80],
-      '1-2': [68, 71, 74, 76, 79, 82],
-      '2-2': [74, 77, 80, 79, 84, 87],
-      '3-1': [76, 79, 83, 81, 86, 89],
-      '3-2': [78, 81, 85, 83, 88, 91]
+      '1-1-语文': [70, 72, 75, 73, 78, 80],
+      '1-2-语文': [68, 71, 74, 76, 79, 82],
+      '2-1-语文': [72, 75, 78, 77, 82, 85],
+      '2-2-语文': [74, 77, 80, 79, 84, 87],
+      '3-1-语文': [76, 79, 83, 81, 86, 89],
+      '3-2-语文': [78, 81, 85, 83, 88, 91]
     };
 
     var trendOption = {
@@ -547,7 +547,7 @@
         }
       },
       series: [{
-        data: trendData['2-1'],
+        data: trendData['1-1-语文'],
         type: 'line',
         smooth: true,
         lineStyle: {
@@ -591,6 +591,12 @@
       });
     });
 
+    // 模块掌握度班级筛选事件
+    document.getElementById('gradeSelect').addEventListener('change', function(e) {
+      // 根据选中班级更新雷达图数据
+      console.log('已切换到:', e.target.value);
+    });
+
     // 响应窗口变化
     window.addEventListener('resize', function() {
       radarChart.resize();
@@ -602,5 +608,6 @@
   <div class="fixed bottom-4 right-4 z-50">
     <a href="home-nodata.html" class="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-200 transition-colors">[ 切换：无数据 ]</a>
   </div>
+  <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
 </body>
 </html>
