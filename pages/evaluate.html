@@ -573,6 +573,15 @@
         }
         switchPanel('#student', '学生管理');
         initIcons();
+      } else if (hash === '#homework') {
+        exitFullscreenMode();
+        document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+        const homeworkMenuItem = document.querySelector('.menu-item[href="#homework"]');
+        if (homeworkMenuItem) {
+          homeworkMenuItem.classList.add('active');
+        }
+        switchPanel('#homework', '作业&批改');
+        initIcons();
       }
     }
 
