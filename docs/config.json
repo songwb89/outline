@@ -1,10 +1,10 @@
 {
   "docs": [
-    { "name": "智能授课", "file": "智能授课.md" },
+    { "name": "智能备课", "file": "智能备课.md" },
     { "name": "文件管理", "file": "文件管理.md" }
   ],
   "pageMapping": {
-    "prepare.html": "智能授课.md",
+    "prepare.html": "智能备课.md",
     "admin-courseware.html": "文件管理.md"
   }
 }
