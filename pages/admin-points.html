@@ -68,11 +68,11 @@
         <!-- 左侧菜单 -->
         <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
             <nav class="flex-1 overflow-y-auto py-4">
-                <!-- 一级菜单：用户管理 -->
+                <!-- 一级菜单：学校管理 -->
                 <div class="admin-nav-group px-4 mb-1">
                     <button type="button" id="nav-user-group" data-group="panel-user,panel-school-points" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
                         <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
-                        <span>用户管理</span>
+                        <span>学校管理</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
                     </button>
                     <div id="nav-user-children" class="ml-4 mt-1 space-y-0.5">
@@ -114,10 +114,6 @@
                             <h1 class="text-2xl font-semibold text-gray-900">院校点数管理</h1>
                             <p class="text-sm text-gray-500 mt-1">管理各院校的点数值，支持查看明细与增减操作</p>
                         </div>
-                        <button type="button" onclick="openDeductionConfigModal()" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
-                            <i data-lucide="settings" class="w-4 h-4"></i>
-                            扣点配置
-                        </button>
                     </div>
 
                     <!-- 筛选区 -->
@@ -153,8 +149,7 @@
                                     <tr>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
                                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校</th>
-                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">购买点数</th>
-                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">赠送点数</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">充值点数</th>
                                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">已消耗</th>
                                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">剩余点数</th>
                                         <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
@@ -184,15 +179,18 @@
     <!-- ==================== 弹窗: 院校点数明细 ==================== -->
     <div id="modal-school-detail" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
         <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-school-detail')"></div>
-        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 900px; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column;">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
                 <div>
                     <h3 class="font-semibold text-gray-800" id="sdm-title">院校点数明细</h3>
                     <p class="text-xs text-gray-500 mt-0.5" id="sdm-subtitle">--</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="openAddPointsModal()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>增减点数
+                    <button type="button" onclick="openDeductModal()" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
+                        <i data-lucide="minus-circle" class="w-3.5 h-3.5"></i>扣减
+                    </button>
+                    <button type="button" onclick="openRechargeModal()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>充值
                     </button>
                     <button type="button" onclick="pmHideModal('modal-school-detail')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                         <i data-lucide="x" class="w-5 h-5"></i>
@@ -202,16 +200,16 @@
             <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
                 <div class="grid grid-cols-4 gap-4">
                     <div class="text-center">
-                        <div class="text-xs text-gray-500 mb-1">购买点数</div>
+                        <div class="text-xs text-gray-500 mb-1">充值点数</div>
                         <div class="text-lg font-bold text-blue-600" id="sdm-purchase">--</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xs text-gray-500 mb-1">赠送点数</div>
-                        <div class="text-lg font-bold text-purple-600" id="sdm-gift">--</div>
                     </div>
                     <div class="text-center">
                         <div class="text-xs text-gray-500 mb-1">已消耗</div>
                         <div class="text-lg font-bold text-orange-600" id="sdm-consumed">--</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">已扣减</div>
+                        <div class="text-lg font-bold text-red-600" id="sdm-deduct">--</div>
                     </div>
                     <div class="text-center">
                         <div class="text-xs text-gray-500 mb-1">剩余点数</div>
@@ -224,16 +222,9 @@
                     <label class="text-xs text-gray-600 whitespace-nowrap">类型</label>
                     <select id="sdm-filter-type" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-primary-500 outline-none min-w-[90px]">
                         <option value="">全部</option>
-                        <option value="purchase">购买</option>
-                        <option value="gift">赠送</option>
+                        <option value="recharge">充值</option>
                         <option value="consume">消费</option>
                         <option value="deduct">扣减</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-2">
-                    <label class="text-xs text-gray-600 whitespace-nowrap">教师</label>
-                    <select id="sdm-filter-teacher" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-primary-500 outline-none min-w-[100px]">
-                        <option value="">全部</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-2">
@@ -245,15 +236,16 @@
                 <button type="button" onclick="sdmApplyFilters()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors">查询</button>
             </div>
             <div class="flex-1 overflow-y-auto">
-                <table class="w-full min-w-[700px]">
+                <table class="w-full min-w-[900px]">
                     <thead class="bg-gray-50 sticky top-0 z-10">
                         <tr>
-                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">序号</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">关联采购</th>
                             <th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">类型</th>
                             <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th>
-                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">余额</th>
-                            <th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">教师/合同</th>
-                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">来源/理由</th>
+                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">金额</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">备注</th>
                         </tr>
                     </thead>
                     <tbody id="sdm-table-body" class="divide-y divide-gray-100"></tbody>
@@ -270,116 +262,98 @@
         </div>
     </div>
 
-    <!-- ==================== 弹窗: 增减院校点数 ==================== -->
-    <div id="modal-add-points" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
-        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-add-points')"></div>
-        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden" style="transform: scale(0.95);">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 class="font-semibold text-gray-800">增减院校点数</h3>
-                <button type="button" onclick="pmHideModal('modal-add-points')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+    <!-- ==================== 弹窗: 充值 ==================== -->
+    <div id="modal-recharge" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-recharge')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">充值</h3>
+                <button type="button" onclick="pmHideModal('modal-recharge')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="p-6">
-                <div class="mb-5 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                    <div class="flex items-center justify-between text-sm mb-1.5">
-                        <span class="text-gray-500">学校</span>
-                        <span class="font-medium text-gray-800" id="apm-school-name">--</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-500">当前剩余</span>
-                        <span class="font-bold text-emerald-600" id="apm-current-balance">--</span>
-                    </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">学校 <span class="text-red-500">*</span></label>
+                    <select id="rcm-school" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择学校</option>
+                    </select>
+                    <p id="rcm-err-school" class="text-sm text-red-500 hidden"></p>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">操作类型</label>
-                    <div class="flex gap-3">
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="apm-op-type" value="purchase" checked class="sr-only peer" onchange="apmToggleFields()">
-                            <div class="text-center py-2.5 border-2 border-blue-300 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white transition-all">购买（增加）</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="apm-op-type" value="gift" class="sr-only peer" onchange="apmToggleFields()">
-                            <div class="text-center py-2.5 border-2 border-purple-300 rounded-lg text-sm font-medium text-purple-600 bg-purple-50 peer-checked:border-purple-600 peer-checked:bg-purple-600 peer-checked:text-white transition-all">赠送（增加）</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="apm-op-type" value="deduct" class="sr-only peer" onchange="apmToggleFields()">
-                            <div class="text-center py-2.5 border-2 border-red-300 rounded-lg text-sm font-medium text-red-600 bg-red-50 peer-checked:border-red-600 peer-checked:bg-red-600 peer-checked:text-white transition-all">扣减（减少）</div>
-                        </label>
+                <div class="flex flex-col gap-1.5" id="rcm-purchase-field">
+                    <label class="text-sm font-medium text-gray-500">关联采购</label>
+                    <div id="rcm-purchase-display" class="px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50">--</div>
+                </div>
+                <div id="rcm-purchase-info" class="bg-blue-50 rounded-lg p-3 text-xs text-blue-700 hidden"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">点数 <span class="text-red-500">*</span></label>
+                        <input type="number" id="rcm-points" placeholder="请输入" min="1" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="rcm-err-points" class="text-sm text-red-500 hidden"></p>
                     </div>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">点数 <span class="text-red-500">*</span></label>
-                    <input type="number" id="apm-points" min="1" placeholder="请输入点数数量" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
-                </div>
-                <div id="apm-contract-fields">
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1.5">合同编号</label>
-                            <input type="text" id="apm-contract-no" placeholder="如HT-20260301" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">金额 <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500">¥</span>
+                            <input type="number" id="rcm-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
                         </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1.5">合同金额</label>
-                            <input type="number" id="apm-contract-amount" min="0" placeholder="单位：元" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="block text-xs font-medium text-gray-700 mb-1.5">合同日期</label>
-                        <input type="date" id="apm-contract-date" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none" />
+                        <p id="rcm-err-amount" class="text-sm text-red-500 hidden"></p>
                     </div>
                 </div>
-                <div id="apm-remark-field" class="mb-6 hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">理由/备注 <span class="text-red-500">*</span></label>
-                    <textarea id="apm-remark" rows="3" placeholder="请输入操作理由，必填" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none"></textarea>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">备注</label>
+                    <textarea id="rcm-remark" rows="2" placeholder="选填" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"></textarea>
                 </div>
-                <div class="flex items-center justify-end gap-3">
-                    <button type="button" onclick="pmHideModal('modal-add-points')" class="px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">取消</button>
-                    <button type="button" onclick="confirmAddPoints()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">确认</button>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('modal-recharge')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="confirmRecharge()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗: 扣减 ==================== -->
+    <div id="modal-deduct" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-deduct')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">扣减</h3>
+                <button type="button" onclick="pmHideModal('modal-deduct')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">学校 <span class="text-red-500">*</span></label>
+                    <select id="dcm-school" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white">
+                        <option value="">请选择学校</option>
+                    </select>
+                    <p id="dcm-err-school" class="text-sm text-red-500 hidden"></p>
                 </div>
+                <div class="flex flex-col gap-1.5" id="dcm-purchase-field">
+                    <label class="text-sm font-medium text-gray-500">关联采购</label>
+                    <div id="dcm-purchase-display" class="px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50">--</div>
+                </div>
+                <div id="dcm-purchase-info" class="bg-blue-50 rounded-lg p-3 text-xs text-blue-700 hidden"></div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">点数 <span class="text-red-500">*</span></label>
+                    <input type="number" id="dcm-points" placeholder="请输入" min="1" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+                    <p id="dcm-err-points" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">扣减原因 <span class="text-red-500">*</span></label>
+                    <textarea id="dcm-remark" rows="2" placeholder="请输入扣减原因（必填）" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"></textarea>
+                    <p id="dcm-err-remark" class="text-sm text-red-500 hidden"></p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('modal-deduct')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="confirmDeduct()" class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认扣减</button>
             </div>
         </div>
     </div>
 
     <!-- ==================== 弹窗: 扣点配置 ==================== -->
-    <div id="modal-deduction-config" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
-        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-deduction-config')"></div>
-        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 500px; display: flex; flex-direction: column;">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-                <h3 class="font-semibold text-gray-800">扣点配置</h3>
-                <button type="button" onclick="pmHideModal('modal-deduction-config')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="px-6 py-5 space-y-4 overflow-y-auto">
-                <p class="text-sm text-gray-500">设置各类生成功能每次消耗的点数</p>
-                <div class="flex items-center gap-4">
-                    <label class="w-28 text-sm font-medium text-gray-700">生成活动</label>
-                    <input type="number" id="dc-activity" value="2" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    <span class="text-sm text-gray-500">点/次</span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <label class="w-28 text-sm font-medium text-gray-700">生成绘本</label>
-                    <input type="number" id="dc-book" value="2" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    <span class="text-sm text-gray-500">点/次</span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <label class="w-28 text-sm font-medium text-gray-700">生成课件</label>
-                    <input type="number" id="dc-courseware" value="1" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    <span class="text-sm text-gray-500">点/次</span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <label class="w-28 text-sm font-medium text-gray-700">生成数字人</label>
-                    <input type="number" id="dc-avatar" value="2" min="0" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    <span class="text-sm text-gray-500">点/次</span>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onclick="pmHideModal('modal-deduction-config')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
-                <button type="button" onclick="saveDeductionConfig()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">保存</button>
-            </div>
-        </div>
-    </div>
-
     <script src="points-manage.js"></script>
     <script>
         // 菜单展开/收起
@@ -404,59 +378,39 @@
         let sdmCurrentSchoolId = null;
 
         function spInit() {
-            const institutions = JSON.parse(localStorage.getItem('institutions')) || [];
+            // 尝试从 institutions 获取数据
+            let institutions = JSON.parse(localStorage.getItem('institutions')) || [];
+
+            // 如果没有数据，生成默认学校
+            if (institutions.length === 0) {
+                institutions = [
+                    { id: 's001', schoolCode: 'SCH2026001', username: '北京市第一中学', disabled: false },
+                    { id: 's002', schoolCode: 'SCH2026002', username: '上海市实验小学', disabled: false },
+                    { id: 's003', schoolCode: 'SCH2026003', username: '广州市外国语学校', disabled: false },
+                    { id: 's004', schoolCode: 'SCH2026004', username: '深圳市育才中学', disabled: false },
+                    { id: 's005', schoolCode: 'SCH2026005', username: '杭州市学军小学', disabled: false },
+                    { id: 's006', schoolCode: 'SCH2026006', username: '成都市第七中学', disabled: false },
+                    { id: 's007', schoolCode: 'SCH2026007', username: '武汉市第二中学', disabled: false },
+                    { id: 's008', schoolCode: 'SCH2026008', username: '南京市金陵中学', disabled: false }
+                ];
+                localStorage.setItem('institutions', JSON.stringify(institutions));
+            }
+
             spAllData = institutions.map(inst => {
                 const cached = getSchools().find(s => s.schoolCode === inst.schoolCode);
                 return {
                     schoolId: inst.id,
                     schoolCode: inst.schoolCode || '',
                     schoolName: inst.username || '',
-                    purchasePoints: cached ? cached.purchasePoints : Math.floor(Math.random() * 50000),
-                    giftPoints: cached ? cached.giftPoints : Math.floor(Math.random() * 5000),
-                    consumed: cached ? cached.consumed : Math.floor(Math.random() * 2000),
-                    balance: cached ? cached.balance : Math.floor(Math.random() * 30000),
+                    purchasePoints: cached ? cached.purchasePoints : Math.floor(Math.random() * 50000) + 10000,
+                    consumed: cached ? cached.consumed : Math.floor(Math.random() * 2000) + 500,
+                    deductPoints: cached ? cached.deductPoints : Math.floor(Math.random() * 200) + 50,
+                    balance: cached ? cached.balance : Math.floor(Math.random() * 30000) + 5000,
                     disabled: inst.disabled
                 };
             });
             spApplyFilters();
             pmInitIcons();
-        }
-
-        // 扣点配置相关
-        let deductionConfig = {
-            activity: 2, book: 2, courseware: 1, avatar: 2
-        };
-
-        function openDeductionConfigModal() {
-            document.getElementById('dc-activity').value = deductionConfig.activity;
-            document.getElementById('dc-book').value = deductionConfig.book;
-            document.getElementById('dc-courseware').value = deductionConfig.courseware;
-            document.getElementById('dc-avatar').value = deductionConfig.avatar;
-            document.getElementById('modal-deduction-config').classList.remove('hidden');
-            pmInitIcons();
-        }
-
-        function saveDeductionConfig() {
-            const activity = document.getElementById('dc-activity').value.trim();
-            const book = document.getElementById('dc-book').value.trim();
-            const courseware = document.getElementById('dc-courseware').value.trim();
-            const avatar = document.getElementById('dc-avatar').value.trim();
-            if (activity === '' || book === '' || courseware === '' || avatar === '') {
-                pmToast('请填写所有扣点配置项', 'error'); return;
-            }
-            const activityNum = parseInt(activity);
-            const bookNum = parseInt(book);
-            const coursewareNum = parseInt(courseware);
-            const avatarNum = parseInt(avatar);
-            if (isNaN(activityNum) || isNaN(bookNum) || isNaN(coursewareNum) || isNaN(avatarNum)) {
-                pmToast('扣点数必须为整数', 'error'); return;
-            }
-            deductionConfig.activity = activityNum;
-            deductionConfig.book = bookNum;
-            deductionConfig.courseware = coursewareNum;
-            deductionConfig.avatar = avatarNum;
-            pmHideModal('modal-deduction-config');
-            pmToast('扣点配置已保存');
         }
 
         function spApplyFilters() {
@@ -482,7 +436,7 @@
             document.getElementById('sp-total-count').textContent = spFiltered.length;
 
             if (pageData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
             } else {
                 tbody.innerHTML = pageData.map((s, i) => {
                     const no = start + i + 1;
@@ -493,7 +447,6 @@
                         '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">' + no + '</td>' +
                         '<td class="px-4 py-3 whitespace-nowrap"><span class="font-medium text-gray-900">' + s.schoolName + '</span><span class="ml-1 text-xs text-gray-400 font-mono">(' + s.schoolCode + ')</span></td>' +
                         '<td class="px-4 py-3 text-right text-sm text-blue-600 font-medium">' + s.purchasePoints.toLocaleString() + '</td>' +
-                        '<td class="px-4 py-3 text-right text-sm text-purple-600 font-medium">' + s.giftPoints.toLocaleString() + '</td>' +
                         '<td class="px-4 py-3 text-right text-sm text-orange-600 font-medium">' + s.consumed.toLocaleString() + '</td>' +
                         '<td class="px-4 py-3 text-right text-sm font-bold text-emerald-600">' + s.balance.toLocaleString() + '</td>' +
                         '<td class="px-4 py-3 text-center whitespace-nowrap">' + balanceStatus + '</td>' +
@@ -541,26 +494,65 @@
             document.getElementById('sdm-title').textContent = school.schoolName + ' - 点数明细';
             document.getElementById('sdm-subtitle').textContent = '学校编码：' + school.schoolCode;
             document.getElementById('sdm-purchase').textContent = school.purchasePoints.toLocaleString();
-            document.getElementById('sdm-gift').textContent = school.giftPoints.toLocaleString();
             document.getElementById('sdm-consumed').textContent = school.consumed.toLocaleString();
+            document.getElementById('sdm-deduct').textContent = school.deductPoints ? school.deductPoints.toLocaleString() : '0';
             document.getElementById('sdm-balance').textContent = school.balance.toLocaleString();
 
-            const teachers = getTeacherPoints();
-            const teacherOpts = '<option value="">全部</option>' + teachers.map(t => '<option value="' + t.teacherId + '">' + t.teacherName + '</option>').join('');
-            document.getElementById('sdm-filter-teacher').innerHTML = teacherOpts;
+            // 加载本地存储的充值/扣减记录
+            const storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
 
-            sdmAllRecords = [
-                { id: 'r1', schoolId: schoolId, type: 'purchase', points: school.purchasePoints, balance: school.purchasePoints + school.giftPoints, teacherId: null, source: '合同购买', contractNo: 'HT-20260301', contractDate: '2026-03-01', contractAmount: 5000, remark: null, createdAt: '2026-03-01 09:00:00' },
-                { id: 'r2', schoolId: schoolId, type: 'gift', points: school.giftPoints, balance: school.purchasePoints + school.giftPoints, teacherId: null, source: '促销活动赠送', contractNo: null, contractDate: null, contractAmount: null, remark: '新用户首月赠送', createdAt: '2026-03-02 10:30:00' },
-                { id: 'r3', schoolId: schoolId, type: 'consume', points: -15, balance: school.balance + 15, teacherId: 't001', source: '生成绘本', resourceName: '丑小鸭的故事', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-03 14:20:00' },
-                { id: 'r4', schoolId: schoolId, type: 'consume', points: -20, balance: school.balance + 35, teacherId: 't002', source: '生成课件', resourceName: 'Unit 3 课件', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-04 08:15:00' },
-                { id: 'r5', schoolId: schoolId, type: 'consume', points: -10, balance: school.balance + 45, teacherId: 't003', source: '生成数字人', resourceName: '数学老师数字人', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-05 16:40:00' },
-                { id: 'r6', schoolId: schoolId, type: 'consume', points: -30, balance: school.balance + 75, teacherId: 't001', source: '生成活动', resourceName: '消防安全演练', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-06 11:05:00' },
-                { id: 'r7', schoolId: schoolId, type: 'deduct', points: -50, balance: school.balance + 125, teacherId: null, source: '账户调整', contractNo: null, contractDate: null, contractAmount: null, remark: '重复充值退款', createdAt: '2026-03-10 09:00:00' },
-                { id: 'r8', schoolId: schoolId, type: 'consume', points: -25, balance: school.balance + 150, teacherId: 't004', source: '生成绘本', resourceName: '小红帽的故事', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-12 15:30:00' },
-                { id: 'r9', schoolId: schoolId, type: 'consume', points: -15, balance: school.balance + 165, teacherId: 't002', source: '生成课件', resourceName: '拼音教学课件', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-15 10:20:00' },
-                { id: 'r10', schoolId: schoolId, type: 'consume', points: -20, balance: school.balance + 185, teacherId: 't005', source: '生成数字人', resourceName: '英语老师数字人', contractNo: null, contractDate: null, contractAmount: null, remark: null, createdAt: '2026-03-18 09:45:00' },
-            ];
+            // 合并所有记录：充值、扣减、消费
+            sdmAllRecords = [];
+
+            // 获取该学校的套餐列表
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+
+            // 添加本地存储的充值/扣减记录
+            storedRecords.forEach(r => {
+                if (r.type === 'recharge' || r.type === 'deduct') {
+                    // 获取套餐名称
+                    let purchaseName = '当前账户';
+                    if (r.purchaseId && r.purchaseId !== 'default') {
+                        const pkg = purchases.find(p => p.id === r.purchaseId);
+                        if (pkg) purchaseName = pkg.packageName + ' (' + pkg.startDate + ')';
+                        else purchaseName = r.purchaseId;
+                    }
+                    sdmAllRecords.push({
+                        id: r.id,
+                        schoolId: r.schoolId,
+                        type: r.type,
+                        purchaseName: purchaseName,
+                        points: r.points,
+                        amount: r.amount || 0,
+                        time: r.time,
+                        remark: r.remark || null,
+                        createdAt: r.time
+                    });
+                }
+            });
+
+            // 添加模拟充值记录
+            sdmAllRecords.push(
+                { id: 'rc1', schoolId: schoolId, type: 'recharge', purchaseName: '基础版 (2026.1.1)', points: 5000, amount: 5000, time: '2026-03-01 09:00:00', remark: '年度套餐购买', createdAt: '2026-03-01 09:00:00' },
+                { id: 'rc2', schoolId: schoolId, type: 'recharge', purchaseName: '进阶版 (2026.2.15)', points: 3000, amount: 3000, time: '2026-03-15 14:30:00', remark: '补充充值', createdAt: '2026-03-15 14:30:00' }
+            );
+
+            // 添加模拟扣减记录
+            sdmAllRecords.push(
+                { id: 'dc1', schoolId: schoolId, type: 'deduct', purchaseName: '-', points: 100, amount: 0, time: '2026-03-10 09:00:00', remark: '重复充值退款', createdAt: '2026-03-10 09:00:00' }
+            );
+
+            // 添加消费记录（来自系统自动生成）
+            sdmAllRecords.push(
+                { id: 'c1', schoolId: schoolId, type: 'consume', purchaseName: '基础版 (2026.1.1)', points: 15, amount: 0, time: '2026-03-03 14:20:00', remark: '生成绘本：丑小鸭的故事', createdAt: '2026-03-03 14:20:00' },
+                { id: 'c2', schoolId: schoolId, type: 'consume', purchaseName: '基础版 (2026.1.1)', points: 20, amount: 0, time: '2026-03-04 08:15:00', remark: '生成课件：Unit 3 课件', createdAt: '2026-03-04 08:15:00' },
+                { id: 'c3', schoolId: schoolId, type: 'consume', purchaseName: '进阶版 (2026.2.15)', points: 10, amount: 0, time: '2026-03-05 16:40:00', remark: '生成数字人：数学老师数字人', createdAt: '2026-03-05 16:40:00' },
+                { id: 'c4', schoolId: schoolId, type: 'consume', purchaseName: '进阶版 (2026.2.15)', points: 30, amount: 0, time: '2026-03-06 11:05:00', remark: '生成活动：消防安全演练', createdAt: '2026-03-06 11:05:00' },
+                { id: 'c5', schoolId: schoolId, type: 'consume', purchaseName: '基础版 (2026.1.1)', points: 25, amount: 0, time: '2026-03-12 15:30:00', remark: '生成绘本：小红帽的故事', createdAt: '2026-03-12 15:30:00' }
+            );
+
+            // 按时间倒序排列
+            sdmAllRecords.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
             document.getElementById('sdm-filter-type').value = '';
             document.getElementById('sdm-filter-from').value = '';
@@ -574,12 +566,10 @@
 
         function sdmApplyFilters() {
             const type = document.getElementById('sdm-filter-type').value;
-            const teacher = document.getElementById('sdm-filter-teacher').value;
             const from = document.getElementById('sdm-filter-from').value;
             const to = document.getElementById('sdm-filter-to').value;
             sdmFiltered = sdmAllRecords.filter(r => {
                 if (type && r.type !== type) return false;
-                if (teacher && r.teacherId !== teacher) return false;
                 if (from && r.createdAt < from) return false;
                 if (to && r.createdAt > to + ' 23:59:59') return false;
                 return true;
@@ -594,27 +584,32 @@
             const totalPages = Math.max(1, Math.ceil(sdmFiltered.length / sdmPageSize));
             const tbody = document.getElementById('sdm-table-body');
             document.getElementById('sdm-count').textContent = sdmFiltered.length;
-            const teachers = getTeacherPoints();
 
             if (pageData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
             } else {
-                tbody.innerHTML = pageData.map(r => {
-                    const typeInfo = pmRecordTypeLabel(r.type);
-                    let subInfo = '-';
-                    if (r.type === 'consume' && r.teacherId) {
-                        const t = teachers.find(x => x.teacherId === r.teacherId);
-                        subInfo = t ? t.teacherName + '(' + t.account + ')' : '-';
-                    } else if (r.type === 'purchase' && r.contractNo) {
-                        subInfo = r.contractNo;
-                    }
+                tbody.innerHTML = pageData.map((r, i) => {
+                    const no = start + i + 1;
+                    const typeInfo = {
+                        recharge: { label: '充值', cls: 'bg-green-100 text-green-700' },
+                        consume: { label: '消费', cls: 'bg-blue-100 text-blue-700' },
+                        deduct: { label: '扣减', cls: 'bg-orange-100 text-orange-700' }
+                    }[r.type] || { label: r.type, cls: 'bg-gray-100 text-gray-700' };
+
+                    const pointsHtml = r.type === 'deduct'
+                        ? `<span class="text-orange-600 font-medium">-${r.points}</span>`
+                        : `<span class="text-green-600 font-medium">+${r.points}</span>`;
+
+                    const amountHtml = r.amount > 0 ? '¥' + r.amount.toLocaleString() : '-';
+
                     return '<tr class="hover:bg-gray-50/60">' +
-                        '<td class="px-4 py-2.5 text-gray-500 whitespace-nowrap text-xs">' + r.createdAt.substring(0, 16) + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-500 whitespace-nowrap text-xs">' + no + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-700 text-sm">' + r.purchaseName + '</td>' +
                         '<td class="px-4 py-2.5 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
-                        '<td class="px-4 py-2.5 text-right font-semibold ' + (r.points >= 0 ? 'text-blue-600' : 'text-orange-600') + '">' + (r.points >= 0 ? '+' : '') + r.points + '</td>' +
-                        '<td class="px-4 py-2.5 text-right text-gray-600">' + r.balance + '</td>' +
-                        '<td class="px-4 py-2.5 text-center text-gray-700">' + subInfo + '</td>' +
-                        '<td class="px-4 py-2.5 text-gray-600">' + (r.source || '-') + (r.resourceName ? ' (' + r.resourceName + ')' : '') + (r.remark ? ' <span class="text-gray-400">(' + r.remark + ')</span>' : '') + '</td></tr>';
+                        '<td class="px-4 py-2.5 text-right font-semibold">' + pointsHtml + '</td>' +
+                        '<td class="px-4 py-2.5 text-right text-gray-600">' + amountHtml + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-500 whitespace-nowrap text-xs">' + r.time.substring(0, 16) + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-600 text-sm">' + (r.remark || '-') + '</td></tr>';
                 }).join('');
             }
 
@@ -643,80 +638,288 @@
         }
 
         // ============================================================
-        // 增减院校点数弹窗
+        // 充值弹窗
         // ============================================================
-        let apmCurrentSchoolId = null;
+        let rcmCurrentSchoolId = null;
 
-        function openAddPointsModal() {
+        function openRechargeModal() {
             if (!sdmCurrentSchoolId) return;
             const school = spAllData.find(s => s.schoolId === sdmCurrentSchoolId);
             if (!school) return;
-            apmCurrentSchoolId = sdmCurrentSchoolId;
-            document.getElementById('apm-school-name').textContent = school.schoolName;
-            document.getElementById('apm-current-balance').textContent = school.balance.toLocaleString() + ' 点';
-            document.getElementById('apm-points').value = '';
-            document.getElementById('apm-contract-no').value = '';
-            document.getElementById('apm-contract-amount').value = '';
-            document.getElementById('apm-contract-date').value = '';
-            document.getElementById('apm-remark').value = '';
-            document.querySelector('input[name="apm-op-type"][value="purchase"]').checked = true;
-            apmToggleFields();
-            pmShowModal('modal-add-points');
+            rcmCurrentSchoolId = sdmCurrentSchoolId;
+
+            // 初始化学校下拉
+            const schoolSelect = document.getElementById('rcm-school');
+            schoolSelect.innerHTML = '<option value="">请选择学校</option>';
+            spAllData.forEach(s => {
+                const selected = s.schoolId === sdmCurrentSchoolId ? 'selected' : '';
+                schoolSelect.innerHTML += `<option value="${s.schoolId}" ${selected}>${s.schoolName}</option>`;
+            });
+
+            // 加载关联采购
+            loadRechargePurchases(sdmCurrentSchoolId);
+
+            document.getElementById('rcm-points').value = '';
+            document.getElementById('rcm-amount').value = '';
+            document.getElementById('rcm-remark').value = '';
+
+            pmShowModal('modal-recharge');
             pmInitIcons();
         }
 
-        function apmToggleFields() {
-            const opType = document.querySelector('input[name="apm-op-type"]:checked').value;
-            const contractFields = document.getElementById('apm-contract-fields');
-            const remarkField = document.getElementById('apm-remark-field');
-            if (opType === 'purchase') {
-                contractFields.classList.remove('hidden');
-                remarkField.classList.add('hidden');
+        function loadRechargePurchases(schoolId) {
+            const purchaseDisplay = document.getElementById('rcm-purchase-display');
+            const infoEl = document.getElementById('rcm-purchase-info');
+
+            if (!schoolId) {
+                purchaseDisplay.textContent = '--';
+                purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50';
+                infoEl.classList.add('hidden');
+                return;
+            }
+
+            // 获取该学校的套餐列表
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            const school = spAllData.find(s => s.schoolId === schoolId);
+
+            if (purchases.length > 0) {
+                // 显示所有套餐（禁用状态）
+                const pkgList = purchases.map(p => {
+                    const remaining = p.points - (p.consumed || 0);
+                    return `${p.packageName} (${p.startDate}) [剩余${remaining}点]`;
+                }).join('；');
+                purchaseDisplay.textContent = pkgList;
+                purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
+                infoEl.classList.add('hidden');
             } else {
-                contractFields.classList.add('hidden');
-                remarkField.classList.remove('hidden');
+                // 默认显示当前账户
+                purchaseDisplay.textContent = `进阶版 (2026.2.15)`;
+                purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
+                infoEl.classList.add('hidden');
             }
         }
 
-        function confirmAddPoints() {
-            const points = parseInt(document.getElementById('apm-points').value);
-            if (!points || points <= 0) { pmToast('请输入有效的点数（大于0）', 'error'); return; }
-            const opType = document.querySelector('input[name="apm-op-type"]:checked').value;
-            const remark = (document.getElementById('apm-remark').value || '').trim();
-            if ((opType === 'gift' || opType === 'deduct') && !remark) { pmToast('请填写操作理由', 'error'); return; }
+        document.getElementById('rcm-school')?.addEventListener('change', function() {
+            const schoolId = this.value;
+            rcmCurrentSchoolId = schoolId;
+            loadRechargePurchases(schoolId);
+        });
 
-            const idx = spAllData.findIndex(s => s.schoolId === apmCurrentSchoolId);
+        function confirmRecharge() {
+            const schoolId = document.getElementById('rcm-school').value;
+            const points = parseInt(document.getElementById('rcm-points').value);
+
+            // 清除错误
+            ['school', 'points'].forEach(f => {
+                document.getElementById(`rcm-err-${f}`)?.classList.add('hidden');
+            });
+
+            let valid = true;
+            if (!schoolId) {
+                document.getElementById('rcm-err-school').textContent = '请选择学校';
+                document.getElementById('rcm-err-school').classList.remove('hidden');
+                valid = false;
+            }
+            if (!points || points < 1) {
+                document.getElementById('rcm-err-points').textContent = '请输入有效的点数';
+                document.getElementById('rcm-err-points').classList.remove('hidden');
+                valid = false;
+            }
+            if (!valid) return;
+
+            const idx = spAllData.findIndex(s => s.schoolId === schoolId);
             if (idx === -1) return;
-            const school = spAllData[idx];
-            let newRecord = {
-                id: 'spr' + Date.now(), schoolId: apmCurrentSchoolId, type: opType,
-                points: opType === 'deduct' ? -points : points,
-                balance: opType === 'deduct' ? school.balance - points : school.balance + points,
-                teacherId: null,
-                source: opType === 'purchase' ? '合同#' + (document.getElementById('apm-contract-no').value || '手工录入') : remark,
-                contractNo: opType === 'purchase' ? document.getElementById('apm-contract-no').value : null,
-                contractDate: opType === 'purchase' ? document.getElementById('apm-contract-date').value : null,
-                contractAmount: opType === 'purchase' ? (parseFloat(document.getElementById('apm-contract-amount').value) || null) : null,
-                remark: remark || null,
-                createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19)
+
+            // 获取该学校的套餐列表
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            const school = spAllData.find(s => s.schoolId === schoolId);
+
+            // 汇总所有套餐信息作为关联采购
+            let purchaseName = '当前账户';
+            if (purchases.length > 0) {
+                const pkgList = purchases.map(p => `${p.packageName} (${p.startDate})`).join('；');
+                purchaseName = pkgList;
+            }
+
+            const newRecord = {
+                id: 'rc' + Date.now(),
+                schoolId: schoolId,
+                type: 'recharge',
+                purchaseId: 'default',
+                purchaseName: purchaseName,
+                points: points,
+                amount: parseFloat(document.getElementById('rcm-amount').value) || 0,
+                remark: document.getElementById('rcm-remark').value.trim() || null,
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19)
             };
 
-            if (opType === 'deduct') { spAllData[idx].consumed += points; spAllData[idx].balance -= points; }
-            else if (opType === 'purchase') { spAllData[idx].purchasePoints += points; spAllData[idx].balance += points; }
-            else { spAllData[idx].giftPoints += points; spAllData[idx].balance += points; }
+            // 更新本地存储
+            let storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            storedRecords.push(newRecord);
+            localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
 
-            const schools = JSON.parse(localStorage.getItem('schools')) || [...seedSchools];
-            const si = schools.findIndex(s => s.schoolId === apmCurrentSchoolId);
+            // 更新学校点数数据
+            spAllData[idx].purchasePoints += points;
+            spAllData[idx].balance += points;
+
+            // 保存学校数据
+            const schools = JSON.parse(localStorage.getItem('schools')) || [];
+            const si = schools.findIndex(s => s.schoolId === schoolId);
             if (si !== -1) schools[si] = { ...schools[si], ...spAllData[idx] };
             else schools.push({ ...spAllData[idx] });
             localStorage.setItem('schools', JSON.stringify(schools));
 
-            sdmAllRecords.unshift(newRecord);
-            localStorage.setItem('schoolPointsRecords_' + apmCurrentSchoolId, JSON.stringify(sdmAllRecords));
-
-            pmHideModal('modal-add-points');
-            pmToast('操作成功');
+            pmHideModal('modal-recharge');
+            pmToast('充值成功');
             spApplyFilters();
+            if (sdmCurrentSchoolId === schoolId) {
+                openSchoolDetail(schoolId);
+            }
+        }
+
+        // ============================================================
+        // 扣减弹窗
+        // ============================================================
+        let dcmCurrentSchoolId = null;
+
+        function openDeductModal() {
+            if (!sdmCurrentSchoolId) return;
+            const school = spAllData.find(s => s.schoolId === sdmCurrentSchoolId);
+            if (!school) return;
+            dcmCurrentSchoolId = sdmCurrentSchoolId;
+
+            // 初始化学校下拉
+            const schoolSelect = document.getElementById('dcm-school');
+            schoolSelect.innerHTML = '<option value="">请选择学校</option>';
+            spAllData.forEach(s => {
+                const selected = s.schoolId === sdmCurrentSchoolId ? 'selected' : '';
+                schoolSelect.innerHTML += `<option value="${s.schoolId}" ${selected}>${s.schoolName}</option>`;
+            });
+
+            // 加载关联采购
+            loadDeductPurchases(sdmCurrentSchoolId);
+
+            document.getElementById('dcm-points').value = '';
+            document.getElementById('dcm-remark').value = '';
+
+            pmShowModal('modal-deduct');
+            pmInitIcons();
+        }
+
+        function loadDeductPurchases(schoolId) {
+            const purchaseDisplay = document.getElementById('dcm-purchase-display');
+            const infoEl = document.getElementById('dcm-purchase-info');
+
+            if (!schoolId) {
+                purchaseDisplay.textContent = '--';
+                purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50';
+                infoEl.classList.add('hidden');
+                return;
+            }
+
+            // 获取该学校的套餐列表
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            const school = spAllData.find(s => s.schoolId === schoolId);
+
+            if (purchases.length > 0) {
+                // 显示所有套餐（禁用状态）
+                const pkgList = purchases.map(p => {
+                    const remaining = p.points - (p.consumed || 0);
+                    return `${p.packageName} (${p.startDate}) [剩余${remaining}点]`;
+                }).join('；');
+                purchaseDisplay.textContent = pkgList;
+                purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
+                infoEl.classList.add('hidden');
+            } else {
+                // 默认显示当前账户
+                purchaseDisplay.textContent = `进阶版 (2026.2.15)`;
+                purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
+                infoEl.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('dcm-school')?.addEventListener('change', function() {
+            const schoolId = this.value;
+            dcmCurrentSchoolId = schoolId;
+            loadDeductPurchases(schoolId);
+        });
+
+        function confirmDeduct() {
+            const schoolId = document.getElementById('dcm-school').value;
+            const points = parseInt(document.getElementById('dcm-points').value);
+            const remark = (document.getElementById('dcm-remark').value || '').trim();
+
+            // 清除错误
+            ['school', 'points', 'remark'].forEach(f => {
+                document.getElementById(`dcm-err-${f}`)?.classList.add('hidden');
+            });
+
+            let valid = true;
+            if (!schoolId) {
+                document.getElementById('dcm-err-school').textContent = '请选择学校';
+                document.getElementById('dcm-err-school').classList.remove('hidden');
+                valid = false;
+            }
+            if (!points || points < 1) {
+                document.getElementById('dcm-err-points').textContent = '请输入有效的点数';
+                document.getElementById('dcm-err-points').classList.remove('hidden');
+                valid = false;
+            }
+            if (!remark) {
+                document.getElementById('dcm-err-remark').textContent = '请输入扣减原因';
+                document.getElementById('dcm-err-remark').classList.remove('hidden');
+                valid = false;
+            }
+            if (!valid) return;
+
+            const idx = spAllData.findIndex(s => s.schoolId === schoolId);
+            if (idx === -1) return;
+
+            // 获取该学校的套餐列表
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+
+            // 汇总所有套餐信息作为关联采购
+            let purchaseName = '-';
+            if (purchases.length > 0) {
+                const pkgList = purchases.map(p => `${p.packageName} (${p.startDate})`).join('；');
+                purchaseName = pkgList;
+            }
+
+            const newRecord = {
+                id: 'dc' + Date.now(),
+                schoolId: schoolId,
+                type: 'deduct',
+                purchaseId: 'default',
+                purchaseName: purchaseName,
+                points: points,
+                amount: 0,
+                remark: remark,
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+
+            // 更新本地存储
+            let storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            storedRecords.push(newRecord);
+            localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
+
+            // 更新学校点数数据
+            spAllData[idx].consumed += points;
+            spAllData[idx].balance -= points;
+            spAllData[idx].deductPoints = (spAllData[idx].deductPoints || 0) + points;
+
+            // 保存学校数据
+            const schools = JSON.parse(localStorage.getItem('schools')) || [];
+            const si = schools.findIndex(s => s.schoolId === schoolId);
+            if (si !== -1) schools[si] = { ...schools[si], ...spAllData[idx] };
+            else schools.push({ ...spAllData[idx] });
+            localStorage.setItem('schools', JSON.stringify(schools));
+
+            pmHideModal('modal-deduct');
+            pmToast('扣减成功');
+            spApplyFilters();
+            if (sdmCurrentSchoolId === schoolId) {
+                openSchoolDetail(schoolId);
+            }
         }
 
         // 初始化

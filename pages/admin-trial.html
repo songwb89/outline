@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>试用开通 - 运营平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                            800: '#3730a3', 900: '#312e81',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            color: white; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10000;
+            display: flex; align-items: center; gap: 12px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+        .toast.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        .toast.toast-success { background: #10b981; }
+        .toast.toast-info { background: #3b82f6; }
+        .toast.toast-error { background: #ef4444; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        .admin-nav-subitem { transition: all 0.15s ease; }
+        .admin-nav-subitem:hover { background-color: #eef2ff; color: #4f46e5; }
+        .admin-nav-subitem.active { background-color: #e0e7ff; color: #4f46e5; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="text-base font-semibold text-gray-800">运营平台</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">A</div>
+                <span class="text-sm text-gray-700 font-medium">管理员</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-57px)]">
+
+        <!-- 左侧菜单 -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <nav class="flex-1 overflow-y-auto py-4">
+                <!-- 一级菜单：学校管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
+                        <span>学校管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
+                        <a href="admin-school.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="building-2" class="w-4 h-4"></i>
+                            <span>学校管理</span>
+                        </a>
+                        <a href="admin-points.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="coins" class="w-4 h-4"></i>
+                            <span>点数管理</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一级菜单：采购管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 text-gray-400"></i>
+                        <span>采购管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div class="nav-children ml-4 mt-1 space-y-0.5">
+                        <a href="admin-purchase.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="package-check" class="w-4 h-4"></i>
+                            <span>开套餐</span>
+                        </a>
+                        <a href="admin-recharge.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            <span>点数管理</span>
+                        </a>
+                        <a href="admin-trial.html" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            <span>试用开通</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一级菜单：产品管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="package" class="w-5 h-5 text-gray-400"></i>
+                        <span>产品管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
+                        <a href="admin-price-config.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="calculator" class="w-4 h-4"></i>
+                            <span>消耗规则</span>
+                        </a>
+                        <a href="admin-package.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                            <span>套餐管理</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <div class="h-full px-6 pt-6 overflow-y-auto">
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">试用开通</h1>
+                        <p class="text-sm text-gray-500 mt-1">管理学校试用开通记录</p>
+                    </div>
+                    <button type="button" onclick="openTrialModal()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        开通试用
+                    </button>
+                </div>
+
+                <!-- 筛选条件 -->
+                <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校</label>
+                            <select id="filterSchool" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-40">
+                                <option value="">全部</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">状态</label>
+                            <select id="filterStatus" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-28">
+                                <option value="">全部</option>
+                                <option value="active">试用中</option>
+                                <option value="converted">已转正</option>
+                                <option value="expired">已到期</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="applyFilters()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                            <i data-lucide="search" class="w-4 h-4"></i>查询
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 数据表格 -->
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 340px); min-height: 300px;">
+                    <div class="overflow-x-auto overflow-y-auto flex-1">
+                        <table class="w-full min-w-[900px]">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校名称</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">试用套餐</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">试用次数</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">有效期</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trialTableBody" class="bg-white divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4 bg-white flex-shrink-0">
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <span>共 <span id="totalCount">0</span> 条</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="prevBtn" onclick="goToPreviousPage()" class="p-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <div class="flex items-center gap-1" id="pageNumbers"></div>
+                            <button type="button" id="nextBtn" onclick="goToNextPage()" class="p-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 开通试用弹窗 -->
+    <div id="trial-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/45" onclick="hideTrialModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 520px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">开通试用</h3>
+                <button type="button" onclick="hideTrialModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">学校 <span class="text-red-500">*</span></label>
+                    <select id="tr-school" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择学校</option>
+                    </select>
+                    <p id="tr-err-school" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">试用套餐 <span class="text-red-500">*</span></label>
+                    <select id="tr-package" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择试用套餐</option>
+                    </select>
+                    <p class="text-xs text-gray-400">选择试用套餐（可设置专用的试用套餐）</p>
+                    <p id="tr-err-package" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">试用天数 <span class="text-red-500">*</span></label>
+                    <input type="number" id="tr-days" placeholder="默认30天" min="1" max="365" value="30" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <p id="tr-err-days" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-gray-700">试用次数配置</label>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">智能阅卷</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="tr-marking" value="3" min="0" class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-primary-500">
+                                <span class="text-sm text-gray-500">次</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">报表导出</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="tr-report" value="5" min="0" class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-primary-500">
+                                <span class="text-sm text-gray-500">次</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">数据分析</span>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="tr-analysis" value="3" min="0" class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-primary-500">
+                                <span class="text-sm text-gray-500">次</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="hideTrialModal()" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="saveTrial()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转正弹窗 -->
+    <div id="convert-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/45" onclick="hideConvertModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">转正</h3>
+                <button type="button" onclick="hideConvertModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">正式套餐 <span class="text-red-500">*</span></label>
+                    <select id="cv-package" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择正式套餐</option>
+                    </select>
+                    <p id="cv-err-package" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">¥</span>
+                        <input type="number" id="cv-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    </div>
+                    <p id="cv-err-amount" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="cv-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="cv-err-start-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="cv-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="cv-err-end-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="hideConvertModal()" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="saveConvert()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 菜单展开/收起
+        document.querySelectorAll('.admin-nav-group-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const children = this.nextElementSibling;
+                if (children) children.classList.toggle('hidden');
+                lucide.createIcons();
+            });
+        });
+
+        // 模拟数据 - 不使用浏览器缓存
+        const schoolsData = [
+            { id: 'school1', name: '深圳实验学校小学部', code: 'SYXX' },
+            { id: 'school2', name: '深圳外国语小学', code: 'SWXX' },
+            { id: 'school3', name: '深圳外国语学校附属碧海小学', code: 'BLXX' },
+            { id: 'school4', name: '海滨小学', code: 'HLXX' },
+            { id: 'school5', name: '南海小学', code: 'NHXX' },
+            { id: 'school6', name: '育才一小', code: 'YXXX' },
+            { id: 'school7', name: '学府一小', code: 'XSXX' },
+            { id: 'school8', name: '百丽小学', code: 'BLYXX' },
+        ];
+
+        const trialPackagesData = [
+            { id: 'tpkg1', name: '试用版-基础', type: 'trial', modules: [{ cat: 'marking', used: 2, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
+            { id: 'tpkg2', name: '试用版-高级', type: 'trial', modules: [{ cat: 'marking', used: 3, total: 3 }, { cat: 'report', used: 5, total: 5 }, { cat: 'analysis', used: 3, total: 3 }] },
+            { id: 'tpkg3', name: '试用版-专业', type: 'trial', modules: [{ cat: 'marking', used: 0, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
+        ];
+
+        const packagesData = [
+            { id: 'pkg1', name: '基础版-月卡', type: 'billing', initialPoints: 100, durationDays: 30, price: 500 },
+            { id: 'pkg2', name: '基础版-年卡', type: 'billing', initialPoints: 1500, durationDays: 365, price: 5000 },
+            { id: 'pkg3', name: '高级版-年卡', type: 'billing', initialPoints: 700, durationDays: 365, price: 8000 },
+            { id: 'pkg4', name: '尊享版-年卡', type: 'billing', initialPoints: 1500, durationDays: 365, price: 15000 },
+        ];
+
+        let trialData = [
+            { id: 'trial1', schoolId: 'school1', schoolName: '深圳实验学校小学部', packageId: 'tpkg2', packageName: '试用版-高级', modules: [{ cat: 'marking', used: 3, total: 3 }, { cat: 'report', used: 5, total: 5 }, { cat: 'analysis', used: 3, total: 3 }], startDate: '2025-06-01', endDate: '2025-06-30', status: 'active' },
+            { id: 'trial2', schoolId: 'school2', schoolName: '深圳外国语小学', packageId: 'tpkg1', packageName: '试用版-基础', modules: [{ cat: 'marking', used: 3, total: 3 }, { cat: 'report', used: 5, total: 5 }, { cat: 'analysis', used: 3, total: 3 }], startDate: '2025-05-01', endDate: '2025-05-31', status: 'converted' },
+            { id: 'trial3', schoolId: 'school3', schoolName: '深圳外国语学校附属碧海小学', packageId: 'tpkg3', packageName: '试用版-专业', modules: [{ cat: 'marking', used: 0, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }], startDate: '2025-04-01', endDate: '2025-04-30', status: 'expired' },
+            { id: 'trial4', schoolId: 'school4', schoolName: '海滨小学', packageId: 'tpkg1', packageName: '试用版-基础', modules: [{ cat: 'marking', used: 1, total: 3 }, { cat: 'report', used: 2, total: 5 }, { cat: 'analysis', used: 1, total: 3 }], startDate: '2025-03-01', endDate: '2025-03-31', status: 'active' },
+        ];
+
+        let filteredData = [...trialData];
+        let currentPage = 1;
+        let pageSize = 10;
+        let convertTrialId = null;
+
+        // 初始化筛选下拉
+        function initFilters() {
+            const schoolSelect = document.getElementById('filterSchool');
+            schoolsData.forEach(s => {
+                schoolSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+        }
+
+        // 初始化弹窗下拉
+        function initModalSelects() {
+            const schoolSelect = document.getElementById('tr-school');
+            schoolSelect.innerHTML = '<option value="">请选择学校</option>';
+            schoolsData.forEach(s => {
+                schoolSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+
+            const packageSelect = document.getElementById('tr-package');
+            packageSelect.innerHTML = '<option value="">请选择试用套餐</option>';
+            trialPackagesData.forEach(p => {
+                packageSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            });
+
+            const convertPackageSelect = document.getElementById('cv-package');
+            convertPackageSelect.innerHTML = '<option value="">请选择正式套餐</option>';
+            packagesData.forEach(p => {
+                convertPackageSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            });
+        }
+
+        function applyFilters() {
+            const schoolId = document.getElementById('filterSchool').value;
+            const status = document.getElementById('filterStatus').value;
+
+            filteredData = trialData.filter(row => {
+                if (schoolId && row.schoolId !== schoolId) return false;
+                if (status && row.status !== status) return false;
+                return true;
+            });
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('trialTableBody');
+            const startIndex = (currentPage - 1) * pageSize;
+            const pageData = filteredData.slice(startIndex, startIndex + pageSize);
+
+            tbody.innerHTML = pageData.map((row, index) => {
+                const no = startIndex + index + 1;
+                const validPeriod = `${row.startDate} 至 ${row.endDate}`;
+
+                const modulesHtml = row.modules.map(m => {
+                    const nameMap = { marking: '阅卷', report: '报表', analysis: '分析' };
+                    const used = m.used;
+                    const total = m.total;
+                    const isExhausted = used >= total;
+                    return `<span class="${isExhausted ? 'text-red-500' : 'text-gray-600'}">${nameMap[m.cat]}${used}/${total}</span>`;
+                }).join(' ');
+
+                let statusHtml = '';
+                let statusClass = '';
+                let actionHtml = '';
+
+                switch (row.status) {
+                    case 'active': statusHtml = '试用中'; statusClass = 'bg-blue-100 text-blue-700'; actionHtml = '<button onclick="openConvertModal(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium mr-3">转正</button><button onclick="deleteTrial(\'' + row.id + '\')" class="text-red-600 hover:text-red-800 font-medium">删除</button>'; break;
+                    case 'converted': statusHtml = '已转正'; statusClass = 'bg-green-100 text-green-700'; actionHtml = '<button onclick="viewTrial(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium">查看</button>'; break;
+                    case 'expired': statusHtml = '已到期'; statusClass = 'bg-gray-100 text-gray-500'; actionHtml = '<button onclick="openConvertModal(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium mr-3">转正</button><button onclick="deleteTrial(\'' + row.id + '\')" class="text-red-600 hover:text-red-800 font-medium">删除</button>'; break;
+                }
+
+                return `<tr class="hover:bg-gray-50/80">
+                    <td class="px-4 py-3 text-sm text-gray-600">${no}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.schoolName}</td>
+                    <td class="px-4 py-3 text-sm text-gray-800">${row.packageName}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${modulesHtml}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${validPeriod}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-0.5 text-xs font-medium rounded ${statusClass}">${statusHtml}</span></td>
+                    <td class="px-4 py-3 text-sm">${actionHtml}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function updatePagination() {
+            const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+            document.getElementById('totalCount').textContent = filteredData.length;
+            document.getElementById('prevBtn').disabled = currentPage <= 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+
+            const container = document.getElementById('pageNumbers');
+            container.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                btn.className = i === currentPage
+                    ? 'min-w-[32px] px-2 py-1 rounded-md text-sm font-medium bg-primary-600 text-white'
+                    : 'min-w-[32px] px-2 py-1 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100';
+                container.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+                updatePagination();
+            }
+        }
+        function goToPreviousPage() { if (currentPage > 1) goToPage(currentPage - 1); }
+        function goToNextPage() { goToPage(currentPage + 1); }
+
+        function openTrialModal() {
+            document.getElementById('tr-school').value = '';
+            document.getElementById('tr-package').value = '';
+            document.getElementById('tr-days').value = 30;
+            document.getElementById('tr-marking').value = 3;
+            document.getElementById('tr-report').value = 5;
+            document.getElementById('tr-analysis').value = 3;
+            document.getElementById('trial-modal').classList.remove('hidden');
+            document.getElementById('tr-school').focus();
+            lucide.createIcons();
+        }
+
+        function hideTrialModal() {
+            document.getElementById('trial-modal').classList.add('hidden');
+        }
+
+        function openConvertModal(id) {
+            convertTrialId = id;
+            const trial = trialData.find(t => t.id === id);
+            if (!trial) return;
+
+            document.getElementById('cv-package').value = '';
+            document.getElementById('cv-amount').value = '';
+            document.getElementById('cv-start-date').value = '';
+            document.getElementById('cv-end-date').value = '';
+            document.getElementById('convert-modal').classList.remove('hidden');
+            document.getElementById('cv-package').focus();
+            lucide.createIcons();
+        }
+
+        function hideConvertModal() {
+            document.getElementById('convert-modal').classList.add('hidden');
+        }
+
+        function viewTrial(id) {
+            const trial = trialData.find(t => t.id === id);
+            if (!trial) return;
+            alert('查看试用详情: ' + JSON.stringify(trial, null, 2));
+        }
+
+        function validateTrial() {
+            let valid = true;
+            const fields = ['school', 'package', 'days'];
+            fields.forEach(f => {
+                document.getElementById(`tr-err-${f}`).classList.add('hidden');
+            });
+
+            if (!document.getElementById('tr-school').value) {
+                document.getElementById('tr-err-school').textContent = '请选择学校';
+                document.getElementById('tr-err-school').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('tr-package').value) {
+                document.getElementById('tr-err-package').textContent = '请选择试用套餐';
+                document.getElementById('tr-err-package').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('tr-days').value || parseInt(document.getElementById('tr-days').value) < 1) {
+                document.getElementById('tr-err-days').textContent = '请输入有效的试用天数';
+                document.getElementById('tr-err-days').classList.remove('hidden');
+                valid = false;
+            }
+            return valid;
+        }
+
+        function saveTrial() {
+            if (!validateTrial()) return;
+
+            const schoolId = document.getElementById('tr-school').value;
+            const packageId = document.getElementById('tr-package').value;
+            const school = schoolsData.find(s => s.id === schoolId);
+            const pkg = trialPackagesData.find(p => p.id === packageId);
+            const days = parseInt(document.getElementById('tr-days').value);
+
+            const startDate = new Date().toISOString().slice(0, 10);
+            const endDate = new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
+
+            const data = {
+                id: 'trial' + Date.now(),
+                schoolId: schoolId,
+                schoolName: school.name,
+                packageId: packageId,
+                packageName: pkg.name,
+                modules: [
+                    { cat: 'marking', used: 0, total: parseInt(document.getElementById('tr-marking').value) },
+                    { cat: 'report', used: 0, total: parseInt(document.getElementById('tr-report').value) },
+                    { cat: 'analysis', used: 0, total: parseInt(document.getElementById('tr-analysis').value) },
+                ],
+                startDate: startDate,
+                endDate: endDate,
+                status: 'active'
+            };
+
+            trialData.unshift(data);
+            hideTrialModal();
+            applyFilters();
+            showToast('试用开通成功');
+        }
+
+        function saveConvert() {
+            const packageId = document.getElementById('cv-package').value;
+            const amount = document.getElementById('cv-amount').value;
+            const startDate = document.getElementById('cv-start-date').value;
+            const endDate = document.getElementById('cv-end-date').value;
+
+            if (!packageId || !amount || !startDate || !endDate) {
+                alert('请填写所有必填项');
+                return;
+            }
+
+            const idx = trialData.findIndex(t => t.id === convertTrialId);
+            if (idx !== -1) {
+                trialData[idx].status = 'converted';
+            }
+
+            hideConvertModal();
+            applyFilters();
+            showToast('转正成功');
+        }
+
+        function deleteTrial(id) {
+            if (!confirm('确定要删除该试用记录吗？')) return;
+            trialData = trialData.filter(t => t.id !== id);
+            applyFilters();
+            showToast('试用记录已删除');
+        }
+
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-success';
+            toast.innerHTML = `<i data-lucide="check-circle"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initFilters();
+            initModalSelects();
+            renderTable();
+            updatePagination();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

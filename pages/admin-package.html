@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>套餐管理 - 运营平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                            800: '#3730a3', 900: '#312e81',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            color: white; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10000;
+            display: flex; align-items: center; gap: 12px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+        .toast.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        .toast.toast-success { background: #10b981; }
+        .toast.toast-info { background: #3b82f6; }
+        .toast.toast-error { background: #ef4444; }
+        .admin-nav-subitem { transition: all 0.15s ease; }
+        .admin-nav-subitem:hover { background-color: #eef2ff; color: #4f46e5; }
+        .admin-nav-subitem.active { background-color: #e0e7ff; color: #4f46e5; }
+        .modal-overlay { background: rgba(0,0,0,0.5); }
+        .pkg-type-btn { transition: all 0.2s ease; }
+        .pkg-type-btn:hover { border-color: #818cf8; }
+        .pkg-type-btn.active { border-color: #4f46e5; background-color: #eef2ff; }
+        .module-cat { transition: all 0.15s ease; }
+        .module-cat:hover { background-color: #f8fafc; }
+        .module-sub-item { transition: all 0.15s ease; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Toast提示 -->
+    <div id="toast" class="toast toast-success">
+        <span class="toast-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span>
+        <span id="toast-message">保存成功</span>
+    </div>
+
+    <!-- 顶部导航 -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="text-base font-semibold text-gray-800">运营平台</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">A</div>
+                <span class="text-sm text-gray-700 font-medium">管理员</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-57px)]">
+
+        <!-- 左侧菜单 -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <nav class="flex-1 overflow-y-auto py-4">
+                <!-- 一级菜单：学校管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
+                        <span>学校管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
+                        <a href="admin-school.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="building-2" class="w-4 h-4"></i>
+                            <span>学校管理</span>
+                        </a>
+                        <a href="admin-points.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="coins" class="w-4 h-4"></i>
+                            <span>点数管理</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一级菜单：产品管理 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="package" class="w-5 h-5 text-gray-400"></i>
+                        <span>产品管理</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div class="nav-children ml-4 mt-1 space-y-0.5">
+                        <a href="admin-price-config.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="calculator" class="w-4 h-4"></i>
+                            <span>消耗规则</span>
+                        </a>
+                        <a href="admin-package.html" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                            <span>套餐管理</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一级菜单：业务数据 -->
+                <div class="admin-nav-group px-4 mb-1">
+                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="database" class="w-5 h-5 text-gray-400"></i>
+                        <span>业务数据</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
+                    </button>
+                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
+                        <a href="admin-courseware.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
+                            <i data-lucide="presentation" class="w-4 h-4"></i>
+                            <span>文件管理</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <!-- 页面标题 -->
+            <div class="px-6 pt-6 overflow-y-auto flex-1">
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">套餐管理</h1>
+                    </div>
+                    <button type="button" onclick="openPackageModal()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        新增套餐
+                    </button>
+                </div>
+
+                <!-- 套餐列表 -->
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                    <div id="package-list" class="divide-y divide-gray-100">
+                        <!-- 动态渲染 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 查看套餐弹窗 -->
+    <div id="modal-view" class="fixed inset-0 z-[9998] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeViewModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="width: 100%; max-width: 560px; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">套餐详情</h3>
+                <button type="button" onclick="closeViewModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="view-content" class="px-5 py-4 overflow-y-auto flex-1">
+                <!-- 动态渲染 -->
+            </div>
+            <div class="px-5 py-4 border-t border-gray-100 flex justify-end shrink-0">
+                <button type="button" onclick="closeViewModal()" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑套餐弹窗 -->
+    <div id="modal-package" class="fixed inset-0 z-[9998] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closePackageModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="width: 100%; max-width: 680px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 id="modal-title" class="font-semibold text-gray-800">新增套餐</h3>
+                <button type="button" onclick="closePackageModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 space-y-4 overflow-y-auto flex-1">
+
+                <!-- 套餐类型选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">套餐类型 <span class="text-red-500">*</span></label>
+                    <div class="flex gap-3">
+                        <button type="button" id="type-billing" onclick="setPackageType('billing')" class="pkg-type-btn flex-1 p-4 border-2 border-gray-200 rounded-xl text-left">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="coins" class="w-5 h-5 text-amber-500"></i>
+                                <span class="font-medium text-gray-800">计费版</span>
+                            </div>
+                            <p class="text-xs text-gray-500">购买后获得套餐额度，使用功能时按规则扣点</p>
+                        </button>
+                        <button type="button" id="type-trial" onclick="setPackageType('trial')" class="pkg-type-btn flex-1 p-4 border-2 border-gray-200 rounded-xl text-left">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="gift" class="w-5 h-5 text-green-500"></i>
+                                <span class="font-medium text-gray-800">试用版</span>
+                            </div>
+                            <p class="text-xs text-gray-500">各功能有独立试用次数，适合推广体验</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 基本信息 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">套餐名称 <span class="text-red-500">*</span></label>
+                        <input type="text" id="pkg-name" placeholder="如：基础版、高级版、旗舰版" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">有效期（天） <span class="text-red-500">*</span></label>
+                        <input type="number" id="pkg-duration" placeholder="365" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div id="pkg-points-container">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">套餐额度（点）<span class="text-red-500">*</span></label>
+                        <input type="number" id="pkg-points" placeholder="如：500" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p class="text-xs text-gray-400 mt-1">学校购买后获得的套餐额度</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">教师账号上限</label>
+                        <input type="number" id="pkg-teacher-limit" placeholder="不填则不限制" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p class="text-xs text-gray-400 mt-1">可创建的教师账号数量</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">价格（元） <span class="text-red-500">*</span></label>
+                    <input type="number" id="pkg-price" placeholder="如：3000" min="0" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">套餐描述</label>
+                    <textarea id="pkg-desc" rows="2" placeholder="简要描述套餐内容..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"></textarea>
+                </div>
+
+                <!-- 功能配置（试用版专用） -->
+                <div id="module-config-container" class="hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700">包含功能</label>
+                        <p id="module-count-hint" class="text-xs text-gray-500 hidden">次数：单个教师账号的不扣点试用次数</p>
+                    </div>
+                    <div id="module-list" class="border border-gray-200 rounded-xl bg-gray-50/50 divide-y divide-gray-100">
+                        <!-- 动态渲染 -->
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <label class="text-sm font-medium text-gray-700">状态</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="pkg-status" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                        <span id="status-label" class="ms-3 text-sm font-medium text-gray-600">启用</span>
+                    </label>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closePackageModal()" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="savePackage()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 菜单展开/收起
+        document.querySelectorAll('.admin-nav-group-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const children = this.nextElementSibling;
+                if (children) children.classList.toggle('hidden');
+                lucide.createIcons();
+            });
+        });
+
+        // 功能模块分类结构
+        const moduleCategories = [
+            {
+                id: 'jiaan',
+                name: '教案',
+                icon: 'file-text',
+                children: [
+                    { id: 'jiaan_ai', name: 'AI生成教案' },
+                    { id: 'jiaan_upload', name: '上传教案' }
+                ]
+            },
+            {
+                id: 'kejian',
+                name: '课件',
+                icon: 'presentation',
+                children: [
+                    { id: 'kejian_ai', name: 'AI生成课件' },
+                    { id: 'kejian_upload', name: '上传课件' }
+                ]
+            },
+            {
+                id: 'xuean',
+                name: '学案',
+                icon: 'book-open',
+                children: [
+                    { id: 'xuean_ai', name: 'AI生成学案' },
+                    { id: 'xuean_upload', name: '上传学案' }
+                ]
+            },
+            {
+                id: 'huodong',
+                name: '活动',
+                icon: 'gamepad-2',
+                children: [
+                    { id: 'huodong_template', name: '创建模板活动' },
+                    { id: 'huodong_ai', name: '创建AI活动' },
+                    { id: 'huodong_lottery', name: '创建抽奖' }
+                ]
+            },
+            {
+                id: 'huiben',
+                name: 'AI绘本',
+                icon: 'book-image',
+                children: [
+                    { id: 'huiben_generate', name: '生成绘本' }
+                ]
+            },
+            {
+                id: 'paidati',
+                name: '拍题答疑',
+                icon: 'camera',
+                children: [
+                    { id: 'paidati_parse', name: '生成解析' }
+                ]
+            }
+        ];
+
+        // 套餐数据
+        let packagesData = [];
+        let editingPackageId = null;
+        let currentPackageType = 'billing'; // 'billing' | 'trial'
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            loadPackages();
+            renderPackageList();
+            lucide.createIcons();
+        });
+
+        // 初始数据
+        const defaultPackages = [
+            {
+                id: 'pkg_' + Date.now(),
+                type: 'billing',
+                name: '计费版',
+                durationDays: 365,
+                initialPoints: 500,
+                price: 3000,
+                status: true,
+                modules: [],
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'pkg_' + (Date.now() + 1),
+                type: 'trial',
+                name: '试用版',
+                durationDays: 30,
+                initialPoints: null,
+                price: 0,
+                status: true,
+                modules: [
+                    { cat: 'jiaan', subs: [{ id: 'jiaan_ai', count: 10 }] },
+                    { cat: 'kejian', subs: [{ id: 'kejian_ai', count: 10 }] },
+                    { cat: 'huodong', subs: [{ id: 'huodong_template', count: 5 }, { id: 'huodong_ai', count: 5 }] },
+                    { cat: 'huiben', subs: [{ id: 'huiben_generate', count: 5 }] }
+                ],
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        // 加载数据（每次刷新重置为初始数据）
+        function loadPackages() {
+            packagesData = JSON.parse(JSON.stringify(defaultPackages));
+        }
+
+        // 保存数据（内存保存，仅当前会话有效）
+        function savePackages() {
+            // 不保存到 localStorage，刷新后数据会重置
+        }
+
+        // 渲染套餐列表
+        function renderPackageList() {
+            const container = document.getElementById('package-list');
+            
+            if (packagesData.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-gray-400">
+                        <i data-lucide="package" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                        <p>暂无套餐，点击上方按钮添加</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            let html = `
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">套餐名称</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">套餐额度</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">教师上限</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">有效期</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">价格</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+            `;
+
+            packagesData.forEach(pkg => {
+                const typeBadge = pkg.type === 'billing' 
+                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700"><i data-lucide="coins" class="w-3 h-3 mr-1"></i>计费版</span>'
+                    : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700"><i data-lucide="gift" class="w-3 h-3 mr-1"></i>试用版</span>';
+                
+                const statusBadge = pkg.status 
+                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">启用</span>'
+                    : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">禁用</span>';
+
+                html += `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-gray-900">${pkg.name}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">${pkg.description || ''}</div>
+                        </td>
+                        <td class="px-6 py-4 text-center">${typeBadge}</td>
+                        <td class="px-6 py-4 text-center text-sm font-medium text-gray-700">${pkg.initialPoints === null ? 0 : pkg.initialPoints} 点</td>
+                        <td class="px-6 py-4 text-center text-sm text-gray-700">${pkg.teacherLimit || '不限'}</td>
+                        <td class="px-6 py-4 text-center text-sm text-gray-700">${pkg.durationDays}天</td>
+                        <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">${pkg.price === 0 ? '免费' : '¥' + pkg.price.toLocaleString()}</td>
+                        <td class="px-6 py-4 text-center">${statusBadge}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="viewPackage('${pkg.id}')" class="text-gray-500 hover:text-gray-700 text-sm font-medium mr-3">查看</button>
+                            <button onclick="editPackage('${pkg.id}')" class="text-primary-600 hover:text-primary-800 text-sm font-medium mr-3">编辑</button>
+                            <button onclick="deletePackage('${pkg.id}')" class="text-red-600 hover:text-red-800 text-sm font-medium">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // 格式化试用模块显示
+        function formatTrialModules(modules) {
+            if (!modules || modules.length === 0) return '无';
+            return modules.length + '个分类';
+        }
+
+        // 设置套餐类型
+        function setPackageType(type) {
+            currentPackageType = type;
+            document.getElementById('type-billing').classList.toggle('active', type === 'billing');
+            document.getElementById('type-trial').classList.toggle('active', type === 'trial');
+            
+            const pointsContainer = document.getElementById('pkg-points-container');
+            const pointsInput = document.getElementById('pkg-points');
+            const teacherLimitInput = document.getElementById('pkg-teacher-limit');
+            const moduleContainer = document.getElementById('module-config-container');
+            
+            if (type === 'billing') {
+                pointsContainer.classList.remove('hidden');
+                pointsInput.required = true;
+                pointsInput.placeholder = '如：500';
+                pointsInput.value = '';
+                teacherLimitInput.value = '';
+                moduleContainer.classList.remove('hidden');
+                moduleContainer.querySelector('p.text-xs').classList.add('hidden');
+                renderModuleList([], false);
+            } else {
+                pointsContainer.classList.remove('hidden');
+                pointsInput.required = false;
+                pointsInput.placeholder = '如：100';
+                pointsInput.value = '';
+                teacherLimitInput.value = '';
+                moduleContainer.classList.remove('hidden');
+                moduleContainer.querySelector('p.text-xs').classList.remove('hidden');
+                renderModuleList([], true);
+            }
+            lucide.createIcons();
+        }
+
+        // 打开弹窗
+        function openPackageModal(pkg = null) {
+            editingPackageId = pkg ? pkg.id : null;
+            document.getElementById('modal-title').textContent = pkg ? '编辑套餐' : '新增套餐';
+            
+            currentPackageType = pkg ? pkg.type : 'billing';
+            
+            // 更新类型按钮状态
+            document.getElementById('type-billing').classList.toggle('active', currentPackageType === 'billing');
+            document.getElementById('type-trial').classList.toggle('active', currentPackageType === 'trial');
+            
+            // 清空/填充表单
+            document.getElementById('pkg-name').value = pkg ? pkg.name : '';
+            document.getElementById('pkg-duration').value = pkg ? pkg.durationDays : 365;
+            document.getElementById('pkg-points').value = pkg && pkg.initialPoints !== null ? pkg.initialPoints : '';
+            document.getElementById('pkg-teacher-limit').value = pkg && pkg.teacherLimit !== null ? pkg.teacherLimit : '';
+            document.getElementById('pkg-price').value = pkg ? pkg.price : '';
+            document.getElementById('pkg-desc').value = pkg ? (pkg.description || '') : '';
+            document.getElementById('pkg-status').checked = pkg ? pkg.status : true;
+            updateStatusLabel();
+
+            // 处理显示逻辑
+            const pointsContainer = document.getElementById('pkg-points-container');
+            const pointsInput = document.getElementById('pkg-points');
+            const moduleContainer = document.getElementById('module-config-container');
+            
+            if (currentPackageType === 'billing') {
+                pointsContainer.classList.remove('hidden');
+                moduleContainer.classList.remove('hidden');
+                moduleContainer.querySelector('p.text-xs').classList.add('hidden');
+                renderModuleList(pkg ? pkg.modules : [], false);
+            } else {
+                pointsContainer.classList.remove('hidden');
+                moduleContainer.classList.remove('hidden');
+                moduleContainer.querySelector('p.text-xs').classList.remove('hidden');
+                renderModuleList(pkg ? pkg.modules : [], true);
+            }
+
+            document.getElementById('modal-package').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // 关闭弹窗
+        function closePackageModal() {
+            document.getElementById('modal-package').classList.add('hidden');
+            editingPackageId = null;
+        }
+
+        // 渲染功能模块列表
+        function renderModuleList(selectedModules = [], showCount = false) {
+            const container = document.getElementById('module-list');
+            let html = '';
+
+            // 转换为 map 结构方便查找
+            const selectedMap = {};
+            if (selectedModules && selectedModules.length > 0) {
+                selectedModules.forEach(cat => {
+                    selectedMap[cat.cat] = cat.subs || [];
+                });
+            }
+
+            moduleCategories.forEach(cat => {
+                const subs = selectedMap[cat.id] || [];
+                const selectedSubMap = {};
+                subs.forEach(s => selectedSubMap[s.id] = s.count);
+
+                // 检查是否有子级被选中
+                const hasSelectedSub = subs.length > 0;
+
+                html += `
+                    <div class="module-cat p-3" data-cat="${cat.id}">
+                        <!-- 一级分类 -->
+                        <div class="flex items-center gap-3 mb-2">
+                            <input type="checkbox" id="cat_${cat.id}" class="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500 cursor-pointer"
+                                ${hasSelectedSub ? 'checked' : ''} onchange="toggleCategory('${cat.id}')">
+                            <i data-lucide="${cat.icon}" class="w-4 h-4 text-gray-400"></i>
+                            <label for="cat_${cat.id}" class="text-sm font-medium text-gray-700 cursor-pointer flex-1">${cat.name}</label>
+                        </div>
+                        <!-- 二级功能 -->
+                        <div class="ml-7 space-y-2" id="subs_${cat.id}">
+                `;
+
+                cat.children.forEach(sub => {
+                    const isSelected = selectedSubMap.hasOwnProperty(sub.id);
+                    const count = selectedSubMap[sub.id] || '';
+
+                    if (showCount) {
+                        html += `
+                            <div class="module-sub-item flex items-center gap-2 p-2 rounded-lg hover:bg-blue-50">
+                                <input type="checkbox" id="sub_${sub.id}" class="w-3.5 h-3.5 text-primary-600 rounded border-gray-300 focus:ring-primary-500 cursor-pointer"
+                                    ${isSelected ? 'checked' : ''}
+                                    onchange="toggleSubModule('${cat.id}', '${sub.id}')">
+                                <label for="sub_${sub.id}" class="text-sm text-gray-600 flex-1 cursor-pointer">${sub.name}</label>
+                                <input type="number" id="count_${sub.id}" value="${count}" placeholder="不限制" min="0"
+                                    class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-primary-500 ${!isSelected ? 'opacity-40' : ''}"
+                                    ${!isSelected ? 'disabled' : ''}
+                                    onchange="updateSubCount('${cat.id}', '${sub.id}')">
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="module-sub-item flex items-center gap-2 p-2 rounded-lg hover:bg-blue-50">
+                                <input type="checkbox" id="sub_${sub.id}" class="w-3.5 h-3.5 text-primary-600 rounded border-gray-300 focus:ring-primary-500 cursor-pointer"
+                                    ${isSelected ? 'checked' : ''}
+                                    onchange="toggleSubModule('${cat.id}', '${sub.id}')">
+                                <label for="sub_${sub.id}" class="text-sm text-gray-600 flex-1 cursor-pointer">${sub.name}</label>
+                            </div>
+                        `;
+                    }
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // 切换一级分类（全选/取消全选子级）
+        function toggleCategory(catId) {
+            const checkbox = document.getElementById('cat_' + catId);
+            const subsContainer = document.getElementById('subs_' + catId);
+            const isChecked = checkbox.checked;
+
+            const subCheckboxes = subsContainer.querySelectorAll('input[type="checkbox"]');
+            const countInputs = subsContainer.querySelectorAll('input[type="number"]');
+
+            subCheckboxes.forEach(cb => {
+                cb.checked = isChecked;
+                const subId = cb.id.replace('sub_', '');
+                const countInput = document.getElementById('count_' + subId);
+                if (countInput) {
+                    countInput.disabled = !isChecked;
+                    countInput.classList.toggle('opacity-40', !isChecked);
+                    if (!isChecked) {
+                        countInput.value = '';
+                    }
+                }
+            });
+
+            updateCategoryCount(catId);
+        }
+
+        // 切换二级功能
+        function toggleSubModule(catId, subId) {
+            const checkbox = document.getElementById('sub_' + subId);
+            const countInput = document.getElementById('count_' + subId);
+            const isChecked = checkbox.checked;
+
+            if (countInput) {
+                countInput.disabled = !isChecked;
+                countInput.classList.toggle('opacity-40', !isChecked);
+            }
+
+            // 选中子节点时，父节点也选中
+            if (isChecked) {
+                document.getElementById('cat_' + catId).checked = true;
+            }
+
+            updateCategoryCount(catId);
+        }
+
+        // 更新子级计数
+        function updateSubCount(catId, subId) {
+            updateCategoryCount(catId);
+        }
+
+        // 更新分类计数显示
+        function updateCategoryCount(catId) {
+            const catCheckbox = document.getElementById('cat_' + catId);
+            const subsContainer = document.getElementById('subs_' + catId);
+            const subCheckboxes = subsContainer.querySelectorAll('input[type="checkbox"]');
+
+            let selectedCount = 0;
+            subCheckboxes.forEach(cb => {
+                if (cb.checked) selectedCount++;
+            });
+
+            if (selectedCount > 0) {
+                catCheckbox.checked = true;
+            } else {
+                catCheckbox.checked = false;
+            }
+        }
+
+        // 更新状态标签
+        function updateStatusLabel() {
+            const checked = document.getElementById('pkg-status').checked;
+            document.getElementById('status-label').textContent = checked ? '启用' : '禁用';
+        }
+        document.getElementById('pkg-status').addEventListener('change', updateStatusLabel);
+
+        // 保存套餐
+        function savePackage() {
+            const name = document.getElementById('pkg-name').value.trim();
+            const duration = parseInt(document.getElementById('pkg-duration').value) || 0;
+            const price = parseFloat(document.getElementById('pkg-price').value) || 0;
+            const description = document.getElementById('pkg-desc').value.trim();
+            const status = document.getElementById('pkg-status').checked;
+
+            // 验证
+            if (!name) {
+                showToast('请输入套餐名称', 'error');
+                return;
+            }
+            if (!duration || duration <= 0) {
+                showToast('请输入有效的有效期', 'error');
+                return;
+            }
+            if (price === '' || price === null || price < 0) {
+                showToast('请输入有效的价格', 'error');
+                return;
+            }
+
+            let initialPoints = null;
+            let modules = [];
+
+            if (currentPackageType === 'billing') {
+                initialPoints = parseInt(document.getElementById('pkg-points').value) || 0;
+                if (!initialPoints || initialPoints <= 0) {
+                    showToast('计费版请输入有效的套餐额度', 'error');
+                    return;
+                }
+                // 计费版收集模块（无次数限制）
+                modules = [];
+                moduleCategories.forEach(cat => {
+                    const subs = [];
+                    cat.children.forEach(sub => {
+                        const checkbox = document.getElementById('sub_' + sub.id);
+                        if (checkbox && !checkbox.disabled && checkbox.checked) {
+                            subs.push({ id: sub.id });
+                        }
+                    });
+                    if (subs.length > 0) {
+                        modules.push({ cat: cat.id, subs });
+                    }
+                });
+
+                if (modules.length === 0) {
+                    showToast('计费版请至少选择一个功能', 'error');
+                    return;
+                }
+            } else {
+                // 试用版也需要初始点数
+                initialPoints = parseInt(document.getElementById('pkg-points').value) || 0;
+                if (!initialPoints || initialPoints <= 0) {
+                    showToast('试用版请输入有效的套餐额度', 'error');
+                    return;
+                }
+                // 收集选中的模块和次数
+                modules = [];
+                moduleCategories.forEach(cat => {
+                    const subs = [];
+                    cat.children.forEach(sub => {
+                        const checkbox = document.getElementById('sub_' + sub.id);
+                        if (checkbox && !checkbox.disabled && checkbox.checked) {
+                            const countInput = document.getElementById('count_' + sub.id);
+                            const countVal = countInput.value.trim();
+                            const count = countVal ? parseInt(countVal) : null; // null表示不限制
+                            subs.push({ id: sub.id, count });
+                        }
+                    });
+                    if (subs.length > 0) {
+                        modules.push({ cat: cat.id, subs });
+                    }
+                });
+
+                if (modules.length === 0) {
+                    showToast('试用版请至少选择一个功能', 'error');
+                    return;
+                }
+            }
+
+            const teacherLimit = document.getElementById('pkg-teacher-limit').value.trim();
+            const teacherLimitValue = teacherLimit ? parseInt(teacherLimit) : null;
+
+            if (editingPackageId) {
+                const index = packagesData.findIndex(p => p.id === editingPackageId);
+                if (index !== -1) {
+                    packagesData[index] = {
+                        ...packagesData[index],
+                        type: currentPackageType,
+                        name,
+                        description,
+                        durationDays: duration,
+                        initialPoints,
+                        teacherLimit: teacherLimitValue,
+                        price,
+                        status,
+                        modules
+                    };
+                }
+            } else {
+                packagesData.push({
+                    id: 'pkg_' + Date.now(),
+                    type: currentPackageType,
+                    name,
+                    description,
+                    durationDays: duration,
+                    initialPoints,
+                    teacherLimit: teacherLimitValue,
+                    price,
+                    status,
+                    modules,
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            savePackages();
+            renderPackageList();
+            closePackageModal();
+            showToast(editingPackageId ? '套餐已更新' : '套餐已添加');
+        }
+
+        // 编辑套餐
+        function editPackage(id) {
+            const pkg = packagesData.find(p => p.id === id);
+            if (pkg) {
+                openPackageModal(pkg);
+            }
+        }
+
+        // 删除套餐
+        function deletePackage(id) {
+            if (confirm('确定要删除该套餐吗？')) {
+                packagesData = packagesData.filter(p => p.id !== id);
+                savePackages();
+                renderPackageList();
+                showToast('套餐已删除');
+            }
+        }
+
+        // 查看套餐详情
+        function viewPackage(id) {
+            const pkg = packagesData.find(p => p.id === id);
+            if (!pkg) return;
+
+            const typeText = pkg.type === 'billing' ? '计费版' : '试用版';
+            const typeBadge = pkg.type === 'billing' 
+                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">计费版</span>'
+                : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">试用版</span>';
+            const statusBadge = pkg.status 
+                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">启用</span>'
+                : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">禁用</span>';
+
+            // 渲染功能模块
+            let modulesHtml = '';
+            // 渲染功能模块（计费版显示全部功能，试用版显示具体配置）
+            if (pkg.type === 'billing') {
+                // 计费版：显示全部功能
+                const allModules = moduleCategories.map(cat => {
+                    const subNames = cat.children.map(sub => sub.name);
+                    return `<div class="flex items-start gap-2 py-1.5 border-b border-gray-100 last:border-0">
+                        <span class="text-xs text-gray-500 shrink-0 w-14">${cat.name}</span>
+                        <span class="text-xs text-gray-700">${subNames.join('、')}</span>
+                    </div>`;
+                }).join('');
+                modulesHtml = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-gray-500">${moduleCategories.length}个分类，${moduleCategories.reduce((acc, cat) => acc + cat.children.length, 0)}个功能</span>
+                    </div>
+                    ${allModules}
+                `;
+            } else if (pkg.modules && pkg.modules.length > 0) {
+                // 试用版：显示具体配置
+                pkg.modules.forEach(cat => {
+                    const catInfo = moduleCategories.find(c => c.id === cat.cat);
+                    if (catInfo) {
+                        const subNames = cat.subs.map(s => {
+                            const subInfo = catInfo.children.find(c => c.id === s.id);
+                            const name = subInfo ? subInfo.name : s.id;
+                            const countText = s.count ? `（${s.count}次）` : '（不限）';
+                            return name + countText;
+                        });
+                        modulesHtml += `
+                            <div class="flex items-start gap-2 py-1.5 border-b border-gray-100 last:border-0">
+                                <span class="text-xs text-gray-500 shrink-0 w-14">${catInfo.name}</span>
+                                <span class="text-xs text-gray-700">${subNames.join('、')}</span>
+                            </div>
+                        `;
+                    }
+                });
+            } else {
+                modulesHtml = '<p class="text-xs text-gray-400 py-1.5">无</p>';
+            }
+
+            const html = `
+                <div class="space-y-4">
+                    <!-- 基本信息 -->
+                    <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1">
+                                <p class="text-lg font-semibold text-gray-900">${pkg.name}</p>
+                                ${pkg.description ? `<p class="text-xs text-gray-500 mt-0.5">${pkg.description}</p>` : ''}
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                ${typeBadge}
+                                ${statusBadge}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="coins" class="w-4 h-4 text-amber-500"></i>
+                                <span class="text-xs text-gray-600">额度：</span>
+                                <span class="text-xs font-medium text-gray-800">${pkg.initialPoints || 0} 点</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-4 h-4 text-blue-500"></i>
+                                <span class="text-xs text-gray-600">有效期：</span>
+                                <span class="text-xs font-medium text-gray-800">${pkg.durationDays} 天</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="credit-card" class="w-4 h-4 text-green-500"></i>
+                                <span class="text-xs text-gray-600">价格：</span>
+                                <span class="text-xs font-medium text-gray-800">${pkg.price === 0 ? '免费' : '¥' + pkg.price.toLocaleString()}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4 text-purple-500"></i>
+                                <span class="text-xs text-gray-600">教师上限：</span>
+                                <span class="text-xs font-medium text-gray-800">${pkg.teacherLimit || '不限'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 包含功能 -->
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">包含功能</h4>
+                        <div class="bg-gray-50 rounded-xl p-3">
+                            ${modulesHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('view-content').innerHTML = html;
+            document.getElementById('modal-view').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // 关闭查看弹窗
+        function closeViewModal() {
+            document.getElementById('modal-view').classList.add('hidden');
+        }
+
+        // 显示Toast提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            const iconContainer = toast.querySelector('.toast-icon');
+            
+            toast.className = 'toast toast-' + type;
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+            } else if (type === 'error') {
+                iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+            } else {
+                iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+            }
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
