@@ -6,6 +6,7 @@
     <title>套餐管理 - 运营平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script src="sidebar.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -75,64 +76,7 @@
     </header>
 
     <div class="flex h-[calc(100vh-57px)]">
-
-        <!-- 左侧菜单 -->
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
-            <nav class="flex-1 overflow-y-auto py-4">
-                <!-- 一级菜单：学校管理 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
-                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
-                        <span>学校管理</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
-                        <a href="admin-school.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="building-2" class="w-4 h-4"></i>
-                            <span>学校管理</span>
-                        </a>
-                        <a href="admin-points.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="coins" class="w-4 h-4"></i>
-                            <span>点数管理</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 一级菜单：产品管理 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
-                        <i data-lucide="package" class="w-5 h-5 text-gray-400"></i>
-                        <span>产品管理</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div class="nav-children ml-4 mt-1 space-y-0.5">
-                        <a href="admin-price-config.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="calculator" class="w-4 h-4"></i>
-                            <span>消耗规则</span>
-                        </a>
-                        <a href="admin-package.html" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="layers" class="w-4 h-4"></i>
-                            <span>套餐管理</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 一级菜单：业务数据 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
-                        <i data-lucide="database" class="w-5 h-5 text-gray-400"></i>
-                        <span>业务数据</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
-                        <a href="admin-courseware.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="presentation" class="w-4 h-4"></i>
-                            <span>文件管理</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <div id="sidebar-container"></div>
 
         <main class="flex-1 overflow-hidden flex flex-col">
             <!-- 页面标题 -->
@@ -966,6 +910,11 @@
                 toast.classList.add('hide');
             }, 2000);
         }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSidebar('admin-package.html');
+        });
     </script>
 </body>
 </html>

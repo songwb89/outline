@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>开套餐 - 运营平台</title>
+    <title>开通套餐 - 运营平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script src="sidebar.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -64,80 +65,17 @@
     <div class="flex h-[calc(100vh-57px)]">
 
         <!-- 左侧菜单 -->
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
-            <nav class="flex-1 overflow-y-auto py-4">
-                <!-- 一级菜单：学校管理 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
-                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
-                        <span>学校管理</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
-                        <a href="admin-school.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="building-2" class="w-4 h-4"></i>
-                            <span>学校管理</span>
-                        </a>
-                        <a href="admin-points.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="coins" class="w-4 h-4"></i>
-                            <span>点数管理</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 一级菜单：采购管理 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700">
-                        <i data-lucide="shopping-cart" class="w-5 h-5 text-gray-400"></i>
-                        <span>采购管理</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div class="nav-children ml-4 mt-1 space-y-0.5">
-                        <a href="admin-purchase.html" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="package-check" class="w-4 h-4"></i>
-                            <span>开套餐</span>
-                        </a>
-                        <a href="admin-recharge.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="credit-card" class="w-4 h-4"></i>
-                            <span>点数管理</span>
-                        </a>
-                        <a href="admin-trial.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="clock" class="w-4 h-4"></i>
-                            <span>试用开通</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 一级菜单：产品管理 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50">
-                        <i data-lucide="package" class="w-5 h-5 text-gray-400"></i>
-                        <span>产品管理</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div class="nav-children ml-4 mt-1 space-y-0.5 hidden">
-                        <a href="admin-price-config.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="calculator" class="w-4 h-4"></i>
-                            <span>消耗规则</span>
-                        </a>
-                        <a href="admin-package.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="layers" class="w-4 h-4"></i>
-                            <span>套餐管理</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <div id="sidebar-container"></div>
 
         <main class="flex-1 overflow-hidden flex flex-col">
             <div class="h-full px-6 pt-6 overflow-y-auto">
                 <div class="mb-6 flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-semibold text-gray-900">开套餐</h1>
+                        <h1 class="text-2xl font-semibold text-gray-900">开通套餐</h1>
                     </div>
                     <button type="button" onclick="openPurchaseModal()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
                         <i data-lucide="plus" class="w-4 h-4"></i>
-                        开套餐
+                        开通套餐
                     </button>
                 </div>
 
@@ -146,9 +84,7 @@
                     <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
                         <div class="flex items-center gap-2">
                             <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校</label>
-                            <select id="filterSchool" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-40">
-                                <option value="">全部</option>
-                            </select>
+                            <input type="text" id="filterSchool" placeholder="请输入学校名称" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-40">
                         </div>
                         <div class="flex items-center gap-2">
                             <label class="text-xs font-medium text-gray-600 whitespace-nowrap">套餐</label>
@@ -182,7 +118,6 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">套餐</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">金额</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">有效期</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">剩余点数</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
                                 </tr>
@@ -214,7 +149,7 @@
         <div class="absolute inset-0 bg-black/45" onclick="hidePurchaseModal()"></div>
         <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-                <h3 class="font-semibold text-gray-800" id="modal-title">开套餐</h3>
+                <h3 class="font-semibold text-gray-800" id="modal-title">开通套餐</h3>
                 <button type="button" onclick="hidePurchaseModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -301,12 +236,13 @@
         const schoolsData = [
             { id: 'school1', name: '深圳实验学校小学部', code: 'SYXX' },
             { id: 'school2', name: '深圳外国语小学', code: 'SWXX' },
-            { id: 'school3', name: '深圳外国语学校附属碧海小学', code: 'BLXX' },
+            { id: 'school3', name: '深圳外国语学校附属碧海小学', code: 'SWBH' },
             { id: 'school4', name: '海滨小学', code: 'HLXX' },
             { id: 'school5', name: '南海小学', code: 'NHXX' },
-            { id: 'school6', name: '育才一小', code: 'YXXX' },
-            { id: 'school7', name: '学府一小', code: 'XSXX' },
-            { id: 'school8', name: '百丽小学', code: 'BLYXX' },
+            { id: 'school6', name: '育才一小', code: 'YCYX' },
+            { id: 'school7', name: '学府一小', code: 'XFYX' },
+            { id: 'school8', name: '百丽小学', code: 'BLXX' },
+            { id: 'school9', name: '麒麟小学', code: 'QLXX' },
         ];
 
         const packagesData = [
@@ -317,14 +253,15 @@
         ];
 
         let purchaseData = [
-            { id: 'pur1', schoolId: 'school1', schoolName: '深圳实验学校小学部', packageId: 'pkg2', packageName: '基础版', amount: 5000, startDate: '2025-01-01', endDate: '2025-12-31', initialPoints: 1500, currentPoints: 89, status: 'active' },
-            { id: 'pur2', schoolId: 'school2', schoolName: '深圳外国语小学', packageId: 'pkg2', packageName: '基础版', amount: 5000, startDate: '2025-01-01', endDate: '2025-12-31', initialPoints: 1500, currentPoints: 1500, status: 'active' },
-            { id: 'pur3', schoolId: 'school3', schoolName: '深圳外国语学校附属碧海小学', packageId: 'pkg1', packageName: '基础版', amount: 3000, startDate: '2025-03-01', endDate: '2026-03-01', initialPoints: 100, currentPoints: 120, status: 'active' },
-            { id: 'pur4', schoolId: 'school4', schoolName: '海滨小学', packageId: 'pkg3', packageName: '高级版', amount: 8000, startDate: '2024-06-01', endDate: '2025-06-01', initialPoints: 700, currentPoints: 12, status: 'expired' },
-            { id: 'pur5', schoolId: 'school5', schoolName: '南海小学', packageId: 'pkg3', packageName: '高级版', amount: 7000, startDate: '2025-02-01', endDate: '2026-02-01', initialPoints: 700, currentPoints: 450, status: 'active' },
-            { id: 'pur6', schoolId: 'school6', schoolName: '育才一小', packageId: 'pkg4', packageName: '尊享版', amount: 14000, startDate: '2025-01-15', endDate: '2026-01-15', initialPoints: 1500, currentPoints: 1200, status: 'active' },
-            { id: 'pur7', schoolId: 'school7', schoolName: '学府一小', packageId: 'pkg2', packageName: '基础版', amount: 4800, startDate: '2024-08-01', endDate: '2025-08-01', initialPoints: 1500, currentPoints: 0, status: 'expired' },
-            { id: 'pur8', schoolId: 'school8', schoolName: '百丽小学', packageId: 'pkg1', packageName: '基础版', amount: 500, startDate: '2025-04-01', endDate: '2025-04-30', initialPoints: 100, currentPoints: 100, status: 'active' },
+            { id: 'pur1', schoolId: 'school1', schoolName: '深圳实验学校小学部', schoolCode: 'SYXX', packageId: 'pkg2', packageName: '基础版', amount: 5000, startDate: '2025-01-01', endDate: '2025-12-31', initialPoints: 1500, currentPoints: 89, status: 'active' },
+            { id: 'pur2', schoolId: 'school2', schoolName: '深圳外国语小学', schoolCode: 'SWXX', packageId: 'pkg2', packageName: '基础版', amount: 5000, startDate: '2025-01-01', endDate: '2025-12-31', initialPoints: 1500, currentPoints: 1500, status: 'active' },
+            { id: 'pur3', schoolId: 'school3', schoolName: '深圳外国语学校附属碧海小学', schoolCode: 'SWBH', packageId: 'pkg1', packageName: '基础版', amount: 3000, startDate: '2025-03-01', endDate: '2026-03-01', initialPoints: 100, currentPoints: 120, status: 'active' },
+            { id: 'pur4', schoolId: 'school4', schoolName: '海滨小学', schoolCode: 'HLXX', packageId: 'pkg3', packageName: '高级版', amount: 8000, startDate: '2024-06-01', endDate: '2025-06-01', initialPoints: 700, currentPoints: 12, status: 'expired' },
+            { id: 'pur5', schoolId: 'school5', schoolName: '南海小学', schoolCode: 'NHXX', packageId: 'pkg3', packageName: '高级版', amount: 7000, startDate: '2025-02-01', endDate: '2026-02-01', initialPoints: 700, currentPoints: 450, status: 'active' },
+            { id: 'pur6', schoolId: 'school6', schoolName: '育才一小', schoolCode: 'YCYX', packageId: 'pkg4', packageName: '尊享版', amount: 14000, startDate: '2025-01-15', endDate: '2026-01-15', initialPoints: 1500, currentPoints: 1200, status: 'active' },
+            { id: 'pur7', schoolId: 'school7', schoolName: '学府一小', schoolCode: 'XFYX', packageId: 'pkg2', packageName: '基础版', amount: 4800, startDate: '2024-08-01', endDate: '2025-08-01', initialPoints: 1500, currentPoints: 0, status: 'expired' },
+            { id: 'pur8', schoolId: 'school8', schoolName: '百丽小学', schoolCode: 'BLXX', packageId: 'pkg1', packageName: '基础版', amount: 500, startDate: '2025-04-01', endDate: '2025-04-30', initialPoints: 100, currentPoints: 100, status: 'active' },
+            { id: 'pur9', schoolId: 'school9', schoolName: '麒麟小学', schoolCode: 'QLXX', packageId: 'pkg2', packageName: '基础版', amount: 4800, startDate: '2025-01-10', endDate: '2025-07-10', initialPoints: 1500, currentPoints: 800, status: 'refunded', refundedAt: '2025-06-15' },
         ];
 
         let filteredData = [...purchaseData];
@@ -336,11 +273,6 @@
 
         // 初始化筛选下拉
         function initFilters() {
-            const schoolSelect = document.getElementById('filterSchool');
-            schoolsData.forEach(s => {
-                schoolSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
-            });
-
             const packageSelect = document.getElementById('filterPackage');
             packagesData.forEach(p => {
                 packageSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
@@ -352,7 +284,7 @@
             const schoolSelect = document.getElementById('pm-school');
             schoolSelect.innerHTML = '<option value="">请选择学校</option>';
             schoolsData.forEach(s => {
-                schoolSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                schoolSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.code})</option>`;
             });
 
             const packageSelect = document.getElementById('pm-package');
@@ -377,12 +309,12 @@
         });
 
         function applyFilters() {
-            const schoolId = document.getElementById('filterSchool').value;
+            const schoolName = (document.getElementById('filterSchool').value || '').trim().toLowerCase();
             const packageId = document.getElementById('filterPackage').value;
             const status = document.getElementById('filterStatus').value;
 
             filteredData = purchaseData.filter(row => {
-                if (schoolId && row.schoolId !== schoolId) return false;
+                if (schoolName && !row.schoolName.toLowerCase().includes(schoolName)) return false;
                 if (packageId && row.packageId !== packageId) return false;
                 if (status && row.status !== status) return false;
                 return true;
@@ -400,8 +332,6 @@
             tbody.innerHTML = pageData.map((row, index) => {
                 const no = startIndex + index + 1;
                 const validPeriod = `${row.startDate} 至 ${row.endDate}`;
-                const pointsDisplay = `${row.currentPoints}/${row.initialPoints}`;
-                const pointsPercent = Math.round(row.currentPoints / row.initialPoints * 100);
 
                 let statusHtml = '';
                 let statusClass = '';
@@ -411,25 +341,16 @@
                     case 'refunded': statusHtml = '已退'; statusClass = 'bg-orange-100 text-orange-700'; break;
                 }
 
-                const actionHtml = row.status === 'refunded' 
-                    ? `<button onclick="viewPurchase('${row.id}')" class="text-gray-600 hover:text-gray-800 font-medium">查看</button>`
-                    : `<button onclick="editPurchase('${row.id}')" class="text-primary-600 hover:text-primary-800 font-medium mr-3">编辑</button>
-                       <button onclick="refundPurchase('${row.id}')" class="text-orange-600 hover:text-orange-800 font-medium">退订</button>`;
+                const actionHtml = row.status === 'active' 
+                    ? `<button onclick="refundPurchase('${row.id}')" class="text-orange-600 hover:text-orange-800 font-medium">退订</button>`
+                    : '';
 
                 return `<tr class="hover:bg-gray-50/80">
                     <td class="px-4 py-3 text-sm text-gray-600">${no}</td>
-                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.schoolName}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.schoolName} (${row.schoolCode || ''})</td>
                     <td class="px-4 py-3 text-sm text-gray-800">${row.packageName}</td>
                     <td class="px-4 py-3 text-sm text-gray-800">¥${row.amount.toLocaleString()}</td>
                     <td class="px-4 py-3 text-sm text-gray-600">${validPeriod}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-800">${pointsDisplay}</span>
-                            <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                <div class="h-full ${pointsPercent > 20 ? 'bg-green-500' : 'bg-amber-500'} rounded-full" style="width: ${pointsPercent}%"></div>
-                            </div>
-                        </div>
-                    </td>
                     <td class="px-4 py-3"><span class="px-2 py-0.5 text-xs font-medium rounded ${statusClass}">${statusHtml}</span></td>
                     <td class="px-4 py-3 text-sm">
                         ${actionHtml}
@@ -472,7 +393,7 @@
         function openPurchaseModal() {
             modalMode = 'create';
             modalId = null;
-            document.getElementById('modal-title').textContent = '开套餐';
+            document.getElementById('modal-title').textContent = '开通套餐';
             document.getElementById('pm-school').value = '';
             document.getElementById('pm-package').value = '';
             document.getElementById('package-info').classList.add('hidden');
@@ -484,22 +405,7 @@
             lucide.createIcons();
         }
 
-        function editPurchase(id) {
-            const row = purchaseData.find(p => p.id === id);
-            if (!row) return;
-            modalMode = 'edit';
-            modalId = id;
-            document.getElementById('modal-title').textContent = '编辑采购';
-            document.getElementById('pm-school').value = row.schoolId;
-            document.getElementById('pm-package').value = row.packageId;
-            document.getElementById('pm-amount').value = row.amount;
-            document.getElementById('pm-start-date').value = row.startDate;
-            document.getElementById('pm-end-date').value = row.endDate;
-            document.getElementById('purchase-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function hidePurchaseModal() {
+function hidePurchaseModal() {
             document.getElementById('purchase-modal').classList.add('hidden');
         }
 
@@ -549,6 +455,7 @@
             const data = {
                 schoolId: schoolId,
                 schoolName: school.name,
+                schoolCode: school.code,
                 packageId: packageId,
                 packageName: pkg.name,
                 amount: parseFloat(document.getElementById('pm-amount').value),
@@ -642,6 +549,7 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            renderSidebar('admin-purchase.html');
             initFilters();
             initModalSelects();
             renderTable();

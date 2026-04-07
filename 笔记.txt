@@ -36,3 +36,16 @@ https://ai-school-files.whoot.cn/mockup/6.0/Outline/pages/admin-school.html
 
 
 https://ai-school-files-1322114923.cos.ap-guangzhou.myqcloud.com/mockup/6.0/Outline/index.html
+
+
+学校管理
+- 学校管理
+采购管理
+- 开套餐
+- 试用开通
+- 点数管理
+产品管理
+- 套餐管理
+- 消耗规则
+业务数据
+- 文件管理

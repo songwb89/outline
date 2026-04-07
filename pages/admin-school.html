@@ -6,6 +6,7 @@
     <title>学校管理 - 运营平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script src="sidebar.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -64,43 +65,7 @@
     <div class="flex h-[calc(100vh-57px)]">
 
         <!-- 左侧菜单 -->
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
-            <nav class="flex-1 overflow-y-auto py-4">
-                <!-- 一级菜单：学校管理 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" id="nav-user-group" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
-                        <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
-                        <span>学校管理</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div id="nav-user-children" class="ml-4 mt-1 space-y-0.5">
-                        <button type="button" id="nav-user" class="admin-nav-subitem active w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="building-2" class="w-4 h-4"></i>
-                            <span>学校管理</span>
-                        </button>
-                        <a href="admin-points.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="coins" class="w-4 h-4"></i>
-                            <span>点数管理</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 一级菜单：业务数据 -->
-                <div class="admin-nav-group px-4 mb-1">
-                    <button type="button" id="nav-data-group" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
-                        <i data-lucide="database" class="w-5 h-5 text-gray-400"></i>
-                        <span>业务数据</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow"></i>
-                    </button>
-                    <div id="nav-data-children" class="ml-4 mt-1 space-y-0.5 hidden">
-                        <a href="admin-courseware.html" class="admin-nav-subitem w-full text-left flex items-center gap-2 pl-4 pr-3 py-2 text-sm font-medium rounded-lg">
-                            <i data-lucide="presentation" class="w-4 h-4"></i>
-                            <span>课件管理</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+        <div id="sidebar-container"></div>
 
         <main class="flex-1 overflow-hidden flex flex-col">
 
@@ -247,18 +212,11 @@
 
     <script src="points-manage.js"></script>
     <script>
-        // 菜单展开/收起
-        document.getElementById('nav-user-group').addEventListener('click', function() {
-            const children = document.getElementById('nav-user-children');
-            if (children) children.classList.toggle('hidden');
-            lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSidebar('admin-school.html');
         });
-        document.getElementById('nav-data-group').addEventListener('click', function() {
-            const children = document.getElementById('nav-data-children');
-            if (children) children.classList.toggle('hidden');
-            lucide.createIcons();
-        });
-
+    </script>
+    <script>
         // ============================================================
         // 学校管理
         // ============================================================
@@ -286,9 +244,16 @@
         ];
 
         let institutions = JSON.parse(localStorage.getItem('institutions'));
-        if (!institutions) {
+        if (!institutions || !Array.isArray(institutions) || institutions.length === 0) {
             institutions = [...seedInstitutions];
             localStorage.setItem('institutions', JSON.stringify(institutions));
+        } else {
+            // 检查数据是否完整，不完整则补充或重新初始化
+            const isIncomplete = institutions.some(row => !row.account || !row.schoolCode || !row.username);
+            if (isIncomplete) {
+                institutions = [...seedInstitutions];
+                localStorage.setItem('institutions', JSON.stringify(institutions));
+            }
         }
         let filteredInstitutions = [...institutions];
         let currentPage = 1;
@@ -334,11 +299,12 @@
                     ? '<span class="px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-700">禁用</span>'
                     : '<span class="px-2 py-0.5 text-xs font-medium rounded bg-green-100 text-green-700">正常</span>';
                 const contactDisplay = row.contact && row.contact !== '-' ? row.contact : '-';
+                const accountDisplay = row.account || '-';
                 return '<tr class="hover:bg-gray-50/80 even:bg-gray-50/40" data-id="' + row.id + '">' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">' + no + '</td>' +
-                    '<td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">' + row.username + '</td>' +
-                    '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">' + row.schoolCode + '</td>' +
-                    '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">' + row.account + '</td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">' + (row.username || '-') + '</td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">' + (row.schoolCode || '-') + '</td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">' + accountDisplay + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">' + contactDisplay + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap">' + statusHtml + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm"><button type="button" onclick="editRow(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium">编辑</button></td></tr>';
