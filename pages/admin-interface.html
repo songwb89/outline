@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扣点规则 - 运营平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+    <script src="sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                            800: '#3730a3', 900: '#312e81',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            color: white; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10000;
+            display: flex; align-items: center; gap: 12px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+        .toast.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        .toast.toast-success { background: #10b981; }
+        .toast.toast-info { background: #3b82f6; }
+        .toast.toast-error { background: #ef4444; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        .admin-nav-subitem { transition: all 0.15s ease; }
+        .admin-nav-subitem:hover { background-color: #eef2ff; color: #4f46e5; }
+        .admin-nav-subitem.active { background-color: #e0e7ff; color: #4f46e5; }
+        .group-item { transition: all 0.2s ease; }
+        .group-item:hover { background-color: #f8fafc; }
+        .group-arrow { transition: transform 0.2s ease; }
+        .group-arrow.expanded { transform: rotate(90deg); }
+        .interface-item { transition: all 0.15s ease; }
+        .interface-item:hover { background-color: #f0f9ff; }
+        .interface-item:hover .interface-actions { opacity: 1; }
+        .interface-actions { opacity: 0; transition: opacity 0.15s ease; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast"></div>
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="text-base font-semibold text-gray-800">运营平台</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">A</div>
+                <span class="text-sm text-gray-700 font-medium">管理员</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-57px)]">
+
+        <!-- 左侧菜单 -->
+        <div id="sidebar-container"></div>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+
+            <!-- ==================== 面板: 扣点规则 ==================== -->
+            <div class="h-full px-6 pt-6 overflow-y-auto">
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">扣点规则</h1>
+                    </div>
+                    <button onclick="openGroupModal()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        新增分组
+                    </button>
+                </div>
+
+                <!-- 分组列表 -->
+                <div id="groupList" class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                    <!-- 动态渲染 -->
+                </div>
+
+                <!-- 空状态 -->
+                <div id="emptyState" class="hidden text-center py-16">
+                    <i data-lucide="layers" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
+                    <p class="text-gray-500 mb-1">暂无接口分组</p>
+                    <p class="text-sm text-gray-400">点击上方"新增分组"添加接口分组</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ==================== 新增/编辑分组弹窗 ==================== -->
+    <div id="groupModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-[480px]">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 id="groupModalTitle" class="text-lg font-semibold text-gray-900">新增分组</h3>
+                <button onclick="closeGroupModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">分组名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="groupNameInput" placeholder="如：AI能力、文档处理" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="closeGroupModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
+                <button onclick="saveGroup()" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-md text-sm font-medium transition-colors">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 新增/编辑接口弹窗 ==================== -->
+    <div id="interfaceModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-[520px]">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 id="interfaceModalTitle" class="text-lg font-semibold text-gray-900">新增接口</h3>
+                <button onclick="closeInterfaceModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-4 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">接口名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="interfaceNameInput" placeholder="如：数字人生成" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">接口路径 <span class="text-red-500">*</span></label>
+                    <input type="text" id="interfacePathInput" placeholder="如：/api/ai/digital_human/generate" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 font-mono">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">点数消耗</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="interfacePriceInput" value="0" min="0" placeholder="0" class="w-24 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <span class="text-sm text-gray-500">点/次（0表示无限使用）</span>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="closeInterfaceModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
+                <button onclick="saveInterface()" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-md text-sm font-medium transition-colors">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化侧边栏
+        renderSidebar('admin-interface.html');
+
+        // 分组数据
+        let groups = [
+            { id: 1, name: 'AI能力', expanded: true },
+            { id: 2, name: '文档处理', expanded: true },
+            { id: 3, name: '拍题答疑', expanded: false }
+        ];
+
+        // 接口数据
+        let interfaces = [
+            { id: 1, groupId: 1, name: '数字人生成', path: '/api/ai/digital_human/generate', unitPrice: 10 },
+            { id: 2, groupId: 1, name: '口语评测', path: '/api/ai/speech/evaluate', unitPrice: 5 },
+            { id: 3, groupId: 1, name: 'AI生成教案', path: '/api/ai/course/generate', unitPrice: 10 },
+            { id: 4, groupId: 1, name: 'AI生成课件', path: '/api/ai/courseware/generate', unitPrice: 15 },
+            { id: 5, groupId: 2, name: '教案导出', path: '/api/course/export', unitPrice: 2 },
+            { id: 6, groupId: 2, name: '课件导出', path: '/api/courseware/export', unitPrice: 2 },
+            { id: 7, groupId: 2, name: '批量导入', path: '/api/batch/import', unitPrice: 5 },
+            { id: 8, groupId: 3, name: '拍题识别', path: '/api/paidati/recognize', unitPrice: 3 },
+            { id: 9, groupId: 3, name: '生成解析', path: '/api/paidati/parse', unitPrice: 5 }
+        ];
+
+        let editingGroupId = null;
+        let editingInterfaceId = null;
+        let currentGroupId = null;
+
+        // 渲染分组列表
+        function renderGroupList() {
+            const container = document.getElementById('groupList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (groups.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            let html = '';
+
+            groups.forEach(group => {
+                const groupInterfaces = interfaces.filter(i => i.groupId === group.id);
+                const isExpanded = group.expanded;
+
+                html += `
+                    <!-- 分组行 -->
+                    <div class="group-item border-b border-gray-100 last:border-0">
+                        <!-- 分组头部 -->
+                        <div class="group-item grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50/50 items-center cursor-pointer" onclick="toggleGroup(${group.id})">
+                            <div class="col-span-6 flex items-center gap-3">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 group-arrow ${isExpanded ? 'expanded' : ''}" id="arrow-${group.id}"></i>
+                                <i data-lucide="folder" class="w-5 h-5 text-amber-500"></i>
+                                <span class="text-sm font-semibold text-gray-800">${group.name}</span>
+                                <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">${groupInterfaces.length} 个接口</span>
+                            </div>
+                            <div class="col-span-6 flex items-center justify-end gap-1">
+                                <button onclick="event.stopPropagation(); openAddInterfaceModal(${group.id})" class="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-50 rounded transition-colors" title="新增接口">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); editGroup(${group.id})" class="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-50 rounded transition-colors" title="编辑">
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteGroup(${group.id})" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors" title="删除">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 接口列表 -->
+                        ${isExpanded ? `
+                            <div class="border-t border-gray-100">
+                                ${groupInterfaces.length === 0 ? `
+                                    <div class="px-6 py-8 text-center text-sm text-gray-400">
+                                        <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                                        <p>暂无接口，点击上方 + 添加</p>
+                                    </div>
+                                ` : groupInterfaces.map(iface => `
+                                    <div class="interface-item grid grid-cols-12 gap-4 px-6 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-blue-50/30">
+                                        <div class="col-span-1 flex items-center justify-center">
+                                            <i data-lucide="file-code" class="w-4 h-4 text-gray-400"></i>
+                                        </div>
+                                        <div class="col-span-3">
+                                            <span class="text-sm font-medium text-gray-800">${iface.name}</span>
+                                        </div>
+                                        <div class="col-span-4">
+                                            <code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${iface.path}</code>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <div class="flex items-center gap-1">
+                                                <input type="number" id="price-${iface.id}" value="${iface.unitPrice}" min="0" class="w-16 px-2 py-1 border border-gray-200 rounded text-xs text-center focus:outline-none focus:border-primary-500" onclick="event.stopPropagation()">
+                                                <span class="text-xs text-gray-400">点/次</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-2 interface-actions flex items-center justify-end gap-1">
+                                            <button onclick="event.stopPropagation(); saveInterfacePrice(${iface.id})" class="p-1.5 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded transition-colors" title="保存点数">
+                                                <i data-lucide="save" class="w-4 h-4"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editInterface(${iface.id})" class="p-1.5 text-gray-400 hover:text-primary-500 hover:bg-primary-50 rounded transition-colors" title="编辑">
+                                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteInterface(${iface.id})" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors" title="删除">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // 展开/收起分组
+        function toggleGroup(groupId) {
+            const group = groups.find(g => g.id === groupId);
+            if (group) {
+                group.expanded = !group.expanded;
+                renderGroupList();
+            }
+        }
+
+        // ============ 分组操作 ============
+
+        function openGroupModal(group = null) {
+            editingGroupId = group ? group.id : null;
+            document.getElementById('groupModalTitle').textContent = group ? '编辑分组' : '新增分组';
+
+            if (group) {
+                document.getElementById('groupNameInput').value = group.name;
+            } else {
+                document.getElementById('groupNameInput').value = '';
+            }
+
+            document.getElementById('groupModal').classList.remove('hidden');
+            document.getElementById('groupNameInput').focus();
+        }
+
+        function closeGroupModal() {
+            document.getElementById('groupModal').classList.add('hidden');
+            editingGroupId = null;
+        }
+
+        function editGroup(groupId) {
+            const group = groups.find(g => g.id === groupId);
+            if (group) openGroupModal(group);
+        }
+
+        function saveGroup() {
+            const name = document.getElementById('groupNameInput').value.trim();
+
+            if (!name) {
+                showToast('请输入分组名称', 'error');
+                return;
+            }
+
+            if (editingGroupId) {
+                const group = groups.find(g => g.id === editingGroupId);
+                if (group) {
+                    group.name = name;
+                }
+                showToast('分组已更新', 'success');
+            } else {
+                const newId = groups.length > 0 ? Math.max(...groups.map(g => g.id)) + 1 : 1;
+                groups.push({ id: newId, name, expanded: true });
+                showToast('分组已添加', 'success');
+            }
+
+            closeGroupModal();
+            renderGroupList();
+        }
+
+        function deleteGroup(groupId) {
+            const groupInterfaces = interfaces.filter(i => i.groupId === groupId);
+            const msg = groupInterfaces.length > 0
+                ? `该分组下有 ${groupInterfaces.length} 个接口，删除后接口也会被删除。确定要删除吗？`
+                : '确定要删除该分组吗？';
+
+            if (!confirm(msg)) return;
+
+            groups = groups.filter(g => g.id !== groupId);
+            interfaces = interfaces.filter(i => i.groupId !== groupId);
+            renderGroupList();
+            showToast('分组已删除', 'success');
+        }
+
+        // ============ 接口操作 ============
+
+        function openAddInterfaceModal(groupId) {
+            currentGroupId = groupId;
+            editingInterfaceId = null;
+            document.getElementById('interfaceModalTitle').textContent = '新增接口';
+            document.getElementById('interfaceNameInput').value = '';
+            document.getElementById('interfacePathInput').value = '';
+            document.getElementById('interfacePriceInput').value = '0';
+            document.getElementById('interfaceModal').classList.remove('hidden');
+            document.getElementById('interfaceNameInput').focus();
+        }
+
+        function closeInterfaceModal() {
+            document.getElementById('interfaceModal').classList.add('hidden');
+            editingInterfaceId = null;
+            currentGroupId = null;
+        }
+
+        function editInterface(interfaceId) {
+            const iface = interfaces.find(i => i.id === interfaceId);
+            if (!iface) return;
+
+            editingInterfaceId = interfaceId;
+            currentGroupId = iface.groupId;
+            document.getElementById('interfaceModalTitle').textContent = '编辑接口';
+            document.getElementById('interfaceNameInput').value = iface.name;
+            document.getElementById('interfacePathInput').value = iface.path;
+            document.getElementById('interfacePriceInput').value = iface.unitPrice || 0;
+            document.getElementById('interfaceModal').classList.remove('hidden');
+        }
+
+        function saveInterface() {
+            const name = document.getElementById('interfaceNameInput').value.trim();
+            const path = document.getElementById('interfacePathInput').value.trim();
+            const unitPrice = parseInt(document.getElementById('interfacePriceInput').value) || 0;
+
+            if (!name) {
+                showToast('请输入接口名称', 'error');
+                return;
+            }
+            if (!path) {
+                showToast('请输入接口路径', 'error');
+                return;
+            }
+            if (!path.startsWith('/')) {
+                showToast('接口路径必须以 / 开头', 'error');
+                return;
+            }
+
+            if (editingInterfaceId) {
+                const iface = interfaces.find(i => i.id === editingInterfaceId);
+                if (iface) {
+                    iface.name = name;
+                    iface.path = path;
+                    iface.unitPrice = unitPrice;
+                }
+                showToast('接口已更新', 'success');
+            } else {
+                const newId = interfaces.length > 0 ? Math.max(...interfaces.map(i => i.id)) + 1 : 1;
+                interfaces.push({ id: newId, groupId: currentGroupId, name, path, unitPrice });
+                showToast('接口已添加', 'success');
+            }
+
+            closeInterfaceModal();
+            renderGroupList();
+        }
+
+        function deleteInterface(interfaceId) {
+            if (!confirm('确定要删除该接口吗？')) return;
+            interfaces = interfaces.filter(i => i.id !== interfaceId);
+            renderGroupList();
+            showToast('接口已删除', 'success');
+        }
+
+        // 保存接口点数
+        function saveInterfacePrice(interfaceId) {
+            if (event) event.stopPropagation();
+            const input = document.getElementById('price-' + interfaceId);
+            if (!input) return;
+
+            const iface = interfaces.find(i => i.id === interfaceId);
+            if (iface) {
+                iface.unitPrice = parseInt(input.value) || 0;
+                showToast(`${iface.name} 点数已更新为 ${iface.unitPrice} 点/次`, 'success');
+            }
+        }
+
+        // Toast 提示
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-5 h-5"></i><span>${message}</span>`;
+            toast.classList.add('show');
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+            }, 2000);
+        }
+
+        // 初始化
+        renderGroupList();
+        setTimeout(() => lucide.createIcons(), 100);
+    </script>
+
+</body>
+</html>

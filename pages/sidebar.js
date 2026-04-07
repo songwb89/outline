@@ -1,5 +1,13 @@
 const MENU_CONFIG = [
   {
+    id: 'system',
+    icon: 'settings',
+    label: '系统管理',
+    children: [
+      { href: 'admin-permission.html', label: '菜单管理' }
+    ]
+  },
+  {
     id: 'school',
     icon: 'users',
     label: '学校管理',
@@ -9,27 +17,20 @@ const MENU_CONFIG = [
     ]
   },
   {
-    id: 'purchase',
-    icon: 'shopping-cart',
-    label: '采购管理',
+    id: 'operation',
+    icon: 'settings-2',
+    label: '运营管理',
     children: [
-      { href: 'admin-purchase.html', label: '开通套餐' },
-      { href: 'admin-trial.html', label: '开通试用' }
-    ]
-  },
-  {
-    id: 'product',
-    icon: 'package',
-    label: '产品管理',
-    children: [
+      { href: 'admin-interface.html', label: '扣点规则' },
       { href: 'admin-package.html', label: '套餐管理' },
-      { href: 'admin-price-config.html', label: '消耗规则' }
+      { href: 'admin-purchase.html', label: '开通套餐' },
+      { href: 'admin-trial.html', label: '试用管理' }
     ]
   },
   {
     id: 'data',
     icon: 'database',
-    label: '业务数据',
+    label: '数据管理',
     children: [
       { href: 'admin-courseware.html', label: '文件管理' }
     ]

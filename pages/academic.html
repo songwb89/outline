@@ -74,6 +74,13 @@
         </a>
       </nav>
       <div class="flex items-center gap-4">
+        <!-- 点数显示 -->
+        <div class="flex items-center gap-2 bg-white/15 px-3 py-1.5 rounded-lg">
+          <i data-lucide="coins" class="w-4 h-4"></i>
+          <span class="text-sm font-medium">剩余点数：</span>
+          <span id="header-points" class="text-sm font-bold">--</span>
+        </div>
+
         <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
           <i data-lucide="list-todo" class="w-5 h-5"></i>
           <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -671,6 +678,16 @@
       // 重新初始化图标
       if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
     }
+
+    // 加载剩余点数
+    (function initPoints() {
+      var schoolId = 'school_001';
+      var purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+      var total = 0;
+      purchases.forEach(function(p) { total += (p.points || 0) - (p.consumed || 0); });
+      var el = document.getElementById('header-points');
+      if (el) el.textContent = total > 0 ? total.toLocaleString() : '0';
+    })();
 
     // ============================================================
     // 子面板切换（带返回栈）

@@ -676,16 +676,12 @@
             const school = spAllData.find(s => s.schoolId === schoolId);
 
             if (purchases.length > 0) {
-                // 显示所有套餐（禁用状态）
-                const pkgList = purchases.map(p => {
-                    const remaining = p.points - (p.consumed || 0);
-                    return `${p.packageName} (${p.startDate}) [剩余${remaining}点]`;
-                }).join('；');
-                purchaseDisplay.textContent = pkgList;
+                // 显示第一个套餐
+                const p = purchases[0];
+                purchaseDisplay.textContent = `${p.packageName} (${p.startDate})`;
                 purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
                 infoEl.classList.add('hidden');
             } else {
-                // 默认显示当前账户
                 purchaseDisplay.textContent = `进阶版 (2026.2.15)`;
                 purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
                 infoEl.classList.add('hidden');
@@ -797,16 +793,12 @@
             const school = spAllData.find(s => s.schoolId === schoolId);
 
             if (purchases.length > 0) {
-                // 显示所有套餐（禁用状态）
-                const pkgList = purchases.map(p => {
-                    const remaining = p.points - (p.consumed || 0);
-                    return `${p.packageName} (${p.startDate}) [剩余${remaining}点]`;
-                }).join('；');
-                purchaseDisplay.textContent = pkgList;
+                // 显示第一个套餐
+                const p = purchases[0];
+                purchaseDisplay.textContent = `${p.packageName} (${p.startDate})`;
                 purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
                 infoEl.classList.add('hidden');
             } else {
-                // 默认显示当前账户
                 purchaseDisplay.textContent = `进阶版 (2026.2.15)`;
                 purchaseDisplay.className = 'px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50';
                 infoEl.classList.add('hidden');

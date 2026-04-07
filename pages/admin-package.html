@@ -135,21 +135,8 @@
                 <!-- 套餐类型选择 -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">套餐类型 <span class="text-red-500">*</span></label>
-                    <div class="flex gap-3">
-                        <button type="button" id="type-billing" onclick="setPackageType('billing')" class="pkg-type-btn flex-1 p-4 border-2 border-gray-200 rounded-xl text-left">
-                            <div class="flex items-center gap-2 mb-1">
-                                <i data-lucide="coins" class="w-5 h-5 text-amber-500"></i>
-                                <span class="font-medium text-gray-800">计费版</span>
-                            </div>
-                            <p class="text-xs text-gray-500">购买后获得套餐额度，使用功能时按规则扣点</p>
-                        </button>
-                        <button type="button" id="type-trial" onclick="setPackageType('trial')" class="pkg-type-btn flex-1 p-4 border-2 border-gray-200 rounded-xl text-left">
-                            <div class="flex items-center gap-2 mb-1">
-                                <i data-lucide="gift" class="w-5 h-5 text-green-500"></i>
-                                <span class="font-medium text-gray-800">试用版</span>
-                            </div>
-                            <p class="text-xs text-gray-500">各功能有独立试用次数，适合推广体验</p>
-                        </button>
+                    <div id="pkg-type-container" class="flex gap-3">
+                        <!-- 动态渲染：新增时显示两个按钮可选择，编辑时只显示当前类型 -->
                     </div>
                 </div>
 
@@ -188,13 +175,21 @@
                     <textarea id="pkg-desc" rows="2" placeholder="简要描述套餐内容..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"></textarea>
                 </div>
 
-                <!-- 功能配置（试用版专用） -->
+                <!-- 功能配置（试用版专用：开放功能 - 无次数） -->
                 <div id="module-config-container" class="hidden">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-sm font-medium text-gray-700">包含功能</label>
-                        <p id="module-count-hint" class="text-xs text-gray-500 hidden">次数：单个教师账号的不扣点试用次数</p>
-                    </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">开放功能</label>
                     <div id="module-list" class="border border-gray-200 rounded-xl bg-gray-50/50 divide-y divide-gray-100">
+                        <!-- 动态渲染 -->
+                    </div>
+                </div>
+
+                <!-- 试用次数配置（仅试用版） -->
+                <div id="trial-config-container" class="hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700">试用次数配置</label>
+                        <p class="text-xs text-gray-500">控制各计费接口的免费试用次数</p>
+                    </div>
+                    <div id="interface-trial-list" class="border border-gray-200 rounded-xl bg-gray-50/50 divide-y divide-gray-100">
                         <!-- 动态渲染 -->
                     </div>
                 </div>
@@ -282,6 +277,26 @@
             }
         ];
 
+        // 接口分组结构（来自扣点规则）
+        const interfaceGroups = [
+            { id: 1, name: 'AI能力', expanded: true },
+            { id: 2, name: '文档处理', expanded: true },
+            { id: 3, name: '拍题答疑', expanded: false }
+        ];
+
+        // 接口数据（来自扣点规则）
+        const interfaces = [
+            { id: 1, groupId: 1, name: '数字人生成', path: '/api/ai/digital_human/generate' },
+            { id: 2, groupId: 1, name: '口语评测', path: '/api/ai/speech/evaluate' },
+            { id: 3, groupId: 1, name: 'AI生成教案', path: '/api/ai/course/generate' },
+            { id: 4, groupId: 1, name: 'AI生成课件', path: '/api/ai/courseware/generate' },
+            { id: 5, groupId: 2, name: '教案导出', path: '/api/course/export' },
+            { id: 6, groupId: 2, name: '课件导出', path: '/api/courseware/export' },
+            { id: 7, groupId: 2, name: '批量导入', path: '/api/batch/import' },
+            { id: 8, groupId: 3, name: '拍题识别', path: '/api/paidati/recognize' },
+            { id: 9, groupId: 3, name: '生成解析', path: '/api/paidati/parse' }
+        ];
+
         // 套餐数据
         let packagesData = [];
         let editingPackageId = null;
@@ -305,6 +320,7 @@
                 price: 3000,
                 status: true,
                 modules: [],
+                interfaceTrials: [],
                 createdAt: new Date().toISOString()
             },
             {
@@ -312,14 +328,22 @@
                 type: 'trial',
                 name: '试用版',
                 durationDays: 30,
-                initialPoints: null,
+                initialPoints: 100,
                 price: 0,
                 status: true,
                 modules: [
-                    { cat: 'jiaan', subs: [{ id: 'jiaan_ai', count: 10 }] },
-                    { cat: 'kejian', subs: [{ id: 'kejian_ai', count: 10 }] },
-                    { cat: 'huodong', subs: [{ id: 'huodong_template', count: 5 }, { id: 'huodong_ai', count: 5 }] },
-                    { cat: 'huiben', subs: [{ id: 'huiben_generate', count: 5 }] }
+                    { cat: 'jiaan', subs: [{ id: 'jiaan_ai' }, { id: 'jiaan_upload' }] },
+                    { cat: 'kejian', subs: [{ id: 'kejian_ai' }, { id: 'kejian_upload' }] },
+                    { cat: 'huodong', subs: [{ id: 'huodong_template' }, { id: 'huodong_ai' }] },
+                    { cat: 'huiben', subs: [{ id: 'huiben_generate' }] }
+                ],
+                interfaceTrials: [
+                    { id: 1, count: 10 },
+                    { id: 2, count: 5 },
+                    { id: 3, count: 10 },
+                    { id: 4, count: 15 },
+                    { id: 8, count: 10 },
+                    { id: 9, count: 10 }
                 ],
                 createdAt: new Date().toISOString()
             }
@@ -408,35 +432,82 @@
             return modules.length + '个分类';
         }
 
-        // 设置套餐类型
+        // 渲染套餐类型选择区域
+        function renderPackageTypeSelector(pkgType, isEdit) {
+            const container = document.getElementById('pkg-type-container');
+            if (isEdit) {
+                // 编辑时：只显示当前类型，不可修改
+                if (pkgType === 'billing') {
+                    container.innerHTML = `
+                        <div class="flex-1 p-4 border border-gray-200 rounded-xl">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="coins" class="w-5 h-5 text-amber-500"></i>
+                                <span class="font-medium text-gray-800">计费版</span>
+                            </div>
+                            <p class="text-xs text-gray-500">购买后获得套餐额度，使用功能时按规则扣点</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="flex-1 p-4 border border-gray-200 rounded-xl">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="gift" class="w-5 h-5 text-green-500"></i>
+                                <span class="font-medium text-gray-800">试用版</span>
+                            </div>
+                            <p class="text-xs text-gray-500">各功能有独立试用次数，适合推广体验</p>
+                        </div>
+                    `;
+                }
+            } else {
+                // 新增时：显示两个按钮可选择
+                container.innerHTML = `
+                    <button type="button" id="type-billing" onclick="setPackageType('billing')" class="pkg-type-btn flex-1 p-4 border-2 border-gray-200 rounded-xl text-left">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i data-lucide="coins" class="w-5 h-5 text-amber-500"></i>
+                            <span class="font-medium text-gray-800">计费版</span>
+                        </div>
+                        <p class="text-xs text-gray-500">购买后获得套餐额度，使用功能时按规则扣点</p>
+                    </button>
+                    <button type="button" id="type-trial" onclick="setPackageType('trial')" class="pkg-type-btn flex-1 p-4 border-2 border-gray-200 rounded-xl text-left">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i data-lucide="gift" class="w-5 h-5 text-green-500"></i>
+                            <span class="font-medium text-gray-800">试用版</span>
+                        </div>
+                        <p class="text-xs text-gray-500">各功能有独立试用次数，适合推广体验</p>
+                    </button>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        // 设置套餐类型（仅新增时调用）
         function setPackageType(type) {
             currentPackageType = type;
-            document.getElementById('type-billing').classList.toggle('active', type === 'billing');
-            document.getElementById('type-trial').classList.toggle('active', type === 'trial');
-            
-            const pointsContainer = document.getElementById('pkg-points-container');
+
+            const typeBilling = document.getElementById('type-billing');
+            const typeTrial = document.getElementById('type-trial');
+            if (typeBilling) typeBilling.classList.toggle('active', type === 'billing');
+            if (typeTrial) typeTrial.classList.toggle('active', type === 'trial');
+
             const pointsInput = document.getElementById('pkg-points');
-            const teacherLimitInput = document.getElementById('pkg-teacher-limit');
             const moduleContainer = document.getElementById('module-config-container');
-            
+            const trialContainer = document.getElementById('trial-config-container');
+
+            moduleContainer.classList.remove('hidden');
+
             if (type === 'billing') {
-                pointsContainer.classList.remove('hidden');
                 pointsInput.required = true;
                 pointsInput.placeholder = '如：500';
                 pointsInput.value = '';
-                teacherLimitInput.value = '';
-                moduleContainer.classList.remove('hidden');
-                moduleContainer.querySelector('p.text-xs').classList.add('hidden');
-                renderModuleList([], false);
+                trialContainer.classList.add('hidden');
+                renderModuleList([], false);  // 计费版：无次数配置
             } else {
-                pointsContainer.classList.remove('hidden');
                 pointsInput.required = false;
                 pointsInput.placeholder = '如：100';
                 pointsInput.value = '';
-                teacherLimitInput.value = '';
-                moduleContainer.classList.remove('hidden');
-                moduleContainer.querySelector('p.text-xs').classList.remove('hidden');
-                renderModuleList([], true);
+                trialContainer.classList.remove('hidden');
+                renderModuleList([], false);  // 试用版包含功能：无次数配置
+                renderInterfaceTrialList([]); // 试用次数配置
             }
             lucide.createIcons();
         }
@@ -445,13 +516,13 @@
         function openPackageModal(pkg = null) {
             editingPackageId = pkg ? pkg.id : null;
             document.getElementById('modal-title').textContent = pkg ? '编辑套餐' : '新增套餐';
-            
+            const isEdit = pkg !== null;
+
             currentPackageType = pkg ? pkg.type : 'billing';
-            
-            // 更新类型按钮状态
-            document.getElementById('type-billing').classList.toggle('active', currentPackageType === 'billing');
-            document.getElementById('type-trial').classList.toggle('active', currentPackageType === 'trial');
-            
+
+            // 渲染类型选择区域（编辑时不可修改）
+            renderPackageTypeSelector(currentPackageType, isEdit);
+
             // 清空/填充表单
             document.getElementById('pkg-name').value = pkg ? pkg.name : '';
             document.getElementById('pkg-duration').value = pkg ? pkg.durationDays : 365;
@@ -463,20 +534,23 @@
             updateStatusLabel();
 
             // 处理显示逻辑
-            const pointsContainer = document.getElementById('pkg-points-container');
-            const pointsInput = document.getElementById('pkg-points');
             const moduleContainer = document.getElementById('module-config-container');
-            
+            const trialContainer = document.getElementById('trial-config-container');
+            const pointsInput = document.getElementById('pkg-points');
+
+            moduleContainer.classList.remove('hidden');
+
             if (currentPackageType === 'billing') {
-                pointsContainer.classList.remove('hidden');
-                moduleContainer.classList.remove('hidden');
-                moduleContainer.querySelector('p.text-xs').classList.add('hidden');
-                renderModuleList(pkg ? pkg.modules : [], false);
+                pointsInput.required = true;
+                pointsInput.placeholder = '如：500';
+                trialContainer.classList.add('hidden');
+                renderModuleList(pkg ? pkg.modules : [], false);  // 计费版：无次数配置
             } else {
-                pointsContainer.classList.remove('hidden');
-                moduleContainer.classList.remove('hidden');
-                moduleContainer.querySelector('p.text-xs').classList.remove('hidden');
-                renderModuleList(pkg ? pkg.modules : [], true);
+                pointsInput.required = false;
+                pointsInput.placeholder = '如：100';
+                trialContainer.classList.remove('hidden');
+                renderModuleList(pkg ? pkg.modules : [], false);  // 试用版包含功能：无次数配置
+                renderInterfaceTrialList(pkg ? pkg.interfaceTrials : []); // 试用次数配置
             }
 
             document.getElementById('modal-package').classList.remove('hidden');
@@ -489,8 +563,8 @@
             editingPackageId = null;
         }
 
-        // 渲染功能模块列表
-        function renderModuleList(selectedModules = [], showCount = false) {
+        // 渲染功能模块列表（不显示次数配置）
+        function renderModuleList(selectedModules = []) {
             const container = document.getElementById('module-list');
             let html = '';
 
@@ -507,7 +581,6 @@
                 const selectedSubMap = {};
                 subs.forEach(s => selectedSubMap[s.id] = s.count);
 
-                // 检查是否有子级被选中
                 const hasSelectedSub = subs.length > 0;
 
                 html += `
@@ -519,37 +592,21 @@
                             <i data-lucide="${cat.icon}" class="w-4 h-4 text-gray-400"></i>
                             <label for="cat_${cat.id}" class="text-sm font-medium text-gray-700 cursor-pointer flex-1">${cat.name}</label>
                         </div>
-                        <!-- 二级功能 -->
+                        <!-- 二级功能（无次数配置） -->
                         <div class="ml-7 space-y-2" id="subs_${cat.id}">
                 `;
 
                 cat.children.forEach(sub => {
                     const isSelected = selectedSubMap.hasOwnProperty(sub.id);
-                    const count = selectedSubMap[sub.id] || '';
 
-                    if (showCount) {
-                        html += `
-                            <div class="module-sub-item flex items-center gap-2 p-2 rounded-lg hover:bg-blue-50">
-                                <input type="checkbox" id="sub_${sub.id}" class="w-3.5 h-3.5 text-primary-600 rounded border-gray-300 focus:ring-primary-500 cursor-pointer"
-                                    ${isSelected ? 'checked' : ''}
-                                    onchange="toggleSubModule('${cat.id}', '${sub.id}')">
-                                <label for="sub_${sub.id}" class="text-sm text-gray-600 flex-1 cursor-pointer">${sub.name}</label>
-                                <input type="number" id="count_${sub.id}" value="${count}" placeholder="不限制" min="0"
-                                    class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-primary-500 ${!isSelected ? 'opacity-40' : ''}"
-                                    ${!isSelected ? 'disabled' : ''}
-                                    onchange="updateSubCount('${cat.id}', '${sub.id}')">
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="module-sub-item flex items-center gap-2 p-2 rounded-lg hover:bg-blue-50">
-                                <input type="checkbox" id="sub_${sub.id}" class="w-3.5 h-3.5 text-primary-600 rounded border-gray-300 focus:ring-primary-500 cursor-pointer"
-                                    ${isSelected ? 'checked' : ''}
-                                    onchange="toggleSubModule('${cat.id}', '${sub.id}')">
-                                <label for="sub_${sub.id}" class="text-sm text-gray-600 flex-1 cursor-pointer">${sub.name}</label>
-                            </div>
-                        `;
-                    }
+                    html += `
+                        <div class="module-sub-item flex items-center gap-2 p-2 rounded-lg hover:bg-blue-50">
+                            <input type="checkbox" id="sub_${sub.id}" class="w-3.5 h-3.5 text-primary-600 rounded border-gray-300 focus:ring-primary-500 cursor-pointer"
+                                ${isSelected ? 'checked' : ''}
+                                onchange="toggleSubModule('${cat.id}', '${sub.id}')">
+                            <label for="sub_${sub.id}" class="text-sm text-gray-600 flex-1 cursor-pointer">${sub.name}</label>
+                        </div>
+                    `;
                 });
 
                 html += `
@@ -560,6 +617,62 @@
 
             container.innerHTML = html;
             lucide.createIcons();
+        }
+
+        // 渲染接口试用次数配置（全部展开，默认0，可直接编辑）
+        function renderInterfaceTrialList(selectedTrials = []) {
+            const container = document.getElementById('interface-trial-list');
+            let html = '';
+
+            // 转换为 map 结构方便查找
+            const trialMap = {};
+            if (selectedTrials && selectedTrials.length > 0) {
+                selectedTrials.forEach(item => {
+                    trialMap[item.id] = item.count;
+                });
+            }
+
+            interfaceGroups.forEach(group => {
+                const groupInterfaces = interfaces.filter(i => i.groupId === group.id);
+                if (groupInterfaces.length === 0) return;
+
+                html += `
+                    <div class="p-3">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i data-lucide="folder" class="w-4 h-4 text-amber-500"></i>
+                            <span class="text-sm font-medium text-gray-800">${group.name}</span>
+                        </div>
+                        <div class="space-y-2 ml-6">
+                `;
+
+                groupInterfaces.forEach(iface => {
+                    const count = trialMap[iface.id] !== undefined ? trialMap[iface.id] : 0;
+
+                    html += `
+                        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50">
+                            <i data-lucide="file-code" class="w-4 h-4 text-gray-400 shrink-0"></i>
+                            <span class="text-sm text-gray-600 flex-1">${iface.name}</span>
+                            <input type="number" value="${count}" min="0" placeholder="0"
+                                class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-primary-500"
+                                onchange="updateInterfaceTrialCount(${iface.id}, this.value)">
+                            <span class="text-xs text-gray-400 shrink-0">次</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // 更新接口试用次数
+        function updateInterfaceTrialCount(interfaceId, value) {
+            // 实际保存由 savePackage 统一处理
         }
 
         // 切换一级分类（全选/取消全选子级）
@@ -660,6 +773,7 @@
 
             let initialPoints = null;
             let modules = [];
+            let interfaceTrials = [];
 
             if (currentPackageType === 'billing') {
                 initialPoints = parseInt(document.getElementById('pkg-points').value) || 0;
@@ -667,7 +781,7 @@
                     showToast('计费版请输入有效的套餐额度', 'error');
                     return;
                 }
-                // 计费版收集模块（无次数限制）
+                // 计费版收集模块（无次数配置）
                 modules = [];
                 moduleCategories.forEach(cat => {
                     const subs = [];
@@ -687,23 +801,20 @@
                     return;
                 }
             } else {
-                // 试用版也需要初始点数
+                // 试用版
                 initialPoints = parseInt(document.getElementById('pkg-points').value) || 0;
                 if (!initialPoints || initialPoints <= 0) {
                     showToast('试用版请输入有效的套餐额度', 'error');
                     return;
                 }
-                // 收集选中的模块和次数
+                // 收集开放功能（无次数配置）
                 modules = [];
                 moduleCategories.forEach(cat => {
                     const subs = [];
                     cat.children.forEach(sub => {
                         const checkbox = document.getElementById('sub_' + sub.id);
                         if (checkbox && !checkbox.disabled && checkbox.checked) {
-                            const countInput = document.getElementById('count_' + sub.id);
-                            const countVal = countInput.value.trim();
-                            const count = countVal ? parseInt(countVal) : null; // null表示不限制
-                            subs.push({ id: sub.id, count });
+                            subs.push({ id: sub.id });
                         }
                     });
                     if (subs.length > 0) {
@@ -712,9 +823,21 @@
                 });
 
                 if (modules.length === 0) {
-                    showToast('试用版请至少选择一个功能', 'error');
+                    showToast('试用版请至少选择一个开放功能', 'error');
                     return;
                 }
+
+                // 收集接口试用次数配置（所有接口，次数>0才保存）
+                interfaces.forEach(iface => {
+                    const countInput = document.getElementById('trial_count_' + iface.id);
+                    if (countInput) {
+                        const countVal = countInput.value.trim();
+                        const count = countVal ? parseInt(countVal) : 0;
+                        if (count > 0) {
+                            interfaceTrials.push({ id: iface.id, count });
+                        }
+                    }
+                });
             }
 
             const teacherLimit = document.getElementById('pkg-teacher-limit').value.trim();
@@ -733,7 +856,8 @@
                         teacherLimit: teacherLimitValue,
                         price,
                         status,
-                        modules
+                        modules,
+                        interfaceTrials
                     };
                 }
             } else {
@@ -748,6 +872,7 @@
                     price,
                     status,
                     modules,
+                    interfaceTrials,
                     createdAt: new Date().toISOString()
                 });
             }
@@ -867,9 +992,9 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 包含功能 -->
+                    <!-- 开放功能 -->
                     <div>
-                        <h4 class="text-sm font-medium text-gray-700 mb-2">包含功能</h4>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">开放功能</h4>
                         <div class="bg-gray-50 rounded-xl p-3">
                             ${modulesHtml}
                         </div>

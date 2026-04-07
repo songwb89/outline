@@ -1,51 +1,60 @@
-教案：重命名、共享、删除
-课件：重命名、共享、删除
-学案：重命名、共享、删除
-活动：编辑、重命名、共享、删除
-抽奖：编辑、删除
-随堂测：编辑、下载、共享、删除
-听写：编辑、删除
-单词评测：编辑、共享、删除
-对话评测：编辑、共享、删除
-场景对话：编辑、共享、删除
+
+
+智能备课
+-添加教案
+-AI生成教案
+-上传教案
+-添加课件
+-AI生成课件
+-上传课件
+-添加学案
+-AI生成学案
+
+作业&批改
+-自主组卷
+-精细化组卷
+-快速组卷
+-AI试卷库
+-智能AI组卷
+-个人题库
+-公共题库
+
+智能助手
+-生成内容
+数字人
+-创建数字人
+AI讲题
+-生成讲解
+AI讲课
+-上传本地文件
+-选择在线课件
+-生成视频概览
+AI绘本
+-生成大纲
+-生成绘本
+拍题答疑
+-本地上传
+-手机上传
+智能批改
+-创建智能批改
+-
 
 
 
-课件：上课
-活动：可以打开
-抽奖：可以打开
-随堂测：可以打开查看。
-听写：可以打开，可以批改
-单词评测：可以打开测评、可以查看评测记录
-对话评测：可以打开测评、可以查看评测记录
-场景对话：可以打开测评、可以查看评测记录
-
-
-兆涵科技
-Sigma Education
-
-
-https://ai-school-files-1322114923.cos.ap-guangzhou.myqcloud.com/mockup/6.0/Outline/index.html
-
-https://ai-school-files.whoot.cn/mockup/6.0/6.0/Outline/index.html
-
-https://ai-school-files.whoot.cn/mockup/6.0/pages/admin-school.html
-
-https://ai-school-files.whoot.cn/mockup/6.0/Outline/pages/admin-school.html
 
 
 
-https://ai-school-files-1322114923.cos.ap-guangzhou.myqcloud.com/mockup/6.0/Outline/index.html
 
 
-学校管理
-- 学校管理
-采购管理
-- 开套餐
-- 试用开通
-- 点数管理
-产品管理
-- 套餐管理
-- 消耗规则
-业务数据
-- 文件管理
+
+
+
+
+
+
+
+课堂分析
+
+
+
+
