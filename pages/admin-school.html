@@ -42,6 +42,8 @@
         .admin-nav-subitem { transition: all 0.15s ease; }
         .admin-nav-subitem:hover { background-color: #eef2ff; color: #4f46e5; }
         .admin-nav-subitem.active { background-color: #e0e7ff; color: #4f46e5; }
+        .pm-modal-overlay { background: rgba(0,0,0,0.45); }
+        .pm-modal-content { transition: transform 0.2s ease, opacity 0.2s ease; transform: scale(1); }
     </style>
 </head>
 
@@ -71,8 +73,22 @@
 
             <!-- ==================== 面板: 学校管理 ==================== -->
             <div class="h-full px-6 pt-6 overflow-y-auto">
-                <div class="mb-6">
+                <div class="mb-6 flex items-center justify-between">
                     <h1 class="text-2xl font-semibold text-gray-900">学校管理</h1>
+                    <div class="flex items-center gap-3">
+                        <button type="button" onclick="openPurchaseModal()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                            <i data-lucide="package-plus" class="w-4 h-4"></i>
+                            开通套餐
+                        </button>
+                        <button type="button" onclick="openTrialModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                            <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+                            开通试用
+                        </button>
+                        <button type="button" onclick="createMainAdmin()" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            新建学校
+                        </button>
+                    </div>
                 </div>
 
                 <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
@@ -94,25 +110,30 @@
                             <input type="text" id="filterContact" placeholder="请输入联系人" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-36">
                         </div>
                         <div class="flex items-center gap-2">
-                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">状态</label>
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">账号状态</label>
                             <select id="filterDisabled" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-28">
                                 <option value="">全部</option>
                                 <option value="false" selected>可用</option>
                                 <option value="true">禁用</option>
                             </select>
                         </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">套餐状态</label>
+                            <select id="filterPackageStatus" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-28">
+                                <option value="">全部</option>
+                                <option value="active">有效</option>
+                                <option value="expired">过期</option>
+                            </select>
+                        </div>
                         <button type="button" onclick="applyFilters()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm shrink-0">
                             <i data-lucide="search" class="w-4 h-4"></i>查询
-                        </button>
-                        <button type="button" onclick="createMainAdmin()" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm shrink-0">
-                            <i data-lucide="plus" class="w-4 h-4"></i>新建学校
                         </button>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 320px); min-height: 320px;">
                     <div class="overflow-x-auto overflow-y-auto flex-1">
-                        <table class="w-full min-w-[900px]">
+                        <table class="w-full min-w-[1200px]">
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
@@ -120,7 +141,11 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校编码</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">账号</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">联系人</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">套餐</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">充值点数</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">已消耗</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">剩余点数</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">账号状态</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
                                 </tr>
                             </thead>
@@ -186,25 +211,335 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">密码 <span id="sm-password-required" class="text-red-500">*</span></label>
+                        <input type="password" id="sm-password" placeholder="请输入登录密码"
+                            class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="sm-err-password" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
                         <label class="text-sm font-medium text-gray-700">联系人</label>
                         <input type="text" id="sm-contact" placeholder="姓名或职位" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1.5">
                         <label class="text-sm font-medium text-gray-700">手机号</label>
                         <input type="text" id="sm-phone" placeholder="选填" maxlength="11" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
                     </div>
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">状态</label>
-                    <select id="sm-disabled" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
-                        <option value="false">可用</option>
-                        <option value="true">禁用</option>
-                    </select>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">状态</label>
+                        <select id="sm-disabled" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                            <option value="false">可用</option>
+                            <option value="true">禁用</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
                 <button type="button" onclick="hideSchoolModal()" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
                 <button type="button" onclick="saveSchool()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗: 院校点数明细 ==================== -->
+    <div id="modal-school-detail" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-school-detail')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl z-10 overflow-hidden" style="transform: scale(1); width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <div>
+                    <h3 class="font-semibold text-gray-800" id="sdm-title">院校点数明细</h3>
+                    <p class="text-xs text-gray-500 mt-0.5" id="sdm-subtitle">--</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openDeductModal()" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
+                        <i data-lucide="minus-circle" class="w-3.5 h-3.5"></i>扣减
+                    </button>
+                    <button type="button" onclick="openRechargeModal()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1">
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>充值
+                    </button>
+                    <button type="button" onclick="pmHideModal('modal-school-detail')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">充值点数</div>
+                        <div class="text-lg font-bold text-blue-600" id="sdm-purchase">--</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">已消耗</div>
+                        <div class="text-lg font-bold text-orange-600" id="sdm-consumed">--</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-gray-500 mb-1">剩余点数</div>
+                        <div class="text-lg font-bold text-emerald-600" id="sdm-balance">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-3 border-b border-gray-100 flex flex-wrap items-end gap-3 shrink-0">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-600 whitespace-nowrap">类型</label>
+                    <select id="sdm-filter-type" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-primary-500 outline-none min-w-[90px]">
+                        <option value="">全部</option>
+                        <option value="recharge">充值</option>
+                        <option value="consume">消费</option>
+                        <option value="deduct">扣减</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-600 whitespace-nowrap">日期</label>
+                    <input type="date" id="sdm-filter-from" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-primary-500 outline-none" />
+                    <span class="text-gray-400 text-xs">~</span>
+                    <input type="date" id="sdm-filter-to" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-primary-500 outline-none" />
+                </div>
+                <button type="button" onclick="sdmApplyFilters()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors">查询</button>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <table class="w-full min-w-[900px]">
+                    <thead class="bg-gray-50 sticky top-0 z-10">
+                        <tr>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">序号</th>
+                            <th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">类型</th>
+                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th>
+                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">金额</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">操作人</th>
+                            <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sdm-table-body" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+            <div class="px-6 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="text-xs text-gray-600">共 <span id="sdm-count" class="font-medium">0</span> 条</div>
+                <div class="flex items-center gap-1">
+                    <button type="button" id="sdm-prev" onclick="sdmGoPage(sdmCurPage - 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-primary-500 hover:text-primary-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+                    <div id="sdm-pages" class="flex items-center gap-0.5"></div>
+                    <button type="button" id="sdm-next" onclick="sdmGoPage(sdmCurPage + 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-primary-500 hover:text-primary-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗: 充值 ==================== -->
+    <div id="modal-recharge" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-recharge')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">充值</h3>
+                <button type="button" onclick="pmHideModal('modal-recharge')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">点数 <span class="text-red-500">*</span></label>
+                        <input type="number" id="rcm-points" placeholder="请输入" min="1" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="rcm-err-points" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">金额 <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500">¥</span>
+                            <input type="number" id="rcm-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        </div>
+                        <p id="rcm-err-amount" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">备注</label>
+                    <textarea id="rcm-remark" rows="2" placeholder="选填" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"></textarea>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('modal-recharge')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="confirmRecharge()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗: 扣减 ==================== -->
+    <div id="modal-deduct" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-deduct')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">扣减</h3>
+                <button type="button" onclick="pmHideModal('modal-deduct')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">点数 <span class="text-red-500">*</span></label>
+                    <input type="number" id="dcm-points" placeholder="请输入" min="1" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+                    <p id="dcm-err-points" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">扣减原因 <span class="text-red-500">*</span></label>
+                    <textarea id="dcm-remark" rows="2" placeholder="请输入扣减原因（必填）" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"></textarea>
+                    <p id="dcm-err-remark" class="text-sm text-red-500 hidden"></p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('modal-deduct')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="confirmDeduct()" class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认扣减</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 开通套餐弹窗（来自 admin-purchase.html） ==================== -->
+    <div id="pm-modal-purchase" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('pm-modal-purchase')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800" id="pm-purchase-title">开通套餐</h3>
+                <button type="button" onclick="pmHideModal('pm-modal-purchase')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">学校 <span class="text-red-500">*</span></label>
+                    <select id="pm-purchase-school" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择学校</option>
+                    </select>
+                    <p id="pm-purchase-err-school" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">套餐 <span class="text-red-500">*</span></label>
+                    <select id="pm-purchase-package" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择套餐</option>
+                    </select>
+                    <p id="pm-purchase-err-package" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div id="pm-package-info" class="bg-blue-50 rounded-lg p-3 text-xs text-blue-700 hidden"></div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">¥</span>
+                        <input type="number" id="pm-purchase-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    </div>
+                    <p id="pm-purchase-err-amount" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="pm-purchase-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="pm-purchase-err-start-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="pm-purchase-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="pm-purchase-err-end-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('pm-modal-purchase')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="pmSavePurchase()" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 续费弹窗 ==================== -->
+    <div id="pm-modal-renew" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('pm-modal-renew')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">套餐续费</h3>
+                <button type="button" onclick="pmHideModal('pm-modal-renew')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">学校</label>
+                    <input type="text" id="pm-renew-school" readonly class="px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">套餐</label>
+                    <input type="text" id="pm-renew-package" readonly class="px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">¥</span>
+                        <input type="number" id="pm-renew-amount" placeholder="请输入" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    </div>
+                    <p id="pm-renew-err-amount" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="pm-renew-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="pm-renew-err-start-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="pm-renew-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="pm-renew-err-end-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('pm-modal-renew')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="pmSaveRenew()" class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认续费</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 开通试用弹窗（来自 admin-trial.html） ==================== -->
+    <div id="pm-modal-trial" class="pm-modal hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('pm-modal-trial')"></div>
+        <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl overflow-hidden" style="transform: scale(0.95); width: 100%; max-width: 480px; margin: 80px auto 0;">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                <h3 class="font-semibold text-gray-800">开通试用</h3>
+                <button type="button" onclick="pmHideModal('pm-modal-trial')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">学校 <span class="text-red-500">*</span></label>
+                    <select id="pm-trial-school" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择学校</option>
+                    </select>
+                    <p id="pm-trial-err-school" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">试用套餐 <span class="text-red-500">*</span></label>
+                    <select id="pm-trial-package" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="">请选择试用套餐</option>
+                    </select>
+                    <p id="pm-trial-err-package" class="text-sm text-red-500 hidden"></p>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">成交金额</label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">¥</span>
+                        <input type="number" id="pm-trial-amount" placeholder="0.00" min="0" step="0.01" value="0" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="pm-trial-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="pm-trial-err-start-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
+                        <input type="date" id="pm-trial-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <p id="pm-trial-err-end-date" class="text-sm text-red-500 hidden"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="pmHideModal('pm-modal-trial')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
+                <button type="button" onclick="pmSaveTrial()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认</button>
             </div>
         </div>
     </div>
@@ -219,6 +554,7 @@
         // ============================================================
         // 学校管理
         // ============================================================
+        // 模拟数据：前6条有套餐，后6条无套餐
         const seedInstitutions = [
             { id: '697079ee686b4dcb495085ea', schoolCode: 'SYXX', account: 'SYXX0001', username: '深圳实验学校小学部', contact: '陈校长', phone: '13800138001', disabled: false },
             { id: '697079ee686b4dcb495085eb', schoolCode: 'SWXX', account: 'SWXX0001', username: '深圳外国语小学', contact: '林主任', phone: '13900139002', disabled: false },
@@ -232,28 +568,86 @@
             { id: '697079ee686b4dcb495085f3', schoolCode: 'LGXX', account: 'LGXX0001', username: '龙岗实验小学', contact: '钱老师', phone: '13200132008', disabled: false },
             { id: '697079ee686b4dcb495085f4', schoolCode: 'GJXX', account: 'GJXX0001', username: '光祖小学', contact: '吴主任', phone: '13100131009', disabled: false },
             { id: '697079ee686b4dcb495085f5', schoolCode: 'LMXX', account: 'LMXX0001', username: '莲南小学', contact: '黄校长', phone: '-', disabled: false },
-            { id: '697079ee686b4dcb495085f6', schoolCode: 'HYXX', account: 'HYXX0001', username: '海韵小学', contact: '马老师', phone: '13000130010', disabled: false },
-            { id: '697079ee686b4dcb495085f7', schoolCode: 'YTXX', account: 'YTXX0001', username: '园岭小学', contact: '徐主任', phone: '15900159011', disabled: false },
-            { id: '697079ee686b4dcb495085f8', schoolCode: 'SLXX', account: 'SLXX0001', username: '石岩小学', contact: '朱校长', phone: '15800158012', disabled: false },
-            { id: '697079ee686b4dcb495085f9', schoolCode: 'GXXX', account: 'GXXX0001', username: '观星小学', contact: '冯老师', phone: '15700157013', disabled: false },
-            { id: '697079ee686b4dcb495085fa', schoolCode: 'LHXX', account: 'LHXX0001', username: '龙华第一小学', contact: '宋主任', phone: '-', disabled: false },
-            { id: '697079ee686b4dcb495085fb', schoolCode: 'BSXX', account: 'BSXX0001', username: '白石洲小学', contact: '唐校长', phone: '15600156014', disabled: false },
-            { id: '697079ee686b4dcb495085fc', schoolCode: 'MYXX', account: 'MYXX0001', username: '梅园小学', contact: '许老师', phone: '15500155015', disabled: false },
-            { id: '697079ee686b4dcb495085fd', schoolCode: 'XYXX', account: 'XYXX0001', username: '香域 ZOO 小学', contact: '梁主任', phone: '15400154016', disabled: false },
         ];
 
-        let institutions = JSON.parse(localStorage.getItem('institutions'));
-        if (!institutions || !Array.isArray(institutions) || institutions.length === 0) {
-            institutions = [...seedInstitutions];
-            localStorage.setItem('institutions', JSON.stringify(institutions));
-        } else {
-            // 检查数据是否完整，不完整则补充或重新初始化
-            const isIncomplete = institutions.some(row => !row.account || !row.schoolCode || !row.username);
-            if (isIncomplete) {
-                institutions = [...seedInstitutions];
-                localStorage.setItem('institutions', JSON.stringify(institutions));
-            }
-        }
+        // 每次刷新都使用初始数据，不使用缓存
+        let institutions = [...seedInstitutions];
+
+        // 初始化 schools 和套餐数据
+        (function initSchoolsData() {
+            const schools = [];
+            institutions.forEach((inst, index) => {
+                if (index < 6) {
+                    // 前6条有年度套餐
+                    const purchasePoints = (index + 1) * 5000;
+                    const consumed = (index + 1) * 800;
+                    schools.push({
+                        schoolId: inst.id,
+                        schoolCode: inst.schoolCode,
+                        schoolName: inst.username,
+                        purchasePoints: purchasePoints,
+                        giftPoints: 1000,
+                        consumed: consumed,
+                        balance: purchasePoints + 1000 - consumed
+                    });
+                    // 套餐数据（调整使前2条过期，后4条有效）
+                    // 今天日期：2026-04-08
+                    // 过期：深圳实验学校小学部(2026-03-01)、深圳外国语小学(2026-03-15)
+                    // 有效：其余4条(endDate: 2027-01-01)
+                    const endDates = ['2026-03-01', '2026-03-15', '2027-01-01', '2027-01-01', '2027-01-01', '2027-01-01'];
+                    const pkgStatuses = ['expired', 'expired', 'active', 'active', 'active', 'active'];
+                    localStorage.setItem('purchases_' + inst.id, JSON.stringify([{
+                        packageName: '年度旗舰版',
+                        startDate: '2026-01-01',
+                        endDate: endDates[index],
+                        status: pkgStatuses[index],
+                        points: purchasePoints
+                    }]));
+                    localStorage.setItem('trials_' + inst.id, JSON.stringify([]));
+                } else if (index === 6) {
+                    // 第7条学府一小：试用版套餐
+                    schools.push({
+                        schoolId: inst.id,
+                        schoolCode: inst.schoolCode,
+                        schoolName: inst.username,
+                        purchasePoints: 1000,
+                        giftPoints: 0,
+                        consumed: 500,
+                        balance: 500
+                    });
+                    localStorage.setItem('purchases_' + inst.id, JSON.stringify([{
+                        packageName: '试用版',
+                        startDate: '2026-03-25',
+                        endDate: '2026-04-09',
+                        status: 'active',
+                        points: 1000
+                    }]));
+                    // 初始化明细记录
+                    localStorage.setItem('schoolPointsRecords_' + inst.id, JSON.stringify([
+                        { id: 'rc1', schoolId: inst.id, type: 'recharge', points: 1000, amount: 0, time: '2026-03-25 09:00:00', remark: '试用版初始点数', operator: '运营管理员(admin)', createdAt: '2026-03-25 09:00:00' },
+                        { id: 'c1', schoolId: inst.id, type: 'consume', points: 200, amount: 0, time: '2026-03-26 10:30:00', remark: '生成课件：Unit 1 课件', operator: '张三(3000003)', createdAt: '2026-03-26 10:30:00' },
+                        { id: 'c2', schoolId: inst.id, type: 'consume', points: 150, amount: 0, time: '2026-03-27 14:20:00', remark: '生成绘本：狼来了', operator: '李四(3000004)', createdAt: '2026-03-27 14:20:00' },
+                        { id: 'c3', schoolId: inst.id, type: 'consume', points: 150, amount: 0, time: '2026-03-28 11:15:00', remark: '生成数字人：语文老师', operator: '王五(3000005)', createdAt: '2026-03-28 11:15:00' }
+                    ]));
+                    localStorage.setItem('trials_' + inst.id, JSON.stringify([]));
+                } else {
+                    // 后6条无套餐
+                    schools.push({
+                        schoolId: inst.id,
+                        schoolCode: inst.schoolCode,
+                        schoolName: inst.username,
+                        purchasePoints: 0,
+                        giftPoints: 0,
+                        consumed: 0,
+                        balance: 0
+                    });
+                    localStorage.setItem('purchases_' + inst.id, JSON.stringify([]));
+                    localStorage.setItem('trials_' + inst.id, JSON.stringify([]));
+                }
+            });
+            localStorage.setItem('schools', JSON.stringify(schools));
+        })();
+
         let filteredInstitutions = [...institutions];
         let currentPage = 1;
         let pageSize = 10;
@@ -264,6 +658,7 @@
             const schoolCode = (document.getElementById('filterSchoolCode').value || '').trim().toLowerCase();
             const contact = (document.getElementById('filterContact').value || '').trim().toLowerCase();
             const disabledVal = document.getElementById('filterDisabled').value;
+            const packageStatus = document.getElementById('filterPackageStatus').value;
             filteredInstitutions = institutions.filter((row) => {
                 if (account && !row.account.toLowerCase().includes(account)) return false;
                 if (username && !row.username.toLowerCase().includes(username)) return false;
@@ -271,6 +666,18 @@
                 if (contact && !(row.contact || '').toLowerCase().includes(contact)) return false;
                 if (disabledVal === 'true' && !row.disabled) return false;
                 if (disabledVal === 'false' && row.disabled) return false;
+                // 套餐状态筛选
+                const purchases = JSON.parse(localStorage.getItem('purchases_' + row.id) || '[]');
+                const trials = JSON.parse(localStorage.getItem('trials_' + row.id) || '[]');
+                const hasNoPackage = purchases.length === 0 && trials.length === 0;
+                if (hasNoPackage) {
+                    if (packageStatus) return false;
+                } else {
+                    const activePurchase = purchases.find(p => p.status === 'active');
+                    const activeTrial = trials.find(t => t.status === 'active');
+                    if (packageStatus === 'active' && !activePurchase && !activeTrial) return false;
+                    if (packageStatus === 'expired' && (activePurchase || activeTrial)) return false;
+                }
                 return true;
             });
             currentPage = 1;
@@ -299,14 +706,51 @@
                     : '<span class="px-2 py-0.5 text-xs font-medium rounded bg-green-100 text-green-700">正常</span>';
                 const contactDisplay = row.contact && row.contact !== '-' ? row.contact : '-';
                 const accountDisplay = row.account || '-';
+
+                // 获取点数数据
+                const schoolData = getSchoolPointsBySchoolId(row.id);
+                const purchasePoints = schoolData ? schoolData.purchasePoints : 0;
+                const consumed = schoolData ? schoolData.consumed : 0;
+                const balance = schoolData ? schoolData.balance : 0;
+
+                // 套餐
+                const purchases = JSON.parse(localStorage.getItem('purchases_' + row.id) || '[]');
+                const trials = JSON.parse(localStorage.getItem('trials_' + row.id) || '[]');
+                const hasNoPackage = purchases.length === 0 && trials.length === 0;
+                const hasRenewablePackage = purchases.some(p => p.packageName && !p.packageName.includes('试用'));
+
+                let packageHtml = '-';
+                if (!hasNoPackage) {
+                    const activePurchase = purchases.find(p => p.status === 'active');
+                    const activeTrial = trials.find(t => t.status === 'active');
+                    if (activePurchase) {
+                        packageHtml = '<div><span class="text-sm font-medium text-gray-800">' + activePurchase.packageName + '</span></div><div class="text-xs text-gray-400">' + activePurchase.startDate + ' ~ ' + activePurchase.endDate + '</div>';
+                    } else if (activeTrial) {
+                        packageHtml = '<div><span class="text-sm font-medium text-blue-600">' + activeTrial.packageName + '</span></div><div class="text-xs text-gray-400">' + activeTrial.startDate + ' ~ ' + activeTrial.endDate + '</div>';
+                    } else if (purchases.length > 0) {
+                        const lastPkg = purchases[purchases.length - 1];
+                        const statusTag = lastPkg.status === 'expired' ? '<span class="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-gray-200 text-gray-500">过期</span>' : '';
+                        packageHtml = '<div><span class="text-sm text-gray-500">' + lastPkg.packageName + '</span>' + statusTag + '</div><div class="text-xs text-gray-400">' + lastPkg.startDate + ' ~ ' + lastPkg.endDate + '</div>';
+                    } else if (trials.length > 0) {
+                        const lastTrial = trials[trials.length - 1];
+                        const statusTag = lastTrial.status === 'expired' || lastTrial.status === 'terminated' || lastTrial.status === 'converted'
+                            ? '<span class="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-gray-200 text-gray-500">' + (lastTrial.status === 'terminated' ? '已终止' : lastTrial.status === 'converted' ? '已转正' : '过期') + '</span>' : '';
+                        packageHtml = '<div><span class="text-sm text-gray-500">' + lastTrial.packageName + '</span>' + statusTag + '</div>';
+                    }
+                }
+
                 return '<tr class="hover:bg-gray-50/80 even:bg-gray-50/40" data-id="' + row.id + '">' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">' + no + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">' + (row.username || '-') + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">' + (row.schoolCode || '-') + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">' + accountDisplay + '</td>' +
                     '<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">' + contactDisplay + '</td>' +
-                    '<td class="px-4 py-3 whitespace-nowrap">' + statusHtml + '</td>' +
-                    '<td class="px-4 py-3 whitespace-nowrap text-sm"><button type="button" onclick="editRow(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium">编辑</button></td></tr>';
+                    '<td class="px-4 py-3">' + packageHtml + '</td>' +
+                    '<td class="px-4 py-3 text-right text-sm text-gray-400">' + (hasNoPackage ? '-' : purchasePoints.toLocaleString()) + '</td>' +
+                    '<td class="px-4 py-3 text-right text-sm text-gray-400">' + (hasNoPackage ? '-' : consumed.toLocaleString()) + '</td>' +
+                    '<td class="px-4 py-3 text-right text-sm text-gray-400">' + (hasNoPackage ? '-' : balance.toLocaleString()) + '</td>' +
+                    '<td class="px-4 py-3 text-center whitespace-nowrap">' + statusHtml + '</td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap text-sm"><button type="button" onclick="editRow(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium mr-2">编辑</button>' + (hasNoPackage ? '' : '<button type="button" onclick="openSchoolDetail(\'' + row.id + '\')" class="text-primary-600 hover:text-primary-800 font-medium mr-2">管理</button>' + (hasRenewablePackage ? '<button type="button" onclick="openRenewModal(\'' + row.id + '\')" class="text-orange-600 hover:text-orange-800 font-medium">续费</button>' : '')) + '</td></tr>';
             }).join('');
             if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
         }
@@ -368,6 +812,7 @@
             document.getElementById('sm-schoolname').value = '';
             document.getElementById('sm-schoolcode').value = '';
             document.getElementById('sm-accountnum').value = '';
+            document.getElementById('sm-password').value = '';
             document.getElementById('sm-contact').value = '';
             document.getElementById('sm-phone').value = '';
             document.getElementById('sm-disabled').value = 'false';
@@ -375,6 +820,8 @@
                 const el = document.getElementById('sm-err-' + k);
                 if (el) el.textContent = '';
             });
+            const el = document.getElementById('sm-err-password');
+            if (el) el.textContent = '';
             const codeInput = document.getElementById('sm-schoolcode');
             const numInput = document.getElementById('sm-accountnum');
             codeInput.readOnly = false;
@@ -393,6 +840,7 @@
             document.getElementById('sm-account-prefix').textContent = '-';
             document.getElementById('sm-accountnum').readOnly = false;
             document.getElementById('sm-schoolcode').readOnly = false;
+            document.getElementById('sm-password-required').classList.remove('hidden');
             showSchoolModal();
         }
 
@@ -419,6 +867,8 @@
             document.getElementById('sm-contact').value = row.contact || '';
             document.getElementById('sm-phone').value = row.phone || '';
             document.getElementById('sm-disabled').value = row.disabled ? 'true' : 'false';
+            document.getElementById('sm-password').value = '';
+            document.getElementById('sm-password-required').classList.add('hidden');
             showSchoolModal();
         }
 
@@ -441,11 +891,15 @@
             const name = document.getElementById('sm-schoolname').value.trim();
             const code = document.getElementById('sm-schoolcode').value.trim().toUpperCase();
             const num = document.getElementById('sm-accountnum').value.trim();
+            const password = document.getElementById('sm-password').value;
             if (!name) fieldErrors.schoolname = '学校名称不能为空';
             if (!code) fieldErrors.schoolcode = '学校编码不能为空';
             else if (!/^[A-Z]+$/.test(code)) fieldErrors.schoolcode = '学校编码仅支持字母';
             if (!num) fieldErrors.accountnum = '账号不能为空';
             else if (!/^\d{4}$/.test(num)) fieldErrors.accountnum = '账号数字部分必须为4位数字';
+            if (schoolModalMode === 'create' && !password) {
+                fieldErrors.password = '密码不能为空';
+            }
             if (code && num) {
                 const fullAccount = code + num;
                 const duplicate = institutions.find(i => i.account.toUpperCase() === fullAccount && i.id !== schoolModalId);
@@ -460,6 +914,8 @@
                 const el = document.getElementById('sm-err-' + k);
                 if (el) el.textContent = '';
             });
+            const pwdEl = document.getElementById('sm-err-password');
+            if (pwdEl) pwdEl.textContent = '';
             const keys = Object.keys(fieldErrors);
             if (keys.length > 0) {
                 keys.forEach(k => {
@@ -468,6 +924,7 @@
                 });
                 return;
             }
+            const password = document.getElementById('sm-password').value;
             const data = {
                 schoolCode: document.getElementById('sm-schoolcode').value.trim().toUpperCase(),
                 username: document.getElementById('sm-schoolname').value.trim(),
@@ -478,6 +935,7 @@
             };
             if (schoolModalMode === 'create') {
                 data.id = Date.now().toString(16) + Math.random().toString(16).slice(2);
+                if (password) data.password = password;
                 institutions.push(data);
                 const schools = JSON.parse(localStorage.getItem('schools')) || getSchools();
                 schools.push({
@@ -490,9 +948,15 @@
                     balance: 0
                 });
                 localStorage.setItem('schools', JSON.stringify(schools));
+                localStorage.setItem('purchases_' + data.id, JSON.stringify([]));
+                localStorage.setItem('trials_' + data.id, JSON.stringify([]));
             } else {
                 const idx = institutions.findIndex(i => i.id === schoolModalId);
-                if (idx !== -1) institutions[idx] = { ...institutions[idx], ...data };
+                if (idx !== -1) {
+                    const updateData = { ...institutions[idx], ...data };
+                    if (password) updateData.password = password;
+                    institutions[idx] = updateData;
+                }
                 const schools = JSON.parse(localStorage.getItem('schools')) || [];
                 const si = schools.findIndex(s => s.schoolId === schoolModalId);
                 if (si !== -1) {
@@ -509,11 +973,669 @@
             showToast(schoolModalMode === 'create' ? '学校新建成功' : '学校信息已更新');
         }
 
+        // ============================================================
+        // 开通套餐（来自 admin-purchase.html）
+        // ============================================================
+        const pmPackagesData = [
+            { id: 'pkg1', name: '基础版', type: 'billing', initialPoints: 100, durationDays: 30, price: 500 },
+            { id: 'pkg2', name: '基础版', type: 'billing', initialPoints: 1500, durationDays: 365, price: 5000 },
+            { id: 'pkg3', name: '高级版', type: 'billing', initialPoints: 700, durationDays: 365, price: 8000 },
+            { id: 'pkg4', name: '尊享版', type: 'billing', initialPoints: 1500, durationDays: 365, price: 15000 },
+        ];
+
+        function openPurchaseModal() {
+            const schoolSelect = document.getElementById('pm-purchase-school');
+            schoolSelect.innerHTML = '<option value="">请选择学校</option>';
+            institutions.forEach(s => {
+                schoolSelect.innerHTML += '<option value="' + s.id + '">' + s.username + ' (' + s.schoolCode + ')</option>';
+            });
+
+            const packageSelect = document.getElementById('pm-purchase-package');
+            packageSelect.innerHTML = '<option value="">请选择套餐</option>';
+            pmPackagesData.forEach(p => {
+                packageSelect.innerHTML += '<option value="' + p.id + '">' + p.name + '（' + p.initialPoints + '点）</option>';
+            });
+
+            document.getElementById('pm-purchase-title').textContent = '开通套餐';
+            document.getElementById('pm-purchase-school').value = '';
+            document.getElementById('pm-purchase-package').value = '';
+            document.getElementById('pm-package-info').classList.add('hidden');
+            document.getElementById('pm-purchase-amount').value = '';
+            document.getElementById('pm-purchase-start-date').value = '';
+            document.getElementById('pm-purchase-end-date').value = '';
+            ['school','package','amount','start-date','end-date'].forEach(f => {
+                const el = document.getElementById('pm-purchase-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+            pmShowModal('pm-modal-purchase');
+        }
+
+        document.getElementById('pm-purchase-package')?.addEventListener('change', function() {
+            const pkg = pmPackagesData.find(p => p.id === this.value);
+            const infoEl = document.getElementById('pm-package-info');
+            if (pkg) {
+                infoEl.innerHTML = '<strong>' + pkg.name + '</strong> - 初始点数：' + pkg.initialPoints + '点，有效期：' + pkg.durationDays + '天';
+                infoEl.classList.remove('hidden');
+                document.getElementById('pm-purchase-amount').value = pkg.price;
+            } else {
+                infoEl.classList.add('hidden');
+                document.getElementById('pm-purchase-amount').value = '';
+            }
+        });
+
+        function pmValidatePurchase() {
+            let valid = true;
+            ['school','package','amount','start-date','end-date'].forEach(f => {
+                const el = document.getElementById('pm-purchase-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+
+            if (!document.getElementById('pm-purchase-school').value) {
+                document.getElementById('pm-purchase-err-school').textContent = '请选择学校';
+                document.getElementById('pm-purchase-err-school').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-purchase-package').value) {
+                document.getElementById('pm-purchase-err-package').textContent = '请选择套餐';
+                document.getElementById('pm-purchase-err-package').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-purchase-amount').value || parseFloat(document.getElementById('pm-purchase-amount').value) < 0) {
+                document.getElementById('pm-purchase-err-amount').textContent = '请输入有效的金额';
+                document.getElementById('pm-purchase-err-amount').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-purchase-start-date').value) {
+                document.getElementById('pm-purchase-err-start-date').textContent = '请选择生效日期';
+                document.getElementById('pm-purchase-err-start-date').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-purchase-end-date').value) {
+                document.getElementById('pm-purchase-err-end-date').textContent = '请选择到期日期';
+                document.getElementById('pm-purchase-err-end-date').classList.remove('hidden');
+                valid = false;
+            }
+            return valid;
+        }
+
+        function pmSavePurchase() {
+            if (!pmValidatePurchase()) return;
+
+            const schoolId = document.getElementById('pm-purchase-school').value;
+            const packageId = document.getElementById('pm-purchase-package').value;
+            const school = institutions.find(s => s.id === schoolId);
+            const pkg = pmPackagesData.find(p => p.id === packageId);
+
+            // 保存套餐记录
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            purchases.push({
+                id: 'pur' + Date.now(),
+                packageName: pkg.name,
+                startDate: document.getElementById('pm-purchase-start-date').value,
+                endDate: document.getElementById('pm-purchase-end-date').value,
+                status: 'active',
+                points: pkg.initialPoints
+            });
+            localStorage.setItem('purchases_' + schoolId, JSON.stringify(purchases));
+
+            // 更新学校点数
+            const schools = getSchools();
+            const si = schools.findIndex(s => s.schoolId === schoolId);
+            if (si !== -1) {
+                schools[si].purchasePoints = (schools[si].purchasePoints || 0) + pkg.initialPoints;
+                schools[si].balance = (schools[si].balance || 0) + pkg.initialPoints;
+            } else {
+                schools.push({
+                    schoolId: schoolId,
+                    schoolCode: school.schoolCode,
+                    schoolName: school.username,
+                    purchasePoints: pkg.initialPoints,
+                    giftPoints: 0,
+                    consumed: 0,
+                    balance: pkg.initialPoints
+                });
+            }
+            localStorage.setItem('schools', JSON.stringify(schools));
+
+            // 记录点数明细
+            let storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            storedRecords.push({
+                id: 'rc' + Date.now(),
+                schoolId: schoolId,
+                type: 'grant',
+                purchaseId: 'pur' + Date.now(),
+                purchaseName: pkg.name,
+                points: pkg.initialPoints,
+                amount: parseFloat(document.getElementById('pm-purchase-amount').value),
+                remark: '开通' + pkg.name + '套餐发放',
+                operator: '运营管理员(admin)',
+                time: document.getElementById('pm-purchase-start-date').value + ' 09:00'
+            });
+            localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
+
+            pmHideModal('pm-modal-purchase');
+            showToast('套餐开通成功');
+            renderTable();
+        }
+
+        // ============================================================
+        // 续费
+        // ============================================================
+        let renewCurrentSchoolId = null;
+        let renewCurrentPackageName = null;
+        let renewCurrentPoints = 0;
+
+        function openRenewModal(schoolId) {
+            renewCurrentSchoolId = schoolId;
+            const inst = institutions.find(i => i.id === schoolId);
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            const trials = JSON.parse(localStorage.getItem('trials_' + schoolId) || '[]');
+
+            // 获取当前套餐信息
+            const activePurchase = purchases.find(p => p.status === 'active');
+            const activeTrial = trials.find(t => t.status === 'active');
+            const currentPkg = activePurchase || activeTrial;
+
+            if (currentPkg) {
+                renewCurrentPackageName = currentPkg.packageName;
+                renewCurrentPoints = currentPkg.points || 0;
+
+                // 设置学校和套餐名称（只读）
+                document.getElementById('pm-renew-school').value = inst ? inst.username : '';
+                document.getElementById('pm-renew-package').value = renewCurrentPackageName;
+
+                // 设置默认值
+                document.getElementById('pm-renew-amount').value = '';
+                const today = new Date();
+                const oneYearLater = new Date(today);
+                oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+                oneYearLater.setDate(oneYearLater.getDate() - 1); // 续费通常从明天开始
+
+                document.getElementById('pm-renew-start-date').value = formatDate(today);
+                document.getElementById('pm-renew-end-date').value = formatDate(oneYearLater);
+
+                // 清除错误提示
+                ['amount', 'start-date', 'end-date'].forEach(f => {
+                    const el = document.getElementById('pm-renew-err-' + f);
+                    if (el) el.classList.add('hidden');
+                });
+
+                pmShowModal('pm-modal-renew');
+            }
+        }
+
+        function formatDate(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + d;
+        }
+
+        function pmValidateRenew() {
+            let valid = true;
+            ['amount', 'start-date', 'end-date'].forEach(f => {
+                const el = document.getElementById('pm-renew-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+
+            if (!document.getElementById('pm-renew-amount').value || parseFloat(document.getElementById('pm-renew-amount').value) < 0) {
+                document.getElementById('pm-renew-err-amount').textContent = '请输入有效的金额';
+                document.getElementById('pm-renew-err-amount').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-renew-start-date').value) {
+                document.getElementById('pm-renew-err-start-date').textContent = '请选择生效日期';
+                document.getElementById('pm-renew-err-start-date').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-renew-end-date').value) {
+                document.getElementById('pm-renew-err-end-date').textContent = '请选择到期日期';
+                document.getElementById('pm-renew-err-end-date').classList.remove('hidden');
+                valid = false;
+            }
+            return valid;
+        }
+
+        function pmSaveRenew() {
+            if (!pmValidateRenew()) return;
+
+            const schoolId = renewCurrentSchoolId;
+            const startDate = document.getElementById('pm-renew-start-date').value;
+            const endDate = document.getElementById('pm-renew-end-date').value;
+            const amount = parseFloat(document.getElementById('pm-renew-amount').value);
+
+            // 保存新的续费套餐记录
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            purchases.push({
+                id: 'renew' + Date.now(),
+                packageName: renewCurrentPackageName,
+                startDate: startDate,
+                endDate: endDate,
+                status: 'active',
+                points: renewCurrentPoints,
+                amount: amount
+            });
+            localStorage.setItem('purchases_' + schoolId, JSON.stringify(purchases));
+
+            // 更新学校点数
+            const schools = getSchools();
+            const si = schools.findIndex(s => s.schoolId === schoolId);
+            if (si !== -1) {
+                schools[si].purchasePoints = (schools[si].purchasePoints || 0) + renewCurrentPoints;
+                schools[si].balance = (schools[si].balance || 0) + renewCurrentPoints;
+            }
+            localStorage.setItem('schools', JSON.stringify(schools));
+
+            // 记录点数明细
+            let storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            storedRecords.push({
+                id: 'rc' + Date.now(),
+                schoolId: schoolId,
+                type: 'grant',
+                purchaseId: 'renew' + Date.now(),
+                purchaseName: renewCurrentPackageName + ' (续费)',
+                points: renewCurrentPoints,
+                amount: amount,
+                remark: renewCurrentPackageName + '续费发放',
+                operator: '运营管理员(admin)',
+                time: startDate + ' 09:00'
+            });
+            localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
+
+            pmHideModal('pm-modal-renew');
+            showToast('续费成功');
+            renderTable();
+        }
+
+        // ============================================================
+        // 开通试用（来自 admin-trial.html）
+        // ============================================================
+        const pmTrialPackagesData = [
+            { id: 'tpkg1', name: '试用版-基础', type: 'trial', modules: [{ cat: 'marking', used: 2, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
+            { id: 'tpkg2', name: '试用版-高级', type: 'trial', modules: [{ cat: 'marking', used: 3, total: 3 }, { cat: 'report', used: 5, total: 5 }, { cat: 'analysis', used: 3, total: 3 }] },
+            { id: 'tpkg3', name: '试用版-专业', type: 'trial', modules: [{ cat: 'marking', used: 0, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
+        ];
+
+        function openTrialModal() {
+            const schoolSelect = document.getElementById('pm-trial-school');
+            schoolSelect.innerHTML = '<option value="">请选择学校</option>';
+            institutions.forEach(s => {
+                schoolSelect.innerHTML += '<option value="' + s.id + '">' + s.username + ' (' + s.schoolCode + ')</option>';
+            });
+
+            const packageSelect = document.getElementById('pm-trial-package');
+            packageSelect.innerHTML = '<option value="">请选择试用套餐</option>';
+            pmTrialPackagesData.forEach(p => {
+                packageSelect.innerHTML += '<option value="' + p.id + '">' + p.name + '</option>';
+            });
+
+            document.getElementById('pm-trial-school').value = '';
+            document.getElementById('pm-trial-package').value = '';
+            document.getElementById('pm-trial-amount').value = '0';
+            document.getElementById('pm-trial-start-date').value = '';
+            document.getElementById('pm-trial-end-date').value = '';
+            ['school','package','start-date','end-date'].forEach(f => {
+                const el = document.getElementById('pm-trial-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+            pmShowModal('pm-modal-trial');
+        }
+
+        function pmValidateTrial() {
+            let valid = true;
+            ['school','package','start-date','end-date'].forEach(f => {
+                const el = document.getElementById('pm-trial-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+
+            if (!document.getElementById('pm-trial-school').value) {
+                document.getElementById('pm-trial-err-school').textContent = '请选择学校';
+                document.getElementById('pm-trial-err-school').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-trial-package').value) {
+                document.getElementById('pm-trial-err-package').textContent = '请选择试用套餐';
+                document.getElementById('pm-trial-err-package').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-trial-start-date').value) {
+                document.getElementById('pm-trial-err-start-date').textContent = '请选择生效日期';
+                document.getElementById('pm-trial-err-start-date').classList.remove('hidden');
+                valid = false;
+            }
+            if (!document.getElementById('pm-trial-end-date').value) {
+                document.getElementById('pm-trial-err-end-date').textContent = '请选择到期日期';
+                document.getElementById('pm-trial-err-end-date').classList.remove('hidden');
+                valid = false;
+            }
+            return valid;
+        }
+
+        function pmSaveTrial() {
+            if (!pmValidateTrial()) return;
+
+            const schoolId = document.getElementById('pm-trial-school').value;
+            const packageId = document.getElementById('pm-trial-package').value;
+            const school = institutions.find(s => s.id === schoolId);
+            const pkg = pmTrialPackagesData.find(p => p.id === packageId);
+
+            const startDate = document.getElementById('pm-trial-start-date').value;
+            const endDate = document.getElementById('pm-trial-end-date').value;
+            const amount = parseFloat(document.getElementById('pm-trial-amount').value) || 0;
+
+            // 保存试用记录
+            const trials = JSON.parse(localStorage.getItem('trials_' + schoolId) || '[]');
+            trials.push({
+                id: 'trial' + Date.now(),
+                packageName: pkg.name,
+                modules: pkg.modules,
+                startDate: startDate,
+                endDate: endDate,
+                amount: amount,
+                status: 'active'
+            });
+            localStorage.setItem('trials_' + schoolId, JSON.stringify(trials));
+
+            // 确保学校数据存在
+            const schools = getSchools();
+            const si = schools.findIndex(s => s.schoolId === schoolId);
+            if (si === -1) {
+                schools.push({
+                    schoolId: schoolId,
+                    schoolCode: school.schoolCode,
+                    schoolName: school.username,
+                    purchasePoints: 0,
+                    giftPoints: 0,
+                    consumed: 0,
+                    balance: 0
+                });
+                localStorage.setItem('schools', JSON.stringify(schools));
+            }
+
+            pmHideModal('pm-modal-trial');
+            showToast('试用开通成功');
+            renderTable();
+        }
+
+        // ============================================================
+        // 院校点数明细
+        // ============================================================
+        let sdmAllRecords = [];
+        let sdmFiltered = [];
+        let sdmCurPage = 1;
+        const sdmPageSize = 10;
+        let sdmCurrentSchoolId = null;
+        let sdmCurrentSchoolData = null;
+
+        function openSchoolDetail(schoolId) {
+            sdmCurrentSchoolId = schoolId;
+            const inst = institutions.find(i => i.id === schoolId);
+            const schoolData = getSchoolPointsBySchoolId(schoolId);
+            sdmCurrentSchoolData = schoolData;
+
+            document.getElementById('sdm-title').textContent = (inst ? inst.username : '') + ' - 点数明细';
+            document.getElementById('sdm-subtitle').textContent = '学校编码：' + (inst ? inst.schoolCode : '');
+            document.getElementById('sdm-purchase').textContent = schoolData ? schoolData.purchasePoints.toLocaleString() : '0';
+            document.getElementById('sdm-consumed').textContent = schoolData ? schoolData.consumed.toLocaleString() : '0';
+            document.getElementById('sdm-balance').textContent = schoolData ? schoolData.balance.toLocaleString() : '0';
+
+            const storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            sdmAllRecords = [];
+
+            const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+
+            storedRecords.forEach(r => {
+                if (r.type === 'recharge' || r.type === 'deduct') {
+                    let purchaseName = '账户';
+                    if (r.purchaseId && r.purchaseId !== 'default') {
+                        const pkg = purchases.find(p => p.id === r.purchaseId);
+                        if (pkg) purchaseName = pkg.packageName + ' (' + pkg.startDate + ')';
+                        else purchaseName = r.purchaseId;
+                    }
+                    sdmAllRecords.push({
+                        id: r.id, schoolId: r.schoolId, type: r.type, purchaseName: purchaseName,
+                        points: r.points, amount: r.amount || 0, time: r.time,
+                        remark: r.remark || null, operator: r.operator || '运营管理员(admin)', createdAt: r.time
+                    });
+                }
+            });
+
+            sdmAllRecords.push(
+                { id: 'rc1', schoolId: schoolId, type: 'recharge', purchaseName: '基础版 (2026.1.1)', points: 5000, amount: 5000, time: '2026-03-01 09:00:00', remark: '年度套餐购买', operator: '运营李四(lisi)', createdAt: '2026-03-01 09:00:00' },
+                { id: 'rc2', schoolId: schoolId, type: 'recharge', purchaseName: '进阶版 (2026.2.15)', points: 3000, amount: 3000, time: '2026-03-15 14:30:00', remark: '补充充值', operator: '运营王五(wangwu)', createdAt: '2026-03-15 14:30:00' }
+            );
+            sdmAllRecords.push(
+                { id: 'dc1', schoolId: schoolId, type: 'deduct', purchaseName: '基础版 (2026.1.1)', points: 100, amount: 0, time: '2026-03-10 09:00:00', remark: '重复充值退款', operator: '运营张三(zhangsan)', createdAt: '2026-03-10 09:00:00' }
+            );
+            sdmAllRecords.push(
+                { id: 'c1', schoolId: schoolId, type: 'consume', purchaseName: '基础版 (2026.1.1)', points: 15, amount: 0, time: '2026-03-03 14:20:00', remark: '生成绘本：丑小鸭的故事', operator: '张三(3000003)', createdAt: '2026-03-03 14:20:00' },
+                { id: 'c2', schoolId: schoolId, type: 'consume', purchaseName: '基础版 (2026.1.1)', points: 20, amount: 0, time: '2026-03-04 08:15:00', remark: '生成课件：Unit 3 课件', operator: '李四(3000004)', createdAt: '2026-03-04 08:15:00' },
+                { id: 'c3', schoolId: schoolId, type: 'consume', purchaseName: '进阶版 (2026.2.15)', points: 10, amount: 0, time: '2026-03-05 16:40:00', remark: '生成数字人：数学老师数字人', operator: '王五(3000005)', createdAt: '2026-03-05 16:40:00' },
+                { id: 'c4', schoolId: schoolId, type: 'consume', purchaseName: '进阶版 (2026.2.15)', points: 30, amount: 0, time: '2026-03-06 11:05:00', remark: '生成活动：消防安全演练', operator: '赵六(3000006)', createdAt: '2026-03-06 11:05:00' },
+                { id: 'c5', schoolId: schoolId, type: 'consume', purchaseName: '基础版 (2026.1.1)', points: 25, amount: 0, time: '2026-03-12 15:30:00', remark: '生成绘本：小红帽的故事', operator: '孙七(3000007)', createdAt: '2026-03-12 15:30:00' }
+            );
+
+            sdmAllRecords.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+            document.getElementById('sdm-filter-type').value = '';
+            document.getElementById('sdm-filter-from').value = '';
+            document.getElementById('sdm-filter-to').value = '';
+            sdmFiltered = [...sdmAllRecords];
+            sdmCurPage = 1;
+            sdmRender();
+            pmShowModal('modal-school-detail');
+            pmInitIcons();
+        }
+
+        function sdmApplyFilters() {
+            const type = document.getElementById('sdm-filter-type').value;
+            const from = document.getElementById('sdm-filter-from').value;
+            const to = document.getElementById('sdm-filter-to').value;
+            sdmFiltered = sdmAllRecords.filter(r => {
+                if (type && r.type !== type) return false;
+                if (from && r.createdAt < from) return false;
+                if (to && r.createdAt > to + ' 23:59:59') return false;
+                return true;
+            });
+            sdmCurPage = 1;
+            sdmRender();
+        }
+
+        function sdmRender() {
+            const start = (sdmCurPage - 1) * sdmPageSize;
+            const pageData = sdmFiltered.slice(start, start + sdmPageSize);
+            const totalPages = Math.max(1, Math.ceil(sdmFiltered.length / sdmPageSize));
+            const tbody = document.getElementById('sdm-table-body');
+            document.getElementById('sdm-count').textContent = sdmFiltered.length;
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
+            } else {
+                tbody.innerHTML = pageData.map((r, i) => {
+                    const no = start + i + 1;
+                    const typeInfo = {
+                        recharge: { label: '充值', cls: 'bg-green-100 text-green-700' },
+                        consume: { label: '消费', cls: 'bg-blue-100 text-blue-700' },
+                        deduct: { label: '扣减', cls: 'bg-orange-100 text-orange-700' }
+                    }[r.type] || { label: r.type, cls: 'bg-gray-100 text-gray-700' };
+
+                    const pointsHtml = r.type === 'consume'
+                        ? '<span class="text-orange-600 font-medium">-' + r.points + '</span>'
+                        : r.type === 'deduct'
+                            ? '<span class="text-orange-600 font-medium">-' + r.points + '</span>'
+                            : '<span class="text-green-600 font-medium">+' + r.points + '</span>';
+
+                    const amountHtml = r.amount > 0 ? '¥' + r.amount.toLocaleString() : '-';
+                    const operator = r.operator || '-';
+
+                    return '<tr class="hover:bg-gray-50/60">' +
+                        '<td class="px-4 py-2.5 text-gray-500 whitespace-nowrap text-xs">' + no + '</td>' +
+                        '<td class="px-4 py-2.5 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
+                        '<td class="px-4 py-2.5 text-right font-semibold">' + pointsHtml + '</td>' +
+                        '<td class="px-4 py-2.5 text-right text-gray-600">' + amountHtml + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-500 whitespace-nowrap text-xs">' + r.time.substring(0, 16) + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-600 text-sm">' + operator + '</td>' +
+                        '<td class="px-4 py-2.5 text-gray-600 text-sm">' + (r.remark || '-') + '</td></tr>';
+                }).join('');
+            }
+
+            document.getElementById('sdm-prev').disabled = sdmCurPage <= 1;
+            document.getElementById('sdm-next').disabled = sdmCurPage >= totalPages;
+            const pagesEl = document.getElementById('sdm-pages');
+            pagesEl.innerHTML = '';
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = i;
+                btn.className = i === sdmCurPage
+                    ? 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-semibold bg-primary-600 text-white'
+                    : 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+                btn.onclick = () => sdmGoPage(i);
+                pagesEl.appendChild(btn);
+            }
+            pmInitIcons();
+        }
+
+        function sdmGoPage(page) {
+            const totalPages = Math.max(1, Math.ceil(sdmFiltered.length / sdmPageSize));
+            if (page < 1 || page > totalPages) return;
+            sdmCurPage = page;
+            sdmRender();
+        }
+
+        // ============================================================
+        // 充值
+        // ============================================================
+        let rcmCurrentSchoolId = null;
+
+        function openRechargeModal() {
+            if (!sdmCurrentSchoolId) return;
+            rcmCurrentSchoolId = sdmCurrentSchoolId;
+            document.getElementById('rcm-points').value = '';
+            document.getElementById('rcm-amount').value = '';
+            document.getElementById('rcm-remark').value = '';
+            ['points', 'amount'].forEach(f => {
+                const el = document.getElementById('rcm-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+            pmShowModal('modal-recharge');
+            pmInitIcons();
+        }
+
+        function confirmRecharge() {
+            const schoolId = rcmCurrentSchoolId;
+            const points = parseInt(document.getElementById('rcm-points').value);
+            ['points', 'amount'].forEach(f => {
+                const el = document.getElementById('rcm-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+            let valid = true;
+            if (!points || points < 1) {
+                document.getElementById('rcm-err-points').textContent = '请输入有效的点数';
+                document.getElementById('rcm-err-points').classList.remove('hidden');
+                valid = false;
+            }
+            if (!valid) return;
+
+            const newRecord = {
+                id: 'rc' + Date.now(), schoolId: schoolId, type: 'recharge',
+                points: points,
+                amount: parseFloat(document.getElementById('rcm-amount').value) || 0,
+                remark: document.getElementById('rcm-remark').value.trim() || null,
+                operator: '运营管理员(admin)',
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+
+            let storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            storedRecords.push(newRecord);
+            localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
+
+            // 更新 schools 数据
+            const schools = getSchools();
+            const si = schools.findIndex(s => s.schoolId === schoolId);
+            if (si !== -1) {
+                schools[si].purchasePoints = (schools[si].purchasePoints || 0) + points;
+                schools[si].balance = (schools[si].balance || 0) + points;
+            } else {
+                schools.push({ schoolId: schoolId, schoolCode: '', schoolName: '', purchasePoints: points, giftPoints: 0, consumed: 0, balance: points });
+            }
+            localStorage.setItem('schools', JSON.stringify(schools));
+
+            pmHideModal('modal-recharge');
+            pmToast('充值成功');
+            if (sdmCurrentSchoolId === schoolId) openSchoolDetail(schoolId);
+            renderTable();
+        }
+
+        // ============================================================
+        // 扣减
+        // ============================================================
+        let dcmCurrentSchoolId = null;
+
+        function openDeductModal() {
+            if (!sdmCurrentSchoolId) return;
+            dcmCurrentSchoolId = sdmCurrentSchoolId;
+            document.getElementById('dcm-points').value = '';
+            document.getElementById('dcm-remark').value = '';
+            ['points', 'remark'].forEach(f => {
+                const el = document.getElementById('dcm-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+            pmShowModal('modal-deduct');
+            pmInitIcons();
+        }
+
+        function confirmDeduct() {
+            const schoolId = dcmCurrentSchoolId;
+            const points = parseInt(document.getElementById('dcm-points').value);
+            const remark = (document.getElementById('dcm-remark').value || '').trim();
+            ['points', 'remark'].forEach(f => {
+                const el = document.getElementById('dcm-err-' + f);
+                if (el) el.classList.add('hidden');
+            });
+            let valid = true;
+            if (!points || points < 1) {
+                document.getElementById('dcm-err-points').textContent = '请输入有效的点数';
+                document.getElementById('dcm-err-points').classList.remove('hidden');
+                valid = false;
+            }
+            if (!remark) {
+                document.getElementById('dcm-err-remark').textContent = '请输入扣减原因';
+                document.getElementById('dcm-err-remark').classList.remove('hidden');
+                valid = false;
+            }
+            if (!valid) return;
+
+            const newRecord = {
+                id: 'dc' + Date.now(), schoolId: schoolId, type: 'deduct',
+                points: points,
+                amount: 0, remark: remark,
+                operator: '运营管理员(admin)',
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+
+            let storedRecords = JSON.parse(localStorage.getItem('schoolPointsRecords_' + schoolId) || '[]');
+            storedRecords.push(newRecord);
+            localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
+
+            const schools = getSchools();
+            const si = schools.findIndex(s => s.schoolId === schoolId);
+            if (si !== -1) {
+                schools[si].consumed = (schools[si].consumed || 0) + points;
+                schools[si].balance = Math.max(0, (schools[si].balance || 0) - points);
+            }
+            localStorage.setItem('schools', JSON.stringify(schools));
+
+            pmHideModal('modal-deduct');
+            pmToast('扣减成功');
+            if (sdmCurrentSchoolId === schoolId) openSchoolDetail(schoolId);
+            renderTable();
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function () {
             filteredInstitutions = [...institutions];
             applyFilters();
-            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+            pmInitIcons();
         });
     </script>
 </body>

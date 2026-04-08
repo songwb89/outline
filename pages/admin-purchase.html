@@ -71,17 +71,23 @@
             <div class="h-full px-6 pt-6 overflow-y-auto">
                 <div class="mb-6 flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-semibold text-gray-900">开通套餐</h1>
+                        <h1 class="text-2xl font-semibold text-gray-900">订单管理</h1>
                     </div>
-                    <button type="button" onclick="openPurchaseModal()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                        开通套餐
-                    </button>
                 </div>
 
                 <!-- 筛选条件 -->
                 <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
                     <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">类型</label>
+                            <select id="filterType" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-24">
+                                <option value="">全部</option>
+                                <option value="trial">试用</option>
+                                <option value="open">开通</option>
+                                <option value="recharge">充值</option>
+                                <option value="renew">续费</option>
+                            </select>
+                        </div>
                         <div class="flex items-center gap-2">
                             <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校</label>
                             <input type="text" id="filterSchool" placeholder="请输入学校名称" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-40">
@@ -92,15 +98,6 @@
                                 <option value="">全部</option>
                             </select>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">状态</label>
-                            <select id="filterStatus" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white w-28">
-                                <option value="">全部</option>
-                                <option value="active">有效</option>
-                                <option value="expired">到期</option>
-                                <option value="refunded">已退</option>
-                            </select>
-                        </div>
                         <button type="button" onclick="applyFilters()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
                             <i data-lucide="search" class="w-4 h-4"></i>查询
                         </button>
@@ -108,18 +105,19 @@
                 </div>
 
                 <!-- 数据表格 -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 340px); min-height: 300px;">
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 280px); min-height: 400px;">
                     <div class="overflow-x-auto overflow-y-auto flex-1">
-                        <table class="w-full min-w-[900px]">
+                        <table class="w-full min-w-[1100px]">
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">序号</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">订单号</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">类型</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校名称</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">套餐</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">金额</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">点数</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">有效期</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">状态</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">操作</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建时间</th>
                                 </tr>
                             </thead>
                             <tbody id="purchaseTableBody" class="bg-white divide-y divide-gray-100"></tbody>
@@ -155,6 +153,15 @@
                 </button>
             </div>
             <div class="px-6 py-5 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">类型 <span class="text-red-500">*</span></label>
+                    <select id="pm-order-type" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                        <option value="open">开通</option>
+                        <option value="trial">试用</option>
+                        <option value="recharge">充值</option>
+                        <option value="renew">续费</option>
+                    </select>
+                </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">学校 <span class="text-red-500">*</span></label>
                     <select id="pm-school" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
@@ -198,30 +205,6 @@
         </div>
     </div>
 
-    <!-- 退订确认弹窗 -->
-    <div id="refund-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-900">确认退订</h3>
-            </div>
-            <div class="px-6 py-5">
-                <div class="flex items-start gap-4">
-                    <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 text-orange-600"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-700">确定要退订该套餐吗？</p>
-                        <p class="text-sm text-gray-500 mt-1">退订后该采购记录将标记为已退状态。</p>
-                    </div>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-                <button type="button" onclick="hideRefundModal()" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors">取消</button>
-                <button type="button" onclick="confirmRefund()" class="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">确认退订</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // 菜单展开/收起
         document.querySelectorAll('.admin-nav-group-btn').forEach(btn => {
@@ -232,7 +215,7 @@
             });
         });
 
-        // 模拟数据 - 不使用浏览器缓存
+        // 模拟数据
         const schoolsData = [
             { id: 'school1', name: '深圳实验学校小学部', code: 'SYXX' },
             { id: 'school2', name: '深圳外国语小学', code: 'SWXX' },
@@ -246,30 +229,35 @@
         ];
 
         const packagesData = [
-            { id: 'pkg1', name: '基础版', type: 'billing', initialPoints: 100, durationDays: 30, price: 500 },
-            { id: 'pkg2', name: '基础版', type: 'billing', initialPoints: 1500, durationDays: 365, price: 5000 },
-            { id: 'pkg3', name: '高级版', type: 'billing', initialPoints: 700, durationDays: 365, price: 8000 },
-            { id: 'pkg4', name: '尊享版', type: 'billing', initialPoints: 1500, durationDays: 365, price: 15000 },
+            { id: 'pkg1', name: '基础版', initialPoints: 100, durationDays: 30, price: 500 },
+            { id: 'pkg2', name: '基础版', initialPoints: 1500, durationDays: 365, price: 5000 },
+            { id: 'pkg3', name: '高级版', initialPoints: 700, durationDays: 365, price: 8000 },
+            { id: 'pkg4', name: '尊享版', initialPoints: 1500, durationDays: 365, price: 15000 },
         ];
 
+        // 订单数据：试用、开通、充值、续费四种类型
         let purchaseData = [
-            { id: 'pur1', schoolId: 'school1', schoolName: '深圳实验学校小学部', schoolCode: 'SYXX', packageId: 'pkg2', packageName: '基础版', amount: 5000, startDate: '2025-01-01', endDate: '2025-12-31', initialPoints: 1500, currentPoints: 89, status: 'active' },
-            { id: 'pur2', schoolId: 'school2', schoolName: '深圳外国语小学', schoolCode: 'SWXX', packageId: 'pkg2', packageName: '基础版', amount: 5000, startDate: '2025-01-01', endDate: '2025-12-31', initialPoints: 1500, currentPoints: 1500, status: 'active' },
-            { id: 'pur3', schoolId: 'school3', schoolName: '深圳外国语学校附属碧海小学', schoolCode: 'SWBH', packageId: 'pkg1', packageName: '基础版', amount: 3000, startDate: '2025-03-01', endDate: '2026-03-01', initialPoints: 100, currentPoints: 120, status: 'active' },
-            { id: 'pur4', schoolId: 'school4', schoolName: '海滨小学', schoolCode: 'HLXX', packageId: 'pkg3', packageName: '高级版', amount: 8000, startDate: '2024-06-01', endDate: '2025-06-01', initialPoints: 700, currentPoints: 12, status: 'expired' },
-            { id: 'pur5', schoolId: 'school5', schoolName: '南海小学', schoolCode: 'NHXX', packageId: 'pkg3', packageName: '高级版', amount: 7000, startDate: '2025-02-01', endDate: '2026-02-01', initialPoints: 700, currentPoints: 450, status: 'active' },
-            { id: 'pur6', schoolId: 'school6', schoolName: '育才一小', schoolCode: 'YCYX', packageId: 'pkg4', packageName: '尊享版', amount: 14000, startDate: '2025-01-15', endDate: '2026-01-15', initialPoints: 1500, currentPoints: 1200, status: 'active' },
-            { id: 'pur7', schoolId: 'school7', schoolName: '学府一小', schoolCode: 'XFYX', packageId: 'pkg2', packageName: '基础版', amount: 4800, startDate: '2024-08-01', endDate: '2025-08-01', initialPoints: 1500, currentPoints: 0, status: 'expired' },
-            { id: 'pur8', schoolId: 'school8', schoolName: '百丽小学', schoolCode: 'BLXX', packageId: 'pkg1', packageName: '基础版', amount: 500, startDate: '2025-04-01', endDate: '2025-04-30', initialPoints: 100, currentPoints: 100, status: 'active' },
-            { id: 'pur9', schoolId: 'school9', schoolName: '麒麟小学', schoolCode: 'QLXX', packageId: 'pkg2', packageName: '基础版', amount: 4800, startDate: '2025-01-10', endDate: '2025-07-10', initialPoints: 1500, currentPoints: 800, status: 'refunded', refundedAt: '2025-06-15' },
+            // 试用
+            { id: 'ORD20260408001', orderType: 'trial', schoolId: 'school1', schoolName: '深圳实验学校小学部', schoolCode: 'SYXX', packageId: 'pkg2', packageName: '基础版', amount: 0, points: 50, startDate: '2026-03-09', endDate: '2026-04-09', createdAt: '2026-03-09 09:30:22' },
+            { id: 'ORD20260407001', orderType: 'trial', schoolId: 'school2', schoolName: '深圳外国语小学', schoolCode: 'SWXX', packageId: 'pkg1', packageName: '基础版', amount: 0, points: 50, startDate: '2026-03-08', endDate: '2026-04-07', createdAt: '2026-03-08 14:20:15' },
+            { id: 'ORD20260308001', orderType: 'trial', schoolId: 'school3', schoolName: '深圳外国语学校附属碧海小学', schoolCode: 'SWBH', packageId: 'pkg1', packageName: '基础版', amount: 0, points: 50, startDate: '2026-02-06', endDate: '2026-03-08', createdAt: '2026-02-06 10:15:33' },
+            // 开通
+            { id: 'ORD20260101001', orderType: 'open', schoolId: 'school1', schoolName: '深圳实验学校小学部', schoolCode: 'SYXX', packageId: 'pkg2', packageName: '基础版', amount: 5000, points: 1500, startDate: '2025-01-01', endDate: '2025-12-31', createdAt: '2025-01-01 09:00:00' },
+            { id: 'ORD20240601001', orderType: 'open', schoolId: 'school4', schoolName: '海滨小学', schoolCode: 'HLXX', packageId: 'pkg3', packageName: '高级版', amount: 8000, points: 700, startDate: '2024-06-01', endDate: '2025-06-01', createdAt: '2024-06-01 14:00:00' },
+            { id: 'ORD20250201001', orderType: 'open', schoolId: 'school5', schoolName: '南海小学', schoolCode: 'NHXX', packageId: 'pkg3', packageName: '高级版', amount: 7000, points: 700, startDate: '2025-02-01', endDate: '2026-02-01', createdAt: '2025-02-01 11:20:30' },
+            // 充值
+            { id: 'ORD20250315001', orderType: 'recharge', schoolId: 'school1', schoolName: '深圳实验学校小学部', schoolCode: 'SYXX', packageId: 'pkg2', packageName: '基础版', amount: 2000, points: 500, startDate: '2026-01-01', endDate: '2026-12-31', createdAt: '2026-03-15 16:45:00' },
+            { id: 'ORD20250401001', orderType: 'recharge', schoolId: 'school6', schoolName: '育才一小', schoolCode: 'YCYX', packageId: 'pkg4', packageName: '尊享版', amount: 5000, points: 500, startDate: '2026-01-15', endDate: '2027-01-15', createdAt: '2026-04-01 09:30:00' },
+            { id: 'ORD20250320001', orderType: 'recharge', schoolId: 'school5', schoolName: '南海小学', schoolCode: 'NHXX', packageId: 'pkg3', packageName: '高级版', amount: 3000, points: 300, startDate: '2026-02-01', endDate: '2027-02-01', createdAt: '2026-03-20 14:20:18' },
+            // 续费
+            { id: 'ORD20240801001', orderType: 'renew', schoolId: 'school7', schoolName: '学府一小', schoolCode: 'XFYX', packageId: 'pkg2', packageName: '基础版', amount: 4800, points: 1500, startDate: '2025-08-01', endDate: '2026-08-01', createdAt: '2024-08-01 10:00:00' },
+            { id: 'ORD20250401002', orderType: 'renew', schoolId: 'school8', schoolName: '百丽小学', schoolCode: 'BLXX', packageId: 'pkg1', packageName: '基础版', amount: 500, points: 100, startDate: '2025-05-01', endDate: '2025-05-31', createdAt: '2025-04-01 09:15:00' },
+            { id: 'ORD20250110001', orderType: 'renew', schoolId: 'school9', schoolName: '麒麟小学', schoolCode: 'QLXX', packageId: 'pkg2', packageName: '基础版', amount: 4800, points: 1500, startDate: '2025-07-10', endDate: '2026-07-10', createdAt: '2025-01-10 11:30:00' },
         ];
 
         let filteredData = [...purchaseData];
         let currentPage = 1;
-        let pageSize = 10;
-        let modalMode = 'create';
-        let modalId = null;
-        let refundModalId = null;
+        let pageSize = 20;
 
         // 初始化筛选下拉
         function initFilters() {
@@ -309,14 +297,14 @@
         });
 
         function applyFilters() {
+            const orderType = document.getElementById('filterType').value;
             const schoolName = (document.getElementById('filterSchool').value || '').trim().toLowerCase();
             const packageId = document.getElementById('filterPackage').value;
-            const status = document.getElementById('filterStatus').value;
 
             filteredData = purchaseData.filter(row => {
+                if (orderType && row.orderType !== orderType) return false;
                 if (schoolName && !row.schoolName.toLowerCase().includes(schoolName)) return false;
                 if (packageId && row.packageId !== packageId) return false;
-                if (status && row.status !== status) return false;
                 return true;
             });
             currentPage = 1;
@@ -330,31 +318,27 @@
             const pageData = filteredData.slice(startIndex, startIndex + pageSize);
 
             tbody.innerHTML = pageData.map((row, index) => {
-                const no = startIndex + index + 1;
-                const validPeriod = `${row.startDate} 至 ${row.endDate}`;
-
-                let statusHtml = '';
-                let statusClass = '';
-                switch (row.status) {
-                    case 'active': statusHtml = '有效'; statusClass = 'bg-green-100 text-green-700'; break;
-                    case 'expired': statusHtml = '到期'; statusClass = 'bg-gray-100 text-gray-500'; break;
-                    case 'refunded': statusHtml = '已退'; statusClass = 'bg-orange-100 text-orange-700'; break;
+                let typeHtml = '';
+                let typeClass = '';
+                switch (row.orderType) {
+                    case 'trial': typeHtml = '试用'; typeClass = 'bg-purple-100 text-purple-700'; break;
+                    case 'open': typeHtml = '开通'; typeClass = 'bg-blue-100 text-blue-700'; break;
+                    case 'recharge': typeHtml = '充值'; typeClass = 'bg-green-100 text-green-700'; break;
+                    case 'renew': typeHtml = '续费'; typeClass = 'bg-orange-100 text-orange-700'; break;
                 }
 
-                const actionHtml = row.status === 'active' 
-                    ? `<button onclick="refundPurchase('${row.id}')" class="text-orange-600 hover:text-orange-800 font-medium">退订</button>`
-                    : '';
+                const validPeriod = `${row.startDate} 至 ${row.endDate}`;
+                const pointsDisplay = row.orderType === 'recharge' ? `+${row.points}` : row.points.toString();
 
                 return `<tr class="hover:bg-gray-50/80">
-                    <td class="px-4 py-3 text-sm text-gray-600">${no}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${row.id}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-0.5 text-xs font-medium rounded ${typeClass}">${typeHtml}</span></td>
                     <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.schoolName} (${row.schoolCode || ''})</td>
                     <td class="px-4 py-3 text-sm text-gray-800">${row.packageName}</td>
                     <td class="px-4 py-3 text-sm text-gray-800">¥${row.amount.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm text-gray-800">${pointsDisplay}</td>
                     <td class="px-4 py-3 text-sm text-gray-600">${validPeriod}</td>
-                    <td class="px-4 py-3"><span class="px-2 py-0.5 text-xs font-medium rounded ${statusClass}">${statusHtml}</span></td>
-                    <td class="px-4 py-3 text-sm">
-                        ${actionHtml}
-                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${row.createdAt}</td>
                 </tr>`;
             }).join('');
         }
@@ -391,9 +375,8 @@
         function goToNextPage() { goToPage(currentPage + 1); }
 
         function openPurchaseModal() {
-            modalMode = 'create';
-            modalId = null;
-            document.getElementById('modal-title').textContent = '开通套餐';
+            document.getElementById('modal-title').textContent = '创建订单';
+            document.getElementById('pm-order-type').value = 'open';
             document.getElementById('pm-school').value = '';
             document.getElementById('pm-package').value = '';
             document.getElementById('package-info').classList.add('hidden');
@@ -405,7 +388,7 @@
             lucide.createIcons();
         }
 
-function hidePurchaseModal() {
+        function hidePurchaseModal() {
             document.getElementById('purchase-modal').classList.add('hidden');
         }
 
@@ -449,86 +432,35 @@ function hidePurchaseModal() {
 
             const schoolId = document.getElementById('pm-school').value;
             const packageId = document.getElementById('pm-package').value;
+            const orderType = document.getElementById('pm-order-type').value;
             const school = schoolsData.find(s => s.id === schoolId);
             const pkg = packagesData.find(p => p.id === packageId);
 
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+            const timeStr = now.toTimeString().slice(0, 8);
+            const seq = String(purchaseData.filter(p => p.id.startsWith('ORD' + dateStr.slice(0, 8))).length + 1).padStart(3, '0');
+            const orderId = 'ORD' + dateStr.slice(0, 8) + seq;
+
             const data = {
+                id: orderId,
+                orderType: orderType,
                 schoolId: schoolId,
                 schoolName: school.name,
                 schoolCode: school.code,
                 packageId: packageId,
                 packageName: pkg.name,
                 amount: parseFloat(document.getElementById('pm-amount').value),
+                points: pkg.initialPoints,
                 startDate: document.getElementById('pm-start-date').value,
                 endDate: document.getElementById('pm-end-date').value,
-                initialPoints: pkg.initialPoints,
-                currentPoints: modalMode === 'edit' ? (purchaseData.find(p => p.id === modalId)?.currentPoints || pkg.initialPoints) : pkg.initialPoints,
-                status: 'active'
+                createdAt: now.toISOString().slice(0, 10).replace(/-/g, '') + ' ' + timeStr
             };
 
-            if (modalMode === 'create') {
-                data.id = 'pur' + Date.now();
-                purchaseData.push(data);
-
-                // 自动创建套餐发放记录
-                const grantRecord = {
-                    id: 'rc' + Date.now(),
-                    schoolId: schoolId,
-                    schoolName: school.name,
-                    purchaseId: data.id,
-                    purchaseName: pkg.name,
-                    type: 'grant',
-                    points: pkg.initialPoints,
-                    amount: 0,
-                    time: data.startDate + ' 09:00',
-                    remark: '开通' + pkg.name + '套餐发放'
-                };
-
-                // 获取并更新点数记录
-                let rechargeRecords = JSON.parse(localStorage.getItem('pointRecords') || '[]');
-                rechargeRecords.push(grantRecord);
-                localStorage.setItem('pointRecords', JSON.stringify(rechargeRecords));
-
-                showToast('采购记录已创建');
-            } else {
-                const idx = purchaseData.findIndex(p => p.id === modalId);
-                if (idx !== -1) {
-                    purchaseData[idx] = { ...purchaseData[idx], ...data };
-                }
-                showToast('采购记录已更新');
-            }
-
+            purchaseData.unshift(data);
+            applyFilters();
+            showToast('订单已创建');
             hidePurchaseModal();
-            applyFilters();
-        }
-
-        function refundPurchase(id) {
-            refundModalId = id;
-            document.getElementById('refund-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function hideRefundModal() {
-            document.getElementById('refund-modal').classList.add('hidden');
-            refundModalId = null;
-        }
-
-        function confirmRefund() {
-            if (!refundModalId) return;
-            const idx = purchaseData.findIndex(p => p.id === refundModalId);
-            if (idx !== -1) {
-                purchaseData[idx].status = 'refunded';
-                purchaseData[idx].refundedAt = new Date().toISOString().split('T')[0];
-            }
-            hideRefundModal();
-            applyFilters();
-            showToast('套餐已退订');
-        }
-
-        function viewPurchase(id) {
-            const row = purchaseData.find(p => p.id === id);
-            if (!row) return;
-            alert(`采购记录详情\n\n学校：${row.schoolName}\n套餐：${row.packageName}\n金额：¥${row.amount.toLocaleString()}\n有效期：${row.startDate} 至 ${row.endDate}\n剩余点数：${row.currentPoints}/${row.initialPoints}\n状态：已退\n退订时间：${row.refundedAt || '-'}`);
         }
 
         function showToast(message) {

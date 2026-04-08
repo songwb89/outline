@@ -622,6 +622,13 @@
 
         <!-- 右侧图标 + 用户 -->
         <div class="flex items-center gap-4">
+          <!-- 点数显示 -->
+          <div class="flex items-center gap-2 bg-white/15 px-3 py-1.5 rounded-lg">
+            <i data-lucide="coins" class="w-4 h-4"></i>
+            <span class="text-sm font-medium">可用额度：</span>
+            <span id="header-points" class="text-sm font-bold">--</span>
+          </div>
+
           <div class="relative cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
             <i data-lucide="list-todo" class="w-5 h-5"></i>
             <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -2216,6 +2223,16 @@
       if (window.lucide) {
         lucide.createIcons();
       }
+
+      // 初始化可用额度显示
+      (function initPoints() {
+        var schoolId = window.currentSchoolId || 'school_001';
+        var purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+        var total = 0;
+        purchases.forEach(function(p) { total += (p.points || 0) - (p.consumed || 0); });
+        var el = document.getElementById('header-points');
+        if (el) el.textContent = total > 0 ? total.toLocaleString() : '0';
+      })();
 
       // 原课视频按钮占位逻辑：后续可接入真实播放器/弹窗
       const playBtn = document.getElementById('playOriginVideoBtn');

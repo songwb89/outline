@@ -12,8 +12,7 @@ const MENU_CONFIG = [
     icon: 'users',
     label: '学校管理',
     children: [
-      { href: 'admin-school.html', label: '学校管理' },
-      { href: 'admin-points.html', label: '点数管理' }
+      { href: 'admin-school.html', label: '学校管理' }
     ]
   },
   {
@@ -23,8 +22,7 @@ const MENU_CONFIG = [
     children: [
       { href: 'admin-interface.html', label: '扣点规则' },
       { href: 'admin-package.html', label: '套餐管理' },
-      { href: 'admin-purchase.html', label: '开通套餐' },
-      { href: 'admin-trial.html', label: '试用管理' }
+      { href: 'admin-purchase.html', label: '订单管理' }
     ]
   },
   {

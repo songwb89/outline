@@ -283,47 +283,66 @@
               <i data-lucide="download" class="w-4 h-4"></i>导出
             </button>
           </div>
+          <!-- 套餐信息横幅 -->
+          <div class="mx-5 mt-4 px-5 py-3 bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-100 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center shrink-0">
+                <i data-lucide="sparkles" class="w-5 h-5 text-violet-600"></i>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-violet-800">当前套餐</div>
+                <div class="text-base font-bold text-violet-900">年度旗舰版</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <i data-lucide="calendar-days" class="w-4 h-4 text-violet-500"></i>
+              <span class="text-violet-700">有效期：</span>
+              <span class="font-medium text-violet-800">2026-01-01</span>
+              <span class="text-violet-400">~</span>
+              <span class="font-medium text-violet-800">2027-01-01</span>
+            </div>
+          </div>
           <div class="p-6">
             <!-- 统计卡片 -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+              <div class="bg-white rounded-xl p-4 border border-gray-200">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-blue-600">充值点数</span>
-                  <i data-lucide="shopping-cart" class="w-4 h-4 text-blue-400"></i>
+                  <span class="text-xs font-medium text-gray-500">充值点数</span>
+                  <i data-lucide="shopping-cart" class="w-4 h-4 text-gray-400"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-2xl font-bold text-blue-800" id="sp-stat-recharge">--</span>
-                  <span class="text-xs text-blue-500">点</span>
+                  <span class="text-2xl font-bold text-gray-800" id="sp-stat-recharge">--</span>
+                  <span class="text-xs text-gray-500">点</span>
                 </div>
               </div>
-              <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+              <div class="bg-white rounded-xl p-4 border border-gray-200">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-purple-600">消费点数</span>
-                  <i data-lucide="gift" class="w-4 h-4 text-purple-400"></i>
+                  <span class="text-xs font-medium text-gray-500">消费点数</span>
+                  <i data-lucide="gift" class="w-4 h-4 text-gray-400"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-2xl font-bold text-purple-800" id="sp-stat-consumed">--</span>
-                  <span class="text-xs text-purple-500">点</span>
+                  <span class="text-2xl font-bold text-gray-800" id="sp-stat-consumed">--</span>
+                  <span class="text-xs text-gray-500">点</span>
                 </div>
               </div>
-              <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
+              <div class="bg-white rounded-xl p-4 border border-gray-200">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-orange-600">扣减点数</span>
-                  <i data-lucide="trending-down" class="w-4 h-4 text-orange-400"></i>
+                  <span class="text-xs font-medium text-gray-500">扣减点数</span>
+                  <i data-lucide="trending-down" class="w-4 h-4 text-gray-400"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-2xl font-bold text-orange-800" id="sp-stat-deduct">--</span>
-                  <span class="text-xs text-orange-500">点</span>
+                  <span class="text-2xl font-bold text-gray-800" id="sp-stat-deduct">--</span>
+                  <span class="text-xs text-gray-500">点</span>
                 </div>
               </div>
-              <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+              <div class="bg-white rounded-xl p-4 border border-gray-200">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-emerald-600">剩余点数</span>
-                  <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+                  <span class="text-xs font-medium text-gray-500">可用额度</span>
+                  <i data-lucide="wallet" class="w-4 h-4 text-gray-400"></i>
                 </div>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-2xl font-bold text-emerald-800" id="sp-stat-balance">--</span>
-                  <span class="text-xs text-emerald-500">点</span>
+                  <span class="text-2xl font-bold text-gray-800" id="sp-stat-balance">--</span>
+                  <span class="text-xs text-gray-500">点</span>
                 </div>
               </div>
             </div>
