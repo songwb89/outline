@@ -327,7 +327,7 @@
                     case 'renew': typeHtml = '续费'; typeClass = 'bg-orange-100 text-orange-700'; break;
                 }
 
-                const validPeriod = `${row.startDate} 至 ${row.endDate}`;
+                const validPeriod = row.orderType === 'recharge' ? '--' : `${row.startDate} 至 ${row.endDate}`;
                 const pointsDisplay = row.orderType === 'recharge' ? `+${row.points}` : row.points.toString();
 
                 return `<tr class="hover:bg-gray-50/80">
