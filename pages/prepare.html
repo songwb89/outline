@@ -53,6 +53,21 @@
     .toast-item.success { background: #059669; }
     .toast-item.error { background: #dc2626; }
     .toast-item.toast-out { animation: toastOut 0.3s ease forwards; }
+
+    /* 切换教材弹窗动画 */
+    #textbook-modal > div {
+      animation: modalIn 0.25s ease-out;
+    }
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
   </style>
 
   <script>
@@ -144,7 +159,7 @@
                 </div>
                 <div>
                   <h4 class="font-bold text-gray-800">部编版·语文</h4>
-                  <p class="text-xs text-gray-500">七年级上册</p>
+                  <p class="text-xs text-gray-500">七年级上</p>
                 </div>
               </div>
               <div class="flex items-center gap-1">
@@ -1521,6 +1536,71 @@
     </div>
   </div>
 
+  <!-- 切换教材弹窗 -->
+  <div id="textbook-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl w-[480px] max-w-[90vw] overflow-hidden">
+      <!-- 弹窗头部 -->
+      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="text-base font-semibold text-gray-800">切换教材</h3>
+        <button onclick="closeTextbookModal()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+        </button>
+      </div>
+      <!-- 弹窗内容 -->
+      <div class="p-5 space-y-5">
+        <!-- 学科选择 -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">学科</label>
+          <select id="subject-selector" onchange="onSubjectChange()" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="语文">语文</option>
+            <option value="数学">数学</option>
+            <option value="英语">英语</option>
+          </select>
+        </div>
+
+        <!-- 教材版本选择 -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">教材版本</label>
+          <select id="version-selector" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="tongbian">统编版(2016)</option>
+            <option value="renjiao">人教版</option>
+            <option value="beishida">北师大版</option>
+          </select>
+        </div>
+
+        <!-- 年级选择（级联） -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">年级</label>
+          <div class="flex gap-3">
+            <!-- 年级主选择 -->
+            <select id="grade-selector" onchange="onGradeChange()" class="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">请选择年级</option>
+              <option value="一">一年级</option>
+              <option value="二">二年级</option>
+              <option value="三">三年级</option>
+              <option value="四">四年级</option>
+              <option value="五">五年级</option>
+              <option value="六">六年级</option>
+              <option value="七">七年级</option>
+              <option value="八">八年级</option>
+              <option value="九">九年级</option>
+            </select>
+            <!-- 学期选择 -->
+            <select id="semester-selector" class="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">请先选择年级</option>
+            </select>
+          </div>
+          <p class="text-xs text-gray-400 mt-1.5">先选择年级，再选择上册或下册</p>
+        </div>
+      </div>
+      <!-- 弹窗底部 -->
+      <div class="px-5 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+        <button onclick="closeTextbookModal()" class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">取消</button>
+        <button onclick="confirmTextbookChange()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">确认</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 上传进度弹窗 -->
   <div id="progress-modal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center">
     <div class="bg-white rounded-2xl shadow-2xl w-[360px] overflow-hidden">
@@ -1622,6 +1702,167 @@
         updateRightContent('第一章 开启初中之门', '1.1 初中生活的变化');
       }
     }
+
+    // ========== 切换教材弹窗相关 ==========
+    // 各学科的教材版本数据
+    const textbookVersions = {
+      '语文': [
+        { value: 'tongbian', label: '统编版(2016)' },
+        { value: 'renjiao', label: '人教版' },
+        { value: 'beishida', label: '北师大版' },
+        { value: 'jiangsu', label: '江苏版' }
+      ],
+      '数学': [
+        { value: 'renshu', label: '人教版' },
+        { value: 'beishu', label: '北师大版' },
+        { value: 'huaxing', label: '华东师大版' },
+        { value: 'suzhou', label: '苏科版' }
+      ],
+      '英语': [
+        { value: 'renying', label: '人教版' },
+        { value: 'waidian', label: '外研版' },
+        { value: 'yiling', label: '译林版' },
+        { value: 'beijing', label: '北京版' }
+      ]
+    };
+
+    // 当前选择的教材信息
+    let currentTextbook = {
+      subject: '语文',
+      version: 'tongbian',
+      grade: '',
+      semester: ''
+    };
+
+    // 打开切换教材弹窗
+    function openTextbookModal() {
+      const modal = document.getElementById('textbook-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        // 初始化选择器状态
+        initTextbookModal();
+      }
+    }
+
+    // 关闭切换教材弹窗
+    function closeTextbookModal() {
+      const modal = document.getElementById('textbook-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // 初始化切换教材弹窗（保留当前选择）
+    function initTextbookModal() {
+      // 设置学科下拉框
+      document.getElementById('subject-selector').value = currentTextbook.subject;
+
+      // 更新教材版本下拉框
+      updateVersionSelector(currentTextbook.subject);
+
+      // 设置年级和学期
+      document.getElementById('grade-selector').value = currentTextbook.grade;
+      onGradeChange();
+      document.getElementById('semester-selector').value = currentTextbook.semester;
+    }
+
+    // 学科变化时更新教材版本
+    function onSubjectChange() {
+      const subjectSelector = document.getElementById('subject-selector');
+      currentTextbook.subject = subjectSelector.value;
+      updateVersionSelector(currentTextbook.subject);
+    }
+
+    // 更新教材版本下拉框
+    function updateVersionSelector(subject) {
+      const versionSelector = document.getElementById('version-selector');
+      const versions = textbookVersions[subject] || [];
+
+      versionSelector.innerHTML = versions.map(v =>
+        `<option value="${v.value}">${v.label}</option>`
+      ).join('');
+
+      // 默认选中第一个版本
+      if (versions.length > 0) {
+        currentTextbook.version = versions[0].value;
+      }
+    }
+
+    // 年级变化时更新学期选项
+    function onGradeChange() {
+      const gradeSelector = document.getElementById('grade-selector');
+      const semesterSelector = document.getElementById('semester-selector');
+      const selectedGrade = gradeSelector.value; // 中文数字：一、二、三...
+
+      currentTextbook.grade = selectedGrade;
+
+      if (selectedGrade) {
+        // 学期显示完整格式：一年级上、一年级下
+        const gradeText = gradeSelector.options[gradeSelector.selectedIndex].text; // 完整文字：一年级、二年级...
+        semesterSelector.innerHTML = `
+          <option value="">请选择学期</option>
+          <option value="上">${gradeText}上</option>
+          <option value="下">${gradeText}下</option>
+        `;
+        semesterSelector.disabled = false;
+      } else {
+        semesterSelector.innerHTML = '<option value="">请先选择年级</option>';
+        semesterSelector.disabled = true;
+      }
+      currentTextbook.semester = '';
+    }
+
+    // 确认教材切换
+    function confirmTextbookChange() {
+      const subject = currentTextbook.subject;
+      const versionSelector = document.getElementById('version-selector');
+      const version = versionSelector.value;
+      const versionText = versionSelector.options[versionSelector.selectedIndex].text;
+      const gradeSelector = document.getElementById('grade-selector');
+      const grade = gradeSelector.value; // 中文数字：一、二、三...
+      const semester = document.getElementById('semester-selector').value;
+
+      // 验证必填项
+      if (!grade) {
+        showToast('请选择年级', 'error');
+        return;
+      }
+      if (!semester) {
+        showToast('请选择学期', 'error');
+        return;
+      }
+
+      // 更新当前教材信息
+      currentTextbook.version = version;
+
+      // 获取年级完整文字用于显示（如：一年级、二年级...）
+      const gradeText = gradeSelector.options[gradeSelector.selectedIndex].text;
+
+      // 更新左侧栏显示
+      const titleEl = document.querySelector('#left-sidebar h4');
+      const subtitleEl = document.querySelector('#left-sidebar p');
+
+      if (titleEl) {
+        titleEl.textContent = `${versionText}·${subject}`;
+      }
+      if (subtitleEl) {
+        // 学期显示格式：一年级上、一年级下
+        subtitleEl.textContent = `${gradeText}${semester}`;
+      }
+
+      // 关闭弹窗
+      closeTextbookModal();
+
+      // 显示成功提示
+      showToast(`已切换至：${versionText}·${subject} ${gradeText}${semester}`, 'success');
+    }
+
+    // 点击背景关闭切换教材弹窗
+    document.getElementById('textbook-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeTextbookModal();
+      }
+    });
 
     // 关闭生成教案弹窗（保留用于其他可能的调用）
     function closeGeneratePlanModal() {
