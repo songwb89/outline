@@ -281,22 +281,23 @@ function pmRenderPagination(containerId, currentPage, totalPages, totalCount, on
   }
 }
 
-// ============================================================
-// 类型标签映射
-// ============================================================
+    // ============================================================
+    // 类型标签映射
+    // ============================================================
 
-function pmRecordTypeLabel(type) {
-  const map = {
-    'purchase': { label: '购买', cls: 'bg-blue-100 text-blue-700' },
-    'gift': { label: '赠送', cls: 'bg-purple-100 text-purple-700' },
-    'consume': { label: '消费', cls: 'bg-orange-100 text-orange-700' },
-    'deduct': { label: '扣减', cls: 'bg-red-100 text-red-700' },
-    'ai_consume': { label: 'AI消耗', cls: 'bg-orange-100 text-orange-700' },
-    'manual_adjust': { label: '手动调整', cls: 'bg-gray-100 text-gray-700' },
-    'initial': { label: '初始分配', cls: 'bg-green-100 text-green-700' }
-  };
-  return map[type] || { label: type, cls: 'bg-gray-100 text-gray-700' };
-}
+    function pmRecordTypeLabel(type) {
+      const map = {
+        'recharge': { label: '充值', cls: 'bg-blue-100 text-blue-700' },
+        'consume': { label: '消费', cls: 'bg-orange-100 text-orange-700' },
+        'deduct': { label: '扣减', cls: 'bg-red-100 text-red-700' },
+        'ai_consume': { label: 'AI消耗', cls: 'bg-orange-100 text-orange-700' },
+        'manual_adjust': { label: '手动调整', cls: 'bg-gray-100 text-gray-700' },
+        'initial': { label: '初始分配', cls: 'bg-green-100 text-green-700' },
+        'purchase': { label: '充值', cls: 'bg-blue-100 text-blue-700' },
+        'gift': { label: '充值', cls: 'bg-blue-100 text-blue-700' }
+      };
+      return map[type] || { label: type, cls: 'bg-gray-100 text-gray-700' };
+    }
 
 // ============================================================
 // 消耗状态

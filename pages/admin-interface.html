@@ -167,24 +167,36 @@
         // 初始化侧边栏
         renderSidebar('admin-interface.html');
 
-        // 分组数据
+        // 分组数据（来自笔记.txt）
         let groups = [
-            { id: 1, name: 'AI能力', expanded: true },
-            { id: 2, name: '文档处理', expanded: true },
-            { id: 3, name: '拍题答疑', expanded: false }
+            { id: 1, name: '智能备课', expanded: true },
+            { id: 2, name: 'AI讲题', expanded: true },
+            { id: 3, name: 'AI讲课', expanded: true },
+            { id: 4, name: 'AI绘本', expanded: true },
+            { id: 5, name: '批改答疑', expanded: true }
         ];
 
-        // 接口数据
+        // 接口数据（来自笔记.txt）
         let interfaces = [
-            { id: 1, groupId: 1, name: '数字人生成', path: '/api/ai/digital_human/generate', unitPrice: 10 },
-            { id: 2, groupId: 1, name: '口语评测', path: '/api/ai/speech/evaluate', unitPrice: 5 },
-            { id: 3, groupId: 1, name: 'AI生成教案', path: '/api/ai/course/generate', unitPrice: 10 },
-            { id: 4, groupId: 1, name: 'AI生成课件', path: '/api/ai/courseware/generate', unitPrice: 15 },
-            { id: 5, groupId: 2, name: '教案导出', path: '/api/course/export', unitPrice: 2 },
-            { id: 6, groupId: 2, name: '课件导出', path: '/api/courseware/export', unitPrice: 2 },
-            { id: 7, groupId: 2, name: '批量导入', path: '/api/batch/import', unitPrice: 5 },
-            { id: 8, groupId: 3, name: '拍题识别', path: '/api/paidati/recognize', unitPrice: 3 },
-            { id: 9, groupId: 3, name: '生成解析', path: '/api/paidati/parse', unitPrice: 5 }
+            // 智能备课
+            { id: 1, groupId: 1, name: 'AI生成教案', path: '/api/ai/prepare/lesson', unitPrice: 10 },
+            { id: 2, groupId: 1, name: 'AI生成课件', path: '/api/ai/prepare/courseware', unitPrice: 15 },
+            { id: 3, groupId: 1, name: 'AI生成学案', path: '/api/ai/prepare/study', unitPrice: 10 },
+            { id: 4, groupId: 1, name: 'AI生成活动', path: '/api/ai/prepare/activity', unitPrice: 8 },
+            // AI讲题
+            { id: 5, groupId: 2, name: '生成解题', path: '/api/ai/explain/solve', unitPrice: 5 },
+            // AI讲课
+            { id: 6, groupId: 3, name: '生成讲解', path: '/api/ai/lecture/explain', unitPrice: 12 },
+            { id: 7, groupId: 3, name: '生成思维导图', path: '/api/ai/lecture/mindmap', unitPrice: 8 },
+            { id: 8, groupId: 3, name: '生成视频概览', path: '/api/ai/lecture/video', unitPrice: 20 },
+            // AI绘本
+            { id: 9, groupId: 4, name: '生成大纲', path: '/api/ai/picturebook/outline', unitPrice: 5 },
+            { id: 10, groupId: 4, name: '生成脚本', path: '/api/ai/picturebook/script', unitPrice: 10 },
+            { id: 11, groupId: 4, name: '生成绘本', path: '/api/ai/picturebook/generate', unitPrice: 15 },
+            // 批改答疑
+            { id: 12, groupId: 5, name: '智能批改', path: '/api/grading/intelligent', unitPrice: 3 },
+            { id: 13, groupId: 5, name: '拍题答疑', path: '/api/qa/photo', unitPrice: 5 },
+            { id: 14, groupId: 5, name: 'AI组卷', path: '/api/homework/ai_compose', unitPrice: 10 }
         ];
 
         let editingGroupId = null;

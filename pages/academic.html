@@ -123,7 +123,7 @@
         <!-- 点数相关菜单 -->
         <button type="button" id="nav-school-points" data-panel="panel-school-points" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer border-0 bg-transparent">
           <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>本校点数</span>
+          <span>点数管理</span>
         </button>
       </nav>
     </aside>
@@ -274,11 +274,11 @@
       </div>
 
 
-      <!-- ===================== 面板5: 本校点数总览 ===================== -->
+      <!-- ===================== 面板5: 点数管理总览 ===================== -->
       <div id="panel-school-points" class="academic-panel hidden">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
-            <h3 class="font-bold text-gray-800 text-base">本校点数</h3>
+            <h3 class="font-bold text-gray-800 text-base">点数管理</h3>
             <button type="button" class="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5">
               <i data-lucide="download" class="w-4 h-4"></i>导出
             </button>
@@ -288,35 +288,43 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-blue-600">购买点数</span>
+                  <span class="text-xs font-medium text-blue-600">充值点数</span>
                   <i data-lucide="shopping-cart" class="w-4 h-4 text-blue-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-blue-800" id="sp-stat-purchase">--</div>
-                <div class="text-xs text-blue-500 mt-1">点</div>
+                <div class="flex items-baseline gap-1">
+                  <span class="text-2xl font-bold text-blue-800" id="sp-stat-recharge">--</span>
+                  <span class="text-xs text-blue-500">点</span>
+                </div>
               </div>
               <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-purple-600">赠送点数</span>
+                  <span class="text-xs font-medium text-purple-600">消费点数</span>
                   <i data-lucide="gift" class="w-4 h-4 text-purple-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-purple-800" id="sp-stat-gift">--</div>
-                <div class="text-xs text-purple-500 mt-1">点</div>
+                <div class="flex items-baseline gap-1">
+                  <span class="text-2xl font-bold text-purple-800" id="sp-stat-consumed">--</span>
+                  <span class="text-xs text-purple-500">点</span>
+                </div>
               </div>
               <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-orange-600">已消耗</span>
+                  <span class="text-xs font-medium text-orange-600">扣减点数</span>
                   <i data-lucide="trending-down" class="w-4 h-4 text-orange-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-orange-800" id="sp-stat-consumed">--</div>
-                <div class="text-xs text-orange-500 mt-1">点</div>
+                <div class="flex items-baseline gap-1">
+                  <span class="text-2xl font-bold text-orange-800" id="sp-stat-deduct">--</span>
+                  <span class="text-xs text-orange-500">点</span>
+                </div>
               </div>
               <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-medium text-emerald-600">剩余点数</span>
                   <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-emerald-800" id="sp-stat-balance">--</div>
-                <div class="text-xs text-emerald-500 mt-1">点</div>
+                <div class="flex items-baseline gap-1">
+                  <span class="text-2xl font-bold text-emerald-800" id="sp-stat-balance">--</span>
+                  <span class="text-xs text-emerald-500">点</span>
+                </div>
               </div>
             </div>
             <!-- 筛选条件 -->
@@ -326,17 +334,14 @@
                   <label class="text-sm text-gray-600 whitespace-nowrap">类型</label>
                   <select id="sp-rec-type" onchange="spRecApplyFilters()" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                     <option value="">全部</option>
-                    <option value="purchase">购买</option>
-                    <option value="gift">赠送</option>
+                    <option value="recharge">充值</option>
                     <option value="consume">消费</option>
                     <option value="deduct">扣减</option>
                   </select>
                 </div>
                 <div class="flex items-center gap-2">
                   <label class="text-sm text-gray-600 whitespace-nowrap">教师</label>
-                  <select id="sp-rec-teacher" onchange="spRecApplyFilters()" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                    <option value="">全部</option>
-                  </select>
+                  <input type="text" id="sp-rec-teacher" oninput="spRecApplyFilters()" placeholder="输入教师姓名" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
                 </div>
                 <div class="flex items-center gap-2">
                   <label class="text-sm text-gray-600 whitespace-nowrap">日期</label>
@@ -374,13 +379,13 @@
         </div>
       </div>
 
-      <!-- ===================== 面板6: 点数明细子面板（已合并至本校点数）===================== -->
+      <!-- ===================== 面板6: 点数明细子面板（已合并至点数管理）===================== -->
       <div id="panel-sp-records" class="academic-panel hidden" data-parent-panel="panel-school-points">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <!-- 返回导航 -->
           <div class="sub-nav-bar px-5 py-3 flex items-center gap-3">
             <button type="button" onclick="spBackToParent()" class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium">
-              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回本校点数
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回点数管理
             </button>
             <span class="text-gray-300">|</span>
             <span class="text-sm text-gray-600 font-medium">点数明细</span>
@@ -391,8 +396,7 @@
                 <label class="text-sm text-gray-600 whitespace-nowrap">类型</label>
                 <select id="sp-rec-type" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                   <option value="">全部</option>
-                  <option value="purchase">购买</option>
-                  <option value="gift">赠送</option>
+                  <option value="recharge">充值</option>
                   <option value="consume">消费</option>
                   <option value="deduct">扣减</option>
                 </select>
@@ -446,7 +450,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div class="sub-nav-bar px-5 py-3 flex items-center gap-3">
             <button type="button" onclick="spBackToParent()" class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium">
-              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回本校点数
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回点数管理
             </button>
             <span class="text-gray-300">|</span>
             <span class="text-sm text-gray-600 font-medium">消费记录</span>
@@ -617,13 +621,6 @@
       <!-- 筛选 -->
       <div class="px-6 py-3 border-b border-gray-100 flex flex-wrap items-end gap-3 shrink-0">
         <div class="flex items-center gap-2">
-          <label class="text-xs text-gray-600 whitespace-nowrap">类型</label>
-          <select id="tdm-filter-type" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:ring-1 focus:ring-blue-500 outline-none">
-            <option value="">全部</option>
-            <option value="ai_consume">AI消耗</option>
-          </select>
-        </div>
-        <div class="flex items-center gap-2">
           <label class="text-xs text-gray-600 whitespace-nowrap">日期</label>
           <input type="date" id="tdm-filter-from" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-blue-500 outline-none" />
           <span class="text-gray-400 text-xs">~</span>
@@ -635,7 +632,7 @@
       <div class="flex-1 overflow-y-auto">
         <table class="class-table w-full text-sm text-gray-800 border-collapse">
           <thead class="sticky top-0 z-10 bg-gray-50">
-            <tr><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th><th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">类型</th><th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">来源</th></tr>
+            <tr><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th><th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">来源</th></tr>
           </thead>
           <tbody id="tdm-table-body"></tbody>
         </table>
@@ -994,7 +991,6 @@
       document.getElementById('tdm-remaining').textContent = available + ' 点';
 
       tdmAllRecords = getTeacherPointRecords(teacherId);
-      document.getElementById('tdm-filter-type').value = '';
       document.getElementById('tdm-filter-from').value = '';
       document.getElementById('tdm-filter-to').value = '';
       tdmFiltered = [...tdmAllRecords];
@@ -1005,11 +1001,9 @@
     }
 
     function tdmApplyFilters() {
-      const type = document.getElementById('tdm-filter-type').value;
       const from = document.getElementById('tdm-filter-from').value;
       const to = document.getElementById('tdm-filter-to').value;
       tdmFiltered = tdmAllRecords.filter(r => {
-        if (type && r.type !== type) return false;
         if (from && r.createdAt < from) return false;
         if (to && r.createdAt > to + ' 23:59:59') return false;
         return true;
@@ -1026,17 +1020,15 @@
       document.getElementById('tdm-count').textContent = tdmFiltered.length;
 
       if (pageData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">暂无数据</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">暂无数据</td></tr>';
       } else {
         tbody.innerHTML = pageData.map(r => {
-          const typeInfo = pmRecordTypeLabel(r.type);
           let sourceDisplay = r.source || '-';
           if (r.resourceName) {
             sourceDisplay += '<span class="text-gray-400">(' + r.resourceName + ')</span>';
           }
           return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
             '<td class="px-4 py-2.5 text-gray-600 whitespace-nowrap">' + r.createdAt.substring(0, 16) + '</td>' +
-            '<td class="px-4 py-2.5 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
             '<td class="px-4 py-2.5 text-right font-medium text-orange-600">' + r.points + '</td>' +
             '<td class="px-4 py-2.5 text-gray-600">' + sourceDisplay + '</td></tr>';
         }).join('');
@@ -1067,26 +1059,15 @@
     }
 
     // ============================================================
-    // 本校点数统计
+    // 点数管理统计
     // ============================================================
     function loadSchoolPointsStats() {
-      // 模拟统计数据
-      const stats = { purchasePoints: 10000, giftPoints: 2000, consumed: 635, balance: 11365 };
-      document.getElementById('sp-stat-purchase').textContent = stats.purchasePoints.toLocaleString();
-      document.getElementById('sp-stat-gift').textContent = stats.giftPoints.toLocaleString();
+      // 模拟统计数据（充值 = 购买 + 赠送）
+      const stats = { recharge: 12000, consumed: 635, deduct: 500, balance: 11365 };
+      document.getElementById('sp-stat-recharge').textContent = stats.recharge.toLocaleString();
       document.getElementById('sp-stat-consumed').textContent = stats.consumed.toLocaleString();
+      document.getElementById('sp-stat-deduct').textContent = stats.deduct.toLocaleString();
       document.getElementById('sp-stat-balance').textContent = stats.balance.toLocaleString();
-
-      // 填充教师筛选下拉
-      const teacherOptions = [
-        { id: 't001', name: '张老师' },
-        { id: 't002', name: '李老师' },
-        { id: 't003', name: '王老师' },
-        { id: 't004', name: '赵老师' },
-        { id: 't005', name: '陈老师' }
-      ];
-      document.getElementById('sp-rec-teacher').innerHTML = '<option value="">全部</option>' +
-        teacherOptions.map(t => '<option value="' + t.id + '">' + t.name + '</option>').join('');
     }
 
     // ============================================================
@@ -1108,19 +1089,20 @@
 
     // 模拟数据
     const spRecMockData = [
-      { id: 'spr_001', type: 'purchase', points: 10000, balance: 12000, teacherId: null, contractNo: 'HT-2026-001', source: '合同#HT-2026-001', createdAt: '2026-01-15 09:30:00', remark: null },
-      { id: 'spr_002', type: 'gift', points: 2000, balance: 12000, teacherId: null, contractNo: null, source: '促销活动赠送', createdAt: '2026-01-15 09:31:00', remark: '新用户首月赠送' },
-      { id: 'spr_003', type: 'consume', points: -50, balance: 11950, teacherId: 't001', contractNo: null, source: '生成绘本', resourceName: '丑小鸭的故事', createdAt: '2026-02-03 14:22:00', remark: null },
-      { id: 'spr_004', type: 'consume', points: -30, balance: 11920, teacherId: 't002', contractNo: null, source: '生成课件', resourceName: 'Unit 3 课件', createdAt: '2026-02-10 10:15:00', remark: null },
-      { id: 'spr_005', type: 'consume', points: -80, balance: 11840, teacherId: 't001', contractNo: null, source: '生成数字人', resourceName: '数学老师数字人', createdAt: '2026-02-18 16:45:00', remark: null },
-      { id: 'spr_006', type: 'consume', points: -25, balance: 11815, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '消防安全演练', createdAt: '2026-02-25 11:30:00', remark: null },
-      { id: 'spr_007', type: 'consume', points: -100, balance: 11715, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '小红帽的故事', createdAt: '2026-03-01 09:00:00', remark: null },
-      { id: 'spr_008', type: 'consume', points: -60, balance: 11655, teacherId: 't001', contractNo: null, source: '生成课件', resourceName: '拼音教学课件', createdAt: '2026-03-05 14:20:00', remark: null },
-      { id: 'spr_009', type: 'consume', points: -40, balance: 11615, teacherId: 't004', contractNo: null, source: '生成数字人', resourceName: '英语老师数字人', createdAt: '2026-03-10 10:05:00', remark: null },
-      { id: 'spr_010', type: 'consume', points: -120, balance: 11495, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '春季运动会', createdAt: '2026-03-12 15:40:00', remark: null },
-      { id: 'spr_011', type: 'consume', points: -55, balance: 11440, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '三只小猪', createdAt: '2026-03-15 11:25:00', remark: null },
-      { id: 'spr_012', type: 'consume', points: -35, balance: 11405, teacherId: 't005', contractNo: null, source: '生成课件', resourceName: '古诗讲解课件', createdAt: '2026-03-18 08:50:00', remark: null },
-      { id: 'spr_013', type: 'deduct', points: -40, balance: 11365, teacherId: null, contractNo: null, source: '账户调整', createdAt: '2026-03-20 10:00:00', remark: '账户调整' }
+      { id: 'spr_001', type: 'recharge', points: 10000, balance: 12000, teacherId: null, contractNo: 'HT-2026-001', source: '合同#HT-2026-001', createdAt: '2026-01-15 09:30:00', remark: null },
+      { id: 'spr_002', type: 'deduct', points: -500, balance: 11500, teacherId: null, contractNo: null, source: '账户调整', createdAt: '2026-01-20 14:00:00', remark: '重复充值退款' },
+      { id: 'spr_003', type: 'recharge', points: 2000, balance: 12000, teacherId: null, contractNo: null, source: '促销活动赠送', createdAt: '2026-01-15 09:31:00', remark: '新用户首月赠送' },
+      { id: 'spr_004', type: 'consume', points: -50, balance: 11950, teacherId: 't001', contractNo: null, source: '生成绘本', resourceName: '丑小鸭的故事', createdAt: '2026-02-03 14:22:00', remark: null },
+      { id: 'spr_005', type: 'consume', points: -30, balance: 11920, teacherId: 't002', contractNo: null, source: '生成课件', resourceName: 'Unit 3 课件', createdAt: '2026-02-10 10:15:00', remark: null },
+      { id: 'spr_006', type: 'consume', points: -80, balance: 11840, teacherId: 't001', contractNo: null, source: '生成数字人', resourceName: '数学老师数字人', createdAt: '2026-02-18 16:45:00', remark: null },
+      { id: 'spr_007', type: 'consume', points: -25, balance: 11815, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '消防安全演练', createdAt: '2026-02-25 11:30:00', remark: null },
+      { id: 'spr_008', type: 'consume', points: -100, balance: 11715, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '小红帽的故事', createdAt: '2026-03-01 09:00:00', remark: null },
+      { id: 'spr_009', type: 'consume', points: -60, balance: 11655, teacherId: 't001', contractNo: null, source: '生成课件', resourceName: '拼音教学课件', createdAt: '2026-03-05 14:20:00', remark: null },
+      { id: 'spr_010', type: 'consume', points: -40, balance: 11615, teacherId: 't004', contractNo: null, source: '生成数字人', resourceName: '英语老师数字人', createdAt: '2026-03-10 10:05:00', remark: null },
+      { id: 'spr_011', type: 'consume', points: -120, balance: 11495, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '春季运动会', createdAt: '2026-03-12 15:40:00', remark: null },
+      { id: 'spr_012', type: 'consume', points: -55, balance: 11440, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '三只小猪', createdAt: '2026-03-15 11:25:00', remark: null },
+      { id: 'spr_013', type: 'consume', points: -35, balance: 11405, teacherId: 't005', contractNo: null, source: '生成课件', resourceName: '古诗讲解课件', createdAt: '2026-03-18 08:50:00', remark: null },
+      { id: 'spr_014', type: 'deduct', points: -40, balance: 11365, teacherId: null, contractNo: null, source: '账户调整', createdAt: '2026-03-20 10:00:00', remark: '账户调整' }
     ];
 
     function spRecLoad() {
@@ -1131,12 +1113,15 @@
 
     function spRecApplyFilters() {
       const type = document.getElementById('sp-rec-type').value;
-      const teacher = document.getElementById('sp-rec-teacher').value;
+      const teacherKw = (document.getElementById('sp-rec-teacher').value || '').trim().toLowerCase();
       const from = document.getElementById('sp-rec-date-from').value;
       const to = document.getElementById('sp-rec-date-to').value;
       spRecFiltered = spRecAll.filter(r => {
         if (type && r.type !== type) return false;
-        if (teacher && r.teacherId !== teacher) return false;
+        if (teacherKw) {
+          const teacherName = spRecTeacherNames[r.teacherId] || '';
+          if (!teacherName.toLowerCase().includes(teacherKw)) return false;
+        }
         if (from && r.createdAt < from) return false;
         if (to && r.createdAt > to + ' 23:59:59') return false;
         return true;
@@ -1168,7 +1153,7 @@
           let subInfo = '-';
           if (r.type === 'consume' && r.teacherId) {
             subInfo = spRecTeacherNames[r.teacherId] || '-';
-          } else if (r.type === 'purchase' && r.contractNo) {
+          } else if (r.type === 'recharge' && r.contractNo) {
             subInfo = r.contractNo;
           }
           // 消费类型显示来源和资源名称

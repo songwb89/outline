@@ -233,32 +233,50 @@
         // 初始化侧边栏
         renderSidebar('admin-permission.html');
 
-        // 页面数据
+        // 页面数据（来自笔记.txt）
         let pages = [
             { id: 1, name: '智能备课', code: 'prepare', status: 1 },
-            { id: 2, name: '学术资源', code: 'academic', status: 1 },
-            { id: 3, name: '学校管理', code: 'school', status: 1 },
-            { id: 4, name: '产品管理', code: 'product', status: 1 },
-            { id: 5, name: '采购管理', code: 'purchase', status: 0 },
-            { id: 6, name: '业务数据', code: 'data', status: 1 }
+            { id: 2, name: '作业&批改', code: 'homework', status: 1 },
+            { id: 3, name: 'AI讲题', code: 'explain', status: 1 },
+            { id: 4, name: 'AI讲课', code: 'lecture', status: 1 },
+            { id: 5, name: 'AI绘本', code: 'picturebook', status: 1 },
+            { id: 6, name: '拍题答疑', code: 'qa', status: 1 },
+            { id: 7, name: '智能批改', code: 'grading', status: 1 }
         ];
 
-        // 功能数据
+        // 功能数据（来自笔记.txt）
         let features = [
+            // 智能备课
             { id: 1, pageId: 1, name: '添加教案', code: 'prepare_add', sort: 1, status: 1 },
-            { id: 2, pageId: 1, name: '上传教案', code: 'prepare_upload', sort: 2, status: 1 },
-            { id: 3, pageId: 1, name: '单词评测', code: 'prepare_word', sort: 3, status: 0 },
-            { id: 4, pageId: 1, name: 'AI生成教案', code: 'prepare_ai', sort: 4, status: 1 },
-            { id: 5, pageId: 2, name: '添加资料', code: 'academic_add', sort: 1, status: 1 },
-            { id: 6, pageId: 2, name: '编辑资料', code: 'academic_edit', sort: 2, status: 1 },
-            { id: 7, pageId: 2, name: '删除资料', code: 'academic_delete', sort: 3, status: 1 },
-            { id: 8, pageId: 3, name: '添加学校', code: 'school_add', sort: 1, status: 1 },
-            { id: 9, pageId: 3, name: '编辑学校', code: 'school_edit', sort: 2, status: 1 },
-            { id: 10, pageId: 3, name: '删除学校', code: 'school_delete', sort: 3, status: 0 },
-            { id: 11, pageId: 3, name: '导出数据', code: 'school_export', sort: 4, status: 1 },
-            { id: 12, pageId: 4, name: '添加套餐', code: 'product_add', sort: 1, status: 1 },
-            { id: 13, pageId: 4, name: '编辑套餐', code: 'product_edit', sort: 2, status: 1 },
-            { id: 14, pageId: 4, name: '删除套餐', code: 'product_delete', sort: 3, status: 1 }
+            { id: 2, pageId: 1, name: 'AI生成教案', code: 'prepare_ai', sort: 2, status: 1 },
+            { id: 3, pageId: 1, name: '上传教案', code: 'prepare_upload', sort: 3, status: 1 },
+            { id: 4, pageId: 1, name: '添加课件', code: 'prepare_add_courseware', sort: 4, status: 1 },
+            { id: 5, pageId: 1, name: 'AI生成课件', code: 'prepare_ai_courseware', sort: 5, status: 1 },
+            { id: 6, pageId: 1, name: '上传课件', code: 'prepare_upload_courseware', sort: 6, status: 1 },
+            { id: 7, pageId: 1, name: '添加学案', code: 'prepare_add_study', sort: 7, status: 1 },
+            { id: 8, pageId: 1, name: 'AI生成学案', code: 'prepare_ai_study', sort: 8, status: 1 },
+            // 作业&批改
+            { id: 9, pageId: 2, name: '自主组卷', code: 'homework_self', sort: 1, status: 1 },
+            { id: 10, pageId: 2, name: '精细化组卷', code: 'homework_precise', sort: 2, status: 1 },
+            { id: 11, pageId: 2, name: '快速组卷', code: 'homework_quick', sort: 3, status: 1 },
+            { id: 12, pageId: 2, name: 'AI试卷库', code: 'homework_ai_bank', sort: 4, status: 1 },
+            { id: 13, pageId: 2, name: '智能AI组卷', code: 'homework_ai', sort: 5, status: 1 },
+            { id: 14, pageId: 2, name: '个人题库', code: 'homework_personal', sort: 6, status: 1 },
+            { id: 15, pageId: 2, name: '公共题库', code: 'homework_public', sort: 7, status: 1 },
+            // AI讲题
+            { id: 16, pageId: 3, name: '生成讲解', code: 'explain_generate', sort: 1, status: 1 },
+            // AI讲课
+            { id: 17, pageId: 4, name: '上传本地文件', code: 'lecture_upload', sort: 1, status: 1 },
+            { id: 18, pageId: 4, name: '选择在线课件', code: 'lecture_select', sort: 2, status: 1 },
+            { id: 19, pageId: 4, name: '生成视频概览', code: 'lecture_overview', sort: 3, status: 1 },
+            // AI绘本
+            { id: 20, pageId: 5, name: '生成大纲', code: 'picturebook_outline', sort: 1, status: 1 },
+            { id: 21, pageId: 5, name: '生成绘本', code: 'picturebook_generate', sort: 2, status: 1 },
+            // 拍题答疑
+            { id: 22, pageId: 6, name: '本地上传', code: 'qa_local', sort: 1, status: 1 },
+            { id: 23, pageId: 6, name: '手机上传', code: 'qa_mobile', sort: 2, status: 1 },
+            // 智能批改
+            { id: 24, pageId: 7, name: '创建智能批改', code: 'grading_create', sort: 1, status: 1 }
         ];
 
         let currentPageId = null;
