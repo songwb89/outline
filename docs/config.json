@@ -3,12 +3,19 @@
     { "name": "首页", "file": "首页.md" },
     { "name": "智能备课", "file": "智能备课.md" },
     { "name": "文件管理", "file": "文件管理.md" },
-    { "name": "智能授课", "file": "智能授课.md" }
+    { "name": "智能授课", "file": "智能授课.md" },
+    { "name": "套餐权限", "file": "套餐权限.md" }
   ],
   "pageMapping": {
     "prepare.html": "智能备课.md",
     "admin-courseware.html": "文件管理.md",
     "teach.html": "智能授课.md",
-    "home.html": "首页.md"
+    "home.html": "首页.md",
+    "academic.html": "套餐权限.md",
+    "admin-package.html": "套餐权限.md",
+    "admin-purchase.html": "套餐权限.md",
+    "admin-school.html": "套餐权限.md",
+    "admin-interface.html": "套餐权限.md",
+    "admin-permission.html": "套餐权限.md"  
   }
 }

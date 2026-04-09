@@ -123,7 +123,7 @@
         <!-- 点数相关菜单 -->
         <button type="button" id="nav-school-points" data-panel="panel-school-points" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer border-0 bg-transparent">
           <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>点数管理</span>
+          <span>套餐管理</span>
         </button>
       </nav>
     </aside>
@@ -274,11 +274,11 @@
       </div>
 
 
-      <!-- ===================== 面板5: 点数管理总览 ===================== -->
+      <!-- ===================== 面板5: 套餐管理总览 ===================== -->
       <div id="panel-school-points" class="academic-panel hidden">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
-            <h3 class="font-bold text-gray-800 text-base">点数管理</h3>
+            <h3 class="font-bold text-gray-800 text-base">套餐管理</h3>
             <button type="button" class="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5">
               <i data-lucide="download" class="w-4 h-4"></i>导出
             </button>
@@ -379,8 +379,7 @@
                   <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200 whitespace-nowrap">时间</th>
                   <th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">类型</th>
                   <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">点数</th>
-                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">余额</th>
-                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">教师/合同</th>
+                  <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">老师</th>
                   <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">来源/理由</th>
                 </tr>
               </thead>
@@ -398,13 +397,13 @@
         </div>
       </div>
 
-      <!-- ===================== 面板6: 点数明细子面板（已合并至点数管理）===================== -->
+      <!-- ===================== 面板6: 点数明细子面板（已合并至套餐管理）===================== -->
       <div id="panel-sp-records" class="academic-panel hidden" data-parent-panel="panel-school-points">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <!-- 返回导航 -->
           <div class="sub-nav-bar px-5 py-3 flex items-center gap-3">
             <button type="button" onclick="spBackToParent()" class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium">
-              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回点数管理
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回套餐管理
             </button>
             <span class="text-gray-300">|</span>
             <span class="text-sm text-gray-600 font-medium">点数明细</span>
@@ -445,7 +444,6 @@
                   <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200 whitespace-nowrap">时间</th>
                   <th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">类型</th>
                   <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">点数</th>
-                  <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">余额</th>
                   <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">教师/合同</th>
                   <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">来源/理由</th>
                 </tr>
@@ -469,7 +467,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div class="sub-nav-bar px-5 py-3 flex items-center gap-3">
             <button type="button" onclick="spBackToParent()" class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium">
-              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回点数管理
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>返回套餐管理
             </button>
             <span class="text-gray-300">|</span>
             <span class="text-sm text-gray-600 font-medium">消费记录</span>
@@ -1078,7 +1076,7 @@
     }
 
     // ============================================================
-    // 点数管理统计
+    // 套餐管理统计
     // ============================================================
     function loadSchoolPointsStats() {
       // 模拟统计数据（充值 = 购买 + 赠送）
@@ -1108,9 +1106,9 @@
 
     // 模拟数据
     const spRecMockData = [
-      { id: 'spr_001', type: 'recharge', points: 10000, balance: 12000, teacherId: null, contractNo: 'HT-2026-001', source: '合同#HT-2026-001', createdAt: '2026-01-15 09:30:00', remark: null },
-      { id: 'spr_002', type: 'deduct', points: -500, balance: 11500, teacherId: null, contractNo: null, source: '账户调整', createdAt: '2026-01-20 14:00:00', remark: '重复充值退款' },
-      { id: 'spr_003', type: 'recharge', points: 2000, balance: 12000, teacherId: null, contractNo: null, source: '促销活动赠送', createdAt: '2026-01-15 09:31:00', remark: '新用户首月赠送' },
+      { id: 'spr_001', type: 'recharge', points: 10000, balance: 12000, teacherId: null, contractNo: '-', source: '套餐充值', createdAt: '2026-01-15 09:30:00', remark: null },
+      { id: 'spr_002', type: 'deduct', points: -500, balance: 11500, teacherId: null, contractNo: null, source: '扣减的理由XXXX', createdAt: '2026-01-20 14:00:00', remark: null },
+      { id: 'spr_003', type: 'recharge', points: 2000, balance: 12000, teacherId: null, contractNo: null, source: '补充充值', createdAt: '2026-01-15 09:31:00', remark: null },
       { id: 'spr_004', type: 'consume', points: -50, balance: 11950, teacherId: 't001', contractNo: null, source: '生成绘本', resourceName: '丑小鸭的故事', createdAt: '2026-02-03 14:22:00', remark: null },
       { id: 'spr_005', type: 'consume', points: -30, balance: 11920, teacherId: 't002', contractNo: null, source: '生成课件', resourceName: 'Unit 3 课件', createdAt: '2026-02-10 10:15:00', remark: null },
       { id: 'spr_006', type: 'consume', points: -80, balance: 11840, teacherId: 't001', contractNo: null, source: '生成数字人', resourceName: '数学老师数字人', createdAt: '2026-02-18 16:45:00', remark: null },
@@ -1184,7 +1182,6 @@
             '<td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">' + r.createdAt.substring(0, 16) + '</td>' +
             '<td class="px-4 py-3 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
             '<td class="px-4 py-3 text-right font-semibold ' + (r.points >= 0 ? 'text-blue-600' : 'text-orange-600') + '">' + (r.points >= 0 ? '+' : '') + r.points + '</td>' +
-            '<td class="px-4 py-3 text-right text-gray-600">' + r.balance + '</td>' +
             '<td class="px-4 py-3 text-center text-gray-700">' + subInfo + '</td>' +
             '<td class="px-4 py-3 text-gray-600">' + sourceDisplay + (r.remark ? ' <span class="text-gray-400">(' + r.remark + ')</span>' : '') + '</td></tr>';
         }).join('');
@@ -1304,5 +1301,7 @@
       tmAccountsLoad();
     });
   </script>
+    <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+
 </body>
 </html>

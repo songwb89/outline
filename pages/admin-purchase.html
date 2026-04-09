@@ -328,7 +328,7 @@
                 }
 
                 const validPeriod = row.orderType === 'recharge' ? '--' : `${row.startDate} 至 ${row.endDate}`;
-                const pointsDisplay = row.orderType === 'recharge' ? `+${row.points}` : row.points.toString();
+                const pointsDisplay = row.points.toString();
 
                 return `<tr class="hover:bg-gray-50/80">
                     <td class="px-4 py-3 text-sm text-gray-600">${row.id}</td>
@@ -489,5 +489,7 @@
             lucide.createIcons();
         });
     </script>
+        <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+
 </body>
 </html>

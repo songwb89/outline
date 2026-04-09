@@ -102,10 +102,6 @@
                             <input type="text" id="filterAccount" placeholder="请输入账号" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-36">
                         </div>
                         <div class="flex items-center gap-2">
-                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校编码</label>
-                            <input type="text" id="filterSchoolCode" placeholder="请输入学校编码" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-36">
-                        </div>
-                        <div class="flex items-center gap-2">
                             <label class="text-xs font-medium text-gray-600 whitespace-nowrap">联系人</label>
                             <input type="text" id="filterContact" placeholder="请输入联系人" class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-36">
                         </div>
@@ -194,19 +190,14 @@
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">学校编码 <span class="text-red-500">*</span></label>
-                    <input type="text" id="sm-schoolcode" placeholder="如 SYXX" maxlength="6" oninput="onSchoolCodeInput(this.value)"
+                    <input type="text" id="sm-schoolcode" placeholder="4~8位字母或数字" maxlength="6" oninput="onSchoolCodeInput(this.value)"
                         class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm font-mono tracking-wider focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 uppercase">
-                    <p class="text-xs text-gray-400">建议使用学校首字母缩写，2~6位字母，如深实小 → SYXX，深外小 → SWXX</p>
                     <p id="sm-err-schoolcode" class="text-sm text-red-500 hidden"></p>
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">账号 <span class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-0">
-                        <span id="sm-account-prefix" class="inline-flex items-center px-3 py-2.5 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50 text-sm font-mono text-gray-500 min-w-[72px] justify-center select-none">-</span>
-                        <input type="text" id="sm-accountnum" placeholder="0001" maxlength="4"
-                            class="flex-1 px-3 py-2.5 border border-gray-300 rounded-r-lg text-sm font-mono tracking-wider focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    </div>
-                    <p class="text-xs text-gray-400 mt-0.5">格式：学校编码 + 4位数字，如 SYXX0001</p>
+                    <input type="text" id="sm-accountnum" placeholder="6~16位字母或数字" maxlength="16"
+                        class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
                     <p id="sm-err-accountnum" class="text-sm text-red-500 hidden"></p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -304,7 +295,6 @@
                             <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">序号</th>
                             <th class="px-4 py-2.5 text-center text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">类型</th>
                             <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th>
-                            <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">金额</th>
                             <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th>
                             <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">操作人</th>
                             <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">备注</th>
@@ -416,7 +406,6 @@
                     </select>
                     <p id="pm-purchase-err-package" class="text-sm text-red-500 hidden"></p>
                 </div>
-                <div id="pm-package-info" class="bg-blue-50 rounded-lg p-3 text-xs text-blue-700 hidden"></div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
                     <div class="flex items-center gap-2">
@@ -424,18 +413,6 @@
                         <input type="number" id="pm-purchase-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
                     </div>
                     <p id="pm-purchase-err-amount" class="text-sm text-red-500 hidden"></p>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
-                        <input type="date" id="pm-purchase-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="pm-purchase-err-start-date" class="text-sm text-red-500 hidden"></p>
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
-                        <input type="date" id="pm-purchase-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="pm-purchase-err-end-date" class="text-sm text-red-500 hidden"></p>
-                    </div>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
@@ -472,18 +449,6 @@
                     </div>
                     <p id="pm-renew-err-amount" class="text-sm text-red-500 hidden"></p>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
-                        <input type="date" id="pm-renew-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="pm-renew-err-start-date" class="text-sm text-red-500 hidden"></p>
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
-                        <input type="date" id="pm-renew-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="pm-renew-err-end-date" class="text-sm text-red-500 hidden"></p>
-                    </div>
-                </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
                 <button type="button" onclick="pmHideModal('pm-modal-renew')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
@@ -518,23 +483,12 @@
                     <p id="pm-trial-err-package" class="text-sm text-red-500 hidden"></p>
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">成交金额</label>
+                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-gray-500">¥</span>
-                        <input type="number" id="pm-trial-amount" placeholder="0.00" min="0" step="0.01" value="0" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                        <input type="number" id="pm-trial-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
                     </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">生效日期 <span class="text-red-500">*</span></label>
-                        <input type="date" id="pm-trial-start-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="pm-trial-err-start-date" class="text-sm text-red-500 hidden"></p>
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">到期日期 <span class="text-red-500">*</span></label>
-                        <input type="date" id="pm-trial-end-date" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="pm-trial-err-end-date" class="text-sm text-red-500 hidden"></p>
-                    </div>
+                    <p id="pm-trial-err-amount" class="text-sm text-red-500 hidden"></p>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
@@ -655,14 +609,12 @@
         function applyFilters() {
             const account = (document.getElementById('filterAccount').value || '').trim().toLowerCase();
             const username = (document.getElementById('filterUsername').value || '').trim().toLowerCase();
-            const schoolCode = (document.getElementById('filterSchoolCode').value || '').trim().toLowerCase();
             const contact = (document.getElementById('filterContact').value || '').trim().toLowerCase();
             const disabledVal = document.getElementById('filterDisabled').value;
             const packageStatus = document.getElementById('filterPackageStatus').value;
             filteredInstitutions = institutions.filter((row) => {
                 if (account && !row.account.toLowerCase().includes(account)) return false;
                 if (username && !row.username.toLowerCase().includes(username)) return false;
-                if (schoolCode && !row.schoolCode.toLowerCase().includes(schoolCode)) return false;
                 if (contact && !(row.contact || '').toLowerCase().includes(contact)) return false;
                 if (disabledVal === 'true' && !row.disabled) return false;
                 if (disabledVal === 'false' && row.disabled) return false;
@@ -823,13 +775,11 @@
             const el = document.getElementById('sm-err-password');
             if (el) el.textContent = '';
             const codeInput = document.getElementById('sm-schoolcode');
-            const numInput = document.getElementById('sm-accountnum');
             codeInput.readOnly = false;
-            numInput.readOnly = false;
             codeInput.classList.remove('!bg-gray-100', '!cursor-not-allowed', '!text-gray-500');
-            numInput.parentElement.classList.remove('!bg-gray-100', '!cursor-not-allowed');
-            numInput.classList.remove('!bg-gray-100', '!cursor-not-allowed', '!text-gray-500');
-            document.getElementById('sm-account-prefix').classList.remove('!bg-gray-200', '!text-gray-400');
+            const accountInput = document.getElementById('sm-accountnum');
+            accountInput.readOnly = false;
+            accountInput.classList.remove('!bg-gray-100', '!cursor-not-allowed', '!text-gray-500');
         }
 
         function createMainAdmin() {
@@ -837,7 +787,6 @@
             schoolModalId = null;
             schoolInitFormDefaults();
             document.getElementById('sm-title').textContent = '新建学校';
-            document.getElementById('sm-account-prefix').textContent = '-';
             document.getElementById('sm-accountnum').readOnly = false;
             document.getElementById('sm-schoolcode').readOnly = false;
             document.getElementById('sm-password-required').classList.remove('hidden');
@@ -853,17 +802,12 @@
             document.getElementById('sm-title').textContent = '编辑学校';
             document.getElementById('sm-schoolname').value = row.username || '';
             document.getElementById('sm-schoolcode').value = row.schoolCode || '';
-            document.getElementById('sm-account-prefix').textContent = row.schoolCode || '-';
-            const numPart = (row.account || '').replace(row.schoolCode || '', '');
-            document.getElementById('sm-accountnum').value = numPart;
+            document.getElementById('sm-accountnum').value = row.account || '';
+            document.getElementById('sm-accountnum').readOnly = true;
+            document.getElementById('sm-accountnum').classList.add('!bg-gray-100', '!cursor-not-allowed', '!text-gray-500');
             const codeInput = document.getElementById('sm-schoolcode');
-            const numInput = document.getElementById('sm-accountnum');
             codeInput.readOnly = true;
-            numInput.readOnly = true;
             codeInput.classList.add('!bg-gray-100', '!cursor-not-allowed', '!text-gray-500');
-            numInput.parentElement.classList.add('!bg-gray-100', '!cursor-not-allowed');
-            numInput.classList.add('!bg-gray-100', '!cursor-not-allowed', '!text-gray-500');
-            document.getElementById('sm-account-prefix').classList.add('!bg-gray-200', '!text-gray-400');
             document.getElementById('sm-contact').value = row.contact || '';
             document.getElementById('sm-phone').value = row.phone || '';
             document.getElementById('sm-disabled').value = row.disabled ? 'true' : 'false';
@@ -883,27 +827,26 @@
         }
 
         function onSchoolCodeInput(val) {
-            document.getElementById('sm-account-prefix').textContent = val.toUpperCase() || '-';
+            // 学校编码输入时自动转大写
         }
 
         function schoolValidate() {
             const fieldErrors = {};
             const name = document.getElementById('sm-schoolname').value.trim();
             const code = document.getElementById('sm-schoolcode').value.trim().toUpperCase();
-            const num = document.getElementById('sm-accountnum').value.trim();
+            const account = document.getElementById('sm-accountnum').value.trim();
             const password = document.getElementById('sm-password').value;
             if (!name) fieldErrors.schoolname = '学校名称不能为空';
             if (!code) fieldErrors.schoolcode = '学校编码不能为空';
             else if (!/^[A-Z]+$/.test(code)) fieldErrors.schoolcode = '学校编码仅支持字母';
-            if (!num) fieldErrors.accountnum = '账号不能为空';
-            else if (!/^\d{4}$/.test(num)) fieldErrors.accountnum = '账号数字部分必须为4位数字';
+            if (!account) fieldErrors.accountnum = '账号不能为空';
+            else if (!/^[a-zA-Z0-9]{8,16}$/.test(account)) fieldErrors.accountnum = '账号需为8~16位字母或数字';
             if (schoolModalMode === 'create' && !password) {
                 fieldErrors.password = '密码不能为空';
             }
-            if (code && num) {
-                const fullAccount = code + num;
-                const duplicate = institutions.find(i => i.account.toUpperCase() === fullAccount && i.id !== schoolModalId);
-                if (duplicate) fieldErrors.accountnum = '该账号已存在，请使用其他编号';
+            if (account) {
+                const duplicate = institutions.find(i => i.account.toLowerCase() === account.toLowerCase() && i.id !== schoolModalId);
+                if (duplicate) fieldErrors.accountnum = '该账号已存在，请使用其他账号';
             }
             return fieldErrors;
         }
@@ -928,7 +871,7 @@
             const data = {
                 schoolCode: document.getElementById('sm-schoolcode').value.trim().toUpperCase(),
                 username: document.getElementById('sm-schoolname').value.trim(),
-                account: document.getElementById('sm-schoolcode').value.trim().toUpperCase() + document.getElementById('sm-accountnum').value.trim(),
+                account: document.getElementById('sm-accountnum').value.trim(),
                 contact: document.getElementById('sm-contact').value.trim() || '-',
                 phone: document.getElementById('sm-phone').value.trim() || '-',
                 disabled: document.getElementById('sm-disabled').value === 'true',
@@ -993,17 +936,14 @@
             const packageSelect = document.getElementById('pm-purchase-package');
             packageSelect.innerHTML = '<option value="">请选择套餐</option>';
             pmPackagesData.forEach(p => {
-                packageSelect.innerHTML += '<option value="' + p.id + '">' + p.name + '（' + p.initialPoints + '点）</option>';
+                packageSelect.innerHTML += '<option value="' + p.id + '">' + p.name + '(' + p.durationDays + '天；' + p.initialPoints + '点)</option>';
             });
 
             document.getElementById('pm-purchase-title').textContent = '开通套餐';
             document.getElementById('pm-purchase-school').value = '';
             document.getElementById('pm-purchase-package').value = '';
-            document.getElementById('pm-package-info').classList.add('hidden');
             document.getElementById('pm-purchase-amount').value = '';
-            document.getElementById('pm-purchase-start-date').value = '';
-            document.getElementById('pm-purchase-end-date').value = '';
-            ['school','package','amount','start-date','end-date'].forEach(f => {
+            ['school','package','amount'].forEach(f => {
                 const el = document.getElementById('pm-purchase-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1012,20 +952,12 @@
 
         document.getElementById('pm-purchase-package')?.addEventListener('change', function() {
             const pkg = pmPackagesData.find(p => p.id === this.value);
-            const infoEl = document.getElementById('pm-package-info');
-            if (pkg) {
-                infoEl.innerHTML = '<strong>' + pkg.name + '</strong> - 初始点数：' + pkg.initialPoints + '点，有效期：' + pkg.durationDays + '天';
-                infoEl.classList.remove('hidden');
-                document.getElementById('pm-purchase-amount').value = pkg.price;
-            } else {
-                infoEl.classList.add('hidden');
-                document.getElementById('pm-purchase-amount').value = '';
-            }
+            document.getElementById('pm-purchase-amount').value = pkg ? pkg.price : '';
         });
 
         function pmValidatePurchase() {
             let valid = true;
-            ['school','package','amount','start-date','end-date'].forEach(f => {
+            ['school','package','amount'].forEach(f => {
                 const el = document.getElementById('pm-purchase-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1045,16 +977,6 @@
                 document.getElementById('pm-purchase-err-amount').classList.remove('hidden');
                 valid = false;
             }
-            if (!document.getElementById('pm-purchase-start-date').value) {
-                document.getElementById('pm-purchase-err-start-date').textContent = '请选择生效日期';
-                document.getElementById('pm-purchase-err-start-date').classList.remove('hidden');
-                valid = false;
-            }
-            if (!document.getElementById('pm-purchase-end-date').value) {
-                document.getElementById('pm-purchase-err-end-date').textContent = '请选择到期日期';
-                document.getElementById('pm-purchase-err-end-date').classList.remove('hidden');
-                valid = false;
-            }
             return valid;
         }
 
@@ -1066,13 +988,20 @@
             const school = institutions.find(s => s.id === schoolId);
             const pkg = pmPackagesData.find(p => p.id === packageId);
 
+            // 自动计算日期：生效日期为今天，到期日期为今天 + durationDays - 1 天
+            const today = new Date();
+            const endDate = new Date(today);
+            endDate.setDate(endDate.getDate() + pkg.durationDays - 1);
+            const startDate = formatDate(today);
+            const endDateStr = formatDate(endDate);
+
             // 保存套餐记录
             const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
             purchases.push({
                 id: 'pur' + Date.now(),
                 packageName: pkg.name,
-                startDate: document.getElementById('pm-purchase-start-date').value,
-                endDate: document.getElementById('pm-purchase-end-date').value,
+                startDate: startDate,
+                endDate: endDateStr,
                 status: 'active',
                 points: pkg.initialPoints
             });
@@ -1109,7 +1038,7 @@
                 amount: parseFloat(document.getElementById('pm-purchase-amount').value),
                 remark: '开通' + pkg.name + '套餐发放',
                 operator: '运营管理员(admin)',
-                time: document.getElementById('pm-purchase-start-date').value + ' 09:00'
+                time: startDate + ' 09:00'
             });
             localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
 
@@ -1131,31 +1060,25 @@
             const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
             const trials = JSON.parse(localStorage.getItem('trials_' + schoolId) || '[]');
 
-            // 获取当前套餐信息
-            const activePurchase = purchases.find(p => p.status === 'active');
-            const activeTrial = trials.find(t => t.status === 'active');
-            const currentPkg = activePurchase || activeTrial;
+            // 获取当前套餐信息（优先使用正式购买的套餐，不限状态）
+            const currentPkg = purchases.find(p => p.packageName && !p.packageName.includes('试用'))
+                              || purchases.find(p => p.status === 'active')
+                              || purchases[0]
+                              || trials.find(t => t.status === 'active')
+                              || trials[0];
 
             if (currentPkg) {
-                renewCurrentPackageName = currentPkg.packageName;
                 renewCurrentPoints = currentPkg.points || 0;
 
                 // 设置学校和套餐名称（只读）
                 document.getElementById('pm-renew-school').value = inst ? inst.username : '';
-                document.getElementById('pm-renew-package').value = renewCurrentPackageName;
+                document.getElementById('pm-renew-package').value = '年度旗舰版(365天；700点)';
 
                 // 设置默认值
                 document.getElementById('pm-renew-amount').value = '';
-                const today = new Date();
-                const oneYearLater = new Date(today);
-                oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
-                oneYearLater.setDate(oneYearLater.getDate() - 1); // 续费通常从明天开始
-
-                document.getElementById('pm-renew-start-date').value = formatDate(today);
-                document.getElementById('pm-renew-end-date').value = formatDate(oneYearLater);
 
                 // 清除错误提示
-                ['amount', 'start-date', 'end-date'].forEach(f => {
+                ['amount'].forEach(f => {
                     const el = document.getElementById('pm-renew-err-' + f);
                     if (el) el.classList.add('hidden');
                 });
@@ -1173,7 +1096,7 @@
 
         function pmValidateRenew() {
             let valid = true;
-            ['amount', 'start-date', 'end-date'].forEach(f => {
+            ['amount'].forEach(f => {
                 const el = document.getElementById('pm-renew-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1183,16 +1106,6 @@
                 document.getElementById('pm-renew-err-amount').classList.remove('hidden');
                 valid = false;
             }
-            if (!document.getElementById('pm-renew-start-date').value) {
-                document.getElementById('pm-renew-err-start-date').textContent = '请选择生效日期';
-                document.getElementById('pm-renew-err-start-date').classList.remove('hidden');
-                valid = false;
-            }
-            if (!document.getElementById('pm-renew-end-date').value) {
-                document.getElementById('pm-renew-err-end-date').textContent = '请选择到期日期';
-                document.getElementById('pm-renew-err-end-date').classList.remove('hidden');
-                valid = false;
-            }
             return valid;
         }
 
@@ -1200,17 +1113,29 @@
             if (!pmValidateRenew()) return;
 
             const schoolId = renewCurrentSchoolId;
-            const startDate = document.getElementById('pm-renew-start-date').value;
-            const endDate = document.getElementById('pm-renew-end-date').value;
             const amount = parseFloat(document.getElementById('pm-renew-amount').value);
 
-            // 保存新的续费套餐记录
+            // 自动计算日期：从套餐到期日的下一天开始，到一年后的同一天减1天
             const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+            const currentPkg = purchases.find(p => p.packageName && !p.packageName.includes('试用'))
+                              || purchases.find(p => p.status === 'active')
+                              || purchases[0];
+            const baseEndDate = currentPkg && currentPkg.endDate ? new Date(currentPkg.endDate) : new Date();
+            const renewStartDate = new Date(baseEndDate);
+            renewStartDate.setDate(renewStartDate.getDate() + 1); // 到期日的下一天
+            const renewEndDate = new Date(renewStartDate);
+            renewEndDate.setFullYear(renewEndDate.getFullYear() + 1);
+            renewEndDate.setDate(renewEndDate.getDate() - 1); // 一年后的同一天减1天
+
+            const startDateStr = formatDate(renewStartDate);
+            const endDateStr = formatDate(renewEndDate);
+
+            // 保存新的续费套餐记录
             purchases.push({
                 id: 'renew' + Date.now(),
                 packageName: renewCurrentPackageName,
-                startDate: startDate,
-                endDate: endDate,
+                startDate: startDateStr,
+                endDate: endDateStr,
                 status: 'active',
                 points: renewCurrentPoints,
                 amount: amount
@@ -1238,7 +1163,7 @@
                 amount: amount,
                 remark: renewCurrentPackageName + '续费发放',
                 operator: '运营管理员(admin)',
-                time: startDate + ' 09:00'
+                time: startDateStr + ' 09:00'
             });
             localStorage.setItem('schoolPointsRecords_' + schoolId, JSON.stringify(storedRecords));
 
@@ -1251,9 +1176,9 @@
         // 开通试用（来自 admin-trial.html）
         // ============================================================
         const pmTrialPackagesData = [
-            { id: 'tpkg1', name: '试用版-基础', type: 'trial', modules: [{ cat: 'marking', used: 2, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
-            { id: 'tpkg2', name: '试用版-高级', type: 'trial', modules: [{ cat: 'marking', used: 3, total: 3 }, { cat: 'report', used: 5, total: 5 }, { cat: 'analysis', used: 3, total: 3 }] },
-            { id: 'tpkg3', name: '试用版-专业', type: 'trial', modules: [{ cat: 'marking', used: 0, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
+            { id: 'tpkg1', name: '试用版-基础', type: 'trial', durationDays: 30, initialPoints: 0, modules: [{ cat: 'marking', used: 2, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
+            { id: 'tpkg2', name: '试用版-高级', type: 'trial', durationDays: 30, initialPoints: 0, modules: [{ cat: 'marking', used: 3, total: 3 }, { cat: 'report', used: 5, total: 5 }, { cat: 'analysis', used: 3, total: 3 }] },
+            { id: 'tpkg3', name: '试用版-专业', type: 'trial', durationDays: 30, initialPoints: 0, modules: [{ cat: 'marking', used: 0, total: 3 }, { cat: 'report', used: 0, total: 5 }, { cat: 'analysis', used: 0, total: 3 }] },
         ];
 
         function openTrialModal() {
@@ -1266,15 +1191,13 @@
             const packageSelect = document.getElementById('pm-trial-package');
             packageSelect.innerHTML = '<option value="">请选择试用套餐</option>';
             pmTrialPackagesData.forEach(p => {
-                packageSelect.innerHTML += '<option value="' + p.id + '">' + p.name + '</option>';
+                packageSelect.innerHTML += '<option value="' + p.id + '">' + p.name + '(' + p.durationDays + '天；' + p.initialPoints + '点)</option>';
             });
 
             document.getElementById('pm-trial-school').value = '';
             document.getElementById('pm-trial-package').value = '';
-            document.getElementById('pm-trial-amount').value = '0';
-            document.getElementById('pm-trial-start-date').value = '';
-            document.getElementById('pm-trial-end-date').value = '';
-            ['school','package','start-date','end-date'].forEach(f => {
+            document.getElementById('pm-trial-amount').value = '';
+            ['school','package','amount'].forEach(f => {
                 const el = document.getElementById('pm-trial-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1283,7 +1206,7 @@
 
         function pmValidateTrial() {
             let valid = true;
-            ['school','package','start-date','end-date'].forEach(f => {
+            ['school','package','amount'].forEach(f => {
                 const el = document.getElementById('pm-trial-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1298,14 +1221,9 @@
                 document.getElementById('pm-trial-err-package').classList.remove('hidden');
                 valid = false;
             }
-            if (!document.getElementById('pm-trial-start-date').value) {
-                document.getElementById('pm-trial-err-start-date').textContent = '请选择生效日期';
-                document.getElementById('pm-trial-err-start-date').classList.remove('hidden');
-                valid = false;
-            }
-            if (!document.getElementById('pm-trial-end-date').value) {
-                document.getElementById('pm-trial-err-end-date').textContent = '请选择到期日期';
-                document.getElementById('pm-trial-err-end-date').classList.remove('hidden');
+            if (!document.getElementById('pm-trial-amount').value || parseFloat(document.getElementById('pm-trial-amount').value) < 0) {
+                document.getElementById('pm-trial-err-amount').textContent = '请输入有效的金额';
+                document.getElementById('pm-trial-err-amount').classList.remove('hidden');
                 valid = false;
             }
             return valid;
@@ -1318,10 +1236,14 @@
             const packageId = document.getElementById('pm-trial-package').value;
             const school = institutions.find(s => s.id === schoolId);
             const pkg = pmTrialPackagesData.find(p => p.id === packageId);
+            const amount = parseFloat(document.getElementById('pm-trial-amount').value);
 
-            const startDate = document.getElementById('pm-trial-start-date').value;
-            const endDate = document.getElementById('pm-trial-end-date').value;
-            const amount = parseFloat(document.getElementById('pm-trial-amount').value) || 0;
+            // 自动计算日期：生效日期为今天，到期日期为30天后（试用默认30天）
+            const today = new Date();
+            const endDate = new Date(today);
+            endDate.setDate(endDate.getDate() + 30 - 1); // 30天试用
+            const startDateStr = formatDate(today);
+            const endDateStr = formatDate(endDate);
 
             // 保存试用记录
             const trials = JSON.parse(localStorage.getItem('trials_' + schoolId) || '[]');
@@ -1329,8 +1251,8 @@
                 id: 'trial' + Date.now(),
                 packageName: pkg.name,
                 modules: pkg.modules,
-                startDate: startDate,
-                endDate: endDate,
+                startDate: startDateStr,
+                endDate: endDateStr,
                 amount: amount,
                 status: 'active'
             });
@@ -1401,8 +1323,8 @@
             });
 
             sdmAllRecords.push(
-                { id: 'rc1', schoolId: schoolId, type: 'recharge', purchaseName: '基础版 (2026.1.1)', points: 5000, amount: 5000, time: '2026-03-01 09:00:00', remark: '套餐充值:￥5000', operator: '运营李四(lisi)', createdAt: '2026-03-01 09:00:00' },
-                { id: 'rc2', schoolId: schoolId, type: 'recharge', purchaseName: '进阶版 (2026.2.15)', points: 3000, amount: 3000, time: '2026-03-15 14:30:00', remark: '补充充值:￥3000', operator: '运营王五(wangwu)', createdAt: '2026-03-15 14:30:00' }
+                { id: 'rc1', schoolId: schoolId, type: 'recharge', purchaseName: '基础版 (2026.1.1)', points: 5000, amount: 5000, time: '2026-03-01 09:00:00', remark: '套餐充值', operator: '运营李四(lisi)', createdAt: '2026-03-01 09:00:00' },
+                { id: 'rc2', schoolId: schoolId, type: 'recharge', purchaseName: '进阶版 (2026.2.15)', points: 3000, amount: 3000, time: '2026-03-15 14:30:00', remark: '补充充值', operator: '运营王五(wangwu)', createdAt: '2026-03-15 14:30:00' }
             );
             sdmAllRecords.push(
                 { id: 'dc1', schoolId: schoolId, type: 'deduct', purchaseName: '基础版 (2026.1.1)', points: 100, amount: 0, time: '2026-03-10 09:00:00', remark: '重复充值退款', operator: '运营张三(zhangsan)', createdAt: '2026-03-10 09:00:00' }
@@ -1636,5 +1558,7 @@
             pmInitIcons();
         });
     </script>
+        <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+
 </body>
 </html>
