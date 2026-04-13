@@ -1187,13 +1187,13 @@
     function skipClassSelect() {
       selectedClassId = null;
       closeClassSelectModal();
-      window.open('present.html', '_blank');
+      window.location.href = 'present.html';
     }
 
     function enterClass() {
       closeClassSelectModal();
       const url = selectedClassId ? `present.html?classId=${selectedClassId}` : 'present.html';
-      window.open(url, '_blank');
+      window.location.href = url;
     }
 
     function closeClassSelectModal() {

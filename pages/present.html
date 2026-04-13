@@ -38,6 +38,11 @@
   </style>
 </head>
 <body class="bg-black text-white overflow-hidden" onload="showToast()">
+  <!-- 左上角退出按钮 -->
+  <button onclick="window.location.href='teach.html'" class="fixed top-4 left-4 z-50 p-2.5 hover:bg-white/10 backdrop-blur-sm rounded-full transition-all hover:scale-110" title="退出授课">
+    <i data-lucide="power" class="w-5 h-5 text-white"></i>
+  </button>
+
   <!-- 自定义提示弹窗 -->
   <div id="custom-alert" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center">
     <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-80 p-6 transform transition-all scale-100 text-center">
