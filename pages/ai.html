@@ -29,6 +29,65 @@
     .view-hidden {
       display: none !important;
     }
+    /* 额度扣减动画 */
+    .points-display {
+      position: relative;
+      cursor: pointer;
+    }
+    .points-display:hover .points-value {
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+    .points-animation-container {
+      position: absolute;
+      top: 0;
+      right: 0.75rem;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 10;
+    }
+    .points-minus {
+      position: absolute;
+      left: calc(50% - 5px);
+      transform: translateX(-50%);
+      font-size: 1rem;
+      font-weight: bold;
+      color: #ef4444;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      animation: pointsMinusAnim 1.5s ease-out forwards;
+      white-space: nowrap;
+    }
+    @keyframes pointsMinusAnim {
+      0% {
+        top: calc(30% + 20px);
+        opacity: 1;
+        transform: translateX(-50%) scale(0.5);
+        color: #dc2626;
+      }
+      20% {
+        transform: translateX(-50%) scale(1.3);
+        color: #ef4444;
+      }
+      50% {
+        top: calc(50% + 20px);
+        transform: translateX(-50%) scale(1.1);
+        color: #dc2626;
+      }
+      100% {
+        top: calc(90% + 20px);
+        opacity: 0;
+        transform: translateX(-50%) scale(0.8);
+        color: #dc2626;
+      }
+    }
+    .points-value-anim {
+      animation: pointsValueChange 0.4s ease-out;
+    }
+    @keyframes pointsValueChange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); color: #fca5a5; }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
@@ -60,11 +119,19 @@
 
       <!-- 右侧图标 + 用户 -->
       <div class="flex items-center gap-4">
+        <!-- 扣减动画测试按钮（示例按钮，样式夸张） -->
+        <button id="test-points-minus-btn" class="px-3 py-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-xs font-bold rounded-full border-2 border-dashed border-gray-300 shadow-lg transform rotate-2 hover:scale-110 hover:rotate-[-2deg] transition-all cursor-pointer">
+          扣减动画
+        </button>
+
         <!-- 点数显示 -->
-        <div class="flex items-center gap-2 bg-white/15 px-3 py-1.5 rounded-lg">
-          <i data-lucide="coins" class="w-4 h-4"></i>
-          <span class="text-sm font-medium">可用额度：</span>
-          <span id="header-points" class="text-sm font-bold">--</span>
+        <div class="flex flex-col items-end gap-0.5 points-display" id="points-container">
+          <div class="flex items-center gap-2 bg-white/15 px-3 py-1.5 rounded-lg">
+            <i data-lucide="coins" class="w-4 h-4"></i>
+            <span class="text-sm font-medium">可用额度：</span>
+            <span id="header-points" class="text-sm font-bold min-w-[3rem] text-right">--</span>
+          </div>
+          <div class="points-animation-container" id="points-animation-container"></div>
         </div>
 
         <!-- 任务 -->
@@ -1301,12 +1368,59 @@
       purchases.forEach(function(p) {
         total += (p.points || 0) - (p.consumed || 0);
       });
+      // 如果没有数据，设置默认初始额度用于演示
+      if (total === 0 && purchases.length === 0) {
+        total = 100;
+        localStorage.setItem('purchases_' + schoolId, JSON.stringify([{ points: 100, consumed: 0 }]));
+      }
       var el = document.getElementById('header-points');
-      if (el) el.textContent = total > 0 ? total.toLocaleString() : '0';
+      if (el) el.textContent = total.toLocaleString();
     })();
 
     // 初始化 Lucide 图标
     lucide.createIcons();
+
+    // 额度扣减动画
+    (function initPointsAnimation() {
+      var container = document.getElementById('points-container');
+      var pointsEl = document.getElementById('header-points');
+      var animContainer = document.getElementById('points-animation-container');
+      if (!container || !pointsEl || !animContainer) return;
+
+      // 模拟扣减动画
+      function triggerDeductAnim(points) {
+        // 创建减的提示
+        var minusEl = document.createElement('span');
+        minusEl.className = 'points-minus';
+        minusEl.textContent = '-' + points;
+        animContainer.appendChild(minusEl);
+
+        // 添加数字动画
+        pointsEl.classList.add('points-value-anim');
+
+        // 更新额度数值
+        var currentVal = parseInt(pointsEl.textContent.replace(/,/g, '')) || 0;
+        pointsEl.textContent = Math.max(0, currentVal - points).toLocaleString();
+
+        // 动画结束后清理
+        setTimeout(function() {
+          minusEl.remove();
+          pointsEl.classList.remove('points-value-anim');
+        }, 1500);
+      }
+
+      // 测试按钮触发扣减动画（仅用于演示）
+      var testBtn = document.getElementById('test-points-minus-btn');
+      if (testBtn) {
+        testBtn.addEventListener('click', function() {
+          var currentVal = parseInt(pointsEl.textContent.replace(/,/g, '')) || 0;
+          if (currentVal > 0) {
+            var deductPoints = Math.floor(Math.random() * 3) + 1;
+            triggerDeductAnim(deductPoints);
+          }
+        });
+      }
+    })();
   </script>
 </body>
 </html>
