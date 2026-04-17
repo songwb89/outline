@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能教学 - 教务管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/points-manage.js"></script>
+  <style>
+    .menu-item {
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      color: #2563EB;
+    }
+    .menu-item.active {
+      background-color: #DBEAFE;
+      color: #2563EB;
+      border-left: 3px solid #2563EB;
+    }
+    .menu-item.active .menu-icon {
+      color: #2563EB;
+    }
+    .class-table th {
+      font-weight: 600;
+      color: #374151;
+      background: #f3f4f6;
+    }
+    .class-table td {
+      vertical-align: middle;
+    }
+    .class-table tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .class-table tbody tr:hover {
+      background-color: #f3f4f6;
+    }
+    .pm-modal-overlay {
+      background: rgba(0,0,0,0.45);
+    }
+    .pm-modal-content {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+
+  <!-- 顶部导航栏 -->
+  <div id="navbar-container"></div>
+
+  <!-- 主内容区域：左侧菜单 + 右侧内容 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 左侧菜单（通用） -->
+    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
+      <div class="p-4 border-b border-gray-100">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-600"></i>
+          教务管理
+        </h2>
+      </div>
+      <nav class="py-2">
+        <a href="academic-class.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="school" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>班级管理</span>
+        </a>
+        <a href="academic-teacher.html" class="menu-item active w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="user-cog" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>老师管理</span>
+        </a>
+        <a href="academic-package.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>套餐管理</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧内容 -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <!-- ===================== 老师管理面板 ===================== -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
+          <h3 class="font-bold text-gray-800 text-base">老师管理</h3>
+        </div>
+
+        <!-- 账号列表 -->
+        <div id="tm-panel-accounts">
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4 bg-gray-50/90">
+            <div class="flex items-center gap-3 shrink-0">
+              <button type="button" class="px-4 py-2 border border-blue-600 text-blue-600 text-sm font-medium rounded-lg bg-white hover:bg-blue-50 transition-colors">导出账号</button>
+              <button type="button" onclick="openAddAccount()" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i>增加账号</button>
+            </div>
+          </div>
+          <!-- 筛选条件 -->
+          <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 shrink-0">姓名：</label>
+                <input type="text" id="tm-filter-name" placeholder="输入姓名" oninput="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 w-28 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 shrink-0">任教科目：</label>
+                <select id="tm-filter-subject" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                  <option value="语文">语文</option>
+                  <option value="数学">数学</option>
+                  <option value="英语">英语</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 shrink-0">带教班级：</label>
+                <select id="tm-filter-class" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 shrink-0">账号状态：</label>
+                <select id="tm-filter-account-status" onchange="tmAccApplyFilters()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                  <option value="normal">正常</option>
+                  <option value="disabled">已禁用</option>
+                </select>
+              </div>
+              <button type="button" onclick="tmAccClearFilters()" class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">清除筛选</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="class-table w-full text-sm text-gray-800 border-collapse">
+              <thead><tr class="border-b border-gray-200"><th class="px-4 py-3 text-center w-16 border-b border-gray-200 whitespace-nowrap">序号</th><th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">登录账号</th><th class="px-4 py-3 text-left min-w-[5rem] border-b border-gray-200">姓名</th><th class="px-4 py-3 text-center min-w-[8rem] border-b border-gray-200 whitespace-nowrap">手机号</th><th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">任教科目</th><th class="px-4 py-3 text-left min-w-[9rem] border-b border-gray-200">带教班级</th><th class="px-4 py-3 text-right min-w-[5rem] border-b border-gray-200 whitespace-nowrap">已消耗</th><th class="px-4 py-3 text-right min-w-[6rem] border-b border-gray-200 whitespace-nowrap">可用额度</th><th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">账号状态</th><th class="px-4 py-3 text-center min-w-[11rem] border-b border-gray-200 whitespace-nowrap">操作</th></tr></thead>
+              <tbody id="tm-accounts-body"></tbody>
+            </table>
+          </div>
+          <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-sm text-gray-600"><span>共 <span id="tm-accounts-count" class="font-medium">0</span> 条</span></div>
+            <div class="flex items-center gap-1">
+              <button type="button" id="tm-acc-prev" onclick="tmAccGoPage(tmAccCurPage - 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+              <div id="tm-acc-pages" class="flex items-center gap-1"></div>
+              <button type="button" id="tm-acc-next" onclick="tmAccGoPage(tmAccCurPage + 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 弹窗: 增加账号 -->
+  <div id="modal-add-account" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+    <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-add-account')"></div>
+    <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-semibold text-gray-800" id="ea-modal-title">增加账号</h3>
+        <button type="button" onclick="pmHideModal('modal-add-account')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">姓名 <span class="text-red-500">*</span></label>
+          <input type="text" id="ea-name" placeholder="请输入老师姓名" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">手机号</label>
+          <input type="text" id="ea-phone" placeholder="选填，请输入手机号" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">主要任课科目 <span class="text-red-500">*</span></label>
+          <select id="ea-main-subject" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            <option value="">请选择</option>
+            <option value="语文">语文</option>
+            <option value="数学">数学</option>
+            <option value="英语">英语</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">兼任科目</label>
+          <select id="ea-other-subject" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            <option value="">无</option>
+            <option value="语文">语文</option>
+            <option value="数学">数学</option>
+            <option value="英语">英语</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">可用额度</label>
+          <div class="flex items-center gap-2">
+            <input type="number" id="ea-max-points" value="100" min="0" class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+            <span class="text-sm text-gray-500">点</span>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3">
+        <button type="button" onclick="pmHideModal('modal-add-account')" class="px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">取消</button>
+        <button type="button" onclick="confirmAccountChange()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗: 设置消耗上限 -->
+  <div id="modal-set-limit" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+    <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-set-limit')"></div>
+    <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-semibold text-gray-800">设置消耗上限</h3>
+        <button type="button" onclick="pmHideModal('modal-set-limit')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="text-gray-500">老师</span>
+            <span class="font-medium text-gray-800" id="slm-teacher-name">--</span>
+          </div>
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="text-gray-500">已消耗</span>
+            <span class="font-medium text-orange-600" id="slm-consumed">--</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-500">当前上限</span>
+            <span class="font-medium text-gray-600" id="slm-current-limit">--</span>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">新的消耗上限 <span class="text-gray-400 font-normal">(留空表示无限制)</span></label>
+          <input type="number" id="slm-new-limit" min="0" placeholder="请输入新的消耗上限" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+        </div>
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">操作理由 <span class="text-red-500">*</span></label>
+          <textarea id="slm-reason" rows="3" placeholder="请输入操作理由，必填" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-3">
+          <button type="button" onclick="pmHideModal('modal-set-limit')" class="px-5 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">取消</button>
+          <button type="button" onclick="confirmSetLimit()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">确认保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗: 老师点数明细 -->
+  <div id="modal-teacher-detail" class="pm-modal hidden fixed inset-0 z-[9998] flex items-center justify-center p-4">
+    <div class="pm-modal-overlay absolute inset-0" onclick="pmHideModal('modal-teacher-detail')"></div>
+    <div class="pm-modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden" style="max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <h3 class="font-semibold text-gray-800">点数明细</h3>
+        <button type="button" onclick="pmHideModal('modal-teacher-detail')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="text-center">
+            <div class="text-xs text-gray-500 mb-1">已消耗</div>
+            <div class="text-lg font-bold text-orange-600" id="tdm-consumed">--</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xs text-gray-500 mb-1">可用额度</div>
+            <div class="text-lg font-bold text-emerald-600" id="tdm-remaining">--</div>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-3 border-b border-gray-100 flex flex-wrap items-end gap-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-600 whitespace-nowrap">日期</label>
+          <input type="date" id="tdm-filter-from" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-blue-500 outline-none" />
+          <span class="text-gray-400 text-xs">~</span>
+          <input type="date" id="tdm-filter-to" class="px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 focus:ring-1 focus:ring-blue-500 outline-none" />
+        </div>
+        <button type="button" onclick="tdmApplyFilters()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">查询</button>
+      </div>
+      <div class="flex-1 overflow-y-auto">
+        <table class="class-table w-full text-sm text-gray-800 border-collapse">
+          <thead class="sticky top-0 z-10 bg-gray-50">
+            <tr><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">时间</th><th class="px-4 py-2.5 text-right text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">点数</th><th class="px-4 py-2.5 text-left text-xs font-medium text-gray-500 border-b border-gray-200 whitespace-nowrap">来源</th></tr>
+          </thead>
+          <tbody id="tdm-table-body"></tbody>
+        </table>
+      </div>
+      <div class="px-6 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="text-xs text-gray-600">共 <span id="tdm-count" class="font-medium">0</span> 条</div>
+        <div class="flex items-center gap-1">
+          <button type="button" id="tdm-prev" onclick="tdmGoPage(tdmCurPage - 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-3 h-3"></i></button>
+          <div id="tdm-pages" class="flex items-center gap-0.5"></div>
+          <button type="button" id="tdm-next" onclick="tdmGoPage(tdmCurPage + 1)" class="w-7 h-7 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white text-xs disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-3 h-3"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 老师管理 - 账号列表
+    // ============================================================
+    let tmAccAll = [];
+    let tmAccFiltered = [];
+    let tmAccCurPage = 1;
+    const tmAccPageSize = 10;
+    let eaCurrentTeacherId = null;
+
+    function tmAccApplyFilters() {
+      const nameKw = (document.getElementById('tm-filter-name').value || '').trim().toLowerCase();
+      const subjVal = document.getElementById('tm-filter-subject').value;
+      const classVal = document.getElementById('tm-filter-class').value;
+      const accStatus = document.getElementById('tm-filter-account-status').value;
+      tmAccFiltered = tmAccAll.filter(t => {
+        if (nameKw && !t.teacherName.toLowerCase().includes(nameKw)) return false;
+        if (subjVal && (!t.subjects || !t.subjects.some(s => s.name === subjVal))) return false;
+        if (classVal && (!t.classes || !t.classes.some(c => c.name === classVal))) return false;
+        if (accStatus) {
+          if (accStatus === 'disabled' && !t.disabled) return false;
+          if (accStatus === 'normal' && t.disabled) return false;
+        }
+        return true;
+      });
+      tmAccCurPage = 1;
+      tmAccountsRender();
+    }
+
+    function tmAccClearFilters() {
+      document.getElementById('tm-filter-name').value = '';
+      document.getElementById('tm-filter-subject').value = '';
+      document.getElementById('tm-filter-class').value = '';
+      document.getElementById('tm-filter-account-status').value = '';
+      tmAccApplyFilters();
+    }
+
+    function updateClassFilterOptions() {
+      const classSet = new Set();
+      tmAccAll.forEach(t => {
+        if (t.classes) t.classes.forEach(c => classSet.add(c.name));
+      });
+      const sel = document.getElementById('tm-filter-class');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">全部</option>';
+      [...classSet].sort().forEach(n => {
+        const o = document.createElement('option');
+        o.value = n; o.textContent = n;
+        sel.appendChild(o);
+      });
+      sel.value = cur;
+    }
+
+    function tmAccountsLoad() {
+      tmAccAll = getTeacherPoints();
+      tmAccFiltered = [...tmAccAll];
+      tmAccCurPage = 1;
+      updateClassFilterOptions();
+      tmAccountsRender();
+    }
+
+    function tmAccountsRender() {
+      const start = (tmAccCurPage - 1) * tmAccPageSize;
+      const pageData = tmAccFiltered.slice(start, start + tmAccPageSize);
+      const totalPages = Math.max(1, Math.ceil(tmAccFiltered.length / tmAccPageSize));
+      const tbody = document.getElementById('tm-accounts-body');
+      document.getElementById('tm-accounts-count').textContent = tmAccFiltered.length;
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-12 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.map((t, i) => {
+          const available = Math.max(0, t.maxPoints - t.consumed);
+          const no = start + i + 1;
+          const phoneHtml = t.phone ? '<span class="font-mono text-xs">' + t.phone + '</span>' : '<span class="text-gray-400">未设置</span>';
+          const subjectsHtml = t.subjects && t.subjects.length > 0
+            ? t.subjects.map(s => s.name + (s.isMain ? '<span class="text-gray-500">(主)</span>' : '')).join('；')
+            : '<span class="text-gray-400">未设置</span>';
+          const classesHtml = t.classes && t.classes.length > 0
+            ? t.classes.map(c => '<span class="inline-block px-2 py-0.5 text-xs text-gray-700 bg-gray-100 rounded border border-gray-200">' + c.name + (c.isHead ? ' <span class="text-gray-500">(班主任)</span>' : '') + '</span>').join('')
+            : '<span class="text-gray-400">未分配</span>';
+          const accDisabled = t.disabled;
+          const accStatusHtml = accDisabled
+            ? '<span class="px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-600">已禁用</span>'
+            : '<span class="px-2 py-0.5 text-xs font-medium rounded bg-emerald-100 text-emerald-600">正常</span>';
+          const toggleBtnHtml = accDisabled
+            ? '<button type="button" onclick="toggleTeacherDisabled(\'' + t.teacherId + '\')" class="text-emerald-600 hover:text-emerald-800 font-medium text-sm">启用</button>'
+            : '<button type="button" onclick="toggleTeacherDisabled(\'' + t.teacherId + '\')" class="text-red-600 hover:text-red-800 font-medium text-sm">禁用</button>';
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-3 text-center text-gray-500">' + no + '</td>' +
+            '<td class="px-4 py-3 text-center font-mono text-gray-600 text-xs">' + t.account + '</td>' +
+            '<td class="px-4 py-3 font-medium text-gray-800">' + t.teacherName + '</td>' +
+            '<td class="px-4 py-3 text-center">' + phoneHtml + '</td>' +
+            '<td class="px-4 py-3">' + subjectsHtml + '</td>' +
+            '<td class="px-4 py-3">' + classesHtml + '</td>' +
+            '<td class="px-4 py-3 text-right font-medium text-orange-600">' + t.consumed + '</td>' +
+            '<td class="px-4 py-3 text-right font-medium text-emerald-600">' + available + '</td>' +
+            '<td class="px-4 py-3 text-center">' + accStatusHtml + '</td>' +
+            '<td class="px-4 py-3 text-center">' +
+              '<button type="button" onclick="openTeacherDetail(\'' + t.teacherId + '\')" class="text-blue-600 hover:text-blue-800 font-medium text-sm mr-2">明细</button>' +
+              '<button type="button" onclick="openEditAccount(\'' + t.teacherId + '\')" class="text-blue-600 hover:text-blue-800 font-medium text-sm mr-2">编辑</button>' +
+              toggleBtnHtml +
+            '</td></tr>';
+        }).join('');
+      }
+      document.getElementById('tm-acc-prev').disabled = tmAccCurPage <= 1;
+      document.getElementById('tm-acc-next').disabled = tmAccCurPage >= totalPages;
+      const pagesEl = document.getElementById('tm-acc-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === tmAccCurPage
+          ? 'min-w-[32px] px-2 py-1 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[32px] px-2 py-1 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => { tmAccCurPage = i; tmAccountsRender(); };
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function tmAccGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(tmAccFiltered.length / tmAccPageSize));
+      if (page < 1 || page > totalPages) return;
+      tmAccCurPage = page;
+      tmAccountsRender();
+    }
+
+    function openAddAccount() {
+      document.getElementById('ea-modal-title').textContent = '增加账号';
+      document.getElementById('ea-name').value = '';
+      document.getElementById('ea-phone').value = '';
+      document.getElementById('ea-main-subject').value = '';
+      document.getElementById('ea-other-subject').value = '';
+      document.getElementById('ea-max-points').value = '100';
+      document.getElementById('ea-name').removeAttribute('disabled');
+      document.getElementById('ea-main-subject').removeAttribute('disabled');
+      pmShowModal('modal-add-account');
+      pmInitIcons();
+    }
+
+    function openEditAccount(teacherId) {
+      const teachers = getTeacherPoints();
+      const t = teachers.find(x => x.teacherId === teacherId);
+      if (!t) return;
+      document.getElementById('ea-modal-title').textContent = '编辑账号';
+      document.getElementById('ea-name').value = t.teacherName;
+      document.getElementById('ea-name').removeAttribute('disabled');
+      document.getElementById('ea-phone').value = t.phone || '';
+      const mainSubj = t.subjects ? t.subjects.find(s => s.isMain) : null;
+      const otherSubj = t.subjects ? t.subjects.find(s => !s.isMain) : null;
+      document.getElementById('ea-main-subject').value = mainSubj ? mainSubj.name : '';
+      document.getElementById('ea-main-subject').removeAttribute('disabled');
+      document.getElementById('ea-other-subject').value = otherSubj ? otherSubj.name : '';
+      document.getElementById('ea-max-points').value = t.maxPoints;
+      eaCurrentTeacherId = teacherId;
+      pmShowModal('modal-add-account');
+      pmInitIcons();
+    }
+
+    function confirmAccountChange() {
+      const name = (document.getElementById('ea-name').value || '').trim();
+      const mainSubject = document.getElementById('ea-main-subject').value;
+      if (!name) { pmToast('请输入姓名', 'error'); return; }
+      if (!mainSubject) { pmToast('请选择主要任课科目', 'error'); return; }
+      const phone = (document.getElementById('ea-phone').value || '').trim();
+      const otherSubject = document.getElementById('ea-other-subject').value;
+      const maxPointsRaw = document.getElementById('ea-max-points').value;
+      const maxPoints = maxPointsRaw === '' ? 0 : parseInt(maxPointsRaw);
+      const subjects = [{ name: mainSubject, isMain: true }];
+      if (otherSubject && otherSubject !== mainSubject) {
+        subjects.push({ name: otherSubject, isMain: false });
+      }
+      const teachers = getTeacherPoints();
+      const isNew = !eaCurrentTeacherId;
+      if (isNew) {
+        const newId = 't' + String(teachers.length + 1).padStart(3, '0');
+        const newAccount = String(30000000 + teachers.length + 1);
+        const newTeacher = {
+          teacherId: newId, teacherName: name, account: newAccount, consumed: 0,
+          maxPoints: maxPoints, phone: phone, subjects: subjects, classes: [], lastLogin: ''
+        };
+        teachers.push(newTeacher);
+        localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+        pmHideModal('modal-add-account');
+        pmToast('添加成功，账号：' + newAccount);
+      } else {
+        const idx = teachers.findIndex(x => x.teacherId === eaCurrentTeacherId);
+        if (idx !== -1) {
+          teachers[idx].teacherName = name;
+          teachers[idx].phone = phone;
+          teachers[idx].maxPoints = maxPoints;
+          teachers[idx].subjects = subjects;
+          localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+          pmHideModal('modal-add-account');
+          pmToast('保存成功');
+        }
+      }
+      tmAccountsRender();
+    }
+
+    function toggleTeacherDisabled(teacherId) {
+      const teachers = getTeacherPoints();
+      const idx = teachers.findIndex(x => x.teacherId === teacherId);
+      if (idx !== -1) {
+        teachers[idx].disabled = !teachers[idx].disabled;
+        localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+        tmAccAll = teachers;
+        tmAccApplyFilters();
+        pmToast(teachers[idx].disabled ? '已禁用' : '已启用');
+      }
+    }
+
+    function openSetLimit(teacherId) {
+      const teachers = getTeacherPoints();
+      const t = teachers.find(x => x.teacherId === teacherId);
+      if (!t) return;
+      tpCurrentTeacherId = teacherId;
+      document.getElementById('slm-teacher-name').textContent = t.teacherName;
+      document.getElementById('slm-consumed').textContent = t.consumed + ' 点';
+      document.getElementById('slm-current-limit').textContent = t.maxPoints === null ? '无限制' : t.maxPoints + ' 点';
+      document.getElementById('slm-new-limit').value = t.maxPoints === null ? '' : t.maxPoints;
+      document.getElementById('slm-reason').value = '';
+      pmShowModal('modal-set-limit');
+      pmInitIcons();
+    }
+
+    function confirmSetLimit() {
+      const reason = (document.getElementById('slm-reason').value || '').trim();
+      if (!reason) { pmToast('请填写操作理由', 'error'); return; }
+      const newLimit = document.getElementById('slm-new-limit').value;
+      const teachers = getTeacherPoints();
+      const idx = teachers.findIndex(x => x.teacherId === tpCurrentTeacherId);
+      if (idx === -1) return;
+      teachers[idx].maxPoints = newLimit === '' ? null : parseInt(newLimit);
+      localStorage.setItem('teacherPoints', JSON.stringify(teachers));
+      pmHideModal('modal-set-limit');
+      pmToast('设置成功');
+      tmAccountsRender();
+    }
+
+    let tdmAllRecords = [];
+    let tdmFiltered = [];
+    let tdmCurPage = 1;
+    const tdmPageSize = 8;
+    let tdmCurrentTeacherId = null;
+
+    function openTeacherDetail(teacherId) {
+      tdmCurrentTeacherId = teacherId;
+      const teachers = getTeacherPoints();
+      const t = teachers.find(x => x.teacherId === teacherId);
+      if (!t) return;
+
+      document.getElementById('tdm-consumed').textContent = t.consumed + ' 点';
+      const available = Math.max(0, t.maxPoints - t.consumed);
+      document.getElementById('tdm-remaining').textContent = available + ' 点';
+
+      tdmAllRecords = getTeacherPointRecords(teacherId);
+      document.getElementById('tdm-filter-from').value = '';
+      document.getElementById('tdm-filter-to').value = '';
+      tdmFiltered = [...tdmAllRecords];
+      tdmCurPage = 1;
+      tdmRender();
+      pmShowModal('modal-teacher-detail');
+      pmInitIcons();
+    }
+
+    function tdmApplyFilters() {
+      const from = document.getElementById('tdm-filter-from').value;
+      const to = document.getElementById('tdm-filter-to').value;
+      tdmFiltered = tdmAllRecords.filter(r => {
+        if (from && r.createdAt < from) return false;
+        if (to && r.createdAt > to + ' 23:59:59') return false;
+        return true;
+      });
+      tdmCurPage = 1;
+      tdmRender();
+    }
+
+    function tdmRender() {
+      const start = (tdmCurPage - 1) * tdmPageSize;
+      const pageData = tdmFiltered.slice(start, start + tdmPageSize);
+      const totalPages = Math.max(1, Math.ceil(tdmFiltered.length / tdmPageSize));
+      const tbody = document.getElementById('tdm-table-body');
+      document.getElementById('tdm-count').textContent = tdmFiltered.length;
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.map(r => {
+          let sourceDisplay = r.source || '-';
+          if (r.resourceName) {
+            sourceDisplay += '<span class="text-gray-400">(' + r.resourceName + ')</span>';
+          }
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-2.5 text-gray-600 whitespace-nowrap">' + r.createdAt.substring(0, 16) + '</td>' +
+            '<td class="px-4 py-2.5 text-right font-medium text-orange-600">' + r.points + '</td>' +
+            '<td class="px-4 py-2.5 text-gray-600">' + sourceDisplay + '</td></tr>';
+        }).join('');
+      }
+
+      document.getElementById('tdm-prev').disabled = tdmCurPage <= 1;
+      document.getElementById('tdm-next').disabled = tdmCurPage >= totalPages;
+      const pagesEl = document.getElementById('tdm-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === tdmCurPage
+          ? 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[28px] px-1.5 py-0.5 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => tdmGoPage(i);
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function tdmGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(tdmFiltered.length / tdmPageSize));
+      if (page < 1 || page > totalPages) return;
+      tdmCurPage = page;
+      tdmRender();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      new Navbar('navbar-container', {
+        currentPage: 'academic',
+        bodyClass: 'h-screen',
+        showTestButton: true,
+        showPointsAnimation: true
+      });
+
+      pmInitIcons();
+      tmAccountsLoad();
+    });
+  </script>
+  <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+</body>
+</html>

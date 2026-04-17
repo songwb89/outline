@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能教学 - 教务管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <script src="components/navbar.js"></script>
+  <script src="components/points-manage.js"></script>
+  <style>
+    .menu-item {
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      color: #2563EB;
+    }
+    .menu-item.active {
+      background-color: #DBEAFE;
+      color: #2563EB;
+      border-left: 3px solid #2563EB;
+    }
+    .menu-item.active .menu-icon {
+      color: #2563EB;
+    }
+    .class-table th {
+      font-weight: 600;
+      color: #374151;
+      background: #f3f4f6;
+    }
+    .class-table td {
+      vertical-align: middle;
+    }
+    .class-table tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .class-table tbody tr:hover {
+      background-color: #f3f4f6;
+    }
+    .pm-modal-overlay {
+      background: rgba(0,0,0,0.45);
+    }
+    .pm-modal-content {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+
+  <!-- 顶部导航栏 -->
+  <div id="navbar-container"></div>
+
+  <!-- 主内容区域：左侧菜单 + 右侧内容 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 左侧菜单（通用） -->
+    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
+      <div class="p-4 border-b border-gray-100">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-600"></i>
+          教务管理
+        </h2>
+      </div>
+      <nav class="py-2">
+        <a href="academic-class.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="school" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>班级管理</span>
+        </a>
+        <a href="academic-teacher.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="user-cog" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>老师管理</span>
+        </a>
+        <a href="academic-package.html" class="menu-item active w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>套餐管理</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧内容 -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <!-- ===================== 套餐管理面板 ===================== -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
+          <h3 class="font-bold text-gray-800 text-base">套餐管理</h3>
+          <button type="button" class="px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-1.5">
+            <i data-lucide="download" class="w-4 h-4"></i>导出
+          </button>
+        </div>
+        <!-- 套餐信息横幅 -->
+        <div class="mx-5 mt-4 px-5 py-3 bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-100 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center shrink-0">
+              <i data-lucide="sparkles" class="w-5 h-5 text-violet-600"></i>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-violet-800">当前套餐</div>
+              <div class="text-base font-bold text-violet-900">年度旗舰版</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <i data-lucide="calendar-days" class="w-4 h-4 text-violet-500"></i>
+            <span class="text-violet-700">有效期：</span>
+            <span class="font-medium text-violet-800">2026-01-01</span>
+            <span class="text-violet-400">~</span>
+            <span class="font-medium text-violet-800">2027-01-01</span>
+          </div>
+        </div>
+        <div class="p-6">
+          <!-- 统计卡片 -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-xl p-4 border border-gray-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-500">充值点数</span>
+                <i data-lucide="shopping-cart" class="w-4 h-4 text-gray-400"></i>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-gray-800" id="sp-stat-recharge">--</span>
+                <span class="text-xs text-gray-500">点</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-500">消费点数</span>
+                <i data-lucide="gift" class="w-4 h-4 text-gray-400"></i>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-gray-800" id="sp-stat-consumed">--</span>
+                <span class="text-xs text-gray-500">点</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-500">扣减点数</span>
+                <i data-lucide="trending-down" class="w-4 h-4 text-gray-400"></i>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-gray-800" id="sp-stat-deduct">--</span>
+                <span class="text-xs text-gray-500">点</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-gray-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-medium text-gray-500">可用额度</span>
+                <i data-lucide="wallet" class="w-4 h-4 text-gray-400"></i>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-gray-800" id="sp-stat-balance">--</span>
+                <span class="text-xs text-gray-500">点</span>
+              </div>
+            </div>
+          </div>
+          <!-- 筛选条件 -->
+          <div class="mb-4">
+            <div class="flex flex-wrap items-end gap-x-5 gap-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">类型</label>
+                <select id="sp-rec-type" onchange="spRecApplyFilters()" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                  <option value="">全部</option>
+                  <option value="recharge">充值</option>
+                  <option value="consume">消费</option>
+                  <option value="deduct">扣减</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">教师</label>
+                <input type="text" id="sp-rec-teacher" oninput="spRecApplyFilters()" placeholder="输入教师姓名" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600 whitespace-nowrap">日期</label>
+                <input type="date" id="sp-rec-date-from" onchange="spRecApplyFilters()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                <span class="text-gray-400">~</span>
+                <input type="date" id="sp-rec-date-to" onchange="spRecApplyFilters()" class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+              </div>
+              <button type="button" onclick="spRecClearFilters()" class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">清除筛选</button>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="class-table w-full text-sm text-gray-800 border-collapse min-w-[900px]">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="px-4 py-3 text-left min-w-[10rem] border-b border-gray-200 whitespace-nowrap">时间</th>
+                <th class="px-4 py-3 text-center min-w-[5rem] border-b border-gray-200 whitespace-nowrap">类型</th>
+                <th class="px-4 py-3 text-right min-w-[7rem] border-b border-gray-200 whitespace-nowrap">点数</th>
+                <th class="px-4 py-3 text-center min-w-[7rem] border-b border-gray-200 whitespace-nowrap">老师</th>
+                <th class="px-4 py-3 text-left min-w-[8rem] border-b border-gray-200">来源/理由</th>
+              </tr>
+            </thead>
+            <tbody id="sp-rec-table-body"></tbody>
+          </table>
+        </div>
+        <div class="px-5 py-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span>共 <span id="sp-rec-count" class="font-medium">0</span> 条</span></div>
+          <div class="flex items-center gap-1">
+            <button type="button" id="sp-rec-prev" onclick="spRecGoPage(spRecCurPage - 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+            <div id="sp-rec-pages" class="flex items-center gap-1"></div>
+            <button type="button" id="sp-rec-next" onclick="spRecGoPage(spRecCurPage + 1)" class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 bg-white disabled:opacity-40 disabled:cursor-not-allowed" disabled><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ============================================================
+    // 套餐管理统计
+    // ============================================================
+    function loadSchoolPointsStats() {
+      const stats = { recharge: 12000, consumed: 635, deduct: 500, balance: 11365 };
+      document.getElementById('sp-stat-recharge').textContent = stats.recharge.toLocaleString();
+      document.getElementById('sp-stat-consumed').textContent = stats.consumed.toLocaleString();
+      document.getElementById('sp-stat-deduct').textContent = stats.deduct.toLocaleString();
+      document.getElementById('sp-stat-balance').textContent = stats.balance.toLocaleString();
+    }
+
+    // ============================================================
+    // 点数明细
+    // ============================================================
+    let spRecAll = [];
+    let spRecFiltered = [];
+    let spRecCurPage = 1;
+    const spRecPageSize = 10;
+
+    const spRecTeacherNames = {
+      't001': '张老师',
+      't002': '李老师',
+      't003': '王老师',
+      't004': '赵老师',
+      't005': '陈老师'
+    };
+
+    const spRecMockData = [
+      { id: 'spr_001', type: 'recharge', points: 10000, balance: 12000, teacherId: null, contractNo: '-', source: '套餐充值', createdAt: '2026-01-15 09:30:00', remark: null },
+      { id: 'spr_002', type: 'deduct', points: -500, balance: 11500, teacherId: null, contractNo: null, source: '扣减的理由XXXX', createdAt: '2026-01-20 14:00:00', remark: null },
+      { id: 'spr_003', type: 'recharge', points: 2000, balance: 12000, teacherId: null, contractNo: null, source: '补充充值', createdAt: '2026-01-15 09:31:00', remark: null },
+      { id: 'spr_004', type: 'consume', points: -50, balance: 11950, teacherId: 't001', contractNo: null, source: '生成绘本', resourceName: '丑小鸭的故事', createdAt: '2026-02-03 14:22:00', remark: null },
+      { id: 'spr_005', type: 'consume', points: -30, balance: 11920, teacherId: 't002', contractNo: null, source: '生成课件', resourceName: 'Unit 3 课件', createdAt: '2026-02-10 10:15:00', remark: null },
+      { id: 'spr_006', type: 'consume', points: -80, balance: 11840, teacherId: 't001', contractNo: null, source: '生成数字人', resourceName: '数学老师数字人', createdAt: '2026-02-18 16:45:00', remark: null },
+      { id: 'spr_007', type: 'consume', points: -25, balance: 11815, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '消防安全演练', createdAt: '2026-02-25 11:30:00', remark: null },
+      { id: 'spr_008', type: 'consume', points: -100, balance: 11715, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '小红帽的故事', createdAt: '2026-03-01 09:00:00', remark: null },
+      { id: 'spr_009', type: 'consume', points: -60, balance: 11655, teacherId: 't001', contractNo: null, source: '生成课件', resourceName: '拼音教学课件', createdAt: '2026-03-05 14:20:00', remark: null },
+      { id: 'spr_010', type: 'consume', points: -40, balance: 11615, teacherId: 't004', contractNo: null, source: '生成数字人', resourceName: '英语老师数字人', createdAt: '2026-03-10 10:05:00', remark: null },
+      { id: 'spr_011', type: 'consume', points: -120, balance: 11495, teacherId: 't003', contractNo: null, source: '生成活动', resourceName: '春季运动会', createdAt: '2026-03-12 15:40:00', remark: null },
+      { id: 'spr_012', type: 'consume', points: -55, balance: 11440, teacherId: 't002', contractNo: null, source: '生成绘本', resourceName: '三只小猪', createdAt: '2026-03-15 11:25:00', remark: null },
+      { id: 'spr_013', type: 'consume', points: -35, balance: 11405, teacherId: 't005', contractNo: null, source: '生成课件', resourceName: '古诗讲解课件', createdAt: '2026-03-18 08:50:00', remark: null },
+      { id: 'spr_014', type: 'deduct', points: -40, balance: 11365, teacherId: null, contractNo: null, source: '账户调整', createdAt: '2026-03-20 10:00:00', remark: '账户调整' }
+    ];
+
+    function spRecLoad() {
+      spRecAll = [...spRecMockData];
+      spRecApplyFilters();
+      pmInitIcons();
+    }
+
+    function spRecApplyFilters() {
+      const type = document.getElementById('sp-rec-type').value;
+      const teacherKw = (document.getElementById('sp-rec-teacher').value || '').trim().toLowerCase();
+      const from = document.getElementById('sp-rec-date-from').value;
+      const to = document.getElementById('sp-rec-date-to').value;
+      spRecFiltered = spRecAll.filter(r => {
+        if (type && r.type !== type) return false;
+        if (teacherKw) {
+          const teacherName = spRecTeacherNames[r.teacherId] || '';
+          if (!teacherName.toLowerCase().includes(teacherKw)) return false;
+        }
+        if (from && r.createdAt < from) return false;
+        if (to && r.createdAt > to + ' 23:59:59') return false;
+        return true;
+      });
+      spRecCurPage = 1;
+      spRecRender();
+    }
+
+    function spRecClearFilters() {
+      document.getElementById('sp-rec-type').value = '';
+      document.getElementById('sp-rec-teacher').value = '';
+      document.getElementById('sp-rec-date-from').value = '';
+      document.getElementById('sp-rec-date-to').value = '';
+      spRecApplyFilters();
+    }
+
+    function spRecRender() {
+      const start = (spRecCurPage - 1) * spRecPageSize;
+      const pageData = spRecFiltered.slice(start, start + spRecPageSize);
+      const totalPages = Math.max(1, Math.ceil(spRecFiltered.length / spRecPageSize));
+      const tbody = document.getElementById('sp-rec-table-body');
+      document.getElementById('sp-rec-count').textContent = spRecFiltered.length;
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-10 text-center text-gray-400">暂无数据</td></tr>';
+      } else {
+        tbody.innerHTML = pageData.map(r => {
+          const typeInfo = pmRecordTypeLabel(r.type);
+          let subInfo = '-';
+          if (r.type === 'consume' && r.teacherId) {
+            subInfo = spRecTeacherNames[r.teacherId] || '-';
+          } else if (r.type === 'recharge' && r.contractNo) {
+            subInfo = r.contractNo;
+          }
+          let sourceDisplay = r.source || '-';
+          if (r.type === 'consume' && r.resourceName) {
+            sourceDisplay += '<span class="text-gray-400">(' + r.resourceName + ')</span>';
+          }
+          return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+            '<td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">' + r.createdAt.substring(0, 16) + '</td>' +
+            '<td class="px-4 py-3 text-center"><span class="px-2 py-0.5 text-xs font-medium rounded ' + typeInfo.cls + '">' + typeInfo.label + '</span></td>' +
+            '<td class="px-4 py-3 text-right font-semibold ' + (r.points >= 0 ? 'text-blue-600' : 'text-orange-600') + '">' + (r.points >= 0 ? '+' : '') + r.points + '</td>' +
+            '<td class="px-4 py-3 text-center text-gray-700">' + subInfo + '</td>' +
+            '<td class="px-4 py-3 text-gray-600">' + sourceDisplay + (r.remark ? ' <span class="text-gray-400">(' + r.remark + ')</span>' : '') + '</td></tr>';
+        }).join('');
+      }
+
+      document.getElementById('sp-rec-prev').disabled = spRecCurPage <= 1;
+      document.getElementById('sp-rec-next').disabled = spRecCurPage >= totalPages;
+      const pagesEl = document.getElementById('sp-rec-pages');
+      pagesEl.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = i === spRecCurPage
+          ? 'min-w-[32px] px-2 py-1 rounded text-xs font-semibold bg-blue-600 text-white'
+          : 'min-w-[32px] px-2 py-1 rounded text-xs font-medium text-gray-700 hover:bg-gray-100';
+        btn.onclick = () => spRecGoPage(i);
+        pagesEl.appendChild(btn);
+      }
+      pmInitIcons();
+    }
+
+    function spRecGoPage(page) {
+      const totalPages = Math.max(1, Math.ceil(spRecFiltered.length / spRecPageSize));
+      if (page < 1 || page > totalPages) return;
+      spRecCurPage = page;
+      spRecRender();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      new Navbar('navbar-container', {
+        currentPage: 'academic',
+        bodyClass: 'h-screen',
+        showTestButton: true,
+        showPointsAnimation: true
+      });
+
+      pmInitIcons();
+      loadSchoolPointsStats();
+      spRecLoad();
+    });
+  </script>
+  <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+</body>
+</html>
