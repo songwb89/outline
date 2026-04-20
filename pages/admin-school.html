@@ -325,20 +325,10 @@
                 </button>
             </div>
             <div class="px-6 py-5 flex flex-col gap-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">点数 <span class="text-red-500">*</span></label>
-                        <input type="number" id="rcm-points" placeholder="请输入" min="1" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        <p id="rcm-err-points" class="text-sm text-red-500 hidden"></p>
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-sm font-medium text-gray-700">金额 <span class="text-red-500">*</span></label>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500">¥</span>
-                            <input type="number" id="rcm-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                        </div>
-                        <p id="rcm-err-amount" class="text-sm text-red-500 hidden"></p>
-                    </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">点数 <span class="text-red-500">*</span></label>
+                    <input type="number" id="rcm-points" placeholder="请输入" min="1" class="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <p id="rcm-err-points" class="text-sm text-red-500 hidden"></p>
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">备注</label>
@@ -406,14 +396,6 @@
                     </select>
                     <p id="pm-purchase-err-package" class="text-sm text-red-500 hidden"></p>
                 </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-500">¥</span>
-                        <input type="number" id="pm-purchase-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    </div>
-                    <p id="pm-purchase-err-amount" class="text-sm text-red-500 hidden"></p>
-                </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
                 <button type="button" onclick="pmHideModal('pm-modal-purchase')" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">取消</button>
@@ -440,14 +422,6 @@
                 <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">套餐</label>
                     <input type="text" id="pm-renew-package" readonly class="px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600">
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-500">¥</span>
-                        <input type="number" id="pm-renew-amount" placeholder="请输入" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    </div>
-                    <p id="pm-renew-err-amount" class="text-sm text-red-500 hidden"></p>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
@@ -481,14 +455,6 @@
                         <option value="">请选择试用套餐</option>
                     </select>
                     <p id="pm-trial-err-package" class="text-sm text-red-500 hidden"></p>
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-gray-700">成交金额 <span class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-500">¥</span>
-                        <input type="number" id="pm-trial-amount" placeholder="0.00" min="0" step="0.01" class="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
-                    </div>
-                    <p id="pm-trial-err-amount" class="text-sm text-red-500 hidden"></p>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
@@ -942,22 +908,16 @@
             document.getElementById('pm-purchase-title').textContent = '开通套餐';
             document.getElementById('pm-purchase-school').value = '';
             document.getElementById('pm-purchase-package').value = '';
-            document.getElementById('pm-purchase-amount').value = '';
-            ['school','package','amount'].forEach(f => {
+            ['school','package'].forEach(f => {
                 const el = document.getElementById('pm-purchase-err-' + f);
                 if (el) el.classList.add('hidden');
             });
             pmShowModal('pm-modal-purchase');
         }
 
-        document.getElementById('pm-purchase-package')?.addEventListener('change', function() {
-            const pkg = pmPackagesData.find(p => p.id === this.value);
-            document.getElementById('pm-purchase-amount').value = pkg ? pkg.price : '';
-        });
-
         function pmValidatePurchase() {
             let valid = true;
-            ['school','package','amount'].forEach(f => {
+            ['school','package'].forEach(f => {
                 const el = document.getElementById('pm-purchase-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -970,11 +930,6 @@
             if (!document.getElementById('pm-purchase-package').value) {
                 document.getElementById('pm-purchase-err-package').textContent = '请选择套餐';
                 document.getElementById('pm-purchase-err-package').classList.remove('hidden');
-                valid = false;
-            }
-            if (!document.getElementById('pm-purchase-amount').value || parseFloat(document.getElementById('pm-purchase-amount').value) < 0) {
-                document.getElementById('pm-purchase-err-amount').textContent = '请输入有效的金额';
-                document.getElementById('pm-purchase-err-amount').classList.remove('hidden');
                 valid = false;
             }
             return valid;
@@ -1035,7 +990,6 @@
                 purchaseId: 'pur' + Date.now(),
                 purchaseName: pkg.name,
                 points: pkg.initialPoints,
-                amount: parseFloat(document.getElementById('pm-purchase-amount').value),
                 remark: '开通' + pkg.name + '套餐发放',
                 operator: '运营管理员(admin)',
                 time: startDate + ' 09:00'
@@ -1074,15 +1028,6 @@
                 document.getElementById('pm-renew-school').value = inst ? inst.username : '';
                 document.getElementById('pm-renew-package').value = '年度旗舰版(365天；700点)';
 
-                // 设置默认值
-                document.getElementById('pm-renew-amount').value = '';
-
-                // 清除错误提示
-                ['amount'].forEach(f => {
-                    const el = document.getElementById('pm-renew-err-' + f);
-                    if (el) el.classList.add('hidden');
-                });
-
                 pmShowModal('pm-modal-renew');
             }
         }
@@ -1095,25 +1040,13 @@
         }
 
         function pmValidateRenew() {
-            let valid = true;
-            ['amount'].forEach(f => {
-                const el = document.getElementById('pm-renew-err-' + f);
-                if (el) el.classList.add('hidden');
-            });
-
-            if (!document.getElementById('pm-renew-amount').value || parseFloat(document.getElementById('pm-renew-amount').value) < 0) {
-                document.getElementById('pm-renew-err-amount').textContent = '请输入有效的金额';
-                document.getElementById('pm-renew-err-amount').classList.remove('hidden');
-                valid = false;
-            }
-            return valid;
+            return true;
         }
 
         function pmSaveRenew() {
             if (!pmValidateRenew()) return;
 
             const schoolId = renewCurrentSchoolId;
-            const amount = parseFloat(document.getElementById('pm-renew-amount').value);
 
             // 自动计算日期：从套餐到期日的下一天开始，到一年后的同一天减1天
             const purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
@@ -1137,8 +1070,7 @@
                 startDate: startDateStr,
                 endDate: endDateStr,
                 status: 'active',
-                points: renewCurrentPoints,
-                amount: amount
+                points: renewCurrentPoints
             });
             localStorage.setItem('purchases_' + schoolId, JSON.stringify(purchases));
 
@@ -1160,7 +1092,6 @@
                 purchaseId: 'renew' + Date.now(),
                 purchaseName: renewCurrentPackageName + ' (续费)',
                 points: renewCurrentPoints,
-                amount: amount,
                 remark: renewCurrentPackageName + '续费发放',
                 operator: '运营管理员(admin)',
                 time: startDateStr + ' 09:00'
@@ -1196,8 +1127,7 @@
 
             document.getElementById('pm-trial-school').value = '';
             document.getElementById('pm-trial-package').value = '';
-            document.getElementById('pm-trial-amount').value = '';
-            ['school','package','amount'].forEach(f => {
+            ['school','package'].forEach(f => {
                 const el = document.getElementById('pm-trial-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1206,7 +1136,7 @@
 
         function pmValidateTrial() {
             let valid = true;
-            ['school','package','amount'].forEach(f => {
+            ['school','package'].forEach(f => {
                 const el = document.getElementById('pm-trial-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1221,11 +1151,6 @@
                 document.getElementById('pm-trial-err-package').classList.remove('hidden');
                 valid = false;
             }
-            if (!document.getElementById('pm-trial-amount').value || parseFloat(document.getElementById('pm-trial-amount').value) < 0) {
-                document.getElementById('pm-trial-err-amount').textContent = '请输入有效的金额';
-                document.getElementById('pm-trial-err-amount').classList.remove('hidden');
-                valid = false;
-            }
             return valid;
         }
 
@@ -1236,7 +1161,6 @@
             const packageId = document.getElementById('pm-trial-package').value;
             const school = institutions.find(s => s.id === schoolId);
             const pkg = pmTrialPackagesData.find(p => p.id === packageId);
-            const amount = parseFloat(document.getElementById('pm-trial-amount').value);
 
             // 自动计算日期：生效日期为今天，到期日期为30天后（试用默认30天）
             const today = new Date();
@@ -1253,7 +1177,6 @@
                 modules: pkg.modules,
                 startDate: startDateStr,
                 endDate: endDateStr,
-                amount: amount,
                 status: 'active'
             });
             localStorage.setItem('trials_' + schoolId, JSON.stringify(trials));
@@ -1431,9 +1354,8 @@
             if (!sdmCurrentSchoolId) return;
             rcmCurrentSchoolId = sdmCurrentSchoolId;
             document.getElementById('rcm-points').value = '';
-            document.getElementById('rcm-amount').value = '';
             document.getElementById('rcm-remark').value = '';
-            ['points', 'amount'].forEach(f => {
+            ['points'].forEach(f => {
                 const el = document.getElementById('rcm-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1444,7 +1366,7 @@
         function confirmRecharge() {
             const schoolId = rcmCurrentSchoolId;
             const points = parseInt(document.getElementById('rcm-points').value);
-            ['points', 'amount'].forEach(f => {
+            ['points'].forEach(f => {
                 const el = document.getElementById('rcm-err-' + f);
                 if (el) el.classList.add('hidden');
             });
@@ -1459,7 +1381,6 @@
             const newRecord = {
                 id: 'rc' + Date.now(), schoolId: schoolId, type: 'recharge',
                 points: points,
-                amount: parseFloat(document.getElementById('rcm-amount').value) || 0,
                 remark: document.getElementById('rcm-remark').value.trim() || null,
                 operator: '运营管理员(admin)',
                 time: new Date().toISOString().replace('T', ' ').substring(0, 19)
