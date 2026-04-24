@@ -3,420 +3,782 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>智能教学 - 教学看板</title>
+  <title>教务大屏 - 数据可视化</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
-  <script src="components/navbar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js"></script>
   <style>
-    .menu-item {
+    @import url('https://fonts.googleapis.com/css2?family=Microsoft YaHei:wght@400;500;600;700;900&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      font-family: 'Microsoft YaHei', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #0d1033 100%);
+      color: #fff;
+      overflow-x: hidden;
+    }
+    
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(30, 41, 96, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #60a5fa, #3b82f6);
+    }
+    
+    /* 数字卡片发光效果 */
+    .data-card {
+      background: linear-gradient(135deg, rgba(30, 41, 96, 0.8) 0%, rgba(15, 23, 71, 0.9) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .data-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #3b82f6, #06b6d4, transparent);
+    }
+    
+    .data-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    
+    /* 发光数字 */
+    .glow-number {
+      text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.4);
+    }
+    
+    .glow-number-cyan {
+      text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.4);
+    }
+    
+    .glow-number-green {
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.4);
+    }
+    
+    .glow-number-purple {
+      text-shadow: 0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(139, 92, 246, 0.4);
+    }
+    
+    .glow-number-orange {
+      text-shadow: 0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.4);
+    }
+    
+    /* 图表容器 */
+    .chart-container {
+      background: linear-gradient(135deg, rgba(30, 41, 96, 0.6) 0%, rgba(15, 23, 71, 0.8) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 12px;
+    }
+    
+    /* 资源卡片 */
+    .resource-item {
+      background: linear-gradient(135deg, rgba(30, 41, 96, 0.7) 0%, rgba(15, 23, 71, 0.85) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      transition: all 0.3s ease;
+    }
+    
+    .resource-item:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* 标题装饰 */
+    .section-title {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, transparent);
+      border-radius: 2px;
+    }
+    
+    /* 班级列表项 */
+    .class-item {
+      background: rgba(30, 41, 96, 0.5);
+      border: 1px solid rgba(59, 130, 246, 0.15);
       transition: all 0.2s ease;
-      border-left: 3px solid transparent;
     }
-    .menu-item:hover {
-      background-color: #eff6ff;
-      color: #2563eb;
+    
+    .class-item:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
     }
-    .menu-item.active {
-      background-color: #dbeafe;
-      color: #2563eb;
-      border-left: 3px solid #2563eb;
+    
+    /* 进度条 */
+    .progress-bar {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
     }
-    .menu-item.active .menu-icon {
-      color: #2563eb;
+    
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s ease;
     }
-    .stat-card {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    
+    /* 筛选器 */
+    .filter-select {
+      background: rgba(30, 41, 96, 0.8);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .stat-card-alt {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    
+    .filter-select:hover, .filter-select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     }
-    .stat-card-info {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    
+    .filter-select option {
+      background: #1a1f4e;
+      color: #fff;
     }
-    .stat-card-success {
-      background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+    
+    /* 动画 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .echarts-container {
-      width: 100%;
-      height: 300px;
+    
+    .animate-in {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    /* 边框装饰 */
+    .border-glow {
+      position: relative;
+    }
+    
+    .border-glow::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), transparent, rgba(6, 182, 212, 0.5));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
     }
   </style>
 </head>
-<body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+<body class="flex flex-col">
 
-  <!-- 顶部导航栏 -->
-  <div id="navbar-container"></div>
-
-  <!-- 主内容区域：左侧菜单 + 右侧内容 -->
-  <div class="flex flex-1 overflow-hidden">
-    <!-- 左侧菜单（通用） -->
-    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
-      <div class="p-4 border-b border-gray-100">
-        <h2 class="font-bold text-gray-800 flex items-center gap-2">
-          <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-500"></i>
-          教务管理
-        </h2>
+  <!-- 顶部标题栏 -->
+  <header class="flex items-center justify-between px-8 py-4 border-b border-blue-900/50 bg-black/20">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
       </div>
-      <nav class="py-2">
-        <a href="academic-class.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
-          <i data-lucide="school" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>班级管理</span>
-        </a>
-        <a href="academic-teacher.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
-          <i data-lucide="user-cog" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>老师管理</span>
-        </a>
-        <a href="academic-package.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
-          <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>套餐管理</span>
-        </a>
-        <a href="academic-dashboard.html" class="menu-item active w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
-          <i data-lucide="bar-chart-3" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>数据看板</span>
-        </a>
-      </nav>
-    </aside>
+      <div>
+        <h1 class="text-2xl font-bold tracking-wide">深圳市外国语学校</h1>
+        <p class="text-sm text-blue-300/70">智能教学数据驾驶舱</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-6">
+      <div class="text-right">
+        <p class="text-3xl font-bold glow-number" id="current-time">--:--:--</p>
+        <p class="text-sm text-blue-300/70" id="current-date">----年--月--日</p>
+      </div>
+    </div>
+  </header>
 
-    <!-- 右侧内容 -->
-    <main class="flex-1 p-6 overflow-y-auto bg-gray-50">
+  <!-- 主内容区域 -->
+  <main class="flex-1 p-6 overflow-y-auto">
+    
+    <!-- 筛选条件 -->
+    <div class="flex items-center gap-6 mb-6 animate-in">
+      <div class="flex items-center gap-3">
+        <span class="text-blue-300/80 text-sm">年级筛选</span>
+        <select id="grade-select" class="filter-select w-32">
+          <option value="all">全部年级</option>
+          <option value="p1">一年级</option>
+          <option value="p2">二年级</option>
+          <option value="p3">三年级</option>
+          <option value="p4">四年级</option>
+          <option value="p5">五年级</option>
+          <option value="p6">六年级</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-blue-300/80 text-sm">时间段</span>
+        <select id="time-select" class="filter-select w-32">
+          <option value="month">近一个月</option>
+          <option value="halfyear">近六个月</option>
+          <option value="year">近一年</option>
+          <option value="all">全部数据</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-blue-300/80 text-sm">学科筛选</span>
+        <select id="subject-select" class="filter-select w-28">
+          <option value="all">全部学科</option>
+          <option value="chinese">语文</option>
+          <option value="math">数学</option>
+          <option value="english">英语</option>
+        </select>
+      </div>
+    </div>
 
-      <!-- ===================== 筛选条件 ===================== -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <div class="flex items-center gap-2">
-            <label class="text-sm text-gray-600 whitespace-nowrap">年级</label>
-            <select id="grade-select" class="w-36 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
-              <option value="all">全部</option>
-              <optgroup label="小学">
-                <option value="p1">一年级</option>
-                <option value="p2">二年级</option>
-                <option value="p3">三年级</option>
-                <option value="p4">四年级</option>
-                <option value="p5">五年级</option>
-                <option value="p6">六年级</option>
-              </optgroup>
-              <optgroup label="初中">
-                <option value="m1">初一</option>
-                <option value="m2">初二</option>
-                <option value="m3">初三</option>
-              </optgroup>
-              <optgroup label="高中">
-                <option value="h1">高一</option>
-                <option value="h2">高二</option>
-                <option value="h3">高三</option>
-              </optgroup>
-            </select>
+    <!-- 第一行：基础数据概览 -->
+    <div class="grid grid-cols-3 gap-6 mb-6 animate-in" style="animation-delay: 0.1s;">
+      <div class="data-card rounded-2xl p-6">
+        <div class="flex items-center gap-5">
+          <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/40">
+            <i data-lucide="users" class="w-8 h-8"></i>
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-sm text-gray-600 whitespace-nowrap">时间段</label>
-            <select id="time-select" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
-              <option value="month">近一个月</option>
-              <option value="halfyear">近六个月</option>
-              <option value="year">近一年</option>
-              <option value="all">全部数据</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="text-sm text-gray-600 whitespace-nowrap">学科</label>
-            <select id="subject-select" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
-              <option value="all">全部</option>
-              <option value="chinese">语文</option>
-              <option value="math">数学</option>
-              <option value="english">英语</option>
-            </select>
+          <div class="relative z-10">
+            <p class="text-blue-300/80 text-sm mb-1">教师总数</p>
+            <p class="text-4xl font-bold glow-number" id="teacher-count">128</p>
           </div>
         </div>
       </div>
-
-      <!-- ===================== 基础数据概览 ===================== -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">基本情况</h3>
-        <div class="grid grid-cols-3 gap-4">
-          <div class="stat-card rounded-xl p-6 text-white shadow-sm">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                <i data-lucide="users" class="w-6 h-6"></i>
-              </div>
-              <div>
-                <p class="text-sm text-white/80">教师总数</p>
-                <p class="text-3xl font-bold">128</p>
-              </div>
-            </div>
+      <div class="data-card rounded-2xl p-6">
+        <div class="flex items-center gap-5">
+          <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center shadow-lg shadow-cyan-500/40">
+            <i data-lucide="user-check" class="w-8 h-8"></i>
           </div>
-          <div class="stat-card-alt rounded-xl p-6 text-white shadow-sm">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-              </div>
-              <div>
-                <p class="text-sm text-white/80">学生总数</p>
-                <p class="text-3xl font-bold">3,456</p>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card-info rounded-xl p-6 text-white shadow-sm">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                <i data-lucide="building" class="w-6 h-6"></i>
-              </div>
-              <div>
-                <p class="text-sm text-white/80">班级数量</p>
-                <p class="text-3xl font-bold">86</p>
-              </div>
-            </div>
+          <div class="relative z-10">
+            <p class="text-cyan-300/80 text-sm mb-1">学生总数</p>
+            <p class="text-4xl font-bold glow-number-cyan" id="student-count">3,456</p>
           </div>
         </div>
       </div>
-
-      <!-- ===================== 教学资源建设 ===================== -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">教学资源</h3>
-        
-        <!-- 校本资源总计 -->
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-sm mb-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <i data-lucide="database" class="w-6 h-6"></i>
-            <span class="text-sm text-white/80">校本资源总计</span>
+      <div class="data-card rounded-2xl p-6">
+        <div class="flex items-center gap-5">
+          <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-lg shadow-purple-500/40">
+            <i data-lucide="building-2" class="w-8 h-8"></i>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-3xl font-bold">2,749</span>
-            <span class="text-sm text-white/70">份</span>
+          <div class="relative z-10">
+            <p class="text-purple-300/80 text-sm mb-1">班级数量</p>
+            <p class="text-4xl font-bold glow-number-purple" id="class-count">86</p>
           </div>
         </div>
-        
-        <!-- 各资源明细 - 6列网格布局 -->
+      </div>
+    </div>
+
+    <!-- 第二行：校本资源 -->
+    <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.2s;">
+      <!-- 校本资源总计 -->
+      <div class="col-span-12">
+        <h3 class="text-lg font-bold mb-4 section-title text-white">校本资源库</h3>
+      </div>
+      
+      <!-- 资源总计大卡片 -->
+      <div class="col-span-3">
+        <div class="data-card rounded-2xl p-6 h-full flex flex-col justify-center items-center">
+          <p class="text-blue-300/70 text-sm mb-2">校本资源总计</p>
+          <p class="text-5xl font-bold glow-number mb-1">2,749</p>
+          <p class="text-blue-300/50 text-sm">份教学资源</p>
+        </div>
+      </div>
+      
+      <!-- 资源明细 -->
+      <div class="col-span-9">
         <div id="resource-cards" class="grid grid-cols-6 gap-3">
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">326</p>
-            <p class="text-xs text-gray-500 mt-0.5">教案</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-blue-400 mb-1">326</p>
+            <p class="text-xs text-blue-300/60">教案</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">458</p>
-            <p class="text-xs text-gray-500 mt-0.5">课件</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-cyan-400 mb-1">458</p>
+            <p class="text-xs text-cyan-300/60">课件</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">289</p>
-            <p class="text-xs text-gray-500 mt-0.5">学案</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-green-400 mb-1">289</p>
+            <p class="text-xs text-green-300/60">学案</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">512</p>
-            <p class="text-xs text-gray-500 mt-0.5">活动</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-yellow-400 mb-1">512</p>
+            <p class="text-xs text-yellow-300/60">活动</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">186</p>
-            <p class="text-xs text-gray-500 mt-0.5">趣味抽奖</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-orange-400 mb-1">186</p>
+            <p class="text-xs text-orange-300/60">趣味抽奖</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">234</p>
-            <p class="text-xs text-gray-500 mt-0.5">随堂测</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-pink-400 mb-1">234</p>
+            <p class="text-xs text-pink-300/60">随堂测</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,english">
-            <p class="text-xl font-bold text-blue-600">167</p>
-            <p class="text-xs text-gray-500 mt-0.5">听写</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,english">
+            <p class="text-2xl font-bold text-purple-400 mb-1">167</p>
+            <p class="text-xs text-purple-300/60">听写</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
-            <p class="text-xl font-bold text-blue-600">98</p>
-            <p class="text-xs text-gray-500 mt-0.5">智能体</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
+            <p class="text-2xl font-bold text-indigo-400 mb-1">98</p>
+            <p class="text-xs text-indigo-300/60">智能体</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,english">
-            <p class="text-xl font-bold text-blue-600">156</p>
-            <p class="text-xs text-gray-500 mt-0.5">单词评测</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,english">
+            <p class="text-2xl font-bold text-teal-400 mb-1">156</p>
+            <p class="text-xs text-teal-300/60">单词评测</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,english">
-            <p class="text-xl font-bold text-blue-600">89</p>
-            <p class="text-xs text-gray-500 mt-0.5">对话评测</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,english">
+            <p class="text-2xl font-bold text-emerald-400 mb-1">89</p>
+            <p class="text-xs text-emerald-300/60">对话评测</p>
           </div>
-          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,english">
-            <p class="text-xl font-bold text-blue-600">234</p>
-            <p class="text-xs text-gray-500 mt-0.5">场景对话</p>
+          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,english">
+            <p class="text-2xl font-bold text-cyan-400 mb-1">234</p>
+            <p class="text-xs text-cyan-300/60">场景对话</p>
           </div>
-        </div>
-        
-        <!-- 时段内新增图表 -->
-        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mt-6">
-          <h4 class="text-sm font-semibold text-gray-700 mb-3">新增备课趋势</h4>
-          <div id="resource-chart" class="echarts-container" style="height: 380px;"></div>
         </div>
       </div>
+    </div>
 
-      <!-- ===================== 课堂教学 ===================== -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">课堂应用</h3>
-        <div id="classroom-chart" class="echarts-container"></div>
-      </div>
-
-      <!-- ===================== 作业数据（整行展示） ===================== -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">作业统计</h3>
-        <div class="flex gap-4 mb-4">
-          <div class="flex-1 bg-blue-50 rounded-lg p-3 text-center">
-            <p class="text-2xl font-bold text-blue-600">1,286</p>
-            <p class="text-xs text-gray-500">作业布置总数</p>
-          </div>
-          <div class="flex-1 bg-blue-50 rounded-lg p-3 text-center">
-            <p class="text-2xl font-bold text-blue-600">92%</p>
-            <p class="text-xs text-gray-500">平均提交率</p>
-          </div>
-          <div class="flex-1 bg-blue-50 rounded-lg p-3 text-center">
-            <p class="text-2xl font-bold text-blue-600">85%</p>
-            <p class="text-xs text-gray-500">平均得分率</p>
-          </div>
-        </div>
-        <!-- 班级作业明细 - 合并可视化 -->
-        <div class="mt-4">
-          <div class="overflow-y-auto max-h-[300px]" id="homework-detail-list"></div>
-        </div>
-        
-        <!-- 得分率趋势 -->
-        <div class="mt-6 pt-4 border-t border-gray-100">
-          <h4 class="text-sm font-semibold text-gray-700 mb-3">得分率趋势</h4>
-          <div id="score-trend-chart" class="echarts-container" style="height: 200px;"></div>
+    <!-- 第三行：图表区域 -->
+    <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.3s;">
+      <!-- 资源新增趋势 -->
+      <div class="col-span-8">
+        <div class="chart-container p-5 h-full">
+          <h3 class="text-base font-bold mb-4 text-white/90">新增备课趋势</h3>
+          <div id="resource-chart" style="height: 280px;"></div>
         </div>
       </div>
-
-      <!-- ===================== 六、学情分析 ===================== -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">知识掌握</h3>
-
-        <!-- 知识点词云 -->
-        <div>
-          <div id="knowledge-cloud" class="echarts-container" style="height: 400px;"></div>
-          <p class="text-sm text-gray-500 text-center mt-2">字体越大/颜色越深，表示掌握度越低</p>
+      
+      <!-- 课堂应用 -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <h3 class="text-base font-bold mb-4 text-white/90">课堂应用</h3>
+          <div id="classroom-chart" style="height: 280px;"></div>
         </div>
-
       </div>
+    </div>
 
-    </main>
+    <!-- 第四行：作业统计 -->
+    <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.4s;">
+      <!-- 作业汇总 -->
+      <div class="col-span-3">
+        <div class="data-card rounded-2xl p-5 h-full">
+          <h3 class="text-base font-bold mb-4 text-white/90">作业统计</h3>
+          <div class="space-y-4">
+            <div class="text-center">
+              <p class="text-3xl font-bold glow-number mb-1">1,286</p>
+              <p class="text-xs text-blue-300/60">作业布置总数</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-blue-500/20 rounded-lg p-3 text-center border border-blue-500/30">
+                <p class="text-2xl font-bold text-blue-400">92%</p>
+                <p class="text-xs text-blue-300/60 mt-1">平均提交率</p>
+              </div>
+              <div class="bg-green-500/20 rounded-lg p-3 text-center border border-green-500/30">
+                <p class="text-2xl font-bold text-green-400">85%</p>
+                <p class="text-xs text-green-300/60 mt-1">平均得分率</p>
+              </div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-white/10">
+              <p class="text-xs text-slate-400 mb-2">得分率分布</p>
+              <div class="flex flex-col items-start">
+                <div id="score-distribution-chart" style="height: 200px; width: 100%; position: relative; z-index: 1;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 班级作业明细 -->
+      <div class="col-span-5">
+        <div class="chart-container p-5 h-full flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-bold text-white/90">班级作业明细</h3>
+            <button id="open-homework-modal-btn" class="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+              <span>查看全部</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </button>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-slate-400 mb-2 px-3">
+            <div class="w-20 flex-shrink-0">班级</div>
+            <div class="w-16 flex-shrink-0 text-center">作业</div>
+            <div class="flex-1">提交率</div>
+            <div class="flex-1">得分率</div>
+          </div>
+          <div id="homework-detail-list" class="space-y-2"></div>
+        </div>
+      </div>
+      
+      <!-- 得分率趋势 -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <h3 class="text-base font-bold mb-3 text-white/90">得分率趋势</h3>
+          <div id="score-trend-chart" style="height: 400px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第五行：知识掌握 -->
+    <div class="animate-in" style="animation-delay: 0.5s;">
+      <div class="chart-container p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-white/90">知识点掌握度分布</h3>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 text-xs text-slate-400">
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span>已掌握</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>需提升</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span>待加强</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-500 opacity-50"></span>未考查</span>
+            </div>
+            <button id="graph-fullscreen-btn" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="全屏展示">
+              <i data-lucide="maximize-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+        <div id="knowledge-graph" style="height: 500px;"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 知识图谱全屏弹窗 -->
+  <div id="graph-fullscreen-modal" class="fixed inset-0 z-50 hidden bg-[#0a0e27]">
+    <div class="absolute inset-0 p-6">
+      <div class="h-full flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white/90">知识点掌握度分布</h3>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 text-xs text-slate-400">
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span>已掌握</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>需提升</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span>待加强</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-500 opacity-50"></span>未考查</span>
+            </div>
+            <button id="graph-fullscreen-close" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+        <div id="knowledge-graph-fullscreen" class="flex-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 班级作业明细弹窗 -->
+  <div id="homework-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="homework-modal-overlay"></div>
+    <div class="relative flex items-center justify-center min-h-screen p-4">
+      <div class="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-2xl border border-blue-500/30 w-full max-w-4xl max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between p-5 border-b border-blue-500/20">
+          <h3 class="text-xl font-bold text-white">班级作业明细</h3>
+          <div class="flex items-center gap-3">
+            <select id="modal-grade-filter" class="bg-slate-700/50 text-white text-sm rounded-lg px-3 py-1.5 border border-slate-600 focus:border-blue-500 outline-none">
+              <option value="all">全部年级</option>
+              <option value="一年级">一年级</option>
+              <option value="二年级">二年级</option>
+              <option value="三年级">三年级</option>
+              <option value="四年级">四年级</option>
+              <option value="五年级">五年级</option>
+              <option value="六年级">六年级</option>
+            </select>
+            <button id="close-homework-modal-btn" class="text-slate-400 hover:text-white transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-5 overflow-y-auto flex-1">
+          <div class="flex items-center gap-4 text-xs text-slate-400 mb-2 px-3">
+            <div class="w-20 flex-shrink-0">班级</div>
+            <div class="w-16 flex-shrink-0 text-center">作业</div>
+            <div class="flex-1">提交率</div>
+            <div class="flex-1">得分率</div>
+          </div>
+          <div id="modal-homework-list" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      new Navbar('navbar-container', {
-        currentPage: 'academic',
-        bodyClass: 'h-screen',
-        showTestButton: true,
-        showPointsAnimation: true
-      });
       lucide.createIcons();
-
-      // 学科筛选 - 控制资源卡片显示/隐藏
+      updateTime();
+      setInterval(updateTime, 1000);
+      initCharts();
+      
+      // 学科筛选
       const subjectSelect = document.getElementById('subject-select');
       const resourceCards = document.getElementById('resource-cards');
       
       subjectSelect.addEventListener('change', function() {
         const currentSubject = this.value;
-        const cards = resourceCards.querySelectorAll('.resource-card');
+        const cards = resourceCards.querySelectorAll('.resource-item');
         
         cards.forEach(card => {
           const subjects = card.dataset.subjects.split(',');
           if (subjects.includes(currentSubject)) {
-            card.classList.remove('hidden');
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
           } else {
-            card.classList.add('hidden');
+            card.style.opacity = '0.3';
+            card.style.transform = 'scale(0.95)';
           }
         });
       });
-
-      // 初始化 ECharts
-      initCharts();
     });
 
-    function initCharts() {
+    function updateTime() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
+      const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+      document.getElementById('current-time').textContent = timeStr;
+      document.getElementById('current-date').textContent = dateStr;
+    }
 
-      // 知识点掌握度数据（50个模拟知识点）
-      var knowledgePoints = [
-        { name: '分数乘法运算', rate: 52 }, { name: '文言文阅读理解', rate: 58 },
-        { name: '英语时态运用', rate: 55 }, { name: '因式分解', rate: 48 },
-        { name: '一元二次方程', rate: 62 }, { name: '完形填空', rate: 67 },
-        { name: '阅读理解技巧', rate: 71 }, { name: '几何证明', rate: 65 },
-        { name: '英语语法', rate: 74 }, { name: '应用题分析', rate: 78 },
-        { name: '作文写作', rate: 82 }, { name: '函数图像', rate: 85 },
-        { name: '词汇积累', rate: 88 }, { name: '听力训练', rate: 79 },
-        { name: '口算能力', rate: 91 }, { name: '句型转换', rate: 63 },
-        { name: '拼音拼读', rate: 96 }, { name: '生字书写', rate: 94 },
-        { name: '段落大意概括', rate: 69 }, { name: '修辞手法', rate: 76 },
-        { name: '小数除法', rate: 56 }, { name: '周长面积计算', rate: 73 },
-        { name: '角的度量', rate: 81 }, { name: '统计图表', rate: 84 },
-        { name: '简易方程', rate: 68 }, { name: '比与比例', rate: 70 },
-        { name: '整数四则运算', rate: 92 }, { name: '方向与位置', rate: 89 },
-        { name: '年月日认识', rate: 93 }, { name: '英语字母', rate: 97 },
-        { name: '音标学习', rate: 61 }, { name: '阅读短文', rate: 77 },
-        { name: '口语表达', rate: 80 }, { name: '写作基础', rate: 75 },
-        { name: '自然数认知', rate: 98 }, { name: '图形识别', rate: 90 },
-        { name: '长度单位换算', rate: 86 }, { name: '重量单位换算', rate: 83 },
-        { name: '时间单位换算', rate: 87 }, { name: '有余数除法', rate: 59 },
-        { name: '图形的旋转', rate: 64 }, { name: '对称轴认识', rate: 72 },
-        { name: '数据的收集', rate: 66 }, { name: '可能性大小', rate: 60 },
-        { name: '综合算式', rate: 57 }, { name: '运算定律', rate: 95 },
-        { name: '多位数读写', rate: 99 }, { name: '亿以内数', rate: 100 }
+    function initCharts() {
+      // 知识点掌握度数据（分层结构）
+      var knowledgeData = {
+        nodes: [
+          // 顶层父节点
+          { name: '数学', category: 0, level: -1, symbolSize: 60 },
+          // 一级分类
+          { name: '数与代数', category: 0, level: 0 },
+          { name: '图形与几何', category: 0, level: 0 },
+          { name: '统计与概率', category: 0, level: 0 },
+          { name: '探索规律', category: 1, level: 0 },
+          { name: '数学竞赛', category: 0, level: 0 },
+          // 数与代数 - 二级
+          { name: '数的认识', category: 1, level: 1 },
+          { name: '数的运算', category: 1, level: 1 },
+          { name: '式与方程', category: 1, level: 1, rate: 68, tested: true },
+          { name: '比和比例', category: 1, level: 1, rate: 70, tested: true },
+          { name: '常见的量', category: 1, level: 1, rate: 85, tested: true },
+          { name: '应用题', category: 1, level: 1 },
+          // 数与代数 - 三级
+          { name: '整数的认识', category: 1, level: 2, rate: 92, tested: true },
+          { name: '小数的认识', category: 1, level: 2, rate: 78, tested: true },
+          { name: '分数的认识', category: 1, level: 2, rate: 65, tested: true },
+          { name: '整数的四则运算', category: 1, level: 2, rate: 88, tested: true },
+          { name: '小数的四则运算', category: 1, level: 2, rate: 56, tested: true },
+          { name: '分数的四则运算', category: 1, level: 2, rate: 52, tested: true },
+          { name: '口算', category: 1, level: 2, rate: 91, tested: true },
+          { name: '面积体积应用题', category: 1, level: 2, rate: 48, tested: true },
+          { name: '复合应用题', category: 1, level: 2, rate: 58, tested: true },
+          // 图形与几何 - 二级
+          { name: '平面图形', category: 1, level: 1, rate: 73, tested: true },
+          { name: '立体图形', category: 1, level: 1, rate: 62, tested: true },
+          { name: '图形与变换', category: 1, level: 1, rate: 64, tested: true },
+          { name: '位置与方向', category: 1, level: 1, rate: 89, tested: true },
+          { name: '周长公式', category: 1, level: 1, rate: 84, tested: true },
+          { name: '面积公式', category: 1, level: 1, rate: 76, tested: true },
+          { name: '体积公式', category: 1, level: 1, rate: 55, tested: true },
+          // 统计与概率 - 二级
+          { name: '统计', category: 1, level: 1, rate: 66, tested: true },
+          { name: '可能性', category: 1, level: 1, rate: 60, tested: true },
+          // 数学竞赛 - 二级
+          { name: '计算技巧', category: 1, level: 1, tested: false },
+          { name: '数阵与进位制', category: 1, level: 1, tested: false },
+          { name: '数论基础', category: 1, level: 1, tested: false },
+          { name: '计数问题', category: 1, level: 1, tested: false },
+          { name: '行程问题', category: 1, level: 1, rate: 45, tested: true },
+          { name: '竞赛应用题', category: 1, level: 1, tested: false },
+          { name: '数学趣题', category: 1, level: 1, tested: false }
+        ],
+        links: [
+          // 连接顶层到一级分类
+          { source: '数学', target: '数与代数' },
+          { source: '数学', target: '图形与几何' },
+          { source: '数学', target: '统计与概率' },
+          { source: '数学', target: '探索规律' },
+          { source: '数学', target: '数学竞赛' },
+          // 数与代数层级
+          { source: '数与代数', target: '数的认识' },
+          { source: '数与代数', target: '数的运算' },
+          { source: '数与代数', target: '式与方程' },
+          { source: '数与代数', target: '比和比例' },
+          { source: '数与代数', target: '常见的量' },
+          { source: '数与代数', target: '应用题' },
+          { source: '数的认识', target: '整数的认识' },
+          { source: '数的认识', target: '小数的认识' },
+          { source: '数的认识', target: '分数的认识' },
+          { source: '数的运算', target: '整数的四则运算' },
+          { source: '数的运算', target: '小数的四则运算' },
+          { source: '数的运算', target: '分数的四则运算' },
+          { source: '数的运算', target: '口算' },
+          { source: '应用题', target: '面积体积应用题' },
+          { source: '应用题', target: '复合应用题' },
+          // 图形与几何层级
+          { source: '图形与几何', target: '平面图形' },
+          { source: '图形与几何', target: '立体图形' },
+          { source: '图形与几何', target: '图形与变换' },
+          { source: '图形与几何', target: '位置与方向' },
+          { source: '图形与几何', target: '周长公式' },
+          { source: '图形与几何', target: '面积公式' },
+          { source: '图形与几何', target: '体积公式' },
+          // 统计与概率
+          { source: '统计与概率', target: '统计' },
+          { source: '统计与概率', target: '可能性' },
+          // 数学竞赛
+          { source: '数学竞赛', target: '计算技巧' },
+          { source: '数学竞赛', target: '数阵与进位制' },
+          { source: '数学竞赛', target: '数论基础' },
+          { source: '数学竞赛', target: '计数问题' },
+          { source: '数学竞赛', target: '行程问题' },
+          { source: '数学竞赛', target: '竞赛应用题' },
+          { source: '数学竞赛', target: '数学趣题' }
+        ]
+      };
+
+      // 分类配置
+      var categories = [
+        { name: '根节点', itemStyle: { color: 'rgba(148, 163, 184, 0.5)' } },
+        { name: '大类', itemStyle: { color: '#6366f1' } },
+        { name: '知识点', itemStyle: { color: '#38bdf8' } }
       ];
 
-      // 统计各分段数量
-      var weakCount = knowledgePoints.filter(function(k) { return k.rate < 60; }).length;
-      var mediumCount = knowledgePoints.filter(function(k) { return k.rate >= 60 && k.rate <= 80; }).length;
-      var goodCount = knowledgePoints.filter(function(k) { return k.rate > 80; }).length;
+      // 节点颜色
+      function getNodeColor(node) {
+        if (node.level === -1) return 'rgba(148, 163, 184, 0.5)';  // 根节点灰色
+        if (!node.tested) return 'rgba(100, 116, 139, 0.4)';
+        if (node.rate >= 80) return '#10b981';
+        if (node.rate >= 60) return '#f59e0b';
+        return '#ef4444';
+      }
 
-      // 词云数据：掌握越低，value越大（词越大）
-      var cloudData = knowledgePoints.map(function(k) {
+      // 节点大小
+      function getNodeSize(node) {
+        if (!node.tested) return 20;
+        if (node.rate >= 80) return 25;
+        if (node.rate >= 60) return 35;
+        return 45;
+      }
+
+      // 转换数据
+      var graphNodes = knowledgeData.nodes.map(function(n) {
+        var cat;
+        if (n.level === -1) cat = 0;
+        else if (n.level === 0) cat = 1;
+        else cat = 2;
         return {
-          name: k.name,
-          value: 100 - k.rate,
-          rate: k.rate
+          name: n.name,
+          value: n.rate,
+          tested: n.tested !== false,
+          rate: n.rate,
+          level: n.level,
+          symbolSize: n.symbolSize || getNodeSize(n),
+          itemStyle: { color: getNodeColor(n) },
+          category: cat
         };
       });
 
-      // 词云颜色：统一蓝色，通过深浅区分掌握度（越浅掌握度越高）
-      var getColor = function(rate) {
-        // hue=220° 蓝色
-        // 掌握度越低，饱和度越高、亮度越低（深蓝）
-        // 掌握度越高，饱和度越低、亮度越高（浅蓝）
-        var saturation = 95 - (rate / 100) * 55;  // 95% -> 40%
-        var lightness = 25 + (rate / 100) * 50;   // 25% -> 75%
-        return 'hsl(220, ' + Math.round(saturation) + '%, ' + Math.round(lightness) + '%)';
-      };
-
-      // 词云图表
-      var knowledgeCloud = echarts.init(document.getElementById('knowledge-cloud'));
-      
-      knowledgeCloud.setOption({
+      // 知识图谱
+      var knowledgeGraph = echarts.init(document.getElementById('knowledge-graph'));
+      knowledgeGraph.setOption({
+        backgroundColor: 'transparent',
         tooltip: {
           show: true,
+          backgroundColor: 'rgba(15, 23, 71, 0.95)',
+          borderColor: 'rgba(59, 130, 246, 0.5)',
+          textStyle: { color: '#fff' },
           formatter: function(params) {
-            return params.data.name + '<br/>掌握度: <b>' + params.data.rate + '%</b>';
+            if (params.dataType === 'edge') return '';
+            var node = params.data;
+            // 根节点和一级分类不显示掌握度
+            if (node.level === -1 || node.level === 0) {
+              return node.name;
+            }
+            // 未考查的知识点
+            if (!node.tested || node.rate === undefined) {
+              return node.name + '<br/><span class="text-slate-400">本周期未考查</span>';
+            }
+            var color = getNodeColor(node);
+            return node.name + '<br/><span style="color:' + color + '">掌握度: <b>' + node.rate + '%</b></span>';
           }
         },
+        legend: {
+          show: false
+        },
         series: [{
-          type: 'wordCloud',
-          shape: 'circle',
-          left: 'center',
-          top: 'center',
-          width: '90%',
-          height: '90%',
-          sizeRange: [14, 60],
-          rotationRange: [-15, 15],
-          rotationStep: 5,
-          gridSize: 8,
-          drawOutOfBound: false,
-          textStyle: {
-            fontFamily: 'Microsoft YaHei, sans-serif',
-            fontWeight: 'bold',
-            emphasis: {
-              shadowBlur: 10,
-              shadowColor: '#333'
-            }
+          type: 'graph',
+          layout: 'force',
+          ribbonType: false,
+          categories: categories,
+          symbol: 'circle',
+          symbolKeepAspect: true,
+          roam: true,
+          edgeSymbol: ['none', 'arrow'],
+          edgeSymbolSize: 6,
+          lineStyle: {
+            color: 'rgba(148, 163, 184, 0.3)',
+            curveness: 0.1,
+            width: 1
           },
-          data: cloudData.map(function(d) {
-            return {
-              name: d.name,
-              value: d.value,
-              rate: d.rate,
-              textStyle: {
-                color: getColor(d.rate)
-              }
-            };
-          })
+          label: {
+            show: true,
+            position: 'right',
+            formatter: '{b}',
+            fontSize: 10,
+            color: 'rgba(226, 232, 240, 0.8)',
+            fontFamily: 'Microsoft YaHei'
+          },
+          emphasis: {
+            focus: 'adjacency',
+            lineStyle: { width: 2 },
+            itemStyle: { shadowBlur: 10, shadowColor: '#fff' }
+          },
+          data: graphNodes,
+          links: knowledgeData.links,
+          force: {
+            repulsion: 100,
+            gravity: 0.08,
+            edgeLength: [40, 80],
+            layoutAnimation: true
+          }
         }]
       });
 
@@ -447,7 +809,7 @@
         '场景对话': ['all', 'english']
       };
 
-      // 课堂教学数据 [语文, 数学, 英语]
+      // 课堂教学数据
       var allClassroom = {
         '课件': [486, 328, 156],
         '活动': [325, 280, 195],
@@ -459,7 +821,6 @@
         '场景对话': [112, 95, 134]
       };
 
-      // 课堂教学得分率 [语文, 数学, 英语]（听写、单词评测、对话评测、场景对话有数据）
       var allClassroomScore = {
         '课件': [null, null, null],
         '活动': [null, null, null],
@@ -471,22 +832,19 @@
         '场景对话': [85, 80, 92]
       };
 
-      // 有得分率的数据项（听写、单词评测、对话评测、场景对话）
-      var hasScoreItems = ['听写', '单词评测', '对话评测', '场景对话'];
-
-      // 所有资源数据（日期格式：年-月-日）
+      // 资源数据
       var allResources = {
         '教案': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 19], ['2024-06-01', 25]] },
-        '课件': { color: '#60a5fa', data: [['2024-01-01', 20], ['2024-02-01', 25], ['2024-03-01', 28], ['2024-04-01', 32], ['2024-05-01', 30], ['2024-06-01', 38]] },
-        '学案': { color: '#93c5fd', data: [['2024-01-01', 15], ['2024-02-01', 12], ['2024-03-01', 18], ['2024-04-01', 20], ['2024-05-01', 22], ['2024-06-01', 28]] },
-        '活动': { color: '#bfdbfe', data: [['2024-01-01', 25], ['2024-02-01', 30], ['2024-03-01', 28], ['2024-04-01', 35], ['2024-05-01', 40], ['2024-06-01', 45]] },
-        '趣味抽奖': { color: '#93c5fd', data: [['2024-01-01', 10], ['2024-02-01', 15], ['2024-03-01', 12], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
-        '随堂测': { color: '#60a5fa', data: [['2024-01-01', 18], ['2024-02-01', 22], ['2024-03-01', 20], ['2024-04-01', 25], ['2024-05-01', 23], ['2024-06-01', 28]] },
-        '听写': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 15], ['2024-03-01', 14], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
-        '智能体': { color: '#93c5fd', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 10], ['2024-04-01', 12], ['2024-05-01', 15], ['2024-06-01', 18]] },
-        '单词评测': { color: '#60a5fa', data: [['2024-01-01', 8], ['2024-02-01', 12], ['2024-03-01', 10], ['2024-04-01', 15], ['2024-05-01', 14], ['2024-06-01', 18]] },
-        '对话评测': { color: '#bfdbfe', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 7], ['2024-04-01', 10], ['2024-05-01', 9], ['2024-06-01', 12]] },
-        '场景对话': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 20], ['2024-06-01', 25]] }
+        '课件': { color: '#06b6d4', data: [['2024-01-01', 20], ['2024-02-01', 25], ['2024-03-01', 28], ['2024-04-01', 32], ['2024-05-01', 30], ['2024-06-01', 38]] },
+        '学案': { color: '#10b981', data: [['2024-01-01', 15], ['2024-02-01', 12], ['2024-03-01', 18], ['2024-04-01', 20], ['2024-05-01', 22], ['2024-06-01', 28]] },
+        '活动': { color: '#f59e0b', data: [['2024-01-01', 25], ['2024-02-01', 30], ['2024-03-01', 28], ['2024-04-01', 35], ['2024-05-01', 40], ['2024-06-01', 45]] },
+        '趣味抽奖': { color: '#ec4899', data: [['2024-01-01', 10], ['2024-02-01', 15], ['2024-03-01', 12], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
+        '随堂测': { color: '#8b5cf6', data: [['2024-01-01', 18], ['2024-02-01', 22], ['2024-03-01', 20], ['2024-04-01', 25], ['2024-05-01', 23], ['2024-06-01', 28]] },
+        '听写': { color: '#6366f1', data: [['2024-01-01', 12], ['2024-02-01', 15], ['2024-03-01', 14], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
+        '智能体': { color: '#14b8a6', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 10], ['2024-04-01', 12], ['2024-05-01', 15], ['2024-06-01', 18]] },
+        '单词评测': { color: '#f97316', data: [['2024-01-01', 8], ['2024-02-01', 12], ['2024-03-01', 10], ['2024-04-01', 15], ['2024-05-01', 14], ['2024-06-01', 18]] },
+        '对话评测': { color: '#84cc16', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 7], ['2024-04-01', 10], ['2024-05-01', 9], ['2024-06-01', 12]] },
+        '场景对话': { color: '#0ea5e9', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 20], ['2024-06-01', 25]] }
       };
 
       // 1. 资源新增趋势图
@@ -500,7 +858,6 @@
           }
         }
         
-        // 默认选中：教案、课件、学案、活动
         var defaultSelected = ['教案', '课件', '学案', '活动', '智能体'];
         
         var series = visibleResources.map(function(name) {
@@ -508,16 +865,33 @@
             name: name,
             type: 'line',
             smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: { color: allResources[name].color, width: 2 },
+            itemStyle: { color: allResources[name].color },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: allResources[name].color + '40' },
+                { offset: 1, color: allResources[name].color + '05' }
+              ])
+            },
             data: allResources[name].data
           };
         });
         
         resourceChart.setOption({
-          tooltip: { trigger: 'axis' },
+          backgroundColor: 'transparent',
+          tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'rgba(15, 23, 71, 0.95)',
+            borderColor: 'rgba(59, 130, 246, 0.5)',
+            textStyle: { color: '#fff' }
+          },
           legend: { 
             data: visibleResources, 
             bottom: 0, 
             type: 'scroll',
+            textStyle: { color: 'rgba(255,255,255,0.7)' },
             selected: function() {
               var selected = {};
               visibleResources.forEach(function(name) {
@@ -526,32 +900,24 @@
               return selected;
             }()
           },
-          grid: { left: '3%', right: '4%', bottom: visibleResources.length > 6 ? '20%' : '15%', top: '10%', containLabel: true },
+          grid: { left: '3%', right: '4%', bottom: visibleResources.length > 6 ? '20%' : '15%', top: '5%', containLabel: true },
           xAxis: {
             type: 'time',
-            axisLabel: {
-              formatter: function(value) {
-                var date = new Date(value);
-                var month = date.getMonth() + 1;
-                var day = date.getDate();
-                return month + '月' + day + '日';
-              }
-            }
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.5)' },
+            splitLine: { show: false }
           },
-          yAxis: { type: 'value' },
+          yAxis: { 
+            type: 'value',
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.5)' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+          },
           series: series
         });
       }
       
-      // 初始显示全部资源
       updateResourceChart('all');
-
-      // 学科筛选联动图表
-      var subjectSelect = document.getElementById('subject-select');
-      subjectSelect.addEventListener('change', function() {
-        updateResourceChart(this.value);
-        updateClassroomChart(this.value);
-      });
 
       // 2. 课堂教学柱状图
       var classroomChart = echarts.init(document.getElementById('classroom-chart'));
@@ -574,35 +940,43 @@
               visibleScoreData.push(validScores.length > 0 ? Math.round(validScores.reduce(function(a, b) { return a + b; }, 0) / validScores.length) : null);
             } else {
               visibleData.push(allClassroom[name][idx]);
-              var score = allClassroomScore[name][idx];
-              visibleScoreData.push(score === 0 ? null : score);
+              visibleScoreData.push(allClassroomScore[name][idx] === 0 ? null : allClassroomScore[name][idx]);
             }
           }
         }
 
-        var hasScore = visibleScoreData.some(function(v) { return v !== null; });
-
         classroomChart.setOption({
+          backgroundColor: 'transparent',
           tooltip: {
             trigger: 'axis',
+            backgroundColor: 'rgba(15, 23, 71, 0.95)',
+            borderColor: 'rgba(59, 130, 246, 0.5)',
+            textStyle: { color: '#fff' },
             formatter: function(params) {
-              var idx = params[0].dataIndex;
-              var name = visibleItems[idx];
-              var usage = visibleData[idx];
-              var score = visibleScoreData[idx];
+              var name = params[0].name;
+              var usage = params[0].value;
+              var score = visibleScoreData[params[0].dataIndex];
               var tip = name + '<br/>使用次数: ' + usage;
-              if (score !== null) {
+              if (score !== null && score !== undefined) {
                 tip += '<br/>得分率: ' + score + '%';
               }
               return tip;
             }
           },
-          grid: { left: '3%', right: '4%', bottom: '15%', top: hasScore ? '15%' : '10%', containLabel: true },
+          grid: { left: '3%', right: '4%', bottom: '10%', top: '5%', containLabel: true },
           xAxis: {
             type: 'category',
-            data: visibleItems
+            data: visibleItems,
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.7)', rotate: 30 }
           },
-          yAxis: { type: 'value', name: '使用次数' },
+          yAxis: { 
+            type: 'value',
+            name: '使用次数',
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.5)' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+          },
           series: [{
             type: 'bar',
             data: visibleData.map(function(val, i) {
@@ -610,16 +984,16 @@
                 value: val,
                 itemStyle: {
                   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: '#60a5fa' },
-                    { offset: 1, color: '#3b82f6' }
+                    { offset: 0, color: '#3b82f6' },
+                    { offset: 1, color: '#1d4ed8' }
                   ])
                 },
                 label: {
-                  show: visibleScoreData[i] !== null,
+                  show: visibleScoreData[i] !== null && visibleScoreData[i] !== undefined,
                   position: 'top',
-                  formatter: '得分率:' + visibleScoreData[i] + '%',
-                  fontSize: 11,
-                  color: '#333'
+                  formatter: '{c}',
+                  fontSize: 10,
+                  color: '#10b981'
                 }
               };
             }),
@@ -628,28 +1002,101 @@
         });
       }
 
-      // 初始显示全部
       updateClassroomChart('all');
 
       // 学科筛选联动
+      var subjectSelect = document.getElementById('subject-select');
       subjectSelect.addEventListener('change', function() {
         updateResourceChart(this.value);
         updateClassroomChart(this.value);
       });
 
-      // 3. 班级作业明细列表
+      // 班级作业明细
       var grades = ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'];
       var classNames = [];
       for (var g = 0; g < 6; g++) {
-        for (var c = 1; c <= 5; c++) {
+        for (var c = 1; c <= 4; c++) {
           classNames.push(grades[g] + c + '班');
         }
       }
       var submitData = classNames.map(function() { return Math.floor(Math.random() * 15) + 85; });
       var scoreData = classNames.map(function() { return Math.floor(Math.random() * 20) + 75; });
-      var homeworkCount = classNames.map(function() { return Math.floor(Math.random() * 8) + 8; }); // 8-15次
+      var homeworkCount = classNames.map(function() { return Math.floor(Math.random() * 8) + 8; });
 
-      // 得分率趋势数据（近30天）
+      // 班级列表HTML生成
+      function generateClassListHtml(names, submitArr, scoreArr, hwCountArr, maxItems) {
+        var html = '';
+        var displayCount = maxItems ? Math.min(maxItems, names.length) : names.length;
+        
+        for (var i = 0; i < displayCount; i++) {
+          html += '<div class="class-item rounded-lg p-3 flex items-center gap-4">';
+          html += '<div class="w-20 flex-shrink-0 text-sm text-blue-300">' + names[i] + '</div>';
+          html += '<div class="w-16 flex-shrink-0 text-center text-sm text-white">' + hwCountArr[i] + '次</div>';
+          html += '<div class="flex-1 flex items-center gap-2">';
+          html += '<div class="flex-1 progress-bar h-2"><div class="progress-fill bg-gradient-to-r from-blue-500 to-cyan-400" style="width:' + submitArr[i] + '%"></div></div>';
+          html += '<div class="w-12 text-right text-sm text-blue-400">' + submitArr[i] + '%</div>';
+          html += '</div>';
+          html += '<div class="flex-1 flex items-center gap-2">';
+          html += '<div class="flex-1 progress-bar h-2"><div class="progress-fill bg-gradient-to-r from-green-500 to-emerald-400" style="width:' + scoreArr[i] + '%"></div></div>';
+          html += '<div class="w-12 text-right text-sm text-green-400">' + scoreArr[i] + '%</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+        return html;
+      }
+
+      // 默认显示7条
+      var defaultCount = 7;
+      document.getElementById('homework-detail-list').innerHTML = generateClassListHtml(classNames, submitData, scoreData, homeworkCount, defaultCount);
+
+      // 弹窗相关元素
+      var modal = document.getElementById('homework-modal');
+      var openBtn = document.getElementById('open-homework-modal-btn');
+      var closeBtn = document.getElementById('close-homework-modal-btn');
+      var overlay = document.getElementById('homework-modal-overlay');
+      var gradeFilter = document.getElementById('modal-grade-filter');
+      var modalList = document.getElementById('modal-homework-list');
+
+      // 弹窗数据渲染（支持年级筛选）
+      function renderModalList(filterGrade) {
+        var filteredNames = [], filteredSubmit = [], filteredScore = [], filteredHwCount = [];
+        for (var i = 0; i < classNames.length; i++) {
+          var gradeMatch = filterGrade === 'all' || classNames[i].startsWith(filterGrade);
+          if (gradeMatch) {
+            filteredNames.push(classNames[i]);
+            filteredSubmit.push(submitData[i]);
+            filteredScore.push(scoreData[i]);
+            filteredHwCount.push(homeworkCount[i]);
+          }
+        }
+        modalList.innerHTML = generateClassListHtml(filteredNames, filteredSubmit, filteredScore, filteredHwCount, null);
+      }
+
+      // 打开弹窗
+      openBtn.addEventListener('click', function() {
+        gradeFilter.value = 'all';
+        renderModalList('all');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
+
+      // 关闭弹窗
+      function closeModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+      closeBtn.addEventListener('click', closeModal);
+      overlay.addEventListener('click', closeModal);
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+      });
+
+      // 年级筛选
+      gradeFilter.addEventListener('change', function() {
+        renderModalList(this.value);
+      });
+
+      // 得分率趋势数据
       var scoreTrendData = [
         ['2024-05-01', 82], ['2024-05-03', 84], ['2024-05-05', 81], ['2024-05-07', 85],
         ['2024-05-09', 83], ['2024-05-11', 86], ['2024-05-13', 84], ['2024-05-15', 87],
@@ -657,33 +1104,34 @@
         ['2024-05-25', 87], ['2024-05-27', 85], ['2024-05-29', 88], ['2024-05-31', 90]
       ];
 
-      // 4. 得分率趋势图
+      // 3. 得分率趋势图
       var scoreTrendChart = echarts.init(document.getElementById('score-trend-chart'));
       scoreTrendChart.setOption({
+        backgroundColor: 'transparent',
         tooltip: {
           trigger: 'axis',
+          backgroundColor: 'rgba(15, 23, 71, 0.95)',
+          borderColor: 'rgba(59, 130, 246, 0.5)',
+          textStyle: { color: '#fff' },
           formatter: function(params) {
             var data = params[0];
-            return data.axisValue + '<br/>得分率: <b>' + data.value[1] + '%</b>';
+            return data.axisValue + '<br/>得分率: <b style="color:#10b981">' + data.value[1] + '%</b>';
           }
         },
-        grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
+        grid: { left: '3%', right: '4%', bottom: '15%', top: '5%', containLabel: true },
         xAxis: {
           type: 'time',
-          axisLabel: {
-            formatter: function(value) {
-              var date = new Date(value);
-              return (date.getMonth() + 1) + '月' + date.getDate() + '日';
-            }
-          }
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+          axisLabel: { color: 'rgba(255,255,255,0.5)' },
+          splitLine: { show: false }
         },
         yAxis: {
           type: 'value',
           min: 60,
           max: 100,
-          axisLabel: {
-            formatter: '{value}%'
-          }
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+          axisLabel: { color: 'rgba(255,255,255,0.5)', formatter: '{value}%' },
+          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
         },
         series: [{
           type: 'line',
@@ -691,57 +1139,99 @@
           data: scoreTrendData,
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
-              { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+              { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
+              { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
             ])
           },
-          lineStyle: { color: '#3b82f6', width: 2 },
-          itemStyle: { color: '#3b82f6' },
+          lineStyle: { color: '#10b981', width: 2 },
+          itemStyle: { color: '#10b981' },
           symbol: 'circle',
           symbolSize: 6
         }]
       });
 
-      // 生成班级作业明细列表
-      var listHtml = '<div class="space-y-2">';
-      // 表头 (sticky)
-      listHtml += '<div class="flex items-center text-xs font-semibold border-b pb-2 mb-2 sticky top-0 bg-white z-10" style="color:#6B7280">';
-      listHtml += '<div class="w-20 flex-shrink-0 text-center">班级</div>';
-      listHtml += '<div class="w-20 text-center">布置作业数</div>';
-      listHtml += '<div class="flex-1 text-center">提交率</div>';
-      listHtml += '<div class="w-8 flex-shrink-0"></div>';
-      listHtml += '<div class="flex-1 text-center">得分率</div>';
-      listHtml += '</div>';
+      // 得分率分布饼状图
+      var scoreDistChart = echarts.init(document.getElementById('score-distribution-chart'));
+      scoreDistChart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: 'rgba(15, 23, 71, 0.95)',
+          borderColor: 'rgba(59, 130, 246, 0.5)',
+          textStyle: { color: '#fff' },
+          position: 'top',
+          formatter: function(params) {
+            return '<b>' + params.name + '</b><br/>' +
+                   '人数：' + params.value + '人<br/>' +
+                   '占比：' + params.percent + '%';
+          }
+        },
+        legend: { show: false },
+        series: [{
+          type: 'pie',
+          radius: '60%',
+          center: ['50%', '45%'],
+          avoidLabelOverlap: true,
+          itemStyle: { borderRadius: 4, borderColor: '#0f172a', borderWidth: 2 },
+          label: {
+            show: true,
+            position: 'outside',
+            color: '#e2e8f0',
+            fontSize: 12,
+            fontWeight: 'bold',
+            formatter: '{b}',
+            lineHeight: 16
+          },
+          labelLine: {
+            show: true,
+            length: 15,
+            length2: 10,
+            lineStyle: { color: '#94a3b8', width: 1 }
+          },
+          emphasis: { scale: true, scaleSize: 5 },
+          data: [
+            { value: 8, name: '<60%', itemStyle: { color: '#ef4444' } },
+            { value: 10, name: '60-70%', itemStyle: { color: '#f97316' } },
+            { value: 18, name: '70-80%', itemStyle: { color: '#eab308' } },
+            { value: 15, name: '80-90%', itemStyle: { color: '#22c55e' } },
+            { value: 10, name: '>90%', itemStyle: { color: '#10b981' } },
+            { value: 6, name: '未提交', itemStyle: { color: '#64748b' } }
+          ]
+        }]
+      });
 
-      for (var i = 0; i < classNames.length; i++) {
-        var bgClass = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-        listHtml += '<div class="flex items-center text-sm py-2 ' + bgClass + ' rounded px-2 hover:bg-blue-50 transition-colors">';
-        // 班级名
-        listHtml += '<div class="w-20 flex-shrink-0 text-center font-medium text-gray-700">' + classNames[i] + '</div>';
-        // 布置作业数 (纯数字)
-        listHtml += '<div class="w-20 text-center text-blue-600">' + homeworkCount[i] + '</div>';
-        // 提交率 (进度条 + 数字)
-        listHtml += '<div class="flex-1 flex items-center gap-2">';
-        listHtml += '<div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:' + submitData[i] + '%"></div></div>';
-        listHtml += '<span class="w-10 text-left text-blue-600 font-medium">' + submitData[i] + '%</span>';
-        listHtml += '</div>';
-        listHtml += '<div class="w-8 flex-shrink-0"></div>';
-        // 得分率 (进度条 + 数字)
-        listHtml += '<div class="flex-1 flex items-center gap-2">';
-        listHtml += '<div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:' + scoreData[i] + '%"></div></div>';
-        listHtml += '<span class="w-10 text-left text-blue-600 font-medium">' + scoreData[i] + '%</span>';
-        listHtml += '</div>';
-        listHtml += '</div>';
-      }
-      listHtml += '</div>';
-      document.getElementById('homework-detail-list').innerHTML = listHtml;
+      // 知识图谱全屏功能
+      var graphFullscreenChart = null;
+      document.getElementById('graph-fullscreen-btn').addEventListener('click', function() {
+        var modal = document.getElementById('graph-fullscreen-modal');
+        modal.classList.remove('hidden');
+        graphFullscreenChart = echarts.init(document.getElementById('knowledge-graph-fullscreen'));
+        graphFullscreenChart.setOption(knowledgeGraph.getOption());
+      });
+      document.getElementById('graph-fullscreen-close').addEventListener('click', function() {
+        var modal = document.getElementById('graph-fullscreen-modal');
+        modal.classList.add('hidden');
+        if (graphFullscreenChart) {
+          graphFullscreenChart.dispose();
+          graphFullscreenChart = null;
+        }
+      });
+      document.getElementById('graph-fullscreen-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          document.getElementById('graph-fullscreen-close').click();
+        }
+      });
 
       // 响应式
       window.addEventListener('resize', function() {
         resourceChart.resize();
         classroomChart.resize();
-        knowledgeCloud.resize();
+        knowledgeGraph.resize();
         scoreTrendChart.resize();
+        scoreDistChart.resize();
+        if (graphFullscreenChart) {
+          graphFullscreenChart.resize();
+        }
       });
     }
   </script>
