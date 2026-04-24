@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能教学 - 教学看板</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <script src="components/navbar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.1.0/dist/echarts-wordcloud.min.js"></script>
+  <style>
+    .menu-item {
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .menu-item:hover {
+      background-color: #eff6ff;
+      color: #2563eb;
+    }
+    .menu-item.active {
+      background-color: #dbeafe;
+      color: #2563eb;
+      border-left: 3px solid #2563eb;
+    }
+    .menu-item.active .menu-icon {
+      color: #2563eb;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .stat-card-alt {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .stat-card-info {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .stat-card-success {
+      background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+    }
+    .echarts-container {
+      width: 100%;
+      height: 300px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col h-screen overflow-hidden">
+
+  <!-- 顶部导航栏 -->
+  <div id="navbar-container"></div>
+
+  <!-- 主内容区域：左侧菜单 + 右侧内容 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 左侧菜单（通用） -->
+    <aside class="w-56 bg-white border-r border-gray-200 shadow-sm flex-shrink-0 overflow-y-auto">
+      <div class="p-4 border-b border-gray-100">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-500"></i>
+          教务管理
+        </h2>
+      </div>
+      <nav class="py-2">
+        <a href="academic-class.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="school" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>班级管理</span>
+        </a>
+        <a href="academic-teacher.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="user-cog" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>老师管理</span>
+        </a>
+        <a href="academic-package.html" class="menu-item w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="landmark" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>套餐管理</span>
+        </a>
+        <a href="academic-dashboard.html" class="menu-item active w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer">
+          <i data-lucide="bar-chart-3" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>数据看板</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧内容 -->
+    <main class="flex-1 p-6 overflow-y-auto bg-gray-50">
+
+      <!-- ===================== 筛选条件 ===================== -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-600 whitespace-nowrap">年级</label>
+            <select id="grade-select" class="w-36 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
+              <option value="all">全部</option>
+              <optgroup label="小学">
+                <option value="p1">一年级</option>
+                <option value="p2">二年级</option>
+                <option value="p3">三年级</option>
+                <option value="p4">四年级</option>
+                <option value="p5">五年级</option>
+                <option value="p6">六年级</option>
+              </optgroup>
+              <optgroup label="初中">
+                <option value="m1">初一</option>
+                <option value="m2">初二</option>
+                <option value="m3">初三</option>
+              </optgroup>
+              <optgroup label="高中">
+                <option value="h1">高一</option>
+                <option value="h2">高二</option>
+                <option value="h3">高三</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-600 whitespace-nowrap">时间段</label>
+            <select id="time-select" class="w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
+              <option value="month">近一个月</option>
+              <option value="halfyear">近六个月</option>
+              <option value="year">近一年</option>
+              <option value="all">全部数据</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-600 whitespace-nowrap">学科</label>
+            <select id="subject-select" class="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
+              <option value="all">全部</option>
+              <option value="chinese">语文</option>
+              <option value="math">数学</option>
+              <option value="english">英语</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 基础数据概览 ===================== -->
+      <div class="mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">基本情况</h3>
+        <p class="text-xs text-gray-400 mb-3">以下数据为学校整体统计，不随筛选条件变化</p>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="stat-card rounded-xl p-6 text-white shadow-sm">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="users" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-sm text-white/80">教师总数</p>
+                <p class="text-3xl font-bold">128</p>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card-alt rounded-xl p-6 text-white shadow-sm">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-sm text-white/80">学生总数</p>
+                <p class="text-3xl font-bold">3,456</p>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card-info rounded-xl p-6 text-white shadow-sm">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                <i data-lucide="building" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-sm text-white/80">班级数量</p>
+                <p class="text-3xl font-bold">86</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 教学资源建设 ===================== -->
+      <div class="mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">教学资源</h3>
+        
+        <!-- 校本资源总计 -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-sm mb-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <i data-lucide="database" class="w-6 h-6"></i>
+            <span class="text-sm text-white/80">校本资源总计</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-3xl font-bold">2,749</span>
+            <span class="text-sm text-white/70">份</span>
+          </div>
+        </div>
+        
+        <!-- 各资源明细 - 6列网格布局 -->
+        <div id="resource-cards" class="grid grid-cols-6 gap-3">
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">326</p>
+            <p class="text-xs text-gray-500 mt-0.5">教案</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">458</p>
+            <p class="text-xs text-gray-500 mt-0.5">课件</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">289</p>
+            <p class="text-xs text-gray-500 mt-0.5">学案</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">512</p>
+            <p class="text-xs text-gray-500 mt-0.5">活动</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">186</p>
+            <p class="text-xs text-gray-500 mt-0.5">趣味抽奖</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">234</p>
+            <p class="text-xs text-gray-500 mt-0.5">随堂测</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,english">
+            <p class="text-xl font-bold text-blue-600">167</p>
+            <p class="text-xs text-gray-500 mt-0.5">听写</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,chinese,math,english">
+            <p class="text-xl font-bold text-blue-600">98</p>
+            <p class="text-xs text-gray-500 mt-0.5">智能体</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,english">
+            <p class="text-xl font-bold text-blue-600">156</p>
+            <p class="text-xs text-gray-500 mt-0.5">单词评测</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,english">
+            <p class="text-xl font-bold text-blue-600">89</p>
+            <p class="text-xs text-gray-500 mt-0.5">对话评测</p>
+          </div>
+          <div class="resource-card bg-white rounded-lg p-3 shadow-sm border border-gray-100 text-center" data-subjects="all,english">
+            <p class="text-xl font-bold text-blue-600">234</p>
+            <p class="text-xs text-gray-500 mt-0.5">场景对话</p>
+          </div>
+        </div>
+        
+        <!-- 时段内新增图表 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mt-6">
+          <h4 class="text-sm font-semibold text-gray-700 mb-3">新增备课趋势</h4>
+          <div id="resource-chart" class="echarts-container" style="height: 380px;"></div>
+        </div>
+      </div>
+
+      <!-- ===================== 课堂教学 ===================== -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">课堂应用</h3>
+        <div id="classroom-chart" class="echarts-container"></div>
+      </div>
+
+      <!-- ===================== 作业数据（整行展示） ===================== -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">作业统计</h3>
+        <div class="flex gap-4 mb-4">
+          <div class="flex-1 bg-blue-50 rounded-lg p-3 text-center">
+            <p class="text-2xl font-bold text-blue-600">1,286</p>
+            <p class="text-xs text-gray-500">作业布置总数</p>
+          </div>
+          <div class="flex-1 bg-blue-50 rounded-lg p-3 text-center">
+            <p class="text-2xl font-bold text-blue-600">92%</p>
+            <p class="text-xs text-gray-500">平均提交率</p>
+          </div>
+          <div class="flex-1 bg-blue-50 rounded-lg p-3 text-center">
+            <p class="text-2xl font-bold text-blue-600">85%</p>
+            <p class="text-xs text-gray-500">平均得分率</p>
+          </div>
+        </div>
+        <!-- 班级作业明细 - 合并可视化 -->
+        <div class="mt-4">
+          <div class="overflow-y-auto max-h-[300px]" id="homework-detail-list"></div>
+        </div>
+        
+        <!-- 得分率趋势 -->
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <h4 class="text-sm font-semibold text-gray-700 mb-3">得分率趋势</h4>
+          <div id="score-trend-chart" class="echarts-container" style="height: 200px;"></div>
+        </div>
+      </div>
+
+      <!-- ===================== 六、学情分析 ===================== -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">知识掌握</h3>
+
+        <!-- 知识点词云 -->
+        <div>
+          <div id="knowledge-cloud" class="echarts-container" style="height: 400px;"></div>
+          <p class="text-sm text-gray-500 text-center mt-2">字体越大/颜色越深，表示掌握度越低</p>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      new Navbar('navbar-container', {
+        currentPage: 'academic',
+        bodyClass: 'h-screen',
+        showTestButton: true,
+        showPointsAnimation: true
+      });
+      lucide.createIcons();
+
+      // 学科筛选 - 控制资源卡片显示/隐藏
+      const subjectSelect = document.getElementById('subject-select');
+      const resourceCards = document.getElementById('resource-cards');
+      
+      subjectSelect.addEventListener('change', function() {
+        const currentSubject = this.value;
+        const cards = resourceCards.querySelectorAll('.resource-card');
+        
+        cards.forEach(card => {
+          const subjects = card.dataset.subjects.split(',');
+          if (subjects.includes(currentSubject)) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+
+      // 初始化 ECharts
+      initCharts();
+    });
+
+    function initCharts() {
+
+      // 知识点掌握度数据（50个模拟知识点）
+      var knowledgePoints = [
+        { name: '分数乘法运算', rate: 52 }, { name: '文言文阅读理解', rate: 58 },
+        { name: '英语时态运用', rate: 55 }, { name: '因式分解', rate: 48 },
+        { name: '一元二次方程', rate: 62 }, { name: '完形填空', rate: 67 },
+        { name: '阅读理解技巧', rate: 71 }, { name: '几何证明', rate: 65 },
+        { name: '英语语法', rate: 74 }, { name: '应用题分析', rate: 78 },
+        { name: '作文写作', rate: 82 }, { name: '函数图像', rate: 85 },
+        { name: '词汇积累', rate: 88 }, { name: '听力训练', rate: 79 },
+        { name: '口算能力', rate: 91 }, { name: '句型转换', rate: 63 },
+        { name: '拼音拼读', rate: 96 }, { name: '生字书写', rate: 94 },
+        { name: '段落大意概括', rate: 69 }, { name: '修辞手法', rate: 76 },
+        { name: '小数除法', rate: 56 }, { name: '周长面积计算', rate: 73 },
+        { name: '角的度量', rate: 81 }, { name: '统计图表', rate: 84 },
+        { name: '简易方程', rate: 68 }, { name: '比与比例', rate: 70 },
+        { name: '整数四则运算', rate: 92 }, { name: '方向与位置', rate: 89 },
+        { name: '年月日认识', rate: 93 }, { name: '英语字母', rate: 97 },
+        { name: '音标学习', rate: 61 }, { name: '阅读短文', rate: 77 },
+        { name: '口语表达', rate: 80 }, { name: '写作基础', rate: 75 },
+        { name: '自然数认知', rate: 98 }, { name: '图形识别', rate: 90 },
+        { name: '长度单位换算', rate: 86 }, { name: '重量单位换算', rate: 83 },
+        { name: '时间单位换算', rate: 87 }, { name: '有余数除法', rate: 59 },
+        { name: '图形的旋转', rate: 64 }, { name: '对称轴认识', rate: 72 },
+        { name: '数据的收集', rate: 66 }, { name: '可能性大小', rate: 60 },
+        { name: '综合算式', rate: 57 }, { name: '运算定律', rate: 95 },
+        { name: '多位数读写', rate: 99 }, { name: '亿以内数', rate: 100 }
+      ];
+
+      // 统计各分段数量
+      var weakCount = knowledgePoints.filter(function(k) { return k.rate < 60; }).length;
+      var mediumCount = knowledgePoints.filter(function(k) { return k.rate >= 60 && k.rate <= 80; }).length;
+      var goodCount = knowledgePoints.filter(function(k) { return k.rate > 80; }).length;
+
+      // 词云数据：掌握越低，value越大（词越大）
+      var cloudData = knowledgePoints.map(function(k) {
+        return {
+          name: k.name,
+          value: 100 - k.rate,
+          rate: k.rate
+        };
+      });
+
+      // 词云颜色：统一蓝色，通过深浅区分掌握度（越浅掌握度越高）
+      var getColor = function(rate) {
+        // hue=220° 蓝色
+        // 掌握度越低，饱和度越高、亮度越低（深蓝）
+        // 掌握度越高，饱和度越低、亮度越高（浅蓝）
+        var saturation = 95 - (rate / 100) * 55;  // 95% -> 40%
+        var lightness = 25 + (rate / 100) * 50;   // 25% -> 75%
+        return 'hsl(220, ' + Math.round(saturation) + '%, ' + Math.round(lightness) + '%)';
+      };
+
+      // 词云图表
+      var knowledgeCloud = echarts.init(document.getElementById('knowledge-cloud'));
+      
+      knowledgeCloud.setOption({
+        tooltip: {
+          show: true,
+          formatter: function(params) {
+            return params.data.name + '<br/>掌握度: <b>' + params.data.rate + '%</b>';
+          }
+        },
+        series: [{
+          type: 'wordCloud',
+          shape: 'circle',
+          left: 'center',
+          top: 'center',
+          width: '90%',
+          height: '90%',
+          sizeRange: [14, 60],
+          rotationRange: [-15, 15],
+          rotationStep: 5,
+          gridSize: 8,
+          drawOutOfBound: false,
+          textStyle: {
+            fontFamily: 'Microsoft YaHei, sans-serif',
+            fontWeight: 'bold',
+            emphasis: {
+              shadowBlur: 10,
+              shadowColor: '#333'
+            }
+          },
+          data: cloudData.map(function(d) {
+            return {
+              name: d.name,
+              value: d.value,
+              rate: d.rate,
+              textStyle: {
+                color: getColor(d.rate)
+              }
+            };
+          })
+        }]
+      });
+
+      // 资源类型与学科映射
+      var resourceSubjects = {
+        '教案': ['all', 'chinese', 'math', 'english'],
+        '课件': ['all', 'chinese', 'math', 'english'],
+        '学案': ['all', 'chinese', 'math', 'english'],
+        '活动': ['all', 'chinese', 'math', 'english'],
+        '趣味抽奖': ['all', 'chinese', 'math', 'english'],
+        '随堂测': ['all', 'chinese', 'math', 'english'],
+        '听写': ['all', 'chinese', 'english'],
+        '智能体': ['all', 'chinese', 'math', 'english'],
+        '单词评测': ['all', 'english'],
+        '对话评测': ['all', 'english'],
+        '场景对话': ['all', 'english']
+      };
+
+      // 课堂教学类型与学科映射
+      var classroomSubjects = {
+        '课件': ['all', 'chinese', 'math', 'english'],
+        '活动': ['all', 'chinese', 'math', 'english'],
+        '趣味抽奖': ['all', 'chinese', 'math', 'english'],
+        '听写': ['all', 'chinese', 'english'],
+        '智能体': ['all', 'chinese', 'math', 'english'],
+        '单词评测': ['all', 'english'],
+        '对话评测': ['all', 'english'],
+        '场景对话': ['all', 'english']
+      };
+
+      // 课堂教学数据 [语文, 数学, 英语]
+      var allClassroom = {
+        '课件': [486, 328, 156],
+        '活动': [325, 280, 195],
+        '趣味抽奖': [156, 142, 89],
+        '听写': [245, 198, 156],
+        '智能体': [189, 165, 145],
+        '单词评测': [125, 98, 98],
+        '对话评测': [88, 72, 67],
+        '场景对话': [112, 95, 134]
+      };
+
+      // 课堂教学得分率 [语文, 数学, 英语]（听写、单词评测、对话评测、场景对话有数据）
+      var allClassroomScore = {
+        '课件': [null, null, null],
+        '活动': [null, null, null],
+        '趣味抽奖': [null, null, null],
+        '听写': [85, 82, 88],
+        '智能体': [null, null, null],
+        '单词评测': [78, 75, 88],
+        '对话评测': [72, 68, 78],
+        '场景对话': [85, 80, 92]
+      };
+
+      // 有得分率的数据项（听写、单词评测、对话评测、场景对话）
+      var hasScoreItems = ['听写', '单词评测', '对话评测', '场景对话'];
+
+      // 所有资源数据（日期格式：年-月-日）
+      var allResources = {
+        '教案': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 19], ['2024-06-01', 25]] },
+        '课件': { color: '#60a5fa', data: [['2024-01-01', 20], ['2024-02-01', 25], ['2024-03-01', 28], ['2024-04-01', 32], ['2024-05-01', 30], ['2024-06-01', 38]] },
+        '学案': { color: '#93c5fd', data: [['2024-01-01', 15], ['2024-02-01', 12], ['2024-03-01', 18], ['2024-04-01', 20], ['2024-05-01', 22], ['2024-06-01', 28]] },
+        '活动': { color: '#bfdbfe', data: [['2024-01-01', 25], ['2024-02-01', 30], ['2024-03-01', 28], ['2024-04-01', 35], ['2024-05-01', 40], ['2024-06-01', 45]] },
+        '趣味抽奖': { color: '#93c5fd', data: [['2024-01-01', 10], ['2024-02-01', 15], ['2024-03-01', 12], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
+        '随堂测': { color: '#60a5fa', data: [['2024-01-01', 18], ['2024-02-01', 22], ['2024-03-01', 20], ['2024-04-01', 25], ['2024-05-01', 23], ['2024-06-01', 28]] },
+        '听写': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 15], ['2024-03-01', 14], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
+        '智能体': { color: '#93c5fd', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 10], ['2024-04-01', 12], ['2024-05-01', 15], ['2024-06-01', 18]] },
+        '单词评测': { color: '#60a5fa', data: [['2024-01-01', 8], ['2024-02-01', 12], ['2024-03-01', 10], ['2024-04-01', 15], ['2024-05-01', 14], ['2024-06-01', 18]] },
+        '对话评测': { color: '#bfdbfe', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 7], ['2024-04-01', 10], ['2024-05-01', 9], ['2024-06-01', 12]] },
+        '场景对话': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 20], ['2024-06-01', 25]] }
+      };
+
+      // 1. 资源新增趋势图
+      var resourceChart = echarts.init(document.getElementById('resource-chart'));
+      
+      function updateResourceChart(subject) {
+        var visibleResources = [];
+        for (var name in resourceSubjects) {
+          if (resourceSubjects[name].includes(subject)) {
+            visibleResources.push(name);
+          }
+        }
+        
+        // 默认选中：教案、课件、学案、活动
+        var defaultSelected = ['教案', '课件', '学案', '活动', '智能体'];
+        
+        var series = visibleResources.map(function(name) {
+          return {
+            name: name,
+            type: 'line',
+            smooth: true,
+            data: allResources[name].data
+          };
+        });
+        
+        resourceChart.setOption({
+          tooltip: { trigger: 'axis' },
+          legend: { 
+            data: visibleResources, 
+            bottom: 0, 
+            type: 'scroll',
+            selected: function() {
+              var selected = {};
+              visibleResources.forEach(function(name) {
+                selected[name] = defaultSelected.includes(name);
+              });
+              return selected;
+            }()
+          },
+          grid: { left: '3%', right: '4%', bottom: visibleResources.length > 6 ? '20%' : '15%', top: '10%', containLabel: true },
+          xAxis: {
+            type: 'time',
+            axisLabel: {
+              formatter: function(value) {
+                var date = new Date(value);
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+                return month + '月' + day + '日';
+              }
+            }
+          },
+          yAxis: { type: 'value' },
+          series: series
+        });
+      }
+      
+      // 初始显示全部资源
+      updateResourceChart('all');
+
+      // 学科筛选联动图表
+      var subjectSelect = document.getElementById('subject-select');
+      subjectSelect.addEventListener('change', function() {
+        updateResourceChart(this.value);
+        updateClassroomChart(this.value);
+      });
+
+      // 2. 课堂教学柱状图
+      var classroomChart = echarts.init(document.getElementById('classroom-chart'));
+
+      function updateClassroomChart(subject) {
+        var subjectIndex = { 'all': -1, 'chinese': 0, 'math': 1, 'english': 2 };
+        var visibleItems = [];
+        var visibleData = [];
+        var visibleScoreData = [];
+
+        for (var name in classroomSubjects) {
+          if (classroomSubjects[name].includes(subject)) {
+            visibleItems.push(name);
+            var idx = subjectIndex[subject];
+            if (idx === -1) {
+              var total = allClassroom[name].reduce(function(a, b) { return a + b; }, 0);
+              visibleData.push(total);
+              var scoreArr = allClassroomScore[name];
+              var validScores = scoreArr.filter(function(s) { return s !== null; });
+              visibleScoreData.push(validScores.length > 0 ? Math.round(validScores.reduce(function(a, b) { return a + b; }, 0) / validScores.length) : null);
+            } else {
+              visibleData.push(allClassroom[name][idx]);
+              var score = allClassroomScore[name][idx];
+              visibleScoreData.push(score === 0 ? null : score);
+            }
+          }
+        }
+
+        var hasScore = visibleScoreData.some(function(v) { return v !== null; });
+
+        classroomChart.setOption({
+          tooltip: {
+            trigger: 'axis',
+            formatter: function(params) {
+              var idx = params[0].dataIndex;
+              var name = visibleItems[idx];
+              var usage = visibleData[idx];
+              var score = visibleScoreData[idx];
+              var tip = name + '<br/>使用次数: ' + usage;
+              if (score !== null) {
+                tip += '<br/>得分率: ' + score + '%';
+              }
+              return tip;
+            }
+          },
+          grid: { left: '3%', right: '4%', bottom: '15%', top: hasScore ? '15%' : '10%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: visibleItems
+          },
+          yAxis: { type: 'value', name: '使用次数' },
+          series: [{
+            type: 'bar',
+            data: visibleData.map(function(val, i) {
+              return {
+                value: val,
+                itemStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#60a5fa' },
+                    { offset: 1, color: '#3b82f6' }
+                  ])
+                },
+                label: {
+                  show: visibleScoreData[i] !== null,
+                  position: 'top',
+                  formatter: '得分率:' + visibleScoreData[i] + '%',
+                  fontSize: 11,
+                  color: '#333'
+                }
+              };
+            }),
+            barWidth: '50%'
+          }]
+        });
+      }
+
+      // 初始显示全部
+      updateClassroomChart('all');
+
+      // 学科筛选联动
+      subjectSelect.addEventListener('change', function() {
+        updateResourceChart(this.value);
+        updateClassroomChart(this.value);
+      });
+
+      // 3. 班级作业明细列表
+      var grades = ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'];
+      var classNames = [];
+      for (var g = 0; g < 6; g++) {
+        for (var c = 1; c <= 5; c++) {
+          classNames.push(grades[g] + c + '班');
+        }
+      }
+      var submitData = classNames.map(function() { return Math.floor(Math.random() * 15) + 85; });
+      var scoreData = classNames.map(function() { return Math.floor(Math.random() * 20) + 75; });
+      var homeworkCount = classNames.map(function() { return Math.floor(Math.random() * 8) + 8; }); // 8-15次
+
+      // 得分率趋势数据（近30天）
+      var scoreTrendData = [
+        ['2024-05-01', 82], ['2024-05-03', 84], ['2024-05-05', 81], ['2024-05-07', 85],
+        ['2024-05-09', 83], ['2024-05-11', 86], ['2024-05-13', 84], ['2024-05-15', 87],
+        ['2024-05-17', 85], ['2024-05-19', 88], ['2024-05-21', 86], ['2024-05-23', 89],
+        ['2024-05-25', 87], ['2024-05-27', 85], ['2024-05-29', 88], ['2024-05-31', 90]
+      ];
+
+      // 4. 得分率趋势图
+      var scoreTrendChart = echarts.init(document.getElementById('score-trend-chart'));
+      scoreTrendChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          formatter: function(params) {
+            var data = params[0];
+            return data.axisValue + '<br/>得分率: <b>' + data.value[1] + '%</b>';
+          }
+        },
+        grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
+        xAxis: {
+          type: 'time',
+          axisLabel: {
+            formatter: function(value) {
+              var date = new Date(value);
+              return (date.getMonth() + 1) + '月' + date.getDate() + '日';
+            }
+          }
+        },
+        yAxis: {
+          type: 'value',
+          min: 60,
+          max: 100,
+          axisLabel: {
+            formatter: '{value}%'
+          }
+        },
+        series: [{
+          type: 'line',
+          smooth: true,
+          data: scoreTrendData,
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+              { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+            ])
+          },
+          lineStyle: { color: '#3b82f6', width: 2 },
+          itemStyle: { color: '#3b82f6' },
+          symbol: 'circle',
+          symbolSize: 6
+        }]
+      });
+
+      // 生成班级作业明细列表
+      var listHtml = '<div class="space-y-2">';
+      // 表头 (sticky)
+      listHtml += '<div class="flex items-center text-xs font-semibold border-b pb-2 mb-2 sticky top-0 bg-white z-10" style="color:#6B7280">';
+      listHtml += '<div class="w-20 flex-shrink-0 text-center">班级</div>';
+      listHtml += '<div class="w-20 text-center">布置作业数</div>';
+      listHtml += '<div class="flex-1 text-center">提交率</div>';
+      listHtml += '<div class="w-8 flex-shrink-0"></div>';
+      listHtml += '<div class="flex-1 text-center">得分率</div>';
+      listHtml += '</div>';
+
+      for (var i = 0; i < classNames.length; i++) {
+        var bgClass = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+        listHtml += '<div class="flex items-center text-sm py-2 ' + bgClass + ' rounded px-2 hover:bg-blue-50 transition-colors">';
+        // 班级名
+        listHtml += '<div class="w-20 flex-shrink-0 text-center font-medium text-gray-700">' + classNames[i] + '</div>';
+        // 布置作业数 (纯数字)
+        listHtml += '<div class="w-20 text-center text-blue-600">' + homeworkCount[i] + '</div>';
+        // 提交率 (进度条 + 数字)
+        listHtml += '<div class="flex-1 flex items-center gap-2">';
+        listHtml += '<div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:' + submitData[i] + '%"></div></div>';
+        listHtml += '<span class="w-10 text-left text-blue-600 font-medium">' + submitData[i] + '%</span>';
+        listHtml += '</div>';
+        listHtml += '<div class="w-8 flex-shrink-0"></div>';
+        // 得分率 (进度条 + 数字)
+        listHtml += '<div class="flex-1 flex items-center gap-2">';
+        listHtml += '<div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:' + scoreData[i] + '%"></div></div>';
+        listHtml += '<span class="w-10 text-left text-blue-600 font-medium">' + scoreData[i] + '%</span>';
+        listHtml += '</div>';
+        listHtml += '</div>';
+      }
+      listHtml += '</div>';
+      document.getElementById('homework-detail-list').innerHTML = listHtml;
+
+      // 响应式
+      window.addEventListener('resize', function() {
+        resourceChart.resize();
+        classroomChart.resize();
+        knowledgeCloud.resize();
+        scoreTrendChart.resize();
+      });
+    }
+  </script>
+</body>
+</html>
