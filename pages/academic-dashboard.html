@@ -44,39 +44,91 @@
       background: linear-gradient(180deg, #60a5fa, #3b82f6);
     }
     
-    /* 数字卡片发光效果 */
+    /* 数据卡片 - 炫酷呼吸效果 */
     .data-card {
       background: linear-gradient(135deg, rgba(30, 41, 96, 0.8) 0%, rgba(15, 23, 71, 0.9) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      backdrop-filter: blur(10px);
+      border-radius: 16px;
       position: relative;
       overflow: hidden;
+      box-shadow: 
+        0 0 0 1px rgba(59, 130, 246, 0.2),
+        0 0 10px rgba(59, 130, 246, 0.15),
+        0 0 20px rgba(59, 130, 246, 0.08),
+        inset 0 0 30px rgba(59, 130, 246, 0.05);
     }
     
+    /* 粒子点阵背景 */
     .data-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #3b82f6, #06b6d4, transparent);
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.12) 1px, transparent 1px),
+        radial-gradient(circle at 3px 3px, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px, 15px 15px;
+      animation: particleFloat 6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
     }
     
+    /* 呼吸渐变边框线 */
     .data-card::after {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
-      animation: pulse 3s ease-in-out infinite;
+      inset: 0;
+      border-radius: 16px;
+      padding: 1px;
+      background: linear-gradient(90deg, #1e40af, #3b82f6, #06b6d4, #0891b2, #3b82f6, #1e40af);
+      background-size: 200% 100%;
+      animation: gradientFlow 3s ease infinite;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 2;
+      pointer-events: none;
+      filter: blur(0.5px);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
     }
     
-    @keyframes pulse {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.1); }
+    @keyframes particleFloat {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-2px, -2px); }
+      50% { transform: translate(0, -4px); }
+      75% { transform: translate(2px, -2px); }
+    }
+    
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .data-card > * {
+      position: relative;
+      z-index: 5;
+    }
+    
+    .data-card:hover::after {
+      opacity: 1.3;
+    }
+    
+    @keyframes particleFloat {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-2px, -2px); }
+      50% { transform: translate(0, -4px); }
+      75% { transform: translate(2px, -2px); }
+    }
+    
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     
     /* 发光数字 */
@@ -100,24 +152,132 @@
       text-shadow: 0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.4);
     }
     
-    /* 图表容器 */
+    /* 图表容器 - 炫酷呼吸效果 */
     .chart-container {
       background: linear-gradient(135deg, rgba(30, 41, 96, 0.6) 0%, rgba(15, 23, 71, 0.8) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.2);
       border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 0 1px rgba(59, 130, 246, 0.2),
+        0 0 10px rgba(59, 130, 246, 0.15),
+        0 0 20px rgba(59, 130, 246, 0.08),
+        inset 0 0 30px rgba(59, 130, 246, 0.05);
     }
     
-    /* 资源卡片 */
+    /* 粒子点阵背景 */
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 3px 3px, rgba(6, 182, 212, 0.06) 1px, transparent 1px);
+      background-size: 20px 20px, 15px 15px;
+      animation: particleFloat 6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    
+    /* 呼吸渐变边框线 */
+    .chart-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(90deg, #1e40af, #3b82f6, #06b6d4, #0891b2, #3b82f6, #1e40af);
+      background-size: 200% 100%;
+      animation: gradientFlow 3s ease infinite;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 2;
+      pointer-events: none;
+      filter: blur(0.5px);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    }
+    
+    .chart-container > * {
+      position: relative;
+      z-index: 5;
+    }
+    
+    .chart-container:hover::after {
+      opacity: 1.3;
+    }
+    
+    /* 资源卡片 - 炫酷呼吸效果 */
     .resource-item {
       background: linear-gradient(135deg, rgba(30, 41, 96, 0.7) 0%, rgba(15, 23, 71, 0.85) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 10px;
       transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 0 1px rgba(59, 130, 246, 0.2),
+        0 0 8px rgba(59, 130, 246, 0.12),
+        0 0 15px rgba(59, 130, 246, 0.06),
+        inset 0 0 20px rgba(59, 130, 246, 0.04);
+    }
+    
+    /* 粒子点阵背景 */
+    .resource-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 2px 2px, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+      background-size: 15px 15px, 12px 12px;
+      animation: particleFloat 6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    
+    /* 呼吸渐变边框线 */
+    .resource-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      padding: 1px;
+      background: linear-gradient(90deg, #1e40af, #3b82f6, #06b6d4, #0891b2, #3b82f6, #1e40af);
+      background-size: 200% 100%;
+      animation: gradientFlow 3s ease infinite;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 2;
+      pointer-events: none;
+      filter: blur(0.5px);
+      box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+    }
+    
+    .resource-item > * {
+      position: relative;
+      z-index: 5;
     }
     
     .resource-item:hover {
-      border-color: rgba(59, 130, 246, 0.6);
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+    
+    .resource-item:hover::after {
+      opacity: 1.2;
     }
     
     /* 标题装饰 */
@@ -220,6 +380,102 @@
       -webkit-mask-composite: xor;
       mask-composite: exclude;
     }
+    
+    /* ==================== 知识图谱面板特殊效果 ==================== */
+    
+    /* 知识图谱容器 - 与其他卡片统一风格 */
+    .knowledge-graph-container {
+      background: linear-gradient(135deg, rgba(30, 41, 96, 0.6) 0%, rgba(15, 23, 71, 0.8) 100%);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 0 1px rgba(59, 130, 246, 0.2),
+        0 0 10px rgba(59, 130, 246, 0.15),
+        0 0 20px rgba(59, 130, 246, 0.08),
+        inset 0 0 30px rgba(59, 130, 246, 0.05);
+    }
+    
+    /* 粒子点阵背景 */
+    .knowledge-graph-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.12) 1px, transparent 1px),
+        radial-gradient(circle at 3px 3px, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px, 15px 15px;
+      animation: particleFloat 6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    
+    /* 呼吸渐变边框线 */
+    .knowledge-graph-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(90deg, #1e40af, #3b82f6, #06b6d4, #0891b2, #3b82f6, #1e40af);
+      background-size: 200% 100%;
+      animation: gradientFlow 3s ease infinite;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: 2;
+      pointer-events: none;
+      filter: blur(0.5px);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    }
+    
+    .knowledge-graph-container > * {
+      position: relative;
+      z-index: 5;
+    }
+    
+    /* 网格点阵背景 */
+    .knowledge-graph-container .grid-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.12) 1px, transparent 1px);
+      background-size: 20px 20px;
+      animation: particleFloat 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    /* 内部发光效果 */
+    .knowledge-graph-container .inner-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150%;
+      height: 150%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+      animation: innerGlowPulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes innerGlowPulse {
+      0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+    }
+    
+    .knowledge-graph-container > * {
+      position: relative;
+      z-index: 5;
+    }
   </style>
 </head>
 <body class="flex flex-col">
@@ -249,7 +505,6 @@
     <!-- 筛选条件 -->
     <div class="flex items-center gap-6 mb-6 animate-in">
       <div class="flex items-center gap-3">
-        <span class="text-blue-300/80 text-sm">年级筛选</span>
         <select id="grade-select" class="filter-select w-32">
           <option value="all">全部年级</option>
           <option value="p1">一年级</option>
@@ -261,7 +516,6 @@
         </select>
       </div>
       <div class="flex items-center gap-3">
-        <span class="text-blue-300/80 text-sm">时间段</span>
         <select id="time-select" class="filter-select w-32">
           <option value="month">近一个月</option>
           <option value="halfyear">近六个月</option>
@@ -270,7 +524,6 @@
         </select>
       </div>
       <div class="flex items-center gap-3">
-        <span class="text-blue-300/80 text-sm">学科筛选</span>
         <select id="subject-select" class="filter-select w-28">
           <option value="all">全部学科</option>
           <option value="chinese">语文</option>
@@ -280,8 +533,16 @@
       </div>
     </div>
 
+    </div>
+
     <!-- 第一行：基础数据概览 -->
-    <div class="grid grid-cols-3 gap-6 mb-6 animate-in" style="animation-delay: 0.1s;">
+    <div class="mb-4">
+      <h2 class="text-lg font-bold text-blue-300 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+        基础数据总览
+      </h2>
+    </div>
+    <div class="grid grid-cols-4 gap-6 mb-6 animate-in" style="animation-delay: 0.1s;">
       <div class="data-card rounded-2xl p-6">
         <div class="flex items-center gap-5">
           <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/40">
@@ -315,95 +576,138 @@
           </div>
         </div>
       </div>
+      <div class="data-card rounded-2xl p-6">
+        <div class="flex items-center gap-5">
+          <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center shadow-lg shadow-green-500/40">
+            <i data-lucide="folder-open" class="w-8 h-8"></i>
+    </div>
+          <div class="relative z-10">
+            <p class="text-green-300/80 text-sm mb-1">校本资源数量</p>
+            <p class="text-4xl font-bold glow-number-green" id="resource-count">2,749</p>
+          </div>
+        </div>
+        </div>
+      </div>
+      
     </div>
 
-    <!-- 第二行：校本资源 -->
+    <!-- 第二行：新增资源分析 -->
+    <div class="mb-4 mt-8">
+      <h2 class="text-lg font-bold text-blue-300 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+        新增资源分析
+      </h2>
+    </div>
     <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.2s;">
-      <!-- 校本资源总计 -->
-      <div class="col-span-12">
-        <h3 class="text-lg font-bold mb-4 section-title text-white">校本资源库</h3>
-      </div>
-      
-      <!-- 资源总计大卡片 -->
-      <div class="col-span-3">
-        <div class="data-card rounded-2xl p-6 h-full flex flex-col justify-center items-center">
-          <p class="text-blue-300/70 text-sm mb-2">校本资源总计</p>
-          <p class="text-5xl font-bold glow-number mb-1">2,749</p>
-          <p class="text-blue-300/50 text-sm">份教学资源</p>
-        </div>
-      </div>
-      
-      <!-- 资源明细 -->
-      <div class="col-span-9">
-        <div id="resource-cards" class="grid grid-cols-6 gap-3">
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-blue-400 mb-1">326</p>
-            <p class="text-xs text-blue-300/60">教案</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-cyan-400 mb-1">458</p>
-            <p class="text-xs text-cyan-300/60">课件</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-green-400 mb-1">289</p>
-            <p class="text-xs text-green-300/60">学案</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-yellow-400 mb-1">512</p>
-            <p class="text-xs text-yellow-300/60">活动</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-orange-400 mb-1">186</p>
-            <p class="text-xs text-orange-300/60">趣味抽奖</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-pink-400 mb-1">234</p>
-            <p class="text-xs text-pink-300/60">随堂测</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,english">
-            <p class="text-2xl font-bold text-purple-400 mb-1">167</p>
-            <p class="text-xs text-purple-300/60">听写</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,chinese,math,english">
-            <p class="text-2xl font-bold text-indigo-400 mb-1">98</p>
-            <p class="text-xs text-indigo-300/60">智能体</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,english">
-            <p class="text-2xl font-bold text-teal-400 mb-1">156</p>
-            <p class="text-xs text-teal-300/60">单词评测</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,english">
-            <p class="text-2xl font-bold text-emerald-400 mb-1">89</p>
-            <p class="text-xs text-emerald-300/60">对话评测</p>
-          </div>
-          <div class="resource-item rounded-xl p-4 text-center cursor-pointer" data-subjects="all,english">
-            <p class="text-2xl font-bold text-cyan-400 mb-1">234</p>
-            <p class="text-xs text-cyan-300/60">场景对话</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 第三行：图表区域 -->
-    <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.3s;">
-      <!-- 资源新增趋势 -->
-      <div class="col-span-8">
-        <div class="chart-container p-5 h-full">
-          <h3 class="text-base font-bold mb-4 text-white/90">新增备课趋势</h3>
-          <div id="resource-chart" style="height: 280px;"></div>
-        </div>
-      </div>
-      
-      <!-- 课堂应用 -->
+      <!-- 新增资源统计（柱状图） -->
       <div class="col-span-4">
         <div class="chart-container p-5 h-full">
-          <h3 class="text-base font-bold mb-4 text-white/90">课堂应用</h3>
-          <div id="classroom-chart" style="height: 280px;"></div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-white/90">新增资源统计</h3>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-white/50">总数</span>
+              <span id="total-new-resource-count" class="text-2xl font-bold text-cyan-400">0</span>
+          </div>
+          </div>
+          <div id="new-resource-bar-chart" style="height: 250px;"></div>
+          </div>
+          </div>
+
+      <!-- 新增资源趋势（折线图） -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-bold text-white/90">新增资源趋势</h3>
+            <select id="new-resource-trend-select" class="bg-slate-700/50 text-white text-xs rounded-lg px-2 py-1 border border-slate-600 focus:border-blue-500 outline-none">
+              <option value="all">全部资源</option>
+              <option value="教案">教案</option>
+              <option value="课件">课件</option>
+              <option value="学案">学案</option>
+              <option value="活动">活动</option>
+              <option value="趣味抽奖">趣味抽奖</option>
+              <option value="随堂测">随堂测</option>
+              <option value="听写">听写</option>
+              <option value="智能体">智能体</option>
+              <option value="单词评测">单词评测</option>
+              <option value="对话评测">对话评测</option>
+              <option value="场景对话">场景对话</option>
+            </select>
+          </div>
+          <div id="new-resource-trend-chart" style="height: 260px;"></div>
+          </div>
+          </div>
+
+      <!-- 教师备课活跃度分布 -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <h3 class="text-base font-bold mb-4 text-white/90">教师备课活跃度</h3>
+          <div id="teacher-create-activity-chart" style="height: 280px;"></div>
+          </div>
+          </div>
+          </div>
+
+    <!-- 第三行：资源使用分析 -->
+    <div class="mb-4 mt-8">
+      <h2 class="text-lg font-bold text-blue-300 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        资源使用分析
+      </h2>
+    </div>
+    <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.3s;">
+      <!-- 资源使用统计（柱状图） -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-white/90">资源使用统计</h3>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-white/50">总数</span>
+              <span id="total-resource-usage-count" class="text-2xl font-bold text-cyan-400">0</span>
+          </div>
+        </div>
+          <div id="resource-usage-bar-chart" style="height: 250px;"></div>
+      </div>
+    </div>
+
+      <!-- 资源使用趋势（折线图） -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-bold text-white/90">资源使用趋势</h3>
+            <select id="resource-usage-trend-select" class="bg-slate-700/50 text-white text-xs rounded-lg px-2 py-1 border border-slate-600 focus:border-blue-500 outline-none">
+              <option value="all">全部资源</option>
+              <option value="教案">教案</option>
+              <option value="课件">课件</option>
+              <option value="学案">学案</option>
+              <option value="活动">活动</option>
+              <option value="趣味抽奖">趣味抽奖</option>
+              <option value="随堂测">随堂测</option>
+              <option value="听写">听写</option>
+              <option value="智能体">智能体</option>
+              <option value="单词评测">单词评测</option>
+              <option value="对话评测">对话评测</option>
+              <option value="场景对话">场景对话</option>
+            </select>
+          </div>
+          <div id="resource-usage-trend-chart" style="height: 260px;"></div>
+        </div>
+      </div>
+      
+      <!-- 教师使用活跃度分布 -->
+      <div class="col-span-4">
+        <div class="chart-container p-5 h-full">
+          <h3 class="text-base font-bold mb-4 text-white/90">教师使用活跃度</h3>
+          <div id="teacher-usage-activity-chart" style="height: 280px;"></div>
         </div>
       </div>
     </div>
 
-    <!-- 第四行：作业统计 -->
+    <!-- 第四行：作业情况分析 -->
+    <div class="mb-4 mt-8">
+      <h2 class="text-lg font-bold text-blue-300 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        作业情况分析
+      </h2>
+    </div>
     <div class="grid grid-cols-12 gap-6 mb-6 animate-in" style="animation-delay: 0.4s;">
       <!-- 作业汇总 -->
       <div class="col-span-3">
@@ -464,23 +768,47 @@
     </div>
 
     <!-- 第五行：知识掌握 -->
+    <div class="mb-4 mt-4">
+      <h3 class="text-base font-bold text-blue-300 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        知识点掌握情况
+      </h3>
+    </div>
     <div class="animate-in" style="animation-delay: 0.5s;">
-      <div class="chart-container p-5">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-bold text-white/90">知识点掌握度分布</h3>
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-4 text-xs text-slate-400">
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span>已掌握</span>
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>需提升</span>
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span>待加强</span>
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-500 opacity-50"></span>未考查</span>
+      <div class="grid grid-cols-3 gap-6">
+        <!-- 左侧：知识图谱 - 带特殊效果 -->
+        <div class="knowledge-graph-container p-5 col-span-2">
+          <!-- 装饰元素 -->
+          <div class="grid-bg"></div>
+          <div class="inner-glow"></div>
+          <div class="pulse-border"></div>
+          <!-- 内容 -->
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-bold text-white/90">知识图谱</h3>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-4 text-xs text-slate-400">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span>已掌握</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>需提升</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span>待加强</span>
+              </div>
+              <button id="graph-fullscreen-btn" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="全屏展示">
+                <i data-lucide="maximize-2" class="w-4 h-4"></i>
+              </button>
             </div>
-            <button id="graph-fullscreen-btn" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="全屏展示">
-              <i data-lucide="maximize-2" class="w-4 h-4"></i>
+          </div>
+          <div id="knowledge-graph" style="height: 450px;"></div>
+        </div>
+        <!-- 右侧：知识点掌握度 -->
+        <div class="chart-container p-5 col-span-1">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-bold text-white/90">知识点掌握度</h3>
+            <button id="ranking-fullscreen-btn" class="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+              <span>查看全部</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </button>
           </div>
+          <div id="knowledge-ranking" class="space-y-2" style="height: 420px; overflow: hidden;"></div>
         </div>
-        <div id="knowledge-graph" style="height: 500px;"></div>
       </div>
     </div>
 
@@ -509,6 +837,33 @@
     </div>
   </div>
 
+  <!-- 知识点排名全屏弹窗 -->
+  <div id="ranking-fullscreen-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="ranking-modal-overlay"></div>
+    <div class="relative flex items-center justify-center min-h-screen p-4">
+      <div class="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-2xl border border-blue-500/30 w-full max-w-4xl max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between p-5 border-b border-blue-500/20">
+          <h3 class="text-xl font-bold text-white">知识点掌握度排名</h3>
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-slate-400">掌握度从低到高</span>
+            <button id="close-ranking-modal-btn" class="text-slate-400 hover:text-white transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-5 overflow-y-auto flex-1">
+          <div class="flex items-center gap-4 text-xs text-slate-400 mb-2 px-3">
+            <div class="w-8 flex-shrink-0 text-center">排名</div>
+            <div class="flex-1">知识点</div>
+            <div class="w-8 flex-shrink-0 text-center">状态</div>
+            <div class="w-32 flex-shrink-0">掌握度</div>
+          </div>
+          <div id="modal-ranking-list" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 班级作业明细弹窗 -->
   <div id="homework-modal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="homework-modal-overlay"></div>
@@ -516,20 +871,9 @@
       <div class="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-2xl border border-blue-500/30 w-full max-w-4xl max-h-[80vh] flex flex-col">
         <div class="flex items-center justify-between p-5 border-b border-blue-500/20">
           <h3 class="text-xl font-bold text-white">班级作业明细</h3>
-          <div class="flex items-center gap-3">
-            <select id="modal-grade-filter" class="bg-slate-700/50 text-white text-sm rounded-lg px-3 py-1.5 border border-slate-600 focus:border-blue-500 outline-none">
-              <option value="all">全部年级</option>
-              <option value="一年级">一年级</option>
-              <option value="二年级">二年级</option>
-              <option value="三年级">三年级</option>
-              <option value="四年级">四年级</option>
-              <option value="五年级">五年级</option>
-              <option value="六年级">六年级</option>
-            </select>
-            <button id="close-homework-modal-btn" class="text-slate-400 hover:text-white transition-colors">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
+          <button id="close-homework-modal-btn" class="text-slate-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
         </div>
         <div class="p-5 overflow-y-auto flex-1">
           <div class="flex items-center gap-4 text-xs text-slate-400 mb-2 px-3">
@@ -550,26 +894,6 @@
       updateTime();
       setInterval(updateTime, 1000);
       initCharts();
-      
-      // 学科筛选
-      const subjectSelect = document.getElementById('subject-select');
-      const resourceCards = document.getElementById('resource-cards');
-      
-      subjectSelect.addEventListener('change', function() {
-        const currentSubject = this.value;
-        const cards = resourceCards.querySelectorAll('.resource-item');
-        
-        cards.forEach(card => {
-          const subjects = card.dataset.subjects.split(',');
-          if (subjects.includes(currentSubject)) {
-            card.style.opacity = '1';
-            card.style.transform = 'scale(1)';
-          } else {
-            card.style.opacity = '0.3';
-            card.style.transform = 'scale(0.95)';
-          }
-        });
-      });
     });
 
     function updateTime() {
@@ -715,6 +1039,7 @@
           category: cat
         };
       });
+      var knowledgeNodesData = graphNodes.filter(function(n) { return n.level === 1; });
 
       // 知识图谱
       var knowledgeGraph = echarts.init(document.getElementById('knowledge-graph'));
@@ -782,6 +1107,42 @@
         }]
       });
 
+      // 知识点掌握度排名
+      function updateKnowledgeRanking() {
+        var rankingContainer = document.getElementById('knowledge-ranking');
+        var knowledgeNodes = knowledgeNodesData.slice().filter(function(n) { return n.rate !== undefined && n.rate !== null; });
+        knowledgeNodes.sort(function(a, b) { return a.rate - b.rate; });
+        var html = '';
+        knowledgeNodes.forEach(function(node, index) {
+          var rate = node.rate;
+          var color = '#10b981';
+          var status = '已掌握';
+          if (rate < 60) {
+            color = '#ef4444';
+            status = '待加强';
+          } else if (rate < 80) {
+            color = '#f59e0b';
+            status = '需提升';
+          }
+          html += '<div class="flex items-center gap-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">';
+          html += '<span class="w-6 h-6 flex items-center justify-center rounded-full bg-' + color.replace('#', '') + '-500/20 text-' + color.replace('#', '') + '-400 text-xs font-bold">' + (index + 1) + '</span>';
+          html += '<div class="flex-1 min-w-0">';
+          html += '<div class="text-sm text-white/90 truncate">' + node.name + '</div>';
+          html += '<div class="text-xs text-slate-400">' + status + '</div>';
+          html += '</div>';
+          html += '<div class="flex items-center gap-2">';
+          html += '<div class="w-20 h-2 bg-slate-700 rounded-full overflow-hidden">';
+          html += '<div class="h-full rounded-full transition-all" style="width:' + rate + '%;background-color:' + color + '"></div>';
+          html += '</div>';
+          html += '<span class="text-xs font-bold" style="color:' + color + ';min-width:36px;text-align:right">' + rate + '%</span>';
+          html += '</div></div>';
+        });
+        rankingContainer.innerHTML = html;
+      }
+      updateKnowledgeRanking();
+
+      // ==================== 资源数据定义 ====================
+
       // 资源类型与学科映射
       var resourceSubjects = {
         '教案': ['all', 'chinese', 'math', 'english'],
@@ -797,89 +1158,214 @@
         '场景对话': ['all', 'english']
       };
 
-      // 课堂教学类型与学科映射
-      var classroomSubjects = {
-        '课件': ['all', 'chinese', 'math', 'english'],
-        '活动': ['all', 'chinese', 'math', 'english'],
-        '趣味抽奖': ['all', 'chinese', 'math', 'english'],
-        '听写': ['all', 'chinese', 'english'],
-        '智能体': ['all', 'chinese', 'math', 'english'],
-        '单词评测': ['all', 'english'],
-        '对话评测': ['all', 'english'],
-        '场景对话': ['all', 'english']
+      // 资源颜色配置
+      var resourceColors = {
+        '教案': '#3b82f6',
+        '课件': '#06b6d4',
+        '学案': '#10b981',
+        '活动': '#f59e0b',
+        '趣味抽奖': '#ec4899',
+        '随堂测': '#8b5cf6',
+        '听写': '#6366f1',
+        '智能体': '#14b8a6',
+        '单词评测': '#f97316',
+        '对话评测': '#84cc16',
+        '场景对话': '#0ea5e9'
       };
 
-      // 课堂教学数据
-      var allClassroom = {
-        '课件': [486, 328, 156],
-        '活动': [325, 280, 195],
-        '趣味抽奖': [156, 142, 89],
-        '听写': [245, 198, 156],
-        '智能体': [189, 165, 145],
-        '单词评测': [125, 98, 98],
-        '对话评测': [88, 72, 67],
-        '场景对话': [112, 95, 134]
+      // 资源新增数据（时段内新增数量）
+      var resourceCreateData = {
+        '教案': { data: [['2026-01-05', 5], ['2026-01-15', 7], ['2026-01-25', 6], ['2026-02-05', 8], ['2026-02-15', 6], ['2026-02-25', 5], ['2026-03-05', 7], ['2026-03-15', 9], ['2026-03-25', 8], ['2026-04-05', 10], ['2026-04-15', 8], ['2026-04-25', 9], ['2026-05-05', 11], ['2026-05-15', 9], ['2026-05-25', 10], ['2026-06-05', 12], ['2026-06-15', 10], ['2026-06-25', 13]] },
+        '课件': { data: [['2026-01-05', 12], ['2026-01-15', 15], ['2026-01-25', 13], ['2026-02-05', 14], ['2026-02-15', 16], ['2026-02-25', 12], ['2026-03-05', 18], ['2026-03-15', 20], ['2026-03-25', 16], ['2026-04-05', 22], ['2026-04-15', 18], ['2026-04-25', 20], ['2026-05-05', 24], ['2026-05-15', 20], ['2026-05-25', 22], ['2026-06-05', 26], ['2026-06-15', 22], ['2026-06-25', 28]] },
+        '学案': { data: [['2026-01-05', 8], ['2026-01-15', 10], ['2026-01-25', 7], ['2026-02-05', 9], ['2026-02-15', 7], ['2026-02-25', 8], ['2026-03-05', 10], ['2026-03-15', 12], ['2026-03-25', 9], ['2026-04-05', 14], ['2026-04-15', 11], ['2026-04-25', 12], ['2026-05-05', 15], ['2026-05-15', 12], ['2026-05-25', 13], ['2026-06-05', 16], ['2026-06-15', 13], ['2026-06-25', 18]] },
+        '活动': { data: [['2026-01-05', 15], ['2026-01-15', 18], ['2026-01-25', 16], ['2026-02-05', 20], ['2026-02-15', 16], ['2026-02-25', 18], ['2026-03-05', 22], ['2026-03-15', 24], ['2026-03-25', 20], ['2026-04-05', 28], ['2026-04-15', 24], ['2026-04-25', 26], ['2026-05-05', 30], ['2026-05-15', 26], ['2026-05-25', 28], ['2026-06-05', 32], ['2026-06-15', 28], ['2026-06-25', 36]] },
+        '趣味抽奖': { data: [['2026-01-05', 6], ['2026-01-15', 8], ['2026-01-25', 5], ['2026-02-05', 9], ['2026-02-15', 7], ['2026-02-25', 6], ['2026-03-05', 8], ['2026-03-15', 10], ['2026-03-25', 7], ['2026-04-05', 12], ['2026-04-15', 9], ['2026-04-25', 10], ['2026-05-05', 13], ['2026-05-15', 10], ['2026-05-25', 11], ['2026-06-05', 14], ['2026-06-15', 11], ['2026-06-25', 15]] },
+        '随堂测': { data: [['2026-01-05', 10], ['2026-01-15', 12], ['2026-01-25', 9], ['2026-02-05', 13], ['2026-02-15', 11], ['2026-02-25', 10], ['2026-03-05', 12], ['2026-03-15', 14], ['2026-03-25', 11], ['2026-04-05', 16], ['2026-04-15', 13], ['2026-04-25', 14], ['2026-05-05', 17], ['2026-05-15', 14], ['2026-05-25', 15], ['2026-06-05', 18], ['2026-06-15', 15], ['2026-06-25', 20]] },
+        '听写': { data: [['2026-01-05', 7], ['2026-01-15', 9], ['2026-01-25', 6], ['2026-02-05', 10], ['2026-02-15', 8], ['2026-02-25', 7], ['2026-03-05', 9], ['2026-03-15', 11], ['2026-03-25', 8], ['2026-04-05', 12], ['2026-04-15', 10], ['2026-04-25', 11], ['2026-05-05', 13], ['2026-05-15', 10], ['2026-05-25', 11], ['2026-06-05', 14], ['2026-06-15', 11], ['2026-06-25', 15]] },
+        '智能体': { data: [['2026-01-05', 3], ['2026-01-15', 5], ['2026-01-25', 4], ['2026-02-05', 5], ['2026-02-15', 6], ['2026-02-25', 5], ['2026-03-05', 7], ['2026-03-15', 8], ['2026-03-25', 7], ['2026-04-05', 10], ['2026-04-15', 8], ['2026-04-25', 9], ['2026-05-05', 12], ['2026-05-15', 10], ['2026-05-25', 11], ['2026-06-05', 13], ['2026-06-15', 11], ['2026-06-25', 15]] },
+        '单词评测': { data: [['2026-01-05', 5], ['2026-01-15', 7], ['2026-01-25', 4], ['2026-02-05', 8], ['2026-02-15', 6], ['2026-02-25', 5], ['2026-03-05', 7], ['2026-03-15', 9], ['2026-03-25', 6], ['2026-04-05', 10], ['2026-04-15', 8], ['2026-04-25', 9], ['2026-05-05', 11], ['2026-05-15', 9], ['2026-05-25', 10], ['2026-06-05', 12], ['2026-06-15', 10], ['2026-06-25', 13]] },
+        '对话评测': { data: [['2026-01-05', 3], ['2026-01-15', 5], ['2026-01-25', 3], ['2026-02-05', 5], ['2026-02-15', 4], ['2026-02-25', 4], ['2026-03-05', 5], ['2026-03-15', 6], ['2026-03-25', 5], ['2026-04-05', 7], ['2026-04-15', 6], ['2026-04-25', 6], ['2026-05-05', 8], ['2026-05-15', 6], ['2026-05-25', 7], ['2026-06-05', 9], ['2026-06-15', 7], ['2026-06-25', 10]] },
+        '场景对话': { data: [['2026-01-05', 7], ['2026-01-15', 9], ['2026-01-25', 6], ['2026-02-05', 10], ['2026-02-15', 8], ['2026-02-25', 7], ['2026-03-05', 9], ['2026-03-15', 11], ['2026-03-25', 8], ['2026-04-05', 12], ['2026-04-15', 10], ['2026-04-25', 11], ['2026-05-05', 13], ['2026-05-15', 11], ['2026-05-25', 12], ['2026-06-05', 14], ['2026-06-15', 12], ['2026-06-25', 16]] }
       };
 
-      var allClassroomScore = {
-        '课件': [null, null, null],
-        '活动': [null, null, null],
-        '趣味抽奖': [null, null, null],
-        '听写': [85, 82, 88],
-        '智能体': [null, null, null],
-        '单词评测': [78, 75, 88],
-        '对话评测': [72, 68, 78],
-        '场景对话': [85, 80, 92]
+      // 资源使用数据（使用次数）
+      var resourceUsageData = {
+        '教案': { data: [['2026-01-05', 65], ['2026-01-15', 78], ['2026-01-25', 72], ['2026-02-05', 85], ['2026-02-15', 92], ['2026-02-25', 80], ['2026-03-05', 98], ['2026-03-15', 112], ['2026-03-25', 105], ['2026-04-05', 125], ['2026-04-15', 118], ['2026-04-25', 132], ['2026-05-05', 145], ['2026-05-15', 138], ['2026-05-25', 152], ['2026-06-05', 168], ['2026-06-15', 155], ['2026-06-25', 178]] },
+        '课件': { data: [['2026-01-05', 210], ['2026-01-15', 245], ['2026-01-25', 198], ['2026-02-05', 235], ['2026-02-15', 268], ['2026-02-25', 220], ['2026-03-05', 298], ['2026-03-15', 325], ['2026-03-25', 285], ['2026-04-05', 358], ['2026-04-15', 320], ['2026-04-25', 345], ['2026-05-05', 398], ['2026-05-15', 365], ['2026-05-25', 385], ['2026-06-05', 425], ['2026-06-15', 395], ['2026-06-25', 445]] },
+        '学案': { data: [['2026-01-05', 98], ['2026-01-15', 115], ['2026-01-25', 88], ['2026-02-05', 105], ['2026-02-15', 118], ['2026-02-25', 95], ['2026-03-05', 125], ['2026-03-15', 142], ['2026-03-25', 118], ['2026-04-05', 155], ['2026-04-15', 135], ['2026-04-25', 148], ['2026-05-05', 165], ['2026-05-15', 148], ['2026-05-25', 158], ['2026-06-05', 175], ['2026-06-15', 158], ['2026-06-25', 182]] },
+        '活动': { data: [['2026-01-05', 145], ['2026-01-15', 168], ['2026-01-25', 135], ['2026-02-05', 155], ['2026-02-15', 178], ['2026-02-25', 145], ['2026-03-05', 195], ['2026-03-15', 218], ['2026-03-25', 182], ['2026-04-05', 235], ['2026-04-15', 205], ['2026-04-25', 225], ['2026-05-05', 258], ['2026-05-15', 232], ['2026-05-25', 245], ['2026-06-05', 275], ['2026-06-15', 248], ['2026-06-25', 285]] },
+        '趣味抽奖': { data: [['2026-01-05', 65], ['2026-01-15', 78], ['2026-01-25', 58], ['2026-02-05', 72], ['2026-02-15', 85], ['2026-02-25', 68], ['2026-03-05', 92], ['2026-03-15', 108], ['2026-03-25', 88], ['2026-04-05', 115], ['2026-04-15', 98], ['2026-04-25', 108], ['2026-05-05', 125], ['2026-05-15', 112], ['2026-05-25', 118], ['2026-06-05', 135], ['2026-06-15', 118], ['2026-06-25', 148]] },
+        '随堂测': { data: [['2026-01-05', 115], ['2026-01-15', 135], ['2026-01-25', 105], ['2026-02-05', 125], ['2026-02-15', 145], ['2026-02-25', 118], ['2026-03-05', 158], ['2026-03-15', 178], ['2026-03-25', 145], ['2026-04-05', 195], ['2026-04-15', 168], ['2026-04-25', 185], ['2026-05-05', 212], ['2026-05-15', 188], ['2026-05-25', 198], ['2026-06-05', 225], ['2026-06-15', 198], ['2026-06-25', 235]] },
+        '听写': { data: [['2026-01-05', 88], ['2026-01-15', 102], ['2026-01-25', 78], ['2026-02-05', 95], ['2026-02-15', 108], ['2026-02-25', 88], ['2026-03-05', 118], ['2026-03-15', 135], ['2026-03-25', 108], ['2026-04-05', 148], ['2026-04-15', 125], ['2026-04-25', 138], ['2026-05-05', 158], ['2026-05-15', 138], ['2026-05-25', 148], ['2026-06-05', 168], ['2026-06-15', 148], ['2026-06-25', 175]] },
+        '智能体': { data: [['2026-01-05', 65], ['2026-01-15', 78], ['2026-01-25', 58], ['2026-02-05', 72], ['2026-02-15', 85], ['2026-02-25', 68], ['2026-03-05', 92], ['2026-03-15', 108], ['2026-03-25', 88], ['2026-04-05', 115], ['2026-04-15', 98], ['2026-04-25', 108], ['2026-05-05', 125], ['2026-05-15', 112], ['2026-05-25', 118], ['2026-06-05', 135], ['2026-06-15', 118], ['2026-06-25', 148]] },
+        '单词评测': { data: [['2026-01-05', 48], ['2026-01-15', 58], ['2026-01-25', 42], ['2026-02-05', 55], ['2026-02-15', 65], ['2026-02-25', 48], ['2026-03-05', 72], ['2026-03-15', 82], ['2026-03-25', 65], ['2026-04-05', 88], ['2026-04-15', 75], ['2026-04-25', 82], ['2026-05-05', 95], ['2026-05-15', 82], ['2026-05-25', 88], ['2026-06-05', 102], ['2026-06-15', 88], ['2026-06-25', 112]] },
+        '对话评测': { data: [['2026-01-05', 32], ['2026-01-15', 38], ['2026-01-25', 28], ['2026-02-05', 35], ['2026-02-15', 42], ['2026-02-25', 32], ['2026-03-05', 48], ['2026-03-15', 55], ['2026-03-25', 42], ['2026-04-05', 58], ['2026-04-15', 48], ['2026-04-25', 55], ['2026-05-05', 65], ['2026-05-15', 55], ['2026-05-25', 58], ['2026-06-05', 72], ['2026-06-15', 58], ['2026-06-25', 78]] },
+        '场景对话': { data: [['2026-01-05', 98], ['2026-01-15', 115], ['2026-01-25', 88], ['2026-02-05', 105], ['2026-02-15', 118], ['2026-02-25', 95], ['2026-03-05', 125], ['2026-03-15', 142], ['2026-03-25', 118], ['2026-04-05', 155], ['2026-04-15', 135], ['2026-04-25', 148], ['2026-05-05', 165], ['2026-05-15', 148], ['2026-05-25', 158], ['2026-06-05', 175], ['2026-06-15', 158], ['2026-06-25', 182]] }
       };
 
-      // 资源数据
-      var allResources = {
-        '教案': { color: '#3b82f6', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 19], ['2024-06-01', 25]] },
-        '课件': { color: '#06b6d4', data: [['2024-01-01', 20], ['2024-02-01', 25], ['2024-03-01', 28], ['2024-04-01', 32], ['2024-05-01', 30], ['2024-06-01', 38]] },
-        '学案': { color: '#10b981', data: [['2024-01-01', 15], ['2024-02-01', 12], ['2024-03-01', 18], ['2024-04-01', 20], ['2024-05-01', 22], ['2024-06-01', 28]] },
-        '活动': { color: '#f59e0b', data: [['2024-01-01', 25], ['2024-02-01', 30], ['2024-03-01', 28], ['2024-04-01', 35], ['2024-05-01', 40], ['2024-06-01', 45]] },
-        '趣味抽奖': { color: '#ec4899', data: [['2024-01-01', 10], ['2024-02-01', 15], ['2024-03-01', 12], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
-        '随堂测': { color: '#8b5cf6', data: [['2024-01-01', 18], ['2024-02-01', 22], ['2024-03-01', 20], ['2024-04-01', 25], ['2024-05-01', 23], ['2024-06-01', 28]] },
-        '听写': { color: '#6366f1', data: [['2024-01-01', 12], ['2024-02-01', 15], ['2024-03-01', 14], ['2024-04-01', 18], ['2024-05-01', 16], ['2024-06-01', 20]] },
-        '智能体': { color: '#14b8a6', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 10], ['2024-04-01', 12], ['2024-05-01', 15], ['2024-06-01', 18]] },
-        '单词评测': { color: '#f97316', data: [['2024-01-01', 8], ['2024-02-01', 12], ['2024-03-01', 10], ['2024-04-01', 15], ['2024-05-01', 14], ['2024-06-01', 18]] },
-        '对话评测': { color: '#84cc16', data: [['2024-01-01', 5], ['2024-02-01', 8], ['2024-03-01', 7], ['2024-04-01', 10], ['2024-05-01', 9], ['2024-06-01', 12]] },
-        '场景对话': { color: '#0ea5e9', data: [['2024-01-01', 12], ['2024-02-01', 18], ['2024-03-01', 15], ['2024-04-01', 22], ['2024-05-01', 20], ['2024-06-01', 25]] }
-      };
+      // 教师活跃度分布数据（用于模拟）
+      var teacherCreateActivityData = [12, 8, 15, 28, 35, 22, 12, 5]; // 0, 1-5, 6-10, 11-20, 21-30, 31-40, 41-50, 50+
+      var teacherUsageActivityData = [15, 8, 25, 45, 30, 15, 8, 3];   // 0, 1-2, 3-5, 6-10, 11-20, 21-30, 31-50, 50+
 
-      // 1. 资源新增趋势图
-      var resourceChart = echarts.init(document.getElementById('resource-chart'));
-      
-      function updateResourceChart(subject) {
-        var visibleResources = [];
-        for (var name in resourceSubjects) {
-          if (resourceSubjects[name].includes(subject)) {
-            visibleResources.push(name);
-          }
-        }
-        
-        var defaultSelected = ['教案', '课件', '学案', '活动', '智能体'];
-        
-        var series = visibleResources.map(function(name) {
-          return {
-            name: name,
+      // ==================== 图表1：新增资源统计（柱状图） ====================
+      var newResourceBarChart = echarts.init(document.getElementById('new-resource-bar-chart'));
+
+      function updateNewResourceBarChart() {
+        var resourceNames = Object.keys(resourceCreateData);
+        var resourceTotals = resourceNames.map(function(name) {
+          var total = resourceCreateData[name].data.reduce(function(sum, d) { return sum + d[1]; }, 0);
+          return { name: name, value: total, color: resourceColors[name] };
+        });
+        // 按数量降序排列
+        resourceTotals.sort(function(a, b) { return b.value - a.value; });
+
+        // 计算并显示总数
+        var grandTotal = resourceTotals.reduce(function(sum, d) { return sum + d.value; }, 0);
+        document.getElementById('total-new-resource-count').textContent = grandTotal;
+
+        newResourceBarChart.setOption({
+          backgroundColor: 'transparent',
+          tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'rgba(15, 23, 71, 0.95)',
+            borderColor: 'rgba(59, 130, 246, 0.5)',
+            textStyle: { color: '#fff' },
+            formatter: function(params) {
+              var p = params[0];
+              return p.name + '<br/>新增数量: <b style="color:' + p.color + '">' + p.value + '</b>';
+            }
+          },
+          grid: { left: '3%', right: '4%', bottom: '25%', top: '5%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: resourceTotals.map(function(d) { return d.name; }),
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.7)', rotate: 30, fontSize: 10 },
+            axisTick: { show: false }
+          },
+          yAxis: {
+            type: 'value',
+            name: '数量',
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.5)' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+          },
+          series: [{
+            type: 'bar',
+            data: resourceTotals.map(function(d) {
+              return {
+                value: d.value,
+                itemStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: d.color },
+                    { offset: 1, color: d.color + '80' }
+                  ]),
+                  borderRadius: [4, 4, 0, 0]
+                }
+              };
+            }),
+            barWidth: '60%',
+            label: {
+              show: true,
+              position: 'top',
+              color: '#fff',
+              fontSize: 10,
+              formatter: function(p) { return p.value; }
+            }
+          }]
+        });
+      }
+
+      updateNewResourceBarChart();
+
+      // ==================== 图表2：新增资源趋势（折线图） ====================
+      var newResourceTrendChart = echarts.init(document.getElementById('new-resource-trend-chart'));
+      var newResourceTrendSelect = document.getElementById('new-resource-trend-select');
+
+      function updateNewResourceTrendChart() {
+        var selected = newResourceTrendSelect.value;
+        var resourceNames = Object.keys(resourceCreateData);
+
+        var series;
+        var legendShow = false;
+
+        // 提取所有日期作为类目轴（保持排序）
+        var allDates = [];
+        resourceNames.forEach(function(name) {
+          resourceCreateData[name].data.forEach(function(d) {
+            if (!allDates.includes(d[0])) {
+              allDates.push(d[0]);
+            }
+          });
+        });
+        allDates.sort();
+
+        // 创建日期到索引的映射
+        var dateIndexMap = {};
+        allDates.forEach(function(d, i) {
+          dateIndexMap[d] = i;
+        });
+
+        // 将日期格式化为 mm/dd
+        var dateLabels = allDates.map(function(d) {
+          var date = new Date(d);
+          return (date.getMonth() + 1) + '/' + date.getDate();
+        });
+
+        if (selected === 'all') {
+          // 计算总数趋势
+          var totalByDate = {};
+          resourceNames.forEach(function(name) {
+            resourceCreateData[name].data.forEach(function(d) {
+              if (!totalByDate[d[0]]) totalByDate[d[0]] = 0;
+              totalByDate[d[0]] += d[1];
+            });
+          });
+          var totalData = allDates.map(function(d) {
+            return [dateIndexMap[d], totalByDate[d] || 0];
+          });
+
+          series = [{
+            name: '总数',
             type: 'line',
             smooth: true,
             symbol: 'circle',
             symbolSize: 8,
-            lineStyle: { color: allResources[name].color, width: 2 },
-            itemStyle: { color: allResources[name].color },
+            lineStyle: { color: '#3b82f6', width: 3 },
+            itemStyle: { color: '#3b82f6' },
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: allResources[name].color + '40' },
-                { offset: 1, color: allResources[name].color + '05' }
+                { offset: 0, color: '#3b82f650' },
+                { offset: 1, color: '#3b82f610' }
               ])
             },
-            data: allResources[name].data
-          };
-        });
-        
-        resourceChart.setOption({
+            data: totalData
+          }];
+        } else {
+          // 只显示选中类型 - 转换为索引格式
+          var selectedData = resourceCreateData[selected].data.map(function(d) {
+            return [dateIndexMap[d[0]], d[1]];
+          });
+
+          series = [{
+            name: selected,
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: { color: resourceColors[selected], width: 3 },
+            itemStyle: { color: resourceColors[selected] },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: resourceColors[selected] + '50' },
+                { offset: 1, color: resourceColors[selected] + '10' }
+              ])
+            },
+            data: selectedData
+          }];
+        }
+
+        newResourceTrendChart.setOption({
           backgroundColor: 'transparent',
           tooltip: {
             trigger: 'axis',
@@ -887,24 +1373,18 @@
             borderColor: 'rgba(59, 130, 246, 0.5)',
             textStyle: { color: '#fff' }
           },
-          legend: { 
-            data: visibleResources, 
-            bottom: 0, 
-            type: 'scroll',
-            textStyle: { color: 'rgba(255,255,255,0.7)' },
-            selected: function() {
-              var selected = {};
-              visibleResources.forEach(function(name) {
-                selected[name] = defaultSelected.includes(name);
-              });
-              return selected;
-            }()
-          },
-          grid: { left: '3%', right: '4%', bottom: visibleResources.length > 6 ? '20%' : '15%', top: '5%', containLabel: true },
+          legend: { show: legendShow },
+          grid: { left: '3%', right: '4%', bottom: '18%', top: '5%', containLabel: true },
           xAxis: {
-            type: 'time',
+            type: 'category',
+            data: dateLabels,
+            boundaryGap: false,
             axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
-            axisLabel: { color: 'rgba(255,255,255,0.5)' },
+            axisLabel: {
+              color: 'rgba(255,255,255,0.5)',
+              interval: 0,
+              fontSize: 10
+            },
             splitLine: { show: false }
           },
           yAxis: { 
@@ -917,35 +1397,81 @@
         });
       }
       
-      updateResourceChart('all');
+      updateNewResourceTrendChart();
+      newResourceTrendSelect.addEventListener('change', updateNewResourceTrendChart);
 
-      // 2. 课堂教学柱状图
-      var classroomChart = echarts.init(document.getElementById('classroom-chart'));
+      // ==================== 图表3：教师备课活跃度分布 ====================
+      var teacherCreateActivityChart = echarts.init(document.getElementById('teacher-create-activity-chart'));
 
-      function updateClassroomChart(subject) {
-        var subjectIndex = { 'all': -1, 'chinese': 0, 'math': 1, 'english': 2 };
-        var visibleItems = [];
-        var visibleData = [];
-        var visibleScoreData = [];
-
-        for (var name in classroomSubjects) {
-          if (classroomSubjects[name].includes(subject)) {
-            visibleItems.push(name);
-            var idx = subjectIndex[subject];
-            if (idx === -1) {
-              var total = allClassroom[name].reduce(function(a, b) { return a + b; }, 0);
-              visibleData.push(total);
-              var scoreArr = allClassroomScore[name];
-              var validScores = scoreArr.filter(function(s) { return s !== null; });
-              visibleScoreData.push(validScores.length > 0 ? Math.round(validScores.reduce(function(a, b) { return a + b; }, 0) / validScores.length) : null);
-            } else {
-              visibleData.push(allClassroom[name][idx]);
-              visibleScoreData.push(allClassroomScore[name][idx] === 0 ? null : allClassroomScore[name][idx]);
-            }
+      teacherCreateActivityChart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(15, 23, 71, 0.95)',
+          borderColor: 'rgba(59, 130, 246, 0.5)',
+          textStyle: { color: '#fff' },
+          formatter: function(params) {
+            var p = params[0];
+            return '创建数量: ' + p.name + '个<br/>教师人数: <b style="color:#3b82f6">' + p.value + '</b>人';
           }
-        }
+        },
+        grid: { left: '3%', right: '4%', bottom: '15%', top: '5%', containLabel: true },
+        xAxis: {
+          type: 'category',
+          data: ['0', '1-5', '6-10', '11-20', '21-30', '31-40', '41-50', '50+'],
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+          axisLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 10 },
+          axisTick: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          name: '教师人数',
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+          axisLabel: { color: 'rgba(255,255,255,0.5)' },
+          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+        },
+        series: [{
+          type: 'bar',
+          data: teacherCreateActivityData.map(function(val, idx) {
+            var color = idx === 0 ? '#ef4444' : (idx < 4 ? '#10b981' : (idx < 6 ? '#f59e0b' : '#ef4444'));
+            return {
+              value: val,
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: color },
+                  { offset: 1, color: color + '80' }
+                ]),
+                borderRadius: [4, 4, 0, 0]
+              }
+            };
+          }),
+          barWidth: '50%',
+          label: {
+            show: true,
+            position: 'top',
+            color: '#fff',
+            fontSize: 10
+          }
+        }]
+      });
 
-        classroomChart.setOption({
+      // ==================== 图表4：资源使用统计（柱状图） ====================
+      var resourceUsageBarChart = echarts.init(document.getElementById('resource-usage-bar-chart'));
+
+      function updateResourceUsageBarChart() {
+        var resourceNames = Object.keys(resourceUsageData);
+        var resourceTotals = resourceNames.map(function(name) {
+          var total = resourceUsageData[name].data.reduce(function(sum, d) { return sum + d[1]; }, 0);
+          return { name: name, value: total, color: resourceColors[name] };
+        });
+        // 按数量降序排列
+        resourceTotals.sort(function(a, b) { return b.value - a.value; });
+
+        // 计算并显示总数
+        var grandTotal = resourceTotals.reduce(function(sum, d) { return sum + d.value; }, 0);
+        document.getElementById('total-resource-usage-count').textContent = grandTotal;
+
+        resourceUsageBarChart.setOption({
           backgroundColor: 'transparent',
           tooltip: {
             trigger: 'axis',
@@ -953,22 +1479,17 @@
             borderColor: 'rgba(59, 130, 246, 0.5)',
             textStyle: { color: '#fff' },
             formatter: function(params) {
-              var name = params[0].name;
-              var usage = params[0].value;
-              var score = visibleScoreData[params[0].dataIndex];
-              var tip = name + '<br/>使用次数: ' + usage;
-              if (score !== null && score !== undefined) {
-                tip += '<br/>得分率: ' + score + '%';
-              }
-              return tip;
+              var p = params[0];
+              return p.name + '<br/>使用次数: <b style="color:' + p.color + '">' + p.value + '</b>';
             }
           },
-          grid: { left: '3%', right: '4%', bottom: '10%', top: '5%', containLabel: true },
+          grid: { left: '3%', right: '4%', bottom: '25%', top: '5%', containLabel: true },
           xAxis: {
             type: 'category',
-            data: visibleItems,
+            data: resourceTotals.map(function(d) { return d.name; }),
             axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
-            axisLabel: { color: 'rgba(255,255,255,0.7)', rotate: 30 }
+            axisLabel: { color: 'rgba(255,255,255,0.7)', rotate: 30, fontSize: 10 },
+            axisTick: { show: false }
           },
           yAxis: { 
             type: 'value',
@@ -979,36 +1500,223 @@
           },
           series: [{
             type: 'bar',
-            data: visibleData.map(function(val, i) {
+            data: resourceTotals.map(function(d) {
               return {
-                value: val,
+                value: d.value,
                 itemStyle: {
                   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: '#3b82f6' },
-                    { offset: 1, color: '#1d4ed8' }
-                  ])
-                },
-                label: {
-                  show: visibleScoreData[i] !== null && visibleScoreData[i] !== undefined,
-                  position: 'top',
-                  formatter: '{c}',
-                  fontSize: 10,
-                  color: '#10b981'
+                    { offset: 0, color: d.color },
+                    { offset: 1, color: d.color + '80' }
+                  ]),
+                  borderRadius: [4, 4, 0, 0]
                 }
               };
             }),
-            barWidth: '50%'
+            barWidth: '60%',
+                label: {
+              show: true,
+                  position: 'top',
+              color: '#fff',
+                  fontSize: 10,
+              formatter: function(p) { return p.value; }
+                }
           }]
         });
       }
 
-      updateClassroomChart('all');
+      updateResourceUsageBarChart();
 
-      // 学科筛选联动
-      var subjectSelect = document.getElementById('subject-select');
-      subjectSelect.addEventListener('change', function() {
-        updateResourceChart(this.value);
-        updateClassroomChart(this.value);
+      // ==================== 图表5：资源使用趋势（折线图） ====================
+      var resourceUsageTrendChart = echarts.init(document.getElementById('resource-usage-trend-chart'));
+      var resourceUsageTrendSelect = document.getElementById('resource-usage-trend-select');
+
+      function updateResourceUsageTrendChart() {
+        var selected = resourceUsageTrendSelect.value;
+        var resourceNames = Object.keys(resourceUsageData);
+
+        var series;
+        var legendShow = false;
+
+        // 提取所有日期作为类目轴（保持排序）
+        var allDates = [];
+        resourceNames.forEach(function(name) {
+          resourceUsageData[name].data.forEach(function(d) {
+            if (!allDates.includes(d[0])) {
+              allDates.push(d[0]);
+            }
+          });
+        });
+        allDates.sort();
+
+        // 创建日期到索引的映射
+        var dateIndexMap = {};
+        allDates.forEach(function(d, i) {
+          dateIndexMap[d] = i;
+        });
+
+        // 将日期格式化为 mm/dd
+        var dateLabels = allDates.map(function(d) {
+          var date = new Date(d);
+          return (date.getMonth() + 1) + '/' + date.getDate();
+        });
+
+        if (selected === 'all') {
+          // 计算总数趋势
+          var totalByDate = {};
+          resourceNames.forEach(function(name) {
+            resourceUsageData[name].data.forEach(function(d) {
+              if (!totalByDate[d[0]]) totalByDate[d[0]] = 0;
+              totalByDate[d[0]] += d[1];
+            });
+          });
+          var totalData = allDates.map(function(d) {
+            return [dateIndexMap[d], totalByDate[d] || 0];
+          });
+
+          series = [{
+            name: '总数',
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: { color: '#10b981', width: 3 },
+            itemStyle: { color: '#10b981' },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#10b98150' },
+                { offset: 1, color: '#10b98110' }
+              ])
+            },
+            data: totalData
+          }];
+        } else {
+          // 只显示选中类型 - 转换为索引格式
+          var selectedData = resourceUsageData[selected].data.map(function(d) {
+            return [dateIndexMap[d[0]], d[1]];
+          });
+
+          series = [{
+            name: selected,
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            lineStyle: { color: resourceColors[selected], width: 3 },
+            itemStyle: { color: resourceColors[selected] },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: resourceColors[selected] + '50' },
+                { offset: 1, color: resourceColors[selected] + '10' }
+              ])
+            },
+            data: selectedData
+          }];
+        }
+
+        resourceUsageTrendChart.setOption({
+          backgroundColor: 'transparent',
+          tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'rgba(15, 23, 71, 0.95)',
+            borderColor: 'rgba(59, 130, 246, 0.5)',
+            textStyle: { color: '#fff' }
+          },
+          legend: { show: legendShow },
+          grid: { left: '3%', right: '4%', bottom: '18%', top: '5%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: dateLabels,
+            boundaryGap: false,
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: {
+              color: 'rgba(255,255,255,0.5)',
+              interval: 0,
+              fontSize: 10
+            },
+            splitLine: { show: false }
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+            axisLabel: { color: 'rgba(255,255,255,0.5)' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+          },
+          series: series
+        });
+      }
+
+      updateResourceUsageTrendChart();
+      resourceUsageTrendSelect.addEventListener('change', updateResourceUsageTrendChart);
+
+      // ==================== 图表6：教师使用活跃度分布 ====================
+      var teacherUsageActivityChart = echarts.init(document.getElementById('teacher-usage-activity-chart'));
+
+      teacherUsageActivityChart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(15, 23, 71, 0.95)',
+          borderColor: 'rgba(59, 130, 246, 0.5)',
+          textStyle: { color: '#fff' },
+          formatter: function(params) {
+            var p = params[0];
+            return '使用次数: ' + p.name + '次<br/>教师人数: <b style="color:#3b82f6">' + p.value + '</b>人';
+          }
+        },
+        grid: { left: '3%', right: '4%', bottom: '15%', top: '5%', containLabel: true },
+        xAxis: {
+          type: 'category',
+          data: ['0', '1-2', '3-5', '6-10', '11-20', '21-30', '31-50', '50+'],
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+          axisLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 10 },
+          axisTick: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          name: '教师人数',
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+          axisLabel: { color: 'rgba(255,255,255,0.5)' },
+          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+        },
+        series: [{
+          type: 'bar',
+          data: teacherUsageActivityData.map(function(val, idx) {
+            var color = idx === 0 ? '#ef4444' : (idx < 4 ? '#10b981' : (idx < 6 ? '#f59e0b' : '#ef4444'));
+            return {
+              value: val,
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: color },
+                  { offset: 1, color: color + '80' }
+                ]),
+                borderRadius: [4, 4, 0, 0]
+              }
+            };
+          }),
+          barWidth: '50%',
+          label: {
+            show: true,
+            position: 'top',
+            color: '#fff',
+            fontSize: 10
+          }
+        }]
+      });
+
+      // ==================== 响应式处理 ====================
+      window.addEventListener('resize', function() {
+        newResourceBarChart.resize();
+        newResourceTrendChart.resize();
+        teacherCreateActivityChart.resize();
+        resourceUsageBarChart.resize();
+        resourceUsageTrendChart.resize();
+        teacherUsageActivityChart.resize();
+        knowledgeGraph.resize();
+        scoreTrendChart.resize();
+        scoreDistChart.resize();
+        if (graphFullscreenChart) {
+          graphFullscreenChart.resize();
+        }
       });
 
       // 班级作业明细
@@ -1054,28 +1762,16 @@
       var openBtn = document.getElementById('open-homework-modal-btn');
       var closeBtn = document.getElementById('close-homework-modal-btn');
       var overlay = document.getElementById('homework-modal-overlay');
-      var gradeFilter = document.getElementById('modal-grade-filter');
       var modalList = document.getElementById('modal-homework-list');
 
-      // 弹窗数据渲染（支持年级筛选）
-      function renderModalList(filterGrade) {
-        var filteredNames = [], filteredSubmit = [], filteredScore = [], filteredHwCount = [];
-        for (var i = 0; i < classNames.length; i++) {
-          var gradeMatch = filterGrade === 'all' || classNames[i].startsWith(filterGrade);
-          if (gradeMatch) {
-            filteredNames.push(classNames[i]);
-            filteredSubmit.push(submitData[i]);
-            filteredScore.push(scoreData[i]);
-            filteredHwCount.push(homeworkCount[i]);
-          }
-        }
-        modalList.innerHTML = generateClassListHtml(filteredNames, filteredSubmit, filteredScore, filteredHwCount, null);
+      // 弹窗数据渲染
+      function renderModalList() {
+        modalList.innerHTML = generateClassListHtml(classNames, submitData, scoreData, homeworkCount, null);
       }
 
       // 打开弹窗
       openBtn.addEventListener('click', function() {
-        gradeFilter.value = 'all';
-        renderModalList('all');
+        renderModalList();
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
       });
@@ -1091,17 +1787,12 @@
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
       });
 
-      // 年级筛选
-      gradeFilter.addEventListener('change', function() {
-        renderModalList(this.value);
-      });
-
       // 得分率趋势数据
       var scoreTrendData = [
-        ['2024-05-01', 82], ['2024-05-03', 84], ['2024-05-05', 81], ['2024-05-07', 85],
-        ['2024-05-09', 83], ['2024-05-11', 86], ['2024-05-13', 84], ['2024-05-15', 87],
-        ['2024-05-17', 85], ['2024-05-19', 88], ['2024-05-21', 86], ['2024-05-23', 89],
-        ['2024-05-25', 87], ['2024-05-27', 85], ['2024-05-29', 88], ['2024-05-31', 90]
+        ['2026-05-01', 82], ['2026-05-03', 84], ['2026-05-05', 81], ['2026-05-07', 85],
+        ['2026-05-09', 83], ['2026-05-11', 86], ['2026-05-13', 84], ['2026-05-15', 87],
+        ['2026-05-17', 85], ['2026-05-19', 88], ['2026-05-21', 86], ['2026-05-23', 89],
+        ['2026-05-25', 87], ['2026-05-27', 85], ['2026-05-29', 88], ['2026-05-31', 90]
       ];
 
       // 3. 得分率趋势图
@@ -1222,10 +1913,48 @@
         }
       });
 
-      // 响应式
+      // 知识点排名弹窗事件
+      document.getElementById('ranking-fullscreen-btn').addEventListener('click', function() {
+        var modal = document.getElementById('ranking-fullscreen-modal');
+        modal.classList.remove('hidden');
+        var knowledgeNodes = knowledgeNodesData.slice().filter(function(n) { return n.rate !== undefined && n.rate !== null; });
+        knowledgeNodes.sort(function(a, b) { return a.rate - b.rate; });
+        var html = '';
+        knowledgeNodes.forEach(function(node, index) {
+          var rate = node.rate;
+          var color = '#10b981';
+          var status = '已掌握';
+          if (rate < 60) {
+            color = '#ef4444';
+            status = '待加强';
+          } else if (rate < 80) {
+            color = '#f59e0b';
+            status = '需提升';
+          }
+          html += '<div class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">';
+          html += '<span class="w-8 h-8 flex items-center justify-center rounded-full bg-' + color.replace('#', '') + '-500/20 text-' + color.replace('#', '') + '-400 text-sm font-bold flex-shrink-0">' + (index + 1) + '</span>';
+          html += '<div class="flex-1 min-w-0">';
+          html += '<div class="text-sm text-white/90 truncate">' + node.name + '</div>';
+          html += '</div>';
+          html += '<span class="px-2 py-1 rounded text-xs font-medium flex-shrink-0" style="background-color:' + color + '20;color:' + color + '">' + status + '</span>';
+          html += '<div class="flex items-center gap-2 w-32 flex-shrink-0">';
+          html += '<div class="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">';
+          html += '<div class="h-full rounded-full" style="width:' + rate + '%;background-color:' + color + '"></div>';
+          html += '</div>';
+          html += '<span class="text-sm font-bold" style="color:' + color + ';min-width:40px;text-align:right">' + rate + '%</span>';
+          html += '</div></div>';
+        });
+        document.getElementById('modal-ranking-list').innerHTML = html;
+      });
+      document.getElementById('close-ranking-modal-btn').addEventListener('click', function() {
+        document.getElementById('ranking-fullscreen-modal').classList.add('hidden');
+      });
+      document.getElementById('ranking-modal-overlay').addEventListener('click', function() {
+        document.getElementById('close-ranking-modal-btn').click();
+      });
+
+      // 响应式（图表resize已在各图表初始化后单独处理）
       window.addEventListener('resize', function() {
-        resourceChart.resize();
-        classroomChart.resize();
         knowledgeGraph.resize();
         scoreTrendChart.resize();
         scoreDistChart.resize();
