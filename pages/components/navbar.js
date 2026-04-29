@@ -16,6 +16,46 @@
     @keyframes pointsMinusAnim { 0% { top: calc(30% + 20px); opacity: 1; transform: translateX(-50%) scale(0.5); color: #dc2626; } 20% { transform: translateX(-50%) scale(1.3); color: #ef4444; } 50% { top: calc(50% + 20px); transform: translateX(-50%) scale(1.1); color: #dc2626; } 100% { top: calc(90% + 20px); opacity: 0; transform: translateX(-50%) scale(0.8); color: #dc2626; } }
     .points-value-anim { animation: pointsValueChange 0.4s ease-out; }
     @keyframes pointsValueChange { 0% { transform: scale(1); } 50% { transform: scale(1.3); color: #fca5a5; } 100% { transform: scale(1); } }
+
+    /* 用户下拉菜单样式 */
+    .user-dropdown { position: relative; }
+    .user-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.5rem;
+      min-width: 140px;
+      background-color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      border: 1px solid #f3f4f6;
+      padding: 0.25rem 0;
+      z-index: 50;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: all 0.2s ease;
+    }
+    .user-dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      color: #374151;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .user-dropdown-item:hover {
+      background-color: #f9fafb;
+      color: #2563eb;
+    }
+    .user-dropdown-item i { width: 16px; height: 16px; }
   `;
   document.head.appendChild(style);
 })();
@@ -137,87 +177,148 @@ class Navbar {
               <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
             </div>
             
-            <!-- 用户信息 -->
-            <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all">
-              <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
-                <i data-lucide="user" class="w-4 h-4"></i>
+            <!-- 用户信息 - 带下拉菜单 -->
+            <div class="user-dropdown" id="user-dropdown">
+              <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all" id="user-dropdown-toggle">
+                <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center overflow-hidden">
+                  <img id="navbar-user-avatar" src="img/default-avatar.png" alt="头像" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                  <i data-lucide="user" class="w-4 h-4" style="display:none;"></i>
+                </div>
+                <div class="text-sm">
+                  <div class="font-medium" id="navbar-user-name">张老师</div>
+                </div>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-white/70 transition-transform" id="user-dropdown-arrow"></i>
               </div>
-              <div class="text-sm">
-                <div class="font-medium">张老师</div>
+              <!-- 下拉菜单 -->
+              <div id="user-dropdown-menu" class="user-dropdown-menu">
+                <div class="user-dropdown-item text-gray-700 hover:text-blue-600 hover:bg-gray-50" onclick="openUserProfile()">
+                  <i data-lucide="user-circle" class="w-4 h-4"></i>
+                  <span>个人信息</span>
+                </div>
+                <div style="border-top: 1px solid #f3f4f6; margin: 0.25rem 0;"></div>
+                <div class="user-dropdown-item text-red-600 hover:text-red-700 hover:bg-red-50" onclick="logout()">
+                  <i data-lucide="log-out" class="w-4 h-4"></i>
+                  <span>退出登录</span>
+                </div>
               </div>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-white/70"></i>
             </div>
           </div>
         </div>
       </header>
     `;
 
-    // 绑定测试按钮点击事件
-    if (this.options.showTestButton) {
-      this.bindTestButton();
-      this.initPoints();
-    }
-
     // 渲染完成后初始化 Lucide 图标
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
     }
-  }
 
-  // 初始化点数
-  initPoints() {
-    var schoolId = 'school_001';
-    var purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
-    var total = 0;
-    purchases.forEach(function(p) { total += (p.points || 0) - (p.consumed || 0); });
-    if (total === 0 && purchases.length === 0) {
-      total = 100;
-      localStorage.setItem('purchases_' + schoolId, JSON.stringify([{ points: 100, consumed: 0 }]));
+    // 绑定用户下拉菜单事件
+    this.bindUserDropdown();
+
+    // 初始化点数和绑定测试按钮
+    if (this.options.showTestButton) {
+      initPoints();
+      bindTestButton();
     }
-    var el = document.getElementById('header-points');
-    if (el) el.textContent = total.toLocaleString();
   }
 
-  // 绑定测试按钮点击事件
-  bindTestButton() {
-    var testBtn = document.getElementById('test-points-minus-btn');
-    if (testBtn) {
-      testBtn.addEventListener('click', function() {
-        var pointsEl = document.getElementById('header-points');
-        if (pointsEl) {
-          var currentVal = parseInt(pointsEl.textContent.replace(/,/g, '')) || 0;
-          if (currentVal > 0) {
-            var deductPoints = Math.floor(Math.random() * 3) + 1;
-            triggerPointsDeduct(deductPoints);
-          }
+  // 绑定用户下拉菜单
+  bindUserDropdown() {
+    var dropdown = document.getElementById('user-dropdown');
+    var toggle = document.getElementById('user-dropdown-toggle');
+    var menu = document.getElementById('user-dropdown-menu');
+    var arrow = document.getElementById('user-dropdown-arrow');
+
+    if (!dropdown || !toggle || !menu) return;
+
+    // 点击切换下拉菜单
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var isOpen = menu.classList.contains('show');
+      if (isOpen) {
+        closeUserDropdown();
+      } else {
+        menu.classList.add('show');
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+      }
+    });
+
+    // 点击其他区域关闭
+    document.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target)) {
+        closeUserDropdown();
+      }
+    });
+  }
+
+  // 设置用户信息
+  setUserInfo(name, avatar) {
+    var nameEl = document.getElementById('navbar-user-name');
+    var avatarEl = document.getElementById('navbar-user-avatar');
+    if (nameEl) nameEl.textContent = name || '用户';
+    if (avatarEl && avatar) avatarEl.src = avatar;
+  }
+}
+
+// 关闭用户下拉菜单
+function closeUserDropdown() {
+  var menu = document.getElementById('user-dropdown-menu');
+  var arrow = document.getElementById('user-dropdown-arrow');
+  if (menu) menu.classList.remove('show');
+  if (arrow) arrow.style.transform = '';
+}
+
+// 打开个人信息弹窗
+function openUserProfile() {
+  closeUserDropdown();
+  if (window.showUserProfileModal) {
+    window.showUserProfileModal();
+  }
+}
+
+// 退出登录
+function logout() {
+  closeUserDropdown();
+  if (typeof window.confirmLogout === 'function') {
+    window.confirmLogout();
+  } else {
+    if (confirm('确定要退出登录吗？')) {
+      localStorage.removeItem('currentTeacher');
+      window.location.href = 'login.html';
+    }
+  }
+}
+
+// 初始化点数
+function initPoints() {
+  var schoolId = 'school_001';
+  var purchases = JSON.parse(localStorage.getItem('purchases_' + schoolId) || '[]');
+  var total = 0;
+  purchases.forEach(function(p) { total += (p.points || 0) - (p.consumed || 0); });
+  if (total === 0 && purchases.length === 0) {
+    total = 100;
+    localStorage.setItem('purchases_' + schoolId, JSON.stringify([{ points: 100, consumed: 0 }]));
+  }
+  var el = document.getElementById('header-points');
+  if (el) el.textContent = total.toLocaleString();
+}
+
+// 绑定测试按钮点击事件
+function bindTestButton() {
+  var testBtn = document.getElementById('test-points-minus-btn');
+  if (testBtn) {
+    testBtn.addEventListener('click', function() {
+      var pointsEl = document.getElementById('header-points');
+      if (pointsEl) {
+        var currentVal = parseInt(pointsEl.textContent.replace(/,/g, '')) || 0;
+        if (currentVal > 0) {
+          var deductPoints = Math.floor(Math.random() * 3) + 1;
+          triggerPointsDeduct(deductPoints);
         }
-      });
-    }
+      }
+    });
   }
 }
 
 // 导出全局函数供页面使用
 window.Navbar = Navbar;
-
-// 全局扣减动画函数，可在任何页面调用
-window.triggerPointsDeduct = function(points) {
-  var container = document.getElementById('points-container');
-  var pointsEl = document.getElementById('header-points');
-  var animContainer = document.getElementById('points-animation-container');
-  if (!container || !pointsEl || !animContainer) return;
-
-  var minusEl = document.createElement('span');
-  minusEl.className = 'points-minus';
-  minusEl.textContent = '-' + points;
-  animContainer.appendChild(minusEl);
-
-  pointsEl.classList.add('points-value-anim');
-
-  var currentVal = parseInt(pointsEl.textContent.replace(/,/g, '')) || 0;
-  pointsEl.textContent = Math.max(0, currentVal - points).toLocaleString();
-
-  setTimeout(function() {
-    minusEl.remove();
-    pointsEl.classList.remove('points-value-anim');
-  }, 1500);
-};

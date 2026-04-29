@@ -318,3 +318,29 @@ function pmConsumeStatus(teacher) {
 function pmInitIcons() {
   if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
 }
+
+// ============================================================
+// 全局扣减动画函数，可在任何页面调用
+// ============================================================
+
+window.triggerPointsDeduct = function(points) {
+  var container = document.getElementById('points-container');
+  var pointsEl = document.getElementById('header-points');
+  var animContainer = document.getElementById('points-animation-container');
+  if (!container || !pointsEl || !animContainer) return;
+
+  var minusEl = document.createElement('span');
+  minusEl.className = 'points-minus';
+  minusEl.textContent = '-' + points;
+  animContainer.appendChild(minusEl);
+
+  pointsEl.classList.add('points-value-anim');
+
+  var currentVal = parseInt(pointsEl.textContent.replace(/,/g, '')) || 0;
+  pointsEl.textContent = Math.max(0, currentVal - points).toLocaleString();
+
+  setTimeout(function() {
+    minusEl.remove();
+    pointsEl.classList.remove('points-value-anim');
+  }, 1500);
+};

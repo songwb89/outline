@@ -1,0 +1,22 @@
+﻿---
+alwaysApply: false
+---
+# 原型开发规范
+
+## 技术栈
+- 单 HTML 文件 + TailwindCSS(CDN) + Lucide 图标(淘宝镜像)
+
+## 组件封装
+复杂/独立的部分封装为 JS 函数，方便复用和状态管理
+
+## 页面路由
+使用 Hash 路由 (#) 实现单页内多页面跳转
+
+## 动画
+使用 Tailwind transition/duration 类：
+
+## 数据管理
+内存存储，刷新重置，不用 localStorage
+
+## 禁止浏览器原生弹窗
+禁止使用 alert / confirm / prompt 等原生弹窗
