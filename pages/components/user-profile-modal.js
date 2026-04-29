@@ -95,6 +95,7 @@
       flex-shrink: 0;
     }
     .upm-avatar {
+      position: relative;
       width: 64px;
       height: 64px;
       border-radius: 50%;
@@ -105,25 +106,26 @@
       justify-content: center;
       color: #ccc;
       transition: all 0.2s;
-      overflow: hidden;
+      overflow: visible;
     }
-    .upm-avatar:hover { background: #e5e5e5; color: #999; }
+    .upm-avatar:hover { background: #f0f0f0; }
     .upm-avatar svg { width: 32px; height: 32px; }
     .upm-avatar.has-img { background: none; }
-    .upm-avatar.has-img svg { display: none; }
+    .upm-avatar.has-img > svg:first-child { display: none; }
     .upm-avatar-edit {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 20px;
-      background: rgba(0,0,0,0.5);
+      bottom: 2px;
+      right: 2px;
+      width: 22px;
+      height: 22px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 0 0 32px 32px;
       opacity: 0;
       transition: opacity 0.2s;
+      border: 2px solid #fff;
     }
     .upm-avatar:hover .upm-avatar-edit { opacity: 1; }
     .upm-avatar-edit svg { width: 12px; height: 12px; color: #fff; }
@@ -152,10 +154,8 @@
       align-items: center;
       justify-content: center;
       border-radius: 4px;
-      opacity: 0;
       transition: all 0.2s;
     }
-    .upm-profile-name:hover .upm-name-edit-btn { opacity: 1; }
     .upm-name-edit-btn:hover { color: #333; background: #f5f5f5; }
     .upm-name-edit-btn svg { width: 14px; height: 14px; }
     .upm-name-input {
@@ -172,6 +172,29 @@
       font-size: 13px;
       color: #999;
     }
+    .upm-profile-subjects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .upm-subject-tag {
+      padding: 2px 10px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .upm-change-pwd-btn {
+      margin-left: 12px;
+      padding: 2px 10px;
+      background: none;
+      color: #3366ff;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .upm-change-pwd-btn:hover { text-decoration: underline; }
     .upm-tags {
       display: inline-flex;
       flex-wrap: wrap;
@@ -196,12 +219,19 @@
       border-bottom: 1px solid #f5f5f5;
     }
     .upm-info-row:last-child { border-bottom: none; }
-    .upm-info-item {
-      flex: 1;
+    .upm-info-item { flex: 1; }
+    .upm-info-item + .upm-info-item { margin-left: 24px; }
+    .upm-form-group { margin-bottom: 16px; }
+    .upm-form-label { font-size: 12px; color: #666; margin-bottom: 6px; }
+    .upm-form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
     }
-    .upm-info-item + .upm-info-item {
-      margin-left: 24px;
-    }
+    .upm-form-input:focus { outline: none; border-color: #3366ff; }
     .upm-info-label {
       font-size: 12px;
       color: #999;
@@ -210,6 +240,34 @@
     .upm-info-value {
       font-size: 14px;
       color: #333;
+    }
+    .upm-classes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .upm-classes-table th {
+      text-align: left;
+      padding: 6px 8px;
+      background: #f5f5f5;
+      color: #666;
+      font-weight: 500;
+      border-bottom: 1px solid #eee;
+    }
+    .upm-classes-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+    .upm-classes-table tr:last-child td { border-bottom: none; }
+    .upm-class-teacher-tag {
+      display: inline-block;
+      padding: 2px 6px;
+      background: #fff3e0;
+      color: #ff6b00;
+      border-radius: 4px;
+      font-size: 12px;
     }
 
     .upm-table {
@@ -298,6 +356,16 @@
     .upm-flow-table tr:hover td { background: #fafafa; }
     .upm-points-minus { color: #fa541c; }
     .upm-points-plus { color: #52c41a; }
+    .upm-points-summary {
+      text-align: center;
+      padding: 12px;
+      margin-bottom: 16px;
+      background: #fff7e6;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #666;
+    }
+    .upm-points-summary span { color: #fa541c; font-weight: bold; }
     .upm-badge {
       padding: 2px 6px;
       background: #f5f5f5;
@@ -314,21 +382,25 @@
       margin-top: 16px;
       padding-top: 12px;
       border-top: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .upm-pager-info { font-size: 12px; color: #999; }
-    .upm-pager-btns { display: flex; gap: 4px; }
+    .upm-pager-btns { display: flex; gap: 4px; flex-wrap: nowrap; align-items: center; }
     .upm-pager-btn {
       min-width: 28px;
       height: 28px;
+      padding: 0 6px;
       border: 1px solid #d9d9d9;
       background: #fff;
       font-size: 12px;
       color: #333;
       border-radius: 4px;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      white-space: nowrap;
     }
     .upm-pager-btn:hover { border-color: #333; }
     .upm-pager-btn.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
@@ -369,6 +441,83 @@
       color: #999;
       font-size: 14px;
     }
+
+    /* 修改密码弹窗 */
+    .upm-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .upm-modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .upm-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .upm-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .upm-modal-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .upm-modal-close:hover {
+      background: #f5f5f5;
+      color: #666;
+    }
+    .upm-modal-body {
+      padding: 20px;
+    }
+    .upm-modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: #fafafa;
+    }
+    .upm-btn-primary {
+      padding: 8px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .upm-btn-primary:hover {
+      background: #333;
+    }
   `;
   document.head.appendChild(style);
 })();
@@ -378,6 +527,30 @@ var upmAllRecords = [];
 var upmCurPage = 1;
 var upmPageSize = 6;
 var upmFilterType = 'all';
+
+// Toast 提示
+var upmToastTimer = null;
+function upmToast(message, type) {
+  var toast = document.getElementById('upm-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'upm-toast';
+    toast.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl text-white text-sm font-medium shadow-2xl flex items-center gap-2 transition-all duration-300';
+    document.body.appendChild(toast);
+  }
+  toast.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl text-white text-sm font-medium shadow-2xl flex items-center gap-2 transition-all duration-300 ' + (type === 'error' ? 'bg-red-500' : type === 'info' ? 'bg-blue-500' : 'bg-emerald-500');
+  toast.innerHTML = '<span>' + message + '</span>';
+  toast.style.opacity = '0';
+  toast.style.transform = 'translateX(-50%) translateY(-8px)';
+  setTimeout(function() { toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0)'; }, 10);
+  if (upmToastTimer) clearTimeout(upmToastTimer);
+  upmToastTimer = setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(-8px)';
+    setTimeout(function() { toast.remove(); }, 300);
+    upmToastTimer = null;
+  }, 2500);
+}
 
 // 显示弹窗
 window.showUserProfileModal = function() {
@@ -432,8 +605,8 @@ function getUserProfileModalHTML() {
         <div id="upm-profile-content" class="upm-tab-content active">
           <div class="upm-profile-top">
             <div class="upm-avatar-wrap">
-              <div id="upm-avatar" class="upm-avatar" onclick="document.getElementById('upm-avatar-input').click()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <div id="upm-avatar" class="upm-avatar has-img" onclick="document.getElementById('upm-avatar-input').click()">
+                <img src="img/tx.png" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />
                 <div class="upm-avatar-edit">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
@@ -443,12 +616,15 @@ function getUserProfileModalHTML() {
             <div class="upm-profile-info">
               <div class="upm-profile-name">
                 <span id="upm-name-text">张老师</span>
-                <input type="text" id="upm-name-input" class="upm-name-input" value="张老师" style="display:none" />
+                <input type="text" id="upm-name-input" class="upm-name-input" value="张老师" style="display:none" onblur="saveNameOnBlur()" />
                 <button class="upm-name-edit-btn" onclick="toggleEditName()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
               </div>
-              <div class="upm-profile-phone" id="upm-phone">手机号: 138****1234</div>
+              <div class="upm-profile-subjects" id="upm-subjects">
+                <span class="upm-subject-tag">语文</span>
+                <span class="upm-subject-tag">数学</span>
+              </div>
             </div>
           </div>
 
@@ -458,61 +634,63 @@ function getUserProfileModalHTML() {
               <div class="upm-info-value" id="upm-account">30000022</div>
             </div>
             <div class="upm-info-item">
-              <div class="upm-info-label">所属学校</div>
+              <div class="upm-info-label">密码</div>
+              <div class="upm-info-value">
+                <span>******</span>
+                <button class="upm-change-pwd-btn" onclick="showChangePasswordModal()">修改</button>
+              </div>
+            </div>
+          </div>
+          <div class="upm-info-row">
+            <div class="upm-info-item">
+              <div class="upm-info-label">手机号</div>
+              <div class="upm-info-value" id="upm-phone">13812345678</div>
+            </div>
+            <div class="upm-info-item">
+              <div class="upm-info-label">所在学校</div>
               <div class="upm-info-value" id="upm-school">第一中学</div>
             </div>
           </div>
 
           <div class="upm-info-row">
             <div class="upm-info-item">
-              <div class="upm-info-label">任教科目</div>
-              <div class="upm-tags" id="upm-subjects-tags">
-                <span class="upm-tag main">语文</span>
-                <span class="upm-tag">数学</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="upm-info-row">
-            <div class="upm-info-item">
               <div class="upm-info-label">任教班级</div>
-              <div class="upm-info-value" id="upm-classes">一年级(1)班、一年级(2)班</div>
+              <div class="upm-info-value">
+                <table class="upm-classes-table">
+                  <thead>
+                    <tr>
+                      <th>班级</th>
+                      <th>任教</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>一年级(1)班</td>
+                      <td><span class="upm-class-teacher-tag">班主任</span> 语文</td>
+                    </tr>
+                    <tr>
+                      <td>一年级(2)班</td>
+                      <td>数学</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- 扣点记录 -->
         <div id="upm-records-content" class="upm-tab-content">
-          <div class="upm-stat-row">
-            <div class="upm-stat">
-              <div class="upm-stat-num" id="upm-total">100</div>
-              <div class="upm-stat-label">总点数</div>
-            </div>
-            <div class="upm-stat">
-              <div class="upm-stat-num orange" id="upm-used">50</div>
-              <div class="upm-stat-label">已使用</div>
-            </div>
-            <div class="upm-stat">
-              <div class="upm-stat-num green" id="upm-remain">50</div>
-              <div class="upm-stat-label">剩余</div>
-            </div>
-          </div>
-
-          <div class="upm-filter-row">
-            <select class="upm-filter" id="upm-filter" onchange="upmChangeFilter(this.value)">
-              <option value="all">全部记录</option>
-              <option value="consume">仅消费</option>
-              <option value="recharge">仅充值</option>
-            </select>
+          <div class="upm-points-summary">
+            累计消耗：<span id="upm-total-used">50</span>
           </div>
 
           <table class="upm-flow-table">
             <thead>
               <tr>
                 <th>时间</th>
-                <th>点数</th>
+                <th>消耗</th>
                 <th>来源</th>
-                <th>说明</th>
               </tr>
             </thead>
             <tbody id="upm-flow-body"></tbody>
@@ -552,7 +730,7 @@ function maskPhone(phone) {
 function loadUserProfileData() {
   var data = JSON.parse(localStorage.getItem('currentTeacher') || 'null') || {
     name: '张老师', phone: '13812345678', account: '30000022',
-    avatar: 'img/default-avatar.png', school: '第一中学',
+    avatar: 'img/tx.png', school: '第一中学',
     subjects: [{name:'语文',isMain:true},{name:'数学',isMain:false}],
     classes: [
       {name:'一年级(1)班',roles:['语文(主)','班主任']},
@@ -567,7 +745,7 @@ function loadUserProfileData() {
   if (nameInput) nameInput.value = data.name;
 
   var phoneEl = document.getElementById('upm-phone');
-  if (phoneEl) phoneEl.textContent = '手机号: ' + data.phone;
+  if (phoneEl) phoneEl.textContent = data.phone;
 
   var accountEl = document.getElementById('upm-account');
   if (accountEl) accountEl.textContent = data.account || '-';
@@ -575,16 +753,27 @@ function loadUserProfileData() {
   var schoolEl = document.getElementById('upm-school');
   if (schoolEl) schoolEl.textContent = data.school;
 
-  var tagsEl = document.getElementById('upm-subjects-tags');
-  if (tagsEl && data.subjects) {
-    tagsEl.innerHTML = data.subjects.map(function(s) {
-      return '<span class="upm-tag' + (s.isMain ? ' main' : '') + '">' + s.name + '</span>';
+  var subjectsEl = document.getElementById('upm-subjects');
+  if (subjectsEl && data.subjects) {
+    subjectsEl.innerHTML = data.subjects.map(function(s) {
+      return '<span class="upm-subject-tag">' + s.name + '</span>';
     }).join('');
   }
 
   var classesEl = document.getElementById('upm-classes');
   if (classesEl && data.classes && data.classes.length > 0) {
-    classesEl.textContent = data.classes.map(function(c) { return c.name; }).join('、');
+    var html = '<table class="upm-classes-table"><thead><tr><th>班级</th><th>任教</th></tr></thead><tbody>';
+    data.classes.forEach(function(c) {
+      var rolesHtml = c.roles.map(function(r) {
+        if (r === '班主任') {
+          return '<span class="upm-class-teacher-tag">' + r + '</span>';
+        }
+        return r;
+      }).join('、');
+      html += '<tr><td>' + c.name + '</td><td>' + rolesHtml + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    classesEl.innerHTML = html;
   } else if (classesEl) {
     classesEl.textContent = '-';
   }
@@ -607,16 +796,16 @@ function loadUserProfileData() {
   if (remainEl) remainEl.textContent = total - used;
 
   upmAllRecords = [
-    {createdAt:'2026-04-29 10:30',points:-2,source:'智能备课',type:'consume',desc:'教案生成'},
-    {createdAt:'2026-04-28 15:20',points:-5,source:'智能备课',type:'consume',desc:'课件生成'},
-    {createdAt:'2026-04-28 09:00',points:100,source:'充值',type:'recharge',desc:''},
-    {createdAt:'2026-04-27 14:30',points:-3,source:'智能授课',type:'consume',desc:'课堂互动'},
-    {createdAt:'2026-04-25 11:00',points:-1,source:'智能备课',type:'consume',desc:'教案生成'},
-    {createdAt:'2026-04-24 16:00',points:-10,source:'AI专区',type:'consume',desc:'智能出题'},
-    {createdAt:'2026-04-20 08:30',points:500,source:'充值',type:'recharge',desc:''},
-    {createdAt:'2026-04-15 10:00',points:-5,source:'智能备课',type:'consume',desc:'学情分析'},
-    {createdAt:'2026-04-10 14:20',points:-8,source:'智能授课',type:'consume',desc:'课后作业'},
-    {createdAt:'2026-04-08 09:30',points:-6,source:'智能备课',type:'consume',desc:'教案生成'}
+    {createdAt:'2026-03-06 11:05',points:-30,type:'consume',desc:'生成课件(Unit 3 课件)'},
+    {createdAt:'2026-03-03 14:20',points:-15,type:'consume',desc:'生成绘本(丑小鸭的故事)'},
+    {createdAt:'2026-04-29 10:30',points:-2,type:'consume',desc:'教案生成(第1课时的教案)'},
+    {createdAt:'2026-04-28 15:20',points:-5,type:'consume',desc:'课件生成(Unit 5 Section A)'},
+    {createdAt:'2026-04-27 14:30',points:-3,type:'consume',desc:'课件生成(Unit 5 Section A)'},
+    {createdAt:'2026-04-25 11:00',points:-1,type:'consume',desc:'教案生成(青蛙写诗)'},
+    {createdAt:'2026-04-24 16:00',points:-10,type:'consume',desc:'课件生成(Unit 5 Section A)'},
+    {createdAt:'2026-04-15 10:00',points:-5,type:'consume',desc:'课件生成(Unit 5 Section A)'},
+    {createdAt:'2026-04-10 14:20',points:-8,type:'consume',desc:'课件生成(Unit 5 Section A)'},
+    {createdAt:'2026-04-08 09:30',points:-6,type:'consume',desc:'教案生成(Unit 5 Section A)'}
   ];
   upmCurPage = 1;
   upmFilterType = 'all';
@@ -634,14 +823,24 @@ function toggleEditName() {
     nameInput.focus();
     nameInput.select();
   } else {
-    var newName = nameInput.value.trim();
-    if (newName) {
-      nameText.textContent = newName;
-      nameInput.value = newName;
-    }
-    nameText.style.display = 'inline';
-    nameInput.style.display = 'none';
+    saveNameOnBlur();
   }
+}
+
+// 离焦保存姓名
+function saveNameOnBlur() {
+  var nameText = document.getElementById('upm-name-text');
+  var nameInput = document.getElementById('upm-name-input');
+  if (!nameText || !nameInput) return;
+  if (nameInput.style.display === 'none') return;
+
+  var newName = nameInput.value.trim();
+  if (newName) {
+    nameText.textContent = newName;
+    nameInput.value = newName;
+  }
+  nameText.style.display = 'inline';
+  nameInput.style.display = 'none';
 }
 
 // 头像上传
@@ -668,8 +867,11 @@ function upmChangeFilter(val) {
 
 // 渲染流水
 function renderFlowTable() {
-  var filtered = upmFilterType === 'all' ? upmAllRecords :
-    upmAllRecords.filter(function(r) { return r.type === upmFilterType; });
+  var filtered = upmAllRecords.filter(function(r) { return r.points < 0; });
+
+  var totalUsed = filtered.reduce(function(sum, r) { return sum + Math.abs(r.points); }, 0);
+  var totalUsedEl = document.getElementById('upm-total-used');
+  if (totalUsedEl) totalUsedEl.textContent = totalUsed;
 
   var totalPages = Math.max(1, Math.ceil(filtered.length / upmPageSize));
   var start = (upmCurPage - 1) * upmPageSize;
@@ -681,17 +883,13 @@ function renderFlowTable() {
   if (!tbody) return;
 
   if (pageData.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="upm-empty">暂无记录</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" class="upm-empty">暂无记录</td></tr>';
   } else {
     tbody.innerHTML = pageData.map(function(r) {
-      var cls = r.points > 0 ? 'upm-points-plus' : 'upm-points-minus';
-      var sign = r.points > 0 ? '+' : '';
-      var badgeCls = r.type === 'recharge' ? ' recharge' : '';
       return '<tr>' +
         '<td>' + r.createdAt + '</td>' +
-        '<td class="' + cls + '">' + sign + r.points + '</td>' +
-        '<td><span class="upm-badge' + badgeCls + '">' + r.source + '</span></td>' +
-        '<td style="color:#999;">' + (r.desc || '-') + '</td>' +
+        '<td class="upm-points-minus">' + Math.abs(r.points) + '</td>' +
+        '<td>' + r.desc + '</td>' +
         '</tr>';
     }).join('');
   }
@@ -704,7 +902,9 @@ function renderFlowTable() {
   var pagesEl = document.getElementById('upm-pages');
   if (pagesEl) {
     pagesEl.innerHTML = '';
-    for (var i = 1; i <= Math.min(totalPages, 5); i++) {
+    var startPage = Math.max(1, Math.min(upmCurPage - 2, totalPages - 4));
+    var endPage = Math.min(startPage + 4, totalPages);
+    for (var i = startPage; i <= endPage; i++) {
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.textContent = i;
@@ -717,8 +917,7 @@ function renderFlowTable() {
 
 // 翻页
 function upmGoPage(page) {
-  var filtered = upmFilterType === 'all' ? upmAllRecords :
-    upmAllRecords.filter(function(r) { return r.type === upmFilterType; });
+  var filtered = upmAllRecords.filter(function(r) { return r.points < 0; });
   var totalPages = Math.max(1, Math.ceil(filtered.length / upmPageSize));
   if (page < 1 || page > totalPages) return;
   upmCurPage = page;
@@ -745,4 +944,47 @@ function saveUserProfile() {
   if (navbarName) navbarName.textContent = name;
 
   hideUserProfileModal();
+}
+
+function showChangePasswordModal() {
+  var html = '<div class="upm-modal-overlay" id="upm-change-pwd-overlay" onclick="if(event.target===this)hideChangePasswordModal()">' +
+    '<div class="upm-modal-content">' +
+      '<div class="upm-modal-header">' +
+        '<div class="upm-modal-title">修改密码</div>' +
+        '<button class="upm-modal-close" onclick="hideChangePasswordModal()">&times;</button>' +
+      '</div>' +
+      '<div class="upm-modal-body">' +
+        '<div class="upm-form-group">' +
+          '<input type="password" id="upm-new-pwd" class="upm-form-input" placeholder="请输入新密码" />' +
+        '</div>' +
+        '<div class="upm-form-group">' +
+          '<input type="password" id="upm-confirm-pwd" class="upm-form-input" placeholder="请再次输入新密码" />' +
+        '</div>' +
+        '<div id="upm-pwd-error" style="color:#ff4444;font-size:12px;margin-top:8px;display:none;">两次密码输入不一致</div>' +
+      '</div>' +
+      '<div class="upm-modal-footer">' +
+        '<button class="upm-btn upm-btn-cancel" onclick="hideChangePasswordModal()">取消</button>' +
+        '<button class="upm-btn upm-btn-primary" onclick="submitChangePassword()">确定</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function hideChangePasswordModal() {
+  var overlay = document.getElementById('upm-change-pwd-overlay');
+  if (overlay) overlay.remove();
+}
+
+function submitChangePassword() {
+  var newPwd = document.getElementById('upm-new-pwd').value;
+  var confirmPwd = document.getElementById('upm-confirm-pwd').value;
+  var errorEl = document.getElementById('upm-pwd-error');
+  if (newPwd !== confirmPwd) {
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  upmToast('密码修改成功', 'success');
+  hideChangePasswordModal();
 }

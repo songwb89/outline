@@ -181,7 +181,7 @@ class Navbar {
             <div class="user-dropdown" id="user-dropdown">
               <div class="flex items-center gap-3 cursor-pointer hover:bg-white/20 p-2 rounded-lg transition-all" id="user-dropdown-toggle">
                 <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center overflow-hidden">
-                  <img id="navbar-user-avatar" src="img/default-avatar.png" alt="头像" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                  <img id="navbar-user-avatar" src="img/tx.png" alt="头像" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
                   <i data-lucide="user" class="w-4 h-4" style="display:none;"></i>
                 </div>
                 <div class="text-sm">
@@ -193,7 +193,7 @@ class Navbar {
               <div id="user-dropdown-menu" class="user-dropdown-menu">
                 <div class="user-dropdown-item text-gray-700 hover:text-blue-600 hover:bg-gray-50" onclick="openUserProfile()">
                   <i data-lucide="user-circle" class="w-4 h-4"></i>
-                  <span>个人信息</span>
+                  <span>个人中心</span>
                 </div>
                 <div style="border-top: 1px solid #f3f4f6; margin: 0.25rem 0;"></div>
                 <div class="user-dropdown-item text-red-600 hover:text-red-700 hover:bg-red-50" onclick="logout()">
