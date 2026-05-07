@@ -58,6 +58,14 @@
         select:not(:disabled):hover, input:not(:disabled):hover {
             border-color: #a5b4fc;
         }
+        .admin-nav-subitem.active {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+        .admin-nav-group-btn.active {
+            background: #f3f4f6;
+            color: #4f46e5;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -575,7 +583,7 @@
             { id: 'm005', name: '英语单词听写', type: 'dictation', source: 'ai', subject: 'english', grade: 'g7s1', version: 'v3', chapter: 'ch1', creator: '孙老师', school: '北京市第一中学', createdAt: '2026-03-11', status: 'pending', featured: false },
             { id: 'm006', name: '乘法运算课件', type: 'courseware', source: 'local', subject: 'math', grade: 'g3s2', version: 'v2', chapter: 'ch1', creator: '周老师', school: '上海市实验中学', createdAt: '2026-03-10', status: 'normal', featured: true, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E7%AD%89%E8%85%B0%E4%B8%89%E8%A7%92%E5%BD%A2%E5%88%A4%E5%AE%9A.pptx' },
             { id: 'm007', name: '英语语法练习', type: 'quiz', source: 'ai', subject: 'english', grade: 'g8s1', version: 'v3', chapter: 'ch2', creator: '吴老师', school: '广州市华南附中', createdAt: '2026-03-09', status: 'normal', featured: false },
-            { id: 'm008', name: '古诗词教案', type: 'picturebook', source: 'ai', subject: 'chinese', grade: 'g3s2', version: 'v1', chapter: 'ch3', creator: '郑老师', school: '深圳市南山学校', createdAt: '2026-03-08', status: 'normal', featured: false },
+            { id: 'm008', name: '古诗词教案', type: 'lesson', source: 'ai', subject: 'chinese', grade: 'g3s2', version: 'v1', chapter: 'ch3', creator: '郑老师', school: '深圳市南山学校', createdAt: '2026-03-08', status: 'normal', featured: false },
             { id: 'm009', name: '抽奖互动游戏', type: 'lottery', source: 'ai', subject: 'chinese', grade: 'g7s1', version: 'v1', chapter: 'ch4', creator: '张老师', school: '北京市第一中学', createdAt: '2026-03-07', status: 'violation', featured: false },
             { id: 'm010', name: '场景对话练习', type: 'scene-dialog', source: 'ai', subject: 'english', grade: 'g8s2', version: 'v3', chapter: 'ch2', creator: '陈老师', school: '上海市实验中学', createdAt: '2026-03-06', status: 'normal', featured: true },
             { id: 'm011', name: '二次函数教案', type: 'lesson', source: 'local', subject: 'math', grade: 'g9s2', version: 'v1', chapter: 'ch2', creator: '刘老师', school: '广州市华南附中', createdAt: '2026-03-05', status: 'normal', featured: false, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E6%98%A5%E8%8A%82%E8%8A%B1%E6%9C%88%E5%A4%9C%E6%95%99%E6%A1%88.docx' },

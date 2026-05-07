@@ -49,7 +49,7 @@ function renderSidebar(currentPage) {
 
     html += `
       <div class="admin-nav-group px-4 mb-1">
-        <button type="button" data-group-id="${group.id}" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg">
+        <button type="button" data-group-id="${group.id}" class="admin-nav-group-btn w-full text-left flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg ${isActiveGroup ? 'active' : ''}">
           <i data-lucide="${group.icon}" class="w-5 h-5 text-gray-400"></i>
           <span>${group.label}</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-auto group-arrow ${isExpanded ? 'rotate-90' : ''}"></i>
