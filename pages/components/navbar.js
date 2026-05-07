@@ -322,3 +322,19 @@ function bindTestButton() {
 
 // 导出全局函数供页面使用
 window.Navbar = Navbar;
+
+// 全局函数：打开个人中心（供 HTML onclick 调用）
+function openUserProfile() {
+  if (typeof showUserProfileModal === 'function') {
+    showUserProfileModal();
+  } else {
+    var script = document.createElement('script');
+    script.src = 'components/user-profile-modal.js';
+    script.onload = function() {
+      if (typeof showUserProfileModal === 'function') {
+        showUserProfileModal();
+      }
+    };
+    document.head.appendChild(script);
+  }
+}

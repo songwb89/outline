@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>备课管理 - 运营平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.min.js"></script>
+    <script src="components/sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        }
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            color: white; padding: 12px 24px; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 10000; display: flex; align-items: center; gap: 12px;
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
+        }
+        .toast.show { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+        .toast.hide { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+        .toast.toast-success { background: #10b981; }
+        .toast.toast-error { background: #ef4444; }
+        .toast.toast-info { background: #3b82f6; }
+        .toast.toast-warning { background: #f59e0b; }
+        .toast i { width: 20px; height: 20px; flex-shrink: 0; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        select:disabled, input:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        select:not(:disabled):hover, input:not(:disabled):hover {
+            border-color: #a5b4fc;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="text-base font-semibold text-gray-800">运营平台</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">A</div>
+                <span class="text-sm text-gray-700 font-medium">管理员</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-[calc(100vh-57px)]">
+        <div id="sidebar-container"></div>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <div class="px-6 pt-6 overflow-y-auto flex-1">
+                <div class="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">备课管理</h1>
+                    </div>
+                </div>
+
+                <!-- 筛选条件 -->
+                <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div class="flex items-center gap-6 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">关键词</label>
+                            <input type="text" id="filterKeyword" onkeyup="applyFilters()" placeholder="素材名称 / 创建人" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-44">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学校</label>
+                            <select id="filterSchool" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[140px]">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">学科</label>
+                            <select id="filterSubject" onchange="onSubjectChange()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[100px]">
+                                <option value="">请选择</option>
+                                <option value="chinese">语文</option>
+                                <option value="math">数学</option>
+                                <option value="english">英语</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">年级</label>
+                            <select id="filterGrade" onchange="onGradeChange()" disabled class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[100px]">
+                                <option value="">请选择</option>
+                            </select>
+                            <select id="filterSemester" onchange="onSemesterChange()" disabled class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[80px]">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">版本</label>
+                            <select id="filterVersion" onchange="onVersionChange()" disabled class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[100px]">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">章节</label>
+                            <select id="filterChapter" onchange="applyFilters()" disabled class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white min-w-[120px]">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 flex-wrap mt-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">素材类型</label>
+                            <select id="filterType" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                                <option value="">请选择</option>
+                                <option value="courseware">课件</option>
+                                <option value="lesson">教案</option>
+                                <option value="study">学案</option>
+                                <option value="activity">活动</option>
+                                <option value="lottery">抽奖</option>
+                                <option value="quiz">随堂测</option>
+                                <option value="dictation">听写</option>
+                                <option value="word-review">单词评测</option>
+                                <option value="dialog-review">对话评测</option>
+                                <option value="scene-dialog">场景对话</option>
+                                <option value="agent">智能体</option>
+                                <!-- <option value="picturebook">绘本</option> -->
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">推荐状态</label>
+                            <select id="filterFeatured" onchange="applyFilters()" class="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 bg-white">
+                                <option value="">请选择</option>
+                                <option value="yes">已推荐</option>
+                                <option value="no">未推荐</option>
+                            </select>
+                        </div>
+                        <button onclick="resetFilters()" class="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">重置</button>
+                        <button onclick="applyFilters()" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded text-sm font-medium transition-all flex items-center gap-2">
+                            <i data-lucide="search" class="w-4 h-4"></i>查询
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 数据表格 -->
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col" style="height: calc(100vh - 320px);">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-900">素材列表</span>
+                            <span class="text-xs text-gray-500">共 <span id="totalCountTop">0</span> 条</span>
+                        </div>
+                        <div class="flex items-center gap-2" id="batchActions" style="display: none;">
+                            <span class="text-xs text-gray-500">已选择 <span id="selectedCount">0</span> 项</span>
+                            <button onclick="batchPublish()" class="px-3 py-1.5 text-xs font-medium text-white bg-green-500 hover:bg-green-600 rounded transition-all">
+                                <i data-lucide="globe" class="w-3 h-3 inline mr-1"></i>批量推荐
+                            </button>
+                            <button onclick="batchUnpublish()" class="px-3 py-1.5 text-xs font-medium text-white bg-gray-500 hover:bg-gray-600 rounded transition-all">
+                                <i data-lucide="eye-off" class="w-3 h-3 inline mr-1"></i>取消推荐
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto overflow-y-auto flex-1">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-10">
+                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-12">序号</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">素材名称</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">素材类型</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学科/年级/版本/章节</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建人</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">学校</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">是否推荐</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">创建时间</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap" style="display: none;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-white flex-shrink-0">
+                        <div class="text-sm text-gray-600">共 <span id="totalCount">0</span> 条，每页 <span id="pageSize">10</span> 条</div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" onclick="goToPreviousPage()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <i data-lucide="chevron-left" class="w-4 h-4 inline"></i>上一页
+                            </button>
+                            <div class="flex items-center gap-1" id="pageNumbers"></div>
+                            <button id="nextBtn" onclick="goToNextPage()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                下一页<i data-lucide="chevron-right" class="w-4 h-4 inline"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PPT预览模态框 -->
+    <div id="pptPreviewModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white flex-shrink-0">
+                <h3 id="pptPreviewTitle" class="text-lg font-semibold text-gray-900">课件预览</h3>
+                <button onclick="closePptPreview()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden bg-gray-100 relative">
+                <!-- 预览加载中 -->
+                <div id="pptLoading" class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
+                        <p class="text-gray-500" id="pptLoadingText">正在加载${typeLabel}...</p>
+                    </div>
+                </div>
+                <!-- 预览容器 -->
+                <div id="pptContainer" class="hidden w-full h-full">
+                    <iframe id="pptIframe" class="w-full h-full" frameborder="0"></iframe>
+                </div>
+                <!-- 预览失败时显示 -->
+                <div id="pptFallback" class="hidden absolute inset-0 flex items-center justify-center">
+                    <div class="text-center bg-white rounded-xl p-8 shadow-lg max-w-md mx-4">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-orange-100 flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-8 h-8 text-orange-600"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">无法预览此文件</h4>
+                        <p id="fallbackErrorMsg" class="text-gray-500 mb-4"></p>
+                        <div class="flex gap-3 justify-center">
+                            <a id="pptDownloadBtn" href="#" download class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2">
+                                <i data-lucide="download" class="w-4 h-4"></i>下载文件
+                            </a>
+                            <button onclick="closePptPreview()" class="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-medium transition-all">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-3 border-t border-gray-200 bg-white flex-shrink-0 flex items-center justify-between">
+                <div class="text-xs text-gray-500">
+                    <span id="pptFileInfo"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-400" id="previewTip">提示：使用 Office Online 在线预览</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-orange-100 to-red-100">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-600"></i>
+                </div>
+                <h3 id="confirmTitle" class="text-xl font-semibold text-gray-900 mb-2">确认操作</h3>
+                <p id="confirmMessage" class="text-gray-500">确定要执行此操作吗？</p>
+            </div>
+            <div class="px-6 pb-6 flex gap-3">
+                <button onclick="closeConfirmModal(false)" class="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">取消</button>
+                <button onclick="closeConfirmModal(true)" class="flex-1 px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 rounded-xl shadow-lg shadow-red-500/25 transition-all">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 数据配置
+        // ============================================================
+        
+        // 学科对应的年级（格式：{ value: 'g1s1', label: '一年级上' }）
+        // 年级格式：g1s1 表示一年级上，g1s2 表示一年级下
+        const gradeData = {
+            'chinese': [
+                { value: 'g1s1', label: '一年级上' },
+                { value: 'g1s2', label: '一年级下' },
+                { value: 'g2s1', label: '二年级上' },
+                { value: 'g2s2', label: '二年级下' },
+                { value: 'g3s1', label: '三年级上' },
+                { value: 'g3s2', label: '三年级下' },
+                { value: 'g4s1', label: '四年级上' },
+                { value: 'g4s2', label: '四年级下' },
+                { value: 'g5s1', label: '五年级上' },
+                { value: 'g5s2', label: '五年级下' },
+                { value: 'g6s1', label: '六年级上' },
+                { value: 'g6s2', label: '六年级下' },
+                { value: 'g7s1', label: '七年级上' },
+                { value: 'g7s2', label: '七年级下' },
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'math': [
+                { value: 'g1s1', label: '一年级上' },
+                { value: 'g1s2', label: '一年级下' },
+                { value: 'g2s1', label: '二年级上' },
+                { value: 'g2s2', label: '二年级下' },
+                { value: 'g3s1', label: '三年级上' },
+                { value: 'g3s2', label: '三年级下' },
+                { value: 'g4s1', label: '四年级上' },
+                { value: 'g4s2', label: '四年级下' },
+                { value: 'g5s1', label: '五年级上' },
+                { value: 'g5s2', label: '五年级下' },
+                { value: 'g6s1', label: '六年级上' },
+                { value: 'g6s2', label: '六年级下' },
+                { value: 'g7s1', label: '七年级上' },
+                { value: 'g7s2', label: '七年级下' },
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'english': [
+                { value: 'g3s1', label: '三年级上' },
+                { value: 'g3s2', label: '三年级下' },
+                { value: 'g4s1', label: '四年级上' },
+                { value: 'g4s2', label: '四年级下' },
+                { value: 'g5s1', label: '五年级上' },
+                { value: 'g5s2', label: '五年级下' },
+                { value: 'g6s1', label: '六年级上' },
+                { value: 'g6s2', label: '六年级下' },
+                { value: 'g7s1', label: '七年级上' },
+                { value: 'g7s2', label: '七年级下' },
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'physics': [
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'chemistry': [
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'history': [
+                { value: 'g7s1', label: '七年级上' },
+                { value: 'g7s2', label: '七年级下' },
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'geography': [
+                { value: 'g7s1', label: '七年级上' },
+                { value: 'g7s2', label: '七年级下' },
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+            'biology': [
+                { value: 'g7s1', label: '七年级上' },
+                { value: 'g7s2', label: '七年级下' },
+                { value: 'g8s1', label: '八年级上' },
+                { value: 'g8s2', label: '八年级下' },
+                { value: 'g9s1', label: '九年级上' },
+                { value: 'g9s2', label: '九年级下' },
+            ],
+        };
+
+        // 提取年级选项（去掉学期信息）
+        const gradeOnlyData = {
+            'chinese': [
+                { value: 'g1', label: '一年级' },
+                { value: 'g2', label: '二年级' },
+                { value: 'g3', label: '三年级' },
+                { value: 'g4', label: '四年级' },
+                { value: 'g5', label: '五年级' },
+                { value: 'g6', label: '六年级' },
+                { value: 'g7', label: '七年级' },
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+            'math': [
+                { value: 'g1', label: '一年级' },
+                { value: 'g2', label: '二年级' },
+                { value: 'g3', label: '三年级' },
+                { value: 'g4', label: '四年级' },
+                { value: 'g5', label: '五年级' },
+                { value: 'g6', label: '六年级' },
+                { value: 'g7', label: '七年级' },
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+            'english': [
+                { value: 'g3', label: '三年级' },
+                { value: 'g4', label: '四年级' },
+                { value: 'g5', label: '五年级' },
+                { value: 'g6', label: '六年级' },
+                { value: 'g7', label: '七年级' },
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+            'physics': [
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+            'chemistry': [
+                { value: 'g9', label: '九年级' },
+            ],
+            'history': [
+                { value: 'g7', label: '七年级' },
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+            'geography': [
+                { value: 'g7', label: '七年级' },
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+            'biology': [
+                { value: 'g7', label: '七年级' },
+                { value: 'g8', label: '八年级' },
+                { value: 'g9', label: '九年级' },
+            ],
+        };
+
+        // 删除 semesterData，使用 grade 值的格式来区分（g1_s1, g1_s2）
+
+        // 年级+学期对应的版本（key格式：g1s1, g1s2）
+        const versionData = {
+            'g1s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '苏教版' },
+            ],
+            'g1s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '苏教版' },
+            ],
+            'g2s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '苏教版' },
+            ],
+            'g2s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '苏教版' },
+            ],
+            'g3s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g3s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g4s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g4s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g5s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g5s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g6s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g6s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '北师大版' },
+            ],
+            'g7s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '沪教版' },
+            ],
+            'g7s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '沪教版' },
+            ],
+            'g8s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '沪教版' },
+            ],
+            'g8s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '沪教版' },
+            ],
+            'g9s1': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '沪教版' },
+            ],
+            'g9s2': [
+                { value: 'v1', label: '部编版' },
+                { value: 'v2', label: '人教版' },
+                { value: 'v3', label: '沪教版' },
+            ],
+        };
+
+        // 版本对应的章节
+        const chapterData = {
+            'v1': [
+                { value: 'ch1', label: '第一单元' },
+                { value: 'ch2', label: '第二单元' },
+                { value: 'ch3', label: '第三单元' },
+                { value: 'ch4', label: '第四单元' },
+                { value: 'ch5', label: '第五单元' },
+                { value: 'ch6', label: '第六单元' },
+            ],
+            'v2': [
+                { value: 'ch1', label: '第一章' },
+                { value: 'ch2', label: '第二章' },
+                { value: 'ch3', label: '第三章' },
+                { value: 'ch4', label: '第四章' },
+                { value: 'ch5', label: '第五章' },
+            ],
+            'v3': [
+                { value: 'ch1', label: 'Module 1' },
+                { value: 'ch2', label: 'Module 2' },
+                { value: 'ch3', label: 'Module 3' },
+                { value: 'ch4', label: 'Module 4' },
+            ],
+        };
+
+        // 模拟数据（带文件路径）
+        const defaultMaterials = [
+            { id: 'm001', name: '《春》优秀教案', type: 'lesson', source: 'local', subject: 'chinese', grade: 'g7s2', version: 'v1', chapter: 'ch1', creator: '张老师', school: '北京市第一中学', createdAt: '2026-03-15', status: 'normal', featured: true, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E6%98%A5%E8%8A%82%E8%8A%B1%E6%9C%88%E5%A4%9C%E6%95%99%E6%A1%88.docx' },
+            { id: 'm002', name: '诗词鉴赏课件', type: 'courseware', source: 'local', subject: 'chinese', grade: 'g7s1', version: 'v1', chapter: 'ch2', creator: '李老师', school: '上海市实验中学', createdAt: '2026-03-14', status: 'normal', featured: false, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E7%AD%89%E8%85%B0%E4%B8%89%E8%A7%92%E5%BD%A2%E5%88%A4%E5%AE%9A.pptx' },
+            { id: 'm003', name: '古诗文默写活动', type: 'activity', source: 'ai', subject: 'chinese', grade: 'g7s2', version: 'v1', chapter: 'ch1', creator: '王老师', school: '广州市华南附中', createdAt: '2026-03-13', status: 'normal', featured: true },
+            { id: 'm004', name: '《春江花月夜》学案', type: 'study', source: 'local', subject: 'chinese', grade: 'g7s2', version: 'v1', chapter: 'ch1', creator: '赵老师', school: '深圳市南山学校', createdAt: '2026-03-12', status: 'normal', featured: false, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E6%98%A5%E8%8A%82%E8%8A%B1%E6%9C%88%E5%A4%9C%E6%95%99%E6%A1%88.docx' },
+            { id: 'm005', name: '英语单词听写', type: 'dictation', source: 'ai', subject: 'english', grade: 'g7s1', version: 'v3', chapter: 'ch1', creator: '孙老师', school: '北京市第一中学', createdAt: '2026-03-11', status: 'pending', featured: false },
+            { id: 'm006', name: '乘法运算课件', type: 'courseware', source: 'local', subject: 'math', grade: 'g3s2', version: 'v2', chapter: 'ch1', creator: '周老师', school: '上海市实验中学', createdAt: '2026-03-10', status: 'normal', featured: true, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E7%AD%89%E8%85%B0%E4%B8%89%E8%A7%92%E5%BD%A2%E5%88%A4%E5%AE%9A.pptx' },
+            { id: 'm007', name: '英语语法练习', type: 'quiz', source: 'ai', subject: 'english', grade: 'g8s1', version: 'v3', chapter: 'ch2', creator: '吴老师', school: '广州市华南附中', createdAt: '2026-03-09', status: 'normal', featured: false },
+            { id: 'm008', name: '古诗词教案', type: 'picturebook', source: 'ai', subject: 'chinese', grade: 'g3s2', version: 'v1', chapter: 'ch3', creator: '郑老师', school: '深圳市南山学校', createdAt: '2026-03-08', status: 'normal', featured: false },
+            { id: 'm009', name: '抽奖互动游戏', type: 'lottery', source: 'ai', subject: 'chinese', grade: 'g7s1', version: 'v1', chapter: 'ch4', creator: '张老师', school: '北京市第一中学', createdAt: '2026-03-07', status: 'violation', featured: false },
+            { id: 'm010', name: '场景对话练习', type: 'scene-dialog', source: 'ai', subject: 'english', grade: 'g8s2', version: 'v3', chapter: 'ch2', creator: '陈老师', school: '上海市实验中学', createdAt: '2026-03-06', status: 'normal', featured: true },
+            { id: 'm011', name: '二次函数教案', type: 'lesson', source: 'local', subject: 'math', grade: 'g9s2', version: 'v1', chapter: 'ch2', creator: '刘老师', school: '广州市华南附中', createdAt: '2026-03-05', status: 'normal', featured: false, filePath: 'https://ai-school-files.whoot.cn/test_ppts/%E6%98%A5%E8%8A%82%E8%8A%B1%E6%9C%88%E5%A4%9C%E6%95%99%E6%A1%88.docx' },
+            { id: 'm012', name: '单词评测活动', type: 'word-review', source: 'ai', subject: 'english', grade: 'g9s1', version: 'v2', chapter: 'ch1', creator: '孙老师', school: '深圳市南山学校', createdAt: '2026-03-04', status: 'pending', featured: false },
+        ];
+
+        // ============================================================
+        // 全局变量
+        // ============================================================
+        let materials = JSON.parse(JSON.stringify(defaultMaterials));
+        let filteredMaterials = materials;
+        let selectedIds = new Set();
+        let currentFeaturedId = null;
+        let confirmCallback = null;
+        const pageSize = 10;
+        let currentPage = 1;
+
+        // ============================================================
+        // 工具函数
+        // ============================================================
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            return dateStr;
+        }
+
+        function typeBadge(type, source) {
+            const typeMap = {
+                'courseware': '课件',
+                'lesson': '教案',
+                'study': '学案',
+                'activity': '活动',
+                'lottery': '抽奖',
+                'quiz': '随堂测',
+                'dictation': '听写',
+                'word-review': '单词评测',
+                'dialog-review': '对话评测',
+                'scene-dialog': '场景对话',
+                'agent': '智能体',
+                // 'picturebook': '绘本',
+            };
+            const label = typeMap[type] || type;
+            
+            // 只有课件、教案、学案且来源是本地才显示"本地"标签
+            let sourceTag = '';
+            if ((type === 'courseware' || type === 'lesson' || type === 'study') && source === 'local') {
+                sourceTag = '<span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded bg-orange-100 text-orange-700">本地</span>';
+            }
+            
+            return `<span class="inline-flex items-center gap-1 text-sm text-gray-700">${label}${sourceTag}</span>`;
+        }
+
+        function statusBadge(status) {
+            if (status === 'normal') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">正常</span>';
+            if (status === 'pending') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">待审核</span>';
+            if (status === 'violation') return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">违规</span>';
+            return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">-</span>';
+        }
+
+        function featuredBadge(featured) {
+            if (featured) return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700"><i data-lucide="star" class="w-3 h-3 inline mr-0.5"></i>已推荐</span>';
+            return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-500">未推荐</span>';
+        }
+
+        function subjectLabel(subject) {
+            const map = { 'chinese': '语文', 'math': '数学', 'english': '英语' };
+            return map[subject] || subject;
+        }
+
+        function gradeLabel(grade) {
+            // grade 格式为 g7s2，表示七年级下
+            const gradeMap = { 'g1': '一年级', 'g2': '二年级', 'g3': '三年级', 'g4': '四年级', 'g5': '五年级', 'g6': '六年级', 'g7': '七年级', 'g8': '八年级', 'g9': '九年级' };
+            // 提取年级和学期
+            const gradeMatch = grade.match(/^g(\d)/);
+            const semesterMatch = grade.match(/s(\d)$/);
+            const gradeText = gradeMatch ? gradeMap['g' + gradeMatch[1]] : grade;
+            const semesterText = semesterMatch ? (semesterMatch[1] === '1' ? '上' : '下') : '';
+            return semesterText ? gradeText + semesterText : gradeText;
+        }
+
+        function versionLabel(version) {
+            const map = { 'v1': '部编版', 'v2': '人教版', 'v3': '北师大版' };
+            return map[version] || version;
+        }
+
+        function chapterLabel(chapter) {
+            const map = {
+                'ch1': '第一单元', 'ch2': '第二单元', 'ch3': '第三单元', 'ch4': '第四单元', 'ch5': '第五单元', 'ch6': '第六单元'
+            };
+            return map[chapter] || chapter;
+        }
+
+        // ============================================================
+        // 级联选择
+        // ============================================================
+        function onSubjectChange() {
+            const subject = document.getElementById('filterSubject').value;
+            const gradeSelect = document.getElementById('filterGrade');
+            const semesterSelect = document.getElementById('filterSemester');
+            const versionSelect = document.getElementById('filterVersion');
+            const chapterSelect = document.getElementById('filterChapter');
+
+            // 重置年级、学期、版本、章节
+            gradeSelect.innerHTML = '<option value="">请选择</option>';
+            semesterSelect.innerHTML = '<option value="">请选择</option>';
+            semesterSelect.disabled = true;
+            versionSelect.innerHTML = '<option value="">请选择</option>';
+            versionSelect.disabled = true;
+            chapterSelect.innerHTML = '<option value="">请选择</option>';
+            chapterSelect.disabled = true;
+
+            if (subject && gradeOnlyData[subject]) {
+                gradeOnlyData[subject].forEach(g => {
+                    gradeSelect.innerHTML += `<option value="${g.value}">${g.label}</option>`;
+                });
+                gradeSelect.disabled = false;
+            } else {
+                gradeSelect.disabled = true;
+            }
+
+            applyFilters();
+        }
+
+        function onGradeChange() {
+            const grade = document.getElementById('filterGrade').value;
+            const semesterSelect = document.getElementById('filterSemester');
+            const versionSelect = document.getElementById('filterVersion');
+            const chapterSelect = document.getElementById('filterChapter');
+
+            // 重置学期、版本、章节
+            semesterSelect.innerHTML = '<option value="">请选择</option>';
+            versionSelect.innerHTML = '<option value="">请选择</option>';
+            versionSelect.disabled = true;
+            chapterSelect.innerHTML = '<option value="">请选择</option>';
+            chapterSelect.disabled = true;
+
+            if (grade) {
+                // 获取年级对应的中文标签
+                const subject = document.getElementById('filterSubject').value;
+                let gradeLabel = '';
+                if (subject && gradeOnlyData[subject]) {
+                    const gradeOption = gradeOnlyData[subject].find(g => g.value === grade);
+                    if (gradeOption) gradeLabel = gradeOption.label;
+                }
+                if (!gradeLabel) {
+                    gradeLabel = grade.replace('g', '年级').replace('g0', '零年级').replace('0', '');
+                }
+
+                // 根据年级加载学期选项，显示为"一年级上"、"一年级下"格式
+                const semesterOptions = [
+                    { value: grade + 's1', label: gradeLabel + '上' },
+                    { value: grade + 's2', label: gradeLabel + '下' }
+                ];
+                semesterOptions.forEach(s => {
+                    semesterSelect.innerHTML += `<option value="${s.value}">${s.label}</option>`;
+                });
+                semesterSelect.disabled = false;
+            } else {
+                semesterSelect.disabled = true;
+            }
+
+            applyFilters();
+        }
+
+        function onSemesterChange() {
+            const grade = document.getElementById('filterGrade').value;
+            const semester = document.getElementById('filterSemester').value;
+            const versionSelect = document.getElementById('filterVersion');
+            const chapterSelect = document.getElementById('filterChapter');
+
+            // 重置版本、章节
+            versionSelect.innerHTML = '<option value="">请选择</option>';
+            chapterSelect.innerHTML = '<option value="">请选择</option>';
+            chapterSelect.disabled = true;
+
+            if (semester && versionData[semester]) {
+                versionData[semester].forEach(v => {
+                    versionSelect.innerHTML += `<option value="${v.value}">${v.label}</option>`;
+                });
+                versionSelect.disabled = false;
+            } else {
+                versionSelect.disabled = true;
+            }
+
+            applyFilters();
+        }
+
+        function onVersionChange() {
+            const version = document.getElementById('filterVersion').value;
+            const chapterSelect = document.getElementById('filterChapter');
+
+            // 重置章节
+            chapterSelect.innerHTML = '<option value="">请选择</option>';
+
+            if (version && chapterData[version]) {
+                chapterData[version].forEach(c => {
+                    chapterSelect.innerHTML += `<option value="${c.value}">${c.label}</option>`;
+                });
+                chapterSelect.disabled = false;
+            } else {
+                chapterSelect.disabled = true;
+            }
+
+            applyFilters();
+        }
+
+        // ============================================================
+        // 筛选和分页
+        // ============================================================
+        function applyFilters() {
+            const keyword = document.getElementById('filterKeyword').value.trim().toLowerCase();
+            const school = document.getElementById('filterSchool').value;
+            const subject = document.getElementById('filterSubject').value;
+            const grade = document.getElementById('filterGrade').value;
+            const semester = document.getElementById('filterSemester').value;
+            const version = document.getElementById('filterVersion').value;
+            const chapter = document.getElementById('filterChapter').value;
+            const type = document.getElementById('filterType').value;
+            const featured = document.getElementById('filterFeatured').value;
+
+            filteredMaterials = materials.filter(m => {
+                const matchKeyword = !keyword || m.name.toLowerCase().includes(keyword) || m.creator.includes(keyword);
+                const matchSchool = !school || m.school === school;
+                const matchSubject = !subject || m.subject === subject;
+                // 精确匹配年级：grade 为空则匹配所有，否则用正则精确匹配
+                const gradeRegex = grade ? new RegExp('^' + grade) : null;
+                const matchGrade = !grade || (gradeRegex.test(m.grade) && (!semester || m.grade === semester));
+                const matchVersion = !version || m.version === version;
+                const matchChapter = !chapter || m.chapter === chapter;
+                const matchType = !type || m.type === type;
+                const matchFeatured = !featured || (featured === 'yes' && m.featured) || (featured === 'no' && !m.featured);
+                return matchKeyword && matchSchool && matchSubject && matchGrade && matchVersion && matchChapter && matchType && matchFeatured;
+            });
+
+            currentPage = 1;
+            selectedIds.clear();
+            updateSelectAllCheckbox();
+            updateBatchActions();
+            renderTable();
+            updatePagination();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterKeyword').value = '';
+            document.getElementById('filterSchool').value = '';
+            document.getElementById('filterSubject').value = '';
+            document.getElementById('filterGrade').value = '';
+            document.getElementById('filterGrade').innerHTML = '<option value="">请选择</option>';
+            document.getElementById('filterGrade').disabled = true;
+            document.getElementById('filterSemester').value = '';
+            document.getElementById('filterSemester').innerHTML = '<option value="">请选择</option>';
+            document.getElementById('filterSemester').disabled = true;
+            document.getElementById('filterVersion').value = '';
+            document.getElementById('filterVersion').innerHTML = '<option value="">请选择</option>';
+            document.getElementById('filterVersion').disabled = true;
+            document.getElementById('filterChapter').value = '';
+            document.getElementById('filterChapter').innerHTML = '<option value="">请选择</option>';
+            document.getElementById('filterChapter').disabled = true;
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterFeatured').value = '';
+            
+            filteredMaterials = materials;
+            currentPage = 1;
+            selectedIds.clear();
+            updateSelectAllCheckbox();
+            updateBatchActions();
+            renderTable();
+            updatePagination();
+        }
+
+        function getTotalPages() { return Math.ceil(filteredMaterials.length / pageSize) || 1; }
+
+        function getCurrentPageData() {
+            const start = (currentPage - 1) * pageSize;
+            return filteredMaterials.slice(start, start + pageSize);
+        }
+
+        function updatePagination() {
+            const totalPages = getTotalPages();
+            const totalCount = filteredMaterials.length;
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('totalCountTop').textContent = totalCount;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            pageNumbersContainer.innerHTML = '';
+
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+            if (startPage > 1) {
+                const btn = document.createElement('button');
+                btn.textContent = '1';
+                btn.onclick = () => goToPage(1);
+                btn.className = 'px-2 py-1 rounded text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all';
+                pageNumbersContainer.appendChild(btn);
+                if (startPage > 2) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.className = 'px-2 py-1 text-gray-500';
+                    pageNumbersContainer.appendChild(dots);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                btn.className = i === currentPage
+                    ? 'px-2 py-1 rounded text-sm font-medium bg-primary-600 text-white transition-all'
+                    : 'px-2 py-1 rounded text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all';
+                pageNumbersContainer.appendChild(btn);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.className = 'px-2 py-1 text-gray-500';
+                    pageNumbersContainer.appendChild(dots);
+                }
+                const btn = document.createElement('button');
+                btn.textContent = totalPages;
+                btn.onclick = () => goToPage(totalPages);
+                btn.className = 'px-2 py-1 rounded text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all';
+                pageNumbersContainer.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            const totalPages = getTotalPages();
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+                updatePagination();
+            }
+        }
+
+        function goToPreviousPage() { if (currentPage > 1) goToPage(currentPage - 1); }
+        function goToNextPage() { if (currentPage < getTotalPages()) goToPage(currentPage + 1); }
+
+        // ============================================================
+        // 表格渲染
+        // ============================================================
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const pageData = getCurrentPageData();
+            const startIndex = (currentPage - 1) * pageSize;
+
+            if (!pageData.length) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="px-4 py-16">
+                            <div class="text-center">
+                                <div class="w-14 h-14 mx-auto rounded-2xl bg-primary-50 flex items-center justify-center">
+                                    <i data-lucide="book-open" class="w-7 h-7 text-primary-600"></i>
+                                </div>
+                                <div class="mt-4 text-sm font-semibold text-gray-900">暂无素材</div>
+                            </div>
+                        </td>
+                    </tr>`;
+                lucide.createIcons();
+                return;
+            }
+
+            tbody.innerHTML = pageData.map((m, index) => {
+                const rowNumber = startIndex + index + 1;
+                const isSelected = selectedIds.has(m.id);
+                return `
+                    <tr class="hover:bg-gray-50 ${isSelected ? 'bg-primary-50/50' : ''}">
+                        <td class="px-4 py-3">
+                            <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" data-id="${m.id}" ${isSelected ? 'checked' : ''} onchange="toggleSelect('${m.id}')">
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm text-gray-500">${rowNumber}</div></td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-gray-900 truncate max-w-[200px]" title="${m.name}">${m.name}</div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">${typeBadge(m.type, m.source)}</td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm text-gray-700">
+                                ${subjectLabel(m.subject)} / ${gradeLabel(m.grade)} / ${versionLabel(m.version)} / ${chapterLabel(m.chapter)}
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm text-gray-700">${m.creator}</div></td>
+                        <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm text-gray-700">${m.school}</div></td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            ${m.featured 
+                                ? '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">已推荐</span>' 
+                                : '<span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-500">未推荐</span>'}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm text-gray-700">${formatDate(m.createdAt)}</div></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium" style="display: none;">
+                            <button onclick="viewMaterial('${m.id}')" class="text-primary-600 hover:text-primary-700 transition-colors mr-3">查看</button>
+                            <button onclick="deleteMaterial('${m.id}')" class="text-red-500 hover:text-red-700 transition-colors">删除</button>
+                        </td>
+                    </tr>`;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // ============================================================
+        // 选择操作
+        // ============================================================
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const pageData = getCurrentPageData();
+            
+            if (selectAllCheckbox.checked) {
+                pageData.forEach(m => selectedIds.add(m.id));
+            } else {
+                pageData.forEach(m => selectedIds.delete(m.id));
+            }
+
+            document.querySelectorAll('.row-checkbox').forEach(cb => {
+                cb.checked = selectAllCheckbox.checked;
+            });
+
+            updateBatchActions();
+            renderTable();
+        }
+
+        function toggleSelect(id) {
+            if (selectedIds.has(id)) {
+                selectedIds.delete(id);
+            } else {
+                selectedIds.add(id);
+            }
+
+            updateSelectAllCheckbox();
+            updateBatchActions();
+            renderTable();
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const pageData = getCurrentPageData();
+            const allSelected = pageData.length > 0 && pageData.every(m => selectedIds.has(m.id));
+            selectAllCheckbox.checked = allSelected;
+        }
+
+        function updateBatchActions() {
+            const batchActions = document.getElementById('batchActions');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (selectedIds.size > 0) {
+                batchActions.style.display = 'flex';
+                selectedCount.textContent = selectedIds.size;
+            } else {
+                batchActions.style.display = 'none';
+            }
+        }
+
+        // ============================================================
+        // 文件预览功能（支持 PPT、PDF、DOCX 等格式）
+        // ============================================================
+        function getFileTypeLabel(material) {
+            const type = material.type;
+            if (type === 'lesson') return '教案';
+            if (type === 'study') return '学案';
+            return '课件';
+        }
+
+        function openPptPreview(material) {
+            const modal = document.getElementById('pptPreviewModal');
+            const title = document.getElementById('pptPreviewTitle');
+            const loading = document.getElementById('pptLoading');
+            const container = document.getElementById('pptContainer');
+            const fallback = document.getElementById('pptFallback');
+            const iframe = document.getElementById('pptIframe');
+            const fileInfo = document.getElementById('pptFileInfo');
+            const downloadBtn = document.getElementById('pptDownloadBtn');
+
+            // 获取素材类型标签
+            const typeLabel = getFileTypeLabel(material);
+
+            // 设置标题（显示素材名称 + 类型）
+            title.textContent = `${material.name}`;
+
+            // 设置加载提示文字
+            document.getElementById('pptLoadingText').textContent = `正在加载${typeLabel}...`;
+
+            // 显示模态框
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+
+            // 如果有文件路径
+            if (material.filePath) {
+                // 获取文件扩展名
+                const ext = material.filePath.split('.').pop().toLowerCase();
+                fileInfo.textContent = `文件类型: ${ext.toUpperCase()}`;
+
+                // 设置下载链接
+                downloadBtn.href = material.filePath;
+                downloadBtn.download = material.name + '.' + ext;
+
+                // 判断是公网URL还是本地路径
+                const isOnlineUrl = material.filePath.startsWith('http://') || material.filePath.startsWith('https://');
+
+                // 根据文件类型设置提示文字
+                const tipText = typeLabel + '预览提示：使用 Office Online 在线预览';
+
+                // PPT/PPTX 文件
+                if (ext === 'pptx' || ext === 'ppt') {
+                    loading.classList.remove('hidden');
+                    container.classList.add('hidden');
+                    fallback.classList.add('hidden');
+
+                    let iframeSrc;
+                    if (isOnlineUrl) {
+                        // 公网URL：直接传给 Office Online Viewer
+                        iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(material.filePath)}&wdHideNavBar=true&wdHideSheetTabs=true`;
+                    } else {
+                        // 本地路径：需要转换为绝对URL
+                        const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+                        const fileUrl = baseUrl + material.filePath;
+                        iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}&wdHideNavBar=true&wdHideSheetTabs=true`;
+                    }
+
+                    iframe.src = iframeSrc;
+
+                    // 监听加载完成
+                    iframe.onload = function() {
+                        loading.classList.add('hidden');
+                        container.classList.remove('hidden');
+                        document.getElementById('previewTip').textContent = tipText;
+                    };
+
+                    // 监听加载错误
+                    iframe.onerror = function() {
+                        loading.classList.add('hidden');
+                        container.classList.add('hidden');
+                        fallback.classList.remove('hidden');
+                        lucide.createIcons();
+                    };
+                }
+                // PDF 文件
+                else if (ext === 'pdf') {
+                    loading.classList.add('hidden');
+                    container.classList.remove('hidden');
+                    fallback.classList.add('hidden');
+
+                    let iframeSrc;
+                    if (isOnlineUrl) {
+                        iframeSrc = material.filePath;
+                    } else {
+                        const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+                        iframeSrc = baseUrl + material.filePath;
+                    }
+                    
+                    iframe.src = iframeSrc;
+                    document.getElementById('previewTip').textContent = tipText;
+
+                    // 检测 PDF 加载错误（403、404 等）
+                    iframe.onload = function() {
+                        // 检查 iframe 内容是否为空或加载失败
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            if (iframeDoc.body && iframeDoc.body.innerHTML.length < 100) {
+                                // PDF 可能加载失败
+                                loading.classList.add('hidden');
+                                container.classList.add('hidden');
+                                fallback.classList.remove('hidden');
+                            }
+                        } catch(e) {
+                            // 跨域访问被阻止，可能是 403
+                        }
+                    };
+                    
+                    iframe.onerror = function() {
+                        loading.classList.add('hidden');
+                        container.classList.add('hidden');
+                        fallback.classList.remove('hidden');
+                        lucide.createIcons();
+                    };
+                }
+                // DOCX/DOC 文件使用 Office Online Viewer
+                else if (ext === 'docx' || ext === 'doc') {
+                    loading.classList.remove('hidden');
+                    container.classList.add('hidden');
+                    fallback.classList.add('hidden');
+
+                    let iframeSrc;
+                    if (isOnlineUrl) {
+                        iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(material.filePath)}&wdHideNavBar=true&wdHideSheetTabs=true`;
+                    } else {
+                        const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+                        const fileUrl = baseUrl + material.filePath;
+                        iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}&wdHideNavBar=true&wdHideSheetTabs=true`;
+                    }
+
+                    iframe.src = iframeSrc;
+
+                    iframe.onload = function() {
+                        loading.classList.add('hidden');
+                        container.classList.remove('hidden');
+                        document.getElementById('previewTip').textContent = tipText;
+                    };
+
+                    iframe.onerror = function() {
+                        loading.classList.add('hidden');
+                        container.classList.add('hidden');
+                        fallback.classList.remove('hidden');
+                        lucide.createIcons();
+                    };
+                }
+                // 其他文件显示下载提示
+                else {
+                    loading.classList.add('hidden');
+                    container.classList.add('hidden');
+                    fallback.classList.remove('hidden');
+                    lucide.createIcons();
+                }
+            } else {
+                // 没有文件路径
+                fileInfo.textContent = '暂无附件';
+                downloadBtn.href = '#';
+                downloadBtn.onclick = (e) => e.preventDefault();
+                loading.classList.add('hidden');
+                container.classList.add('hidden');
+                fallback.classList.remove('hidden');
+                lucide.createIcons();
+            }
+        }
+
+        function closePptPreview() {
+            const modal = document.getElementById('pptPreviewModal');
+            const iframe = document.getElementById('pptIframe');
+
+            modal.classList.add('hidden');
+            iframe.src = 'about:blank';
+        }
+
+        // ESC 键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePptPreview();
+                closeConfirmModal(false);
+            }
+        });
+
+        // 点击模态框外部关闭
+        document.getElementById('pptPreviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePptPreview();
+            }
+        });
+
+        // ============================================================
+        // 操作函数
+        // ============================================================
+        function viewMaterial(id) {
+            const m = materials.find(item => item.id === id);
+            if (!m) return;
+
+            // 如果是本地课件且有文件路径，打开预览
+            if (m.source === 'local' && m.filePath && (m.type === 'courseware' || m.type === 'lesson' || m.type === 'study')) {
+                openPptPreview(m);
+            } else {
+                showToast(`查看素材：${m.name}`, 'info');
+            }
+        }
+
+        function deleteMaterial(id) {
+            const m = materials.find(item => item.id === id);
+            if (!m) return;
+            showConfirm('删除素材', `确定删除「${m.name}」吗？此操作不可恢复。`, (confirmed) => {
+                if (!confirmed) return;
+                materials = materials.filter(item => item.id !== id);
+                selectedIds.delete(id);
+                applyFilters();
+                showToast('已删除素材', 'success');
+            });
+        }
+
+        function batchPublish() {
+            if (selectedIds.size === 0) return;
+            
+            // 统计未推荐的数量
+            let unpublishedCount = 0;
+            selectedIds.forEach(id => {
+                const m = materials.find(item => item.id === id);
+                if (m && !m.featured) unpublishedCount++;
+            });
+            
+            // 如果都已推荐，提示无操作
+            if (unpublishedCount === 0) {
+                showToast('所选素材均已推荐，无需重复操作', 'warning');
+                return;
+            }
+            
+            // 执行推荐操作
+            selectedIds.forEach(id => {
+                const m = materials.find(item => item.id === id);
+                if (m) m.featured = true;
+            });
+            applyFilters();
+            showToast(`已成功推荐 ${unpublishedCount} 项素材`, 'success');
+        }
+
+        function batchUnpublish() {
+            if (selectedIds.size === 0) return;
+            
+            // 统计已推荐的数量
+            let publishedCount = 0;
+            selectedIds.forEach(id => {
+                const m = materials.find(item => item.id === id);
+                if (m && m.featured) publishedCount++;
+            });
+            
+            // 如果都未推荐，提示无操作
+            if (publishedCount === 0) {
+                showToast('所选素材均未推荐，无需重复操作', 'warning');
+                return;
+            }
+            
+            // 执行取消推荐操作
+            selectedIds.forEach(id => {
+                const m = materials.find(item => item.id === id);
+                if (m) m.featured = false;
+            });
+            applyFilters();
+            showToast(`已成功取消推荐 ${publishedCount} 项素材`, 'success');
+        }
+
+        // ============================================================
+        // 弹窗
+        // ============================================================
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirmModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeConfirmModal(confirmed) {
+            document.getElementById('confirmModal').classList.add('hidden');
+            if (confirmCallback) { confirmCallback(confirmed); confirmCallback = null; }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            let iconName;
+            if (type === 'success') { toast.classList.add('toast-success'); iconName = 'check-circle'; }
+            else if (type === 'error') { toast.classList.add('toast-error'); iconName = 'alert-circle'; }
+            else if (type === 'info') { toast.classList.add('toast-info'); iconName = 'info'; }
+            else if (type === 'warning') { toast.classList.add('toast-warning'); iconName = 'alert-triangle'; }
+            else { toast.classList.add('toast-success'); iconName = 'check-circle'; }
+            toast.innerHTML = `<i data-lucide="${iconName}"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ============================================================
+        // 初始化
+        // ============================================================
+        function initSchoolOptions() {
+            const schoolSelect = document.getElementById('filterSchool');
+            const schools = [...new Set(materials.map(m => m.school))].sort();
+            schools.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school;
+                option.textContent = school;
+                schoolSelect.appendChild(option);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSidebar('admin-prepare.html');
+            initSchoolOptions();
+            renderTable();
+            updatePagination();
+            lucide.createIcons();
+        });
+    </script>
+    <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+</body>
+</html>

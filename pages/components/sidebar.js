@@ -28,9 +28,10 @@ const MENU_CONFIG = [
   {
     id: 'data',
     icon: 'database',
-    label: '数据管理',
+    label: '业务数据',
     children: [
-      { href: 'admin-courseware.html', label: '文件管理' }
+      { href: 'admin-courseware.html', label: '文件管理' },
+      { href: 'admin-prepare.html', label: '备课管理' }
     ]
   }
 ];

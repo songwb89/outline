@@ -990,7 +990,6 @@
                     <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-violet-600 transition-colors">辛弃疾</h4>
                     <div class="flex items-center gap-2 mt-1.5 flex-wrap">
                       <span class="px-2 py-0.5 bg-violet-50 text-violet-600 text-xs font-medium rounded-full">智能体</span>
-                      <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">官方</span>
                       <span class="text-xs text-gray-400">1月5日</span>
                     </div>
                   </div>
@@ -1003,10 +1002,151 @@
                 </div>
               </div>
             </div>
+
+            <!-- 推荐资源区域 -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+                <h3 class="text-base font-semibold text-gray-800">推荐资源</h3>
+              </div>
+              <div id="recommended-resources" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- 教案推荐 -->
+                <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-amber-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openLessonPlanPreview()">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i data-lucide="file-text" class="w-5 h-5 text-amber-600"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-amber-600 transition-colors">《春》优秀教案</h4>
+                      <div class="flex items-center gap-2 mt-1.5">
+                        <span class="px-2 py-0.5 bg-amber-50 text-amber-600 text-xs font-medium rounded-full">教案</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); adoptResource(this, '教案', '《春》优秀教案')" class="add-btn absolute bottom-3 right-3 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors opacity-0 group-hover:opacity-100">
+                    <i data-lucide="plus" class="w-3 h-3 inline mr-0.5"></i>采纳
+                  </button>
+                </div>
+
+                <!-- 课件推荐 -->
+                <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openCoursewarePreview()">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i data-lucide="presentation" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-emerald-600 transition-colors">《背影》精美课件</h4>
+                      <div class="flex items-center gap-2 mt-1.5">
+                        <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-xs font-medium rounded-full">课件</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); adoptResource(this, '课件', '《背影》精美课件')" class="add-btn absolute bottom-3 right-3 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors opacity-0 group-hover:opacity-100">
+                    <i data-lucide="plus" class="w-3 h-3 inline mr-0.5"></i>采纳
+                  </button>
+                </div>
+
+                <!-- 学案推荐 -->
+                <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openStudyPlanPreview()">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i data-lucide="book-open" class="w-5 h-5 text-cyan-600"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-cyan-600 transition-colors">《济南的冬天》学案</h4>
+                      <div class="flex items-center gap-2 mt-1.5">
+                        <span class="px-2 py-0.5 bg-cyan-50 text-cyan-600 text-xs font-medium rounded-full">学案</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); adoptResource(this, '学案', '《济南的冬天》学案')" class="add-btn absolute bottom-3 right-3 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors opacity-0 group-hover:opacity-100">
+                    <i data-lucide="plus" class="w-3 h-3 inline mr-0.5"></i>采纳
+                  </button>
+                </div>
+
+                <!-- 随堂测推荐 -->
+                <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible" onclick="openQuizPreview()">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-purple-600 transition-colors">《春》随堂测验题库</h4>
+                      <div class="flex items-center gap-2 mt-1.5">
+                        <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs font-medium rounded-full">随堂测</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); adoptResource(this, '随堂测', '《春》随堂测验题库')" class="add-btn absolute bottom-3 right-3 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors opacity-0 group-hover:opacity-100">
+                    <i data-lucide="plus" class="w-3 h-3 inline mr-0.5"></i>采纳
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       `;
       lucide.createIcons();
+    }
+
+    // 采纳推荐资源 - 将官方资源复制到上方我的备课内容中
+    function adoptResource(btn, type, title) {
+      // 找到内容区域中的卡片网格容器
+      const contentArea = document.getElementById('content-area');
+      const cardGrid = contentArea.querySelector('.grid.grid-cols-2');
+
+      // 根据类型确定卡片样式
+      const typeConfig = {
+        '教案': { icon: 'file-text', bgColor: 'bg-blue-100', iconColor: 'text-blue-600', borderColor: 'hover:border-blue-300', tagBg: 'bg-blue-50', tagColor: 'text-blue-600' },
+        '课件': { icon: 'presentation', bgColor: 'bg-green-100', iconColor: 'text-green-600', borderColor: 'hover:border-green-300', tagBg: 'bg-green-50', tagColor: 'text-green-600' },
+        '学案': { icon: 'book-open', bgColor: 'bg-cyan-100', iconColor: 'text-cyan-600', borderColor: 'hover:border-cyan-300', tagBg: 'bg-cyan-50', tagColor: 'text-cyan-600' },
+        '随堂测': { icon: 'clipboard-check', bgColor: 'bg-purple-100', iconColor: 'text-purple-600', borderColor: 'hover:border-purple-300', tagBg: 'bg-purple-50', tagColor: 'text-purple-600' }
+      };
+
+      const config = typeConfig[type] || typeConfig['教案'];
+
+      // 生成新的卡片 HTML
+      const newCard = document.createElement('div');
+      newCard.className = `group bg-white border border-gray-200 rounded-xl p-4 ${config.borderColor} hover:shadow-lg transition-all duration-200 cursor-pointer relative overflow-visible`;
+
+      // 获取当前日期
+      const today = new Date();
+      const dateStr = `${today.getMonth() + 1}月${today.getDate()}日`;
+
+      newCard.innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 ${config.bgColor} rounded-lg flex items-center justify-center flex-shrink-0">
+            <i data-lucide="${config.icon}" class="w-5 h-5 ${config.iconColor}"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-sm font-semibold text-gray-800 truncate group-hover:text-${type === '教案' ? 'blue' : type === '课件' ? 'green' : 'cyan'}-600 transition-colors">${title}</h4>
+            <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+              <span class="px-2 py-0.5 ${config.tagBg} ${config.tagColor} text-xs font-medium rounded-full">${type}</span>
+              <span class="text-xs text-gray-400">${dateStr}</span>
+            </div>
+          </div>
+        </div>
+        <button class="card-more-btn absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10" onclick="event.stopPropagation(); toggleCardMenu(this)">
+          <i data-lucide="ellipsis" class="w-4 h-4"></i>
+        </button>
+        <div class="card-menu hidden absolute top-10 right-3 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-[100]">
+          <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">重命名</button>
+          <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">下载</button>
+          <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onclick="event.stopPropagation()">共享</button>
+          <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50" onclick="event.stopPropagation()">删除</button>
+        </div>
+      `;
+
+      // 添加到卡片网格的开头
+      cardGrid.insertBefore(newCard, cardGrid.firstChild);
+
+      // 重新初始化图标
+      lucide.createIcons();
+
+      // 显示成功提示
+      showToast(`已将「${title}」添加到备课内容`, 'success');
+
+      // 隐藏推荐资源中的对应卡片（可选：也可以保留让用户继续采纳）
     }
 
     // 页面加载完成后默认展开第一章并选中第一节
