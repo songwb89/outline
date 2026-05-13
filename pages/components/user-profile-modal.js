@@ -710,11 +710,6 @@ function getUserProfileModalHTML() {
           </div>
         </div>
       </div>
-
-      <div class="upm-footer">
-        <button class="upm-btn upm-btn-cancel" onclick="hideUserProfileModal()">取消</button>
-        <button class="upm-btn upm-btn-save" onclick="saveUserProfile()">保存</button>
-      </div>
     </div>
   </div>
   `;
