@@ -950,6 +950,9 @@ function showChangePasswordModal() {
       '</div>' +
       '<div class="upm-modal-body">' +
         '<div class="upm-form-group">' +
+          '<input type="password" id="upm-old-pwd" class="upm-form-input" placeholder="请输入原密码" />' +
+        '</div>' +
+        '<div class="upm-form-group">' +
           '<input type="password" id="upm-new-pwd" class="upm-form-input" placeholder="请输入新密码" />' +
         '</div>' +
         '<div class="upm-form-group">' +
