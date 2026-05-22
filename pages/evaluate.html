@@ -97,6 +97,12 @@
           <i data-lucide="trophy" class="menu-icon w-5 h-5 text-gray-400"></i>
           <span>课堂点评</span>
         </a>
+
+        <!-- 课堂分析（使用视频分析图标） -->
+        <a href="#class-analysis" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="video" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>课堂分析</span>
+        </a>
       </nav>
     </aside>
 
@@ -420,6 +426,121 @@
         </div>
       </div>
 
+      <!-- 课堂分析 内容面板 -->
+      <div id="panel-class-analysis" class="hidden space-y-6">
+        <!-- 顶部：页面标题 + 上传按钮 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-0 z-10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="font-bold text-gray-800">课堂分析</h3>
+            </div>
+            <button type="button" id="btn-upload-analysis" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+              <i data-lucide="upload" class="w-4 h-4"></i>
+              上传音视频
+            </button>
+          </div>
+        </div>
+
+        <!-- 课堂分析列表 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">名称</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">状态</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">创建时间</th>
+                  <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+              </thead>
+              <tbody id="analysis-list" class="divide-y divide-gray-100">
+                <!-- 示例数据 -->
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="video" class="w-4 h-4 text-blue-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600" onclick="openAnalysisReport(this)">三年级语文《秋天的雨》</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">已完成</span>
+                  </td>
+                  <td class="px-4 py-3 text-sm text-gray-500">2026-05-20 14:30</td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center justify-center gap-2">
+                      <button type="button" onclick="openRenameModal(this)" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="重命名">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                      </button>
+                      <button type="button" onclick="openDeleteModal(this)" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="删除">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="audio-lines" class="w-4 h-4 text-purple-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-gray-700">四年级数学《平行四边形》</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">分析中</span>
+                  </td>
+                  <td class="px-4 py-3 text-sm text-gray-500">2026-05-21 09:15</td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center justify-center gap-2">
+                      <button type="button" onclick="openRenameModal(this)" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="重命名">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                      </button>
+                      <button type="button" onclick="openDeleteModal(this)" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="删除">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="video" class="w-4 h-4 text-blue-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-gray-700">二年级英语《Colors》</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">已失败</span>
+                  </td>
+                  <td class="px-4 py-3 text-sm text-gray-500">2026-05-22 16:45</td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center justify-center gap-2">
+                      <button type="button" onclick="openRenameModal(this)" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="重命名">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                      </button>
+                      <button type="button" onclick="openDeleteModal(this)" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="删除">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 空状态 -->
+          <div id="analysis-empty" class="hidden py-12 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+              <i data-lucide="video-off" class="w-8 h-8 text-gray-400"></i>
+            </div>
+            <p class="text-gray-500 mb-2">暂无课堂分析记录</p>
+            <p class="text-sm text-gray-400">点击上方"上传音视频"按钮开始分析</p>
+          </div>
+        </div>
+      </div>
+
       <!-- 其他菜单占位内容 -->
       <div id="panel-other" class="hidden bg-white rounded-xl shadow-sm border border-gray-100 min-h-[400px] flex items-center justify-center">
         <div class="text-center text-gray-400">
@@ -428,6 +549,191 @@
           <p class="text-sm mt-2">详细内容区域，后续开发</p>
         </div>
       </div>
+      <!-- 上传音视频弹窗 -->
+      <div id="modal-upload" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeUploadModal()"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            <!-- 弹窗头部 -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 class="text-lg font-semibold text-gray-800">上传音视频</h3>
+              <button type="button" onclick="closeUploadModal()" class="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <!-- 弹窗内容 -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+              <!-- 上传区域 -->
+              <div id="upload-dropzone" class="relative border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer">
+                <input type="file" id="file-input" accept="video/*,audio/*" class="hidden" />
+                <div class="flex flex-col items-center gap-3">
+                  <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i data-lucide="upload-cloud" class="w-7 h-7 text-blue-600"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-700">点击上传或拖拽文件到此处</p>
+                    <p class="text-xs text-gray-400 mt-1">支持 MP4、AVI、MOV 视频格式或 MP3、WAV 音频格式</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 已选文件预览 -->
+              <div id="file-preview" class="hidden">
+                <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="video" class="w-5 h-5 text-blue-600" id="preview-icon"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-700 truncate" id="file-name"></p>
+                    <p class="text-xs text-gray-400" id="file-size"></p>
+                  </div>
+                  <button type="button" onclick="removeFile()" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 课例基本信息 -->
+              <div class="space-y-4">
+                <h4 class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <i data-lucide="info" class="w-4 h-4 text-gray-400"></i>
+                  课例基本信息
+                </h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1.5">课程名称 <span class="text-red-500">*</span></label>
+                    <input type="text" placeholder="请输入课程名称" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1.5">授课日期 <span class="text-red-500">*</span></label>
+                    <input type="date" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1.5">年级 <span class="text-red-500">*</span></label>
+                    <select class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="">请选择年级</option>
+                      <option value="p1">一年级</option>
+                      <option value="p2">二年级</option>
+                      <option value="p3">三年级</option>
+                      <option value="p4">四年级</option>
+                      <option value="p5">五年级</option>
+                      <option value="p6">六年级</option>
+                      <option value="j1">七年级</option>
+                      <option value="j2">八年级</option>
+                      <option value="j3">九年级</option>
+                      <option value="g1">高一</option>
+                      <option value="g2">高二</option>
+                      <option value="g3">高三</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1.5">学科 <span class="text-red-500">*</span></label>
+                    <select class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      <option value="">请选择学科</option>
+                      <option value="chinese">语文</option>
+                      <option value="math">数学</option>
+                      <option value="english">英语</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 上传教案 -->
+              <div class="space-y-3">
+                <h4 class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i>
+                  上传教案（可选）
+                </h4>
+                <p class="text-xs text-gray-500">上传教案后，系统将利用大模型技术分析教学设计与教学实施的一致性</p>
+                <div id="doc-dropzone" class="border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer">
+                  <input type="file" id="doc-input" accept=".pdf,.doc,.docx,.ppt,.pptx" class="hidden" />
+                  <div class="flex flex-col items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <i data-lucide="folder-plus" class="w-5 h-5 text-gray-500"></i>
+                    </div>
+                    <p class="text-sm text-gray-600">点击上传教案</p>
+                    <p class="text-xs text-gray-400">支持 PDF、Word、PPT 格式</p>
+                  </div>
+                </div>
+                <div id="doc-preview" class="hidden flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-700 truncate" id="doc-name"></p>
+                  </div>
+                  <button type="button" onclick="removeDoc()" class="p-1 text-gray-400 hover:text-red-500 rounded transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 弹窗底部 -->
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50">
+              <button type="button" onclick="closeUploadModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                取消
+              </button>
+              <button type="button" id="btn-generate" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                生成报告
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 重命名弹窗 -->
+      <div id="modal-rename" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeRenameModal()"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 class="text-lg font-semibold text-gray-800">重命名</h3>
+              <button type="button" onclick="closeRenameModal()" class="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+            <div class="p-6">
+              <input type="hidden" id="rename-id">
+              <input type="text" id="rename-input" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请输入新名称">
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50">
+              <button type="button" onclick="closeRenameModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                取消
+              </button>
+              <button type="button" onclick="confirmRename()" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                确认
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 删除确认弹窗 -->
+      <div id="modal-delete" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div class="p-6 text-center">
+              <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                <i data-lucide="alert-triangle" class="w-7 h-7 text-red-600"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">确认删除</h3>
+              <p class="text-sm text-gray-500">确定要删除此课堂分析吗？删除后将无法恢复。</p>
+            </div>
+            <div class="flex items-center gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50">
+              <button type="button" onclick="closeDeleteModal()" class="flex-1 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                取消
+              </button>
+              <button type="button" onclick="confirmDelete()" class="flex-1 px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                删除
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -475,6 +781,7 @@
       const panelStudent = document.getElementById('panel-student');
       const panelComprehensive = document.getElementById('panel-comprehensive');
       const panelClassroomReview = document.getElementById('panel-classroom-review');
+      const panelClassAnalysis = document.getElementById('panel-class-analysis');
       const panelRefinedPaper = document.getElementById('panel-refined-paper');
       const panelQuickPaper = document.getElementById('panel-quick-paper');
       const panelAiPaper = document.getElementById('panel-ai-paper');
@@ -492,6 +799,7 @@
       if (panelStudent) panelStudent.classList.add('hidden');
       if (panelComprehensive) panelComprehensive.classList.add('hidden');
       if (panelClassroomReview) panelClassroomReview.classList.add('hidden');
+      if (panelClassAnalysis) panelClassAnalysis.classList.add('hidden');
 
       if (href === '#homework' || menuTitle === '作业&批改') {
         panelHomework.classList.remove('hidden');
@@ -505,6 +813,9 @@
         if (panelComprehensive) panelComprehensive.classList.remove('hidden');
       } else if (href === '#classroom-review' || menuTitle === '课堂点评') {
         if (panelClassroomReview) panelClassroomReview.classList.remove('hidden');
+      } else if (href === '#class-analysis' || menuTitle === '课堂分析') {
+        if (panelClassAnalysis) panelClassAnalysis.classList.remove('hidden');
+        initIcons();
       } else {
         panelOther.classList.remove('hidden');
       }
@@ -763,6 +1074,7 @@
       const panelStudent = document.getElementById('panel-student');
       const panelComprehensive = document.getElementById('panel-comprehensive');
       const panelClassroomReview = document.getElementById('panel-classroom-review');
+      const panelClassAnalysis = document.getElementById('panel-class-analysis');
       panelHomework.classList.remove('hidden');
       panelOther.classList.add('hidden');
       panelAssign.classList.add('hidden');
@@ -772,6 +1084,7 @@
       panelStudent.classList.add('hidden');
       panelComprehensive.classList.add('hidden');
       panelClassroomReview.classList.add('hidden');
+      panelClassAnalysis.classList.add('hidden');
       document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
       document.querySelector('.menu-item[href="#homework"]').classList.add('active');
       initIcons();
@@ -792,6 +1105,253 @@
       panelCheck.classList.remove('hidden');
       initIcons();
     }
+
+    // ==================== 课堂分析功能 ====================
+    let selectedFile = null;
+    let selectedDoc = null;
+    let deleteTargetId = null;
+
+    // 打开上传弹窗
+    document.getElementById('btn-upload-analysis').addEventListener('click', function() {
+      const modal = document.getElementById('modal-upload');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      initIcons();
+    });
+
+    // 关闭上传弹窗
+    function closeUploadModal() {
+      const modal = document.getElementById('modal-upload');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      // 重置表单
+      resetUploadForm();
+    }
+
+    // 重置上传表单
+    function resetUploadForm() {
+      selectedFile = null;
+      selectedDoc = null;
+      document.getElementById('file-input').value = '';
+      document.getElementById('doc-input').value = '';
+      document.getElementById('file-preview').classList.add('hidden');
+      document.getElementById('doc-preview').classList.add('hidden');
+      document.getElementById('btn-generate').disabled = true;
+      // 重置其他输入框
+      const inputs = document.querySelectorAll('#modal-upload input[type="text"], #modal-upload input[type="date"], #modal-upload select');
+      inputs.forEach(input => input.value = '');
+      const checkboxes = document.querySelectorAll('#modal-upload input[type="checkbox"]');
+      checkboxes[0].checked = true;
+    }
+
+    // 文件上传区域点击
+    document.getElementById('upload-dropzone').addEventListener('click', function() {
+      document.getElementById('file-input').click();
+    });
+
+    // 文件选择处理
+    document.getElementById('file-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        handleFileSelect(file);
+      }
+    });
+
+    // 拖拽上传
+    const dropzone = document.getElementById('upload-dropzone');
+    dropzone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dropzone.classList.add('border-blue-400', 'bg-blue-50');
+    });
+    dropzone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      dropzone.classList.remove('border-blue-400', 'bg-blue-50');
+    });
+    dropzone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropzone.classList.remove('border-blue-400', 'bg-blue-50');
+      const file = e.dataTransfer.files[0];
+      if (file && (file.type.startsWith('video/') || file.type.startsWith('audio/'))) {
+        handleFileSelect(file);
+      }
+    });
+
+    function handleFileSelect(file) {
+      selectedFile = file;
+      const preview = document.getElementById('file-preview');
+      const fileName = document.getElementById('file-name');
+      const fileSize = document.getElementById('file-size');
+      const previewIcon = document.getElementById('preview-icon');
+
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+
+      // 根据文件类型显示图标
+      if (file.type.startsWith('audio/')) {
+        previewIcon.setAttribute('data-lucide', 'audio-lines');
+        previewIcon.className = 'w-5 h-5 text-purple-600';
+      } else {
+        previewIcon.setAttribute('data-lucide', 'video');
+        previewIcon.className = 'w-5 h-5 text-blue-600';
+      }
+
+      preview.classList.remove('hidden');
+      document.getElementById('btn-generate').disabled = false;
+      initIcons();
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function removeFile() {
+      selectedFile = null;
+      document.getElementById('file-input').value = '';
+      document.getElementById('file-preview').classList.add('hidden');
+      document.getElementById('btn-generate').disabled = true;
+    }
+
+    // 教案上传区域
+    document.getElementById('doc-dropzone').addEventListener('click', function() {
+      document.getElementById('doc-input').click();
+    });
+
+    document.getElementById('doc-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        selectedDoc = file;
+        const preview = document.getElementById('doc-preview');
+        const docName = document.getElementById('doc-name');
+        docName.textContent = file.name;
+        preview.classList.remove('hidden');
+        initIcons();
+      }
+    });
+
+    function removeDoc() {
+      selectedDoc = null;
+      document.getElementById('doc-input').value = '';
+      document.getElementById('doc-preview').classList.add('hidden');
+    }
+
+    // 打开分析报告（仅已完成状态）
+    function openAnalysisReport(span) {
+      const row = span.closest('tr');
+      const statusCell = row.querySelector('td:nth-child(2) span');
+      if (statusCell && statusCell.textContent === '已完成') {
+        window.open('class-analysis.html', '_blank');
+      }
+    }
+
+    // 生成报告按钮
+    document.getElementById('btn-generate').addEventListener('click', function() {
+      if (!selectedFile) return;
+
+      // 收集表单数据
+      const formData = {
+        file: selectedFile,
+        courseName: document.querySelector('#modal-upload input[type="text"]').value,
+        doc: selectedDoc
+      };
+
+      // 模拟上传成功
+      closeUploadModal();
+
+      // 添加新记录到列表
+      const tbody = document.getElementById('analysis-list');
+      const isAudio = selectedFile.type.startsWith('audio/');
+      const newRow = document.createElement('tr');
+      newRow.className = 'hover:bg-gray-50 transition-colors';
+      newRow.innerHTML = `
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg ${isAudio ? 'bg-purple-100' : 'bg-blue-100'} flex items-center justify-center flex-shrink-0">
+              <i data-lucide="${isAudio ? 'audio-lines' : 'video'}" class="w-4 h-4 ${isAudio ? 'text-purple-600' : 'text-blue-600'}"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600" onclick="openAnalysisReport(this)">${formData.courseName || selectedFile.name.replace(/\.[^/.]+$/, '')}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">分析中</span>
+        </td>
+        <td class="px-4 py-3 text-sm text-gray-500">${new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(/\//g, '-')}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" onclick="openRenameModal(this)" class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="重命名">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
+            <button type="button" onclick="openDeleteModal(this)" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="删除">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(newRow);
+      initIcons();
+    });
+
+    // 重命名功能
+    function openRenameModal(btn) {
+      const row = btn.closest('tr');
+      const nameSpan = row.querySelector('td:first-child span');
+      document.getElementById('rename-id').value = row.rowIndex;
+      document.getElementById('rename-input').value = nameSpan.textContent;
+      document.getElementById('modal-rename').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('rename-input').focus();
+      initIcons();
+    }
+
+    function closeRenameModal() {
+      document.getElementById('modal-rename').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function confirmRename() {
+      const id = document.getElementById('rename-id').value;
+      const newName = document.getElementById('rename-input').value.trim();
+      if (!newName) return;
+
+      const tbody = document.getElementById('analysis-list');
+      const rows = tbody.querySelectorAll('tr');
+      if (rows[id - 1]) {
+        rows[id - 1].querySelector('td:first-child span').textContent = newName;
+      }
+      closeRenameModal();
+    }
+
+    // 删除功能
+    function openDeleteModal(btn) {
+      const row = btn.closest('tr');
+      deleteTargetId = row;
+      document.getElementById('modal-delete').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      initIcons();
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('modal-delete').classList.add('hidden');
+      document.body.style.overflow = '';
+      deleteTargetId = null;
+    }
+
+    function confirmDelete() {
+      if (deleteTargetId) {
+        deleteTargetId.remove();
+      }
+      closeDeleteModal();
+    }
+
+    // 监听重命名输入框回车键
+    document.getElementById('rename-input').addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        confirmRename();
+      }
+    });
 
     // 初始化导航栏
     new Navbar('navbar-container', {
