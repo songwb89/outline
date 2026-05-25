@@ -5,7 +5,7 @@
 
 class FloatingAudioPlayer {
   constructor(options = {}) {
-    this.audioSrc = options.audioSrc || 'kt4ys.mp3';
+    this.audioSrc = options.audioSrc || 'data/kt4ys.mp3';
     this.title = options.title || '';
     this.isPlaying = false;
     this.audio = null;
@@ -357,7 +357,7 @@ class FloatingAudioPlayer {
 
         <!-- 时间 -->
         <div class="player-time">
-          <span id="currentTime">0:00</span> / <span id="totalTime">--:--</span>
+          <span id="floating-currentTime">0:00</span> / <span id="floating-totalTime">--:--</span>
         </div>
 
         <!-- 关闭按钮 -->
@@ -376,8 +376,8 @@ class FloatingAudioPlayer {
     this.playerBtn = document.getElementById('playerBtn');
     this.closeBtn = document.getElementById('closeBtn');
     this.progressRing = document.querySelector('.progress-ring-fill');
-    this.currentTimeEl = document.getElementById('currentTime');
-    this.totalTimeEl = document.getElementById('totalTime');
+    this.currentTimeEl = document.getElementById('floating-currentTime');
+    this.totalTimeEl = document.getElementById('floating-totalTime');
     this.container = document.getElementById('floatingPlayer');
 
     // 播放/暂停按钮
@@ -388,28 +388,39 @@ class FloatingAudioPlayer {
 
     // 创建音频对象
     this.audio = new Audio(this.audioSrc);
+    // 确保使用正确的基础路径
+    if (!this.audioSrc.startsWith('http') && !this.audioSrc.startsWith('/')) {
+      this.audio.src = 'data/kt4ys.mp3';
+    }
     this.startOffset = 15; // 跳过前15秒
 
     // 音频事件
     this.audio.addEventListener('loadedmetadata', () => {
       this.duration = this.audio.duration;
-      this.totalTimeEl.textContent = this.formatTime(this.duration);
-      this.currentTimeEl.textContent = this.formatTime(this.startOffset);
+      if (this.totalTimeEl) this.totalTimeEl.textContent = this.formatTime(this.duration);
+      if (this.currentTimeEl) this.currentTimeEl.textContent = '0:00';
     });
 
     this.audio.addEventListener('timeupdate', () => {
+      if (!this.duration) return;
+      // 计算相对于总时长的进度百分比
       this.progress = (this.audio.currentTime / this.duration) * 100;
       this.updateProgress();
-      this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
+      // 当前时间显示：从0开始（实际播放位置 - 跳过的前12秒）
+      if (this.currentTimeEl) {
+        const displayTime = Math.max(0, this.audio.currentTime - this.startOffset);
+        this.currentTimeEl.textContent = this.formatTime(displayTime);
+      }
     });
 
     this.audio.addEventListener('ended', () => {
       this.stop();
     });
 
-    this.audio.addEventListener('error', () => {
-      console.error('音频加载失败');
-      this.currentTimeEl.textContent = 'Error';
+    this.audio.addEventListener('error', (e) => {
+      console.error('音频加载失败', e);
+      if (this.totalTimeEl) this.totalTimeEl.textContent = 'Error';
+      if (this.currentTimeEl) this.currentTimeEl.textContent = 'Error';
     });
   }
 
@@ -434,10 +445,10 @@ class FloatingAudioPlayer {
 
   play() {
     if (this.audio) {
-      // 如果是暂停后继续播放，保持当前进度；否则从 startOffset 开始
-      if (this.audio.currentTime < this.startOffset) {
-        this.audio.currentTime = this.startOffset;
-      }
+      // 每次播放都从 startOffset 开始
+      this.audio.currentTime = this.startOffset;
+      // 显示0:00
+      if (this.currentTimeEl) this.currentTimeEl.textContent = '0:00';
       this.audio.play().then(() => {
         this.isPlaying = true;
         this.playerBtn.classList.add('playing');
@@ -468,7 +479,8 @@ class FloatingAudioPlayer {
       this.container.querySelector('.floating-player-inner').classList.remove('playing');
       this.progress = 0;
       this.updateProgress();
-      this.currentTimeEl.textContent = this.formatTime(this.startOffset);
+      // 重置为0，但总时长保持不变
+      if (this.currentTimeEl) this.currentTimeEl.textContent = '0:00';
       this.stopProgressAnimation();
     }
   }
@@ -536,7 +548,7 @@ function initFloatingPlayer(audioSrc, title) {
 // 显示悬浮播放器
 function showFloatingPlayer() {
   if (!floatingPlayer) {
-    initFloatingPlayer('kt4ys.mp3', '');
+    initFloatingPlayer('data/kt4ys.mp3', '');
   }
   floatingPlayer.show();
 }

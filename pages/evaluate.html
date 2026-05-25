@@ -1136,6 +1136,8 @@
       document.getElementById('doc-input').value = '';
       document.getElementById('file-preview').classList.add('hidden');
       document.getElementById('doc-preview').classList.add('hidden');
+      document.getElementById('upload-dropzone').classList.remove('hidden');
+      document.getElementById('doc-dropzone').classList.remove('hidden');
       document.getElementById('btn-generate').disabled = true;
       // 重置其他输入框
       const inputs = document.querySelectorAll('#modal-upload input[type="text"], #modal-upload input[type="date"], #modal-upload select');
@@ -1196,6 +1198,7 @@
       }
 
       preview.classList.remove('hidden');
+      document.getElementById('upload-dropzone').classList.add('hidden');
       document.getElementById('btn-generate').disabled = false;
       initIcons();
     }
@@ -1212,6 +1215,7 @@
       selectedFile = null;
       document.getElementById('file-input').value = '';
       document.getElementById('file-preview').classList.add('hidden');
+      document.getElementById('upload-dropzone').classList.remove('hidden');
       document.getElementById('btn-generate').disabled = true;
     }
 
@@ -1228,6 +1232,7 @@
         const docName = document.getElementById('doc-name');
         docName.textContent = file.name;
         preview.classList.remove('hidden');
+        document.getElementById('doc-dropzone').classList.add('hidden');
         initIcons();
       }
     });
@@ -1236,6 +1241,7 @@
       selectedDoc = null;
       document.getElementById('doc-input').value = '';
       document.getElementById('doc-preview').classList.add('hidden');
+      document.getElementById('doc-dropzone').classList.remove('hidden');
     }
 
     // 打开分析报告（仅已完成状态）

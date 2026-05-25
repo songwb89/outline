@@ -109,7 +109,8 @@ def submit_recognition_task(audio_url: str) -> tuple:
             "enable_punc": ENABLE_PUNC,
             "enable_speaker_info": ENABLE_SPEAKER_INFO,
             "enable_ddc": True,
-            "enable_channel_split": True,
+            # enable_channel_split 默认为 False，不显式配置
+            # 如需声道分离，设置为 True
             "corpus": {"correct_table_name": "", "context": ""}
         }
     }
