@@ -191,9 +191,8 @@ const MockData = {
     // 2.1 教师语速分析
     speakingSpeed: {
       totalWords: 7028,
-      totalDuration: '31.8分钟',
+      totalDuration: 31.8,
       avgSpeed: 220,
-      analysis: '本节课教师授课总文字量为7028字，实际讲授时长31.8分钟，平均语速达220字/分钟。依据教学标准，语速建议控制在150-250字/分钟区间。本次授课语速处于推荐范围内，节奏适中，表达清晰流畅，学生有足够时间理解消化。',
       chartData: [
         { time: 0, speed: 180 },
         { time: 1, speed: 182 },

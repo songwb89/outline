@@ -1,10 +1,10 @@
 """
-ASR数据预处理脚本 v2
+ASR数据预处理脚本 v3
 功能：
-1. 丢弃逐字数据（words数组），只保留句子级别
+1. 保留逐字数据（words数组）
 2. 简化结构，去除additions嵌套
 3. 调用阿里千问模型判断角色映射
-4. 输出干净的JSON
+4. 输出包含完整信息的JSON
 """
 
 import json
@@ -29,7 +29,7 @@ def load_asr_data(input_path: str) -> dict:
 def simplify_utterances(utterances: list, mapping: dict) -> list:
     """
     简化utterances结构：
-    1. 丢弃逐字数据（words数组）
+    1. 保留逐字数据（words数组）
     2. 去除additions嵌套，直接展平
     3. 应用角色映射，去掉speaker字段
     """
@@ -39,15 +39,27 @@ def simplify_utterances(utterances: list, mapping: dict) -> list:
         # 原始ASR格式：start_time, end_time, additions.speaker
         speaker = utt.get('additions', {}).get('speaker', '')
         role = mapping.get(speaker, 'unknown')
+
+        # 保留逐字数据
+        words = []
+        if 'words' in utt and utt['words']:
+            for w in utt['words']:
+                words.append({
+                    'word': w.get('text', ''),
+                    'start_ms': w.get('start_time', 0),
+                    'end_ms': w.get('end_time', 0)
+                })
+
         simplified.append({
-            'start': utt.get('start_time', 0),
-            'end': utt.get('end_time', 0),
+            'start_ms': utt.get('start_time', 0),
+            'end_ms': utt.get('end_time', 0),
             'text': utt.get('text', '').strip(),
-            'role': role
+            'role': role,
+            'words': words
         })
 
     # 按时间排序
-    simplified.sort(key=lambda x: x['start'])
+    simplified.sort(key=lambda x: x['start_ms'])
 
     return simplified
 
@@ -205,6 +217,57 @@ def save_processed_data(data: dict, output_path: str):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def extract_for_llm(data: dict) -> list:
+    """
+    提取用于LLM分析的对话记录
+    （不含逐字数据，只保留句子级别）
+    """
+    return [
+        {
+            'role': u['role'],
+            'text': u['text'],
+            'start': u['start_ms'],
+            'end': u['end_ms']
+        }
+        for u in data.get('utterances', [])
+    ]
+
+
+def build_llm_prompt(data: dict, subject: str = None, grade: str = None) -> str:
+    """
+    构建用于教学环节分析的prompt
+    data: 处理后的完整数据
+    subject/grade: 可选的学科和年级信息
+    """
+    # 提取对话记录（不含逐字数据）
+    utterances = extract_for_llm(data)
+
+    # 格式化为文本
+    lines = []
+    for u in utterances:
+        start_sec = u['start'] // 1000
+        end_sec = u['end'] // 1000
+        time_str = f"{start_sec // 60}:{start_sec % 60:02d}"
+        role = 'T' if u['role'] == 'teacher' else 'S'
+        lines.append(f"[{time_str}] {role}: {u['text']}")
+
+    transcript_text = "\n".join(lines)
+
+    # 拼接用户提示词
+    subject_line = f"\n【学科】: {subject}" if subject else ""
+    grade_line = f"\n【年级】: {grade}" if grade else ""
+
+    prompt = f"""请分析以下课堂对话数据，识别教学环节。
+
+【课堂对话数据】
+{transcript_text}
+【学科】（可选）: {subject or '根据内容自行判断'}{grade_line}
+
+请严格按系统提示词中的格式输出JSON，不要包含任何其他内容。"""
+
+    return prompt
+
+
 def main(input_file: str = None, output_file: str = None):
     """
     主处理流程
@@ -240,13 +303,31 @@ def main(input_file: str = None, output_file: str = None):
     simplified = simplify_utterances(original_utterances, speaker_mapping)
     print(f"    - 简化后句子数: {len(simplified)}")
 
-    # 4. 构建输出（无metadata）
+    # 4. 构建输出（包含metadata）
     print(f"\n[4] 保存结果: {output_file}")
-    output_data = {'utterances': simplified}
+
+    # 计算统计信息
+    total_duration = 0
+    total_words = 0
+    if simplified:
+        total_duration = simplified[-1]['end_ms']
+        total_words = sum(len(u['words']) for u in simplified)
+
+    output_data = {
+        'utterances': simplified,
+        'metadata': {
+            'source': input_file.name if hasattr(input_file, 'name') else 'unknown',
+            'total_duration_ms': total_duration,
+            'total_utterances': len(simplified),
+            'total_words': total_words
+        }
+    }
     save_processed_data(output_data, str(output_file))
 
     print(f"\n" + "=" * 60)
     print(f"[处理完成] 共 {len(simplified)} 条记录")
+    print(f"  - 总时长: {total_duration / 1000:.1f} 秒")
+    print(f"  - 总字数(逐字): {total_words}")
     print("=" * 60)
 
     return output_data
@@ -255,7 +336,7 @@ def main(input_file: str = None, output_file: str = None):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description="ASR数据预处理 v2")
+    parser = argparse.ArgumentParser(description="ASR数据预处理 v3")
     parser.add_argument('--input', '-i', help='输入文件路径')
     parser.add_argument('--output', '-o', help='输出文件路径')
 

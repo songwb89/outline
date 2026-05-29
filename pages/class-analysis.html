@@ -276,8 +276,9 @@
                   <span class="text-xs font-medium text-blue-300 bg-blue-500/25 px-2.5 py-1 rounded-full border border-blue-400/30 shadow-sm">AI分析</span>
                   <span class="text-xs text-gray-500">由AI生成 · 仅供参考</span>
                 </div>
-                <p id="phaseAnalysis" class="text-sm text-gray-300 leading-relaxed"></p>
-                <p id="phaseSuggestion" class="text-sm text-blue-400 leading-relaxed mt-2"></p>
+                <p class="text-sm leading-relaxed">
+                  <span id="phaseAnalysis" class="text-gray-300"></span><span id="phaseSuggestion" class="text-blue-400"></span>
+                </p>
               </div>
               <!-- 教学环节列表 -->
               <div id="phaseAccordion" class="space-y-2"></div>
@@ -310,14 +311,14 @@
                 <div class="bg-gray-800/50 rounded-lg p-2">
                   <div class="flex items-center gap-2 mb-1">
                     <i data-lucide="activity" class="w-4 h-4 text-green-400"></i>
-                    <span class="text-xs font-medium text-gray-300">S-T行为分析</span>
+                    <span class="text-xs font-medium text-gray-300">S-T分析</span>
                   </div>
                   <div id="stChart" style="height: calc(100% - 32px);"></div>
                 </div>
                 <div class="bg-gray-800/50 rounded-lg p-2">
                   <div class="flex items-center gap-2 mb-1">
                     <i data-lucide="triangle" class="w-4 h-4 text-purple-400"></i>
-                    <span class="text-xs font-medium text-gray-300">Rt-Ch散点图</span>
+                    <span class="text-xs font-medium text-gray-300">Rt-Ch图</span>
                   </div>
                   <div id="rtChChart" style="height: calc(100% - 32px);"></div>
                   <div id="rtChLabel" class="text-center text-xs text-gray-400" style="margin-top: -16px;">
@@ -398,8 +399,9 @@
                   <span class="text-xs font-medium text-blue-300 bg-blue-500/25 px-2.5 py-1 rounded-full border border-blue-400/30 shadow-sm">AI分析</span>
                   <span class="text-xs text-gray-500">由AI生成 · 仅供参考</span>
                 </div>
-                <p id="wordAnalysis" class="text-sm text-gray-300 leading-relaxed"></p>
-                <p id="wordSuggestion" class="text-sm text-blue-400 leading-relaxed mt-2"></p>
+                <p class="text-sm leading-relaxed">
+                  <span id="wordAnalysis" class="text-gray-300"></span><span id="wordSuggestion" class="text-blue-400"></span>
+                </p>
               </div>
               <!-- 词云 -->
               <div id="wordCloud" class="word-cloud min-h-[200px]"></div>
@@ -561,7 +563,7 @@
                       <span class="text-xs font-medium text-blue-300 bg-blue-500/25 px-2.5 py-1 rounded-full border border-blue-400/30 shadow-sm">AI分析</span>
                       <span class="text-xs text-gray-500">由AI生成 · 仅供参考</span>
                     </div>
-                    <p class="text-sm text-gray-300 leading-relaxed">本节课的问题链围绕张若虚的《春江花月夜》展开，通过分析诗歌中的意象、情感和哲理，引导学生深入理解诗歌内涵。问题链从意象分析到情感体验，再到哲理探讨，逻辑清晰，层层递进。教师通过提问激发学生的形象思维和辩证思维，问题集中包含复杂情境，问题类型多为收敛型和提高型，有助于学生逐步深入理解诗歌。</p>
+                    <p class="text-sm text-gray-300 leading-relaxed">本节课的问题链围绕张若虚的《春江花月夜》展开，通过分析诗歌中的意象、情感和哲理，引导学生深入理解诗歌内涵。问题链从意象分析到情感体验，再到哲理探讨，逻辑清晰，层层递进。教师通过提问激发学生的形象思维和辩证思维，问题集中包含复杂情境，问题类型多为收敛型和提高型，有助于学生逐步深入理解诗歌。<span class="text-blue-400">建议教师在后续教学中可以增加一些实际应用情境，以增强学生的应用思维和创新思维。</span></p>
                   </div>
                   <div id="questionChainFlow" class="w-full" style="height: 280px;"></div>
                 </div>

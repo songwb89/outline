@@ -186,9 +186,14 @@ function loadTeachingStructure() {
 function loadPhases() {
   const data = MockData.teachingStructure.phases;
 
-  // 设置AI分析摘要
-  document.getElementById('phaseAnalysis').textContent = data.analysis;
-  document.getElementById('phaseSuggestion').textContent = data.suggestion;
+  // 设置AI分析摘要：建议部分不换行，直接接在点评内容后面
+  const phaseAnalysisEl = document.getElementById('phaseAnalysis');
+  const phaseSuggestionEl = document.getElementById('phaseSuggestion');
+  if (phaseAnalysisEl) phaseAnalysisEl.textContent = data.analysis || '';
+  if (phaseSuggestionEl) {
+    phaseSuggestionEl.textContent = data.suggestion || '';
+    phaseSuggestionEl.classList.remove('mt-2');
+  }
 
   // 渲染手风琴式环节列表
   const accordionContainer = document.getElementById('phaseAccordion');
@@ -215,10 +220,11 @@ function loadPhases() {
             <path d="M8 5v14l11-7z"/>
           </svg>
         </div>
-        <!-- 占比进度条 -->
-        <div class="flex items-center gap-2 w-40 flex-shrink-0">
-          <div class="flex-1 h-2 bg-gray-600 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+        <!-- 占比条 -->
+        <div class="flex items-center gap-2 w-56 flex-shrink-0">
+          <span class="text-[11px] text-gray-500 w-6 text-right">占比</span>
+          <div class="flex-1 h-1.5 bg-gray-700/80 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500/80 rounded-full"
                  style="width: ${item.percentage}%"></div>
           </div>
           <span class="text-xs text-gray-400 w-10 text-right">${item.percentage}%</span>
@@ -496,7 +502,7 @@ function initRtChChart() {
       axisLabel: {
         color: '#9ca3af',
         fontSize: 10,
-        formatter: function(v) { return (v * 10).toFixed(0); }
+        formatter: function(v) { return v.toFixed(1); }
       },
       splitLine: { lineStyle: { color: 'rgba(75, 85, 99, 0.2)' } }
     },
@@ -512,7 +518,7 @@ function initRtChChart() {
       axisLabel: {
         color: '#9ca3af',
         fontSize: 10,
-        formatter: function(v) { return (v * 10).toFixed(0); }
+        formatter: function(v) { return v.toFixed(1); }
       },
       splitLine: { lineStyle: { color: 'rgba(75, 85, 99, 0.2)' } }
     },
@@ -803,7 +809,8 @@ function loadTeachingBehavior() {
 function initSpeedChart() {
   const data = MockData.teachingBehavior.speakingSpeed;
 
-  document.getElementById('speedTrend').textContent = data.analysis;
+  const analysisText = `本节课教师在授课过程中一共说了${data.totalWords}个字，共耗时${data.totalDuration}分钟，平均语速为${data.avgSpeed}字/分钟。课堂语速的范围推荐保持在150字/分钟到250字每分钟之间。`;
+  document.getElementById('speedTrend').textContent = analysisText;
 
   // 渲染语速折线图
   const chartDom = document.getElementById('speedChart');
@@ -938,9 +945,14 @@ function loadHighFrequencyWords() {
 
   charts.wordCloud.setOption(option);
 
-  // AI分析
-  document.getElementById('wordAnalysis').textContent = data.analysis;
-  document.getElementById('wordSuggestion').textContent = data.suggestion;
+  // AI分析：建议部分不换行，直接接在点评内容后面
+  const wordAnalysisEl = document.getElementById('wordAnalysis');
+  const wordSuggestionEl = document.getElementById('wordSuggestion');
+  if (wordAnalysisEl) wordAnalysisEl.textContent = data.analysis || '';
+  if (wordSuggestionEl) {
+    wordSuggestionEl.textContent = data.suggestion || '';
+    wordSuggestionEl.classList.remove('mt-2');
+  }
 }
 
 function loadBehaviorRatio() {
