@@ -445,6 +445,8 @@
             flex: 1;
             padding: 30px;
             overflow-y: auto;
+            background: #fff;
+            color: #111827;
         }
         /* Markdown 渲染样式 */
         .prd-content h1 {

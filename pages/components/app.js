@@ -1221,29 +1221,25 @@ function initFourMatChart() {
   charts.fourMatChart = echarts.init(chartDom);
 
   const data = MockData.teachingStrategy.thinkingStimulus.questionClassification.fourMat;
-  const values = [
-    data['是何--事实型'] || 0,
-    data['为何--原理型'] || 0,
-    data['若何--变化型'] || 0,
-    data['如何--方法型'] || 0
-  ];
+  const v1 = data['是何--事实型'] || 0;
+  const v2 = data['为何--原理型'] || 0;
+  const v3 = data['若何--变化型'] || 0;
+  const v4 = data['如何--方法型'] || 0;
+
+  const values = [v1, v2, v3, v4];
   const maxVal = Math.max(...values, 1);
 
   const option = {
     backgroundColor: 'transparent',
     tooltip: {
-      trigger: 'item',
-      backgroundColor: 'rgba(31, 41, 55, 0.95)',
-      borderColor: '#4b5563',
-      textStyle: { color: '#e5e7eb' },
-      formatter: '{b}: {c} 题'
+      show: false
     },
     radar: {
       indicator: [
-        { name: '是何\n事实型', max: maxVal },
-        { name: '为何\n原理型', max: maxVal },
-        { name: '若何\n变化型', max: maxVal },
-        { name: '如何\n方法型', max: maxVal }
+        { name: `是何 | 事实型 | ${v1}`, max: maxVal },
+        { name: `为何 | 原理型 | ${v2}`, max: maxVal },
+        { name: `若何 | 变化型 | ${v3}`, max: maxVal },
+        { name: `如何 | 方法型 | ${v4}`, max: maxVal }
       ],
       center: ['50%', '55%'],
       radius: '65%',
@@ -1296,54 +1292,63 @@ function showQuestionDetail() {
   const tbody = document.getElementById('questionDetailBody');
   const data = MockData.teachingStrategy.thinkingStimulus.questionClassification.questionList;
 
-  tbody.innerHTML = data.map((item, idx) => `
-    <tr class="border-b border-gray-800 hover:bg-gray-800/30">
-      <td class="px-4 py-3 text-gray-400 text-xs font-mono">${item.time}</td>
-      <td class="px-4 py-3">
-        ${item.studentAnswer || item.teacherFeedback ? `
-        <button onclick="toggleAnswer(${idx})" class="text-blue-400 hover:text-blue-300 transition-colors">
-          <svg id="expandIcon${idx}" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </button>` : '<span class="text-gray-600">-</span>'}
-      </td>
-      <td class="px-4 py-3 text-gray-200 text-sm">
-        <div class="line-clamp-2" id="questionText${idx}">${item.question}</div>
-        <div id="expandContent${idx}" class="hidden mt-3 space-y-3 pl-4 border-l-2 border-blue-500/50">
+  tbody.innerHTML = data.map((item, idx) => {
+    const hasDetail = Boolean(item.studentAnswer || item.teacherFeedback);
+
+    return `
+      <tr class="border-b border-gray-800 hover:bg-gray-800/30">
+        <td class="px-4 py-3 text-gray-400 text-xs font-mono">${item.time}</td>
+        <td class="px-4 py-3">
+          ${hasDetail ? `
+            <button onclick="toggleAnswer(${idx})" class="text-blue-400 hover:text-blue-300 transition-colors">
+              <svg id="expandIcon${idx}" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          ` : '<span class="text-gray-600">-</span>'}
+        </td>
+        <td class="px-4 py-3 text-gray-200 text-sm">
+          <div class="line-clamp-2" id="questionText${idx}">${item.question}</div>
+          ${hasDetail ? `
+            <div id="expandContent${idx}" class="hidden mt-3 space-y-3 pl-4 border-l-2 border-blue-500/50">
+              ${item.studentAnswer ? `
+                <div class="bg-gray-800/50 rounded-lg p-3">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs text-green-400 font-medium">学生应答</span>
+                  </div>
+                  <p class="text-sm text-gray-300">${item.studentAnswer}</p>
+                </div>
+              ` : ''}
+              ${item.teacherFeedback ? `
+                <div class="bg-gray-800/50 rounded-lg p-3">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs text-yellow-400 font-medium">教师反馈</span>
+                  </div>
+                  <p class="text-sm text-gray-300">${item.teacherFeedback}</p>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+        </td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-1 text-xs rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">${item.fourMat.split('--')[0]}</span>
+        </td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-1 text-xs rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">${item.bloom}</span>
+        </td>
+        <td class="px-4 py-3">
           ${item.studentAnswer ? `
-          <div class="bg-gray-800/50 rounded-lg p-3">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs text-green-400 font-medium">学生应答</span>
-            </div>
-            <p class="text-sm text-gray-300">${item.studentAnswer}</p>
-          </div>` : ''}
-          ${item.teacherFeedback ? `
-          <div class="bg-gray-800/50 rounded-lg p-3">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs text-yellow-400 font-medium">教师反馈</span>
-            </div>
-            <p class="text-sm text-gray-300">${item.teacherFeedback}</p>
-          </div>` : ''}
-        </div>
-      </td>
-      <td class="px-4 py-3">
-        <span class="px-2 py-1 text-xs rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">${item.fourMat.split('--')[0]}</span>
-      </td>
-      <td class="px-4 py-3">
-        <span class="px-2 py-1 text-xs rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">${item.bloom}</span>
-      </td>
-      <td class="px-4 py-3">
-        ${item.studentAnswer ? `
-          <span class="whitespace-nowrap px-2 py-1 text-xs rounded-md bg-green-500/20 text-green-300 border border-green-500/30">有应答</span>
-        ` : `
-          <span class="whitespace-nowrap px-2 py-1 text-xs rounded-md bg-gray-500/20 text-gray-400 border border-gray-500/30">无应答</span>
-        `}
-      </td>
-      <td class="px-4 py-3">
-        ${getFeedbackTag(item.teacherFeedback)}
-      </td>
-    </tr>
-  `).join('');
+            <span class="whitespace-nowrap px-2 py-1 text-xs rounded-md bg-green-500/20 text-green-300 border border-green-500/30">有应答</span>
+          ` : `
+            <span class="whitespace-nowrap px-2 py-1 text-xs rounded-md bg-gray-500/20 text-gray-400 border border-gray-500/30">无应答</span>
+          `}
+        </td>
+        <td class="px-4 py-3">
+          ${getFeedbackTag(item.teacherFeedback)}
+        </td>
+      </tr>
+    `;
+  }).join('');
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -1353,6 +1358,8 @@ function toggleAnswer(idx) {
   const content = document.getElementById(`expandContent${idx}`);
   const icon = document.getElementById(`expandIcon${idx}`);
   const text = document.getElementById(`questionText${idx}`);
+
+  if (!content || !icon || !text) return;
 
   if (content.classList.contains('hidden')) {
     content.classList.remove('hidden');
@@ -1365,8 +1372,65 @@ function toggleAnswer(idx) {
   }
 }
 
+function showQuestionChainDetailModal() {
+  const modal = document.getElementById('questionChainDetailModal');
+  const tbody = document.getElementById('questionChainDetailBody');
+  if (!modal || !tbody) return;
+
+  const chains = MockData?.teachingStrategy?.thinkingStimulus?.questionChains || [];
+  const chain = chains[0];
+  const nodes = chain?.nodes || [];
+
+  const safe = (v) => (v === undefined || v === null) ? '' : String(v);
+
+  tbody.innerHTML = nodes.map((node, idx) => {
+    const relatedQuestions = node.relatedQuestions || [];
+    const relatedHtml = relatedQuestions.length > 0
+      ? `<ul class="space-y-1">${relatedQuestions.map((q, i) => `
+          <li class="flex items-start gap-2">
+            <span class="text-gray-500 text-xs mt-0.5 shrink-0">${i + 1}.</span>
+            <span class="text-gray-300 text-xs leading-relaxed">${safe(q)}</span>
+          </li>
+        `).join('')}</ul>`
+      : '<span class="text-gray-500 text-xs">—</span>';
+
+    return `
+      <tr class="border-b border-gray-800 hover:bg-gray-800/30 align-top">
+        <td class="px-4 py-3 text-gray-300 text-xs font-mono">${idx + 1}</td>
+        <td class="px-4 py-3 text-gray-200 text-sm font-medium">${safe(node.label)}</td>
+        <td class="px-4 py-3 text-gray-200 text-sm leading-relaxed">${safe(node.coreQuestion)}</td>
+        <td class="px-4 py-3 text-sm">
+          <span class="block font-medium text-purple-300 mb-1">${safe(node.thinking)}</span>
+          <span class="block text-gray-400 text-xs leading-relaxed">${safe(node.thinkingDesc)}</span>
+        </td>
+        <td class="px-4 py-3 text-sm">
+          <span class="block font-medium text-emerald-300 mb-1">${safe(node.situation)}</span>
+          <span class="block text-gray-400 text-xs leading-relaxed">${safe(node.situationDesc)}</span>
+        </td>
+        <td class="px-4 py-3 text-sm">
+          <span class="block font-medium text-amber-300 mb-1">${safe(node.chainType)}</span>
+          <span class="block text-gray-400 text-xs leading-relaxed">${safe(node.chainTypeDesc)}</span>
+        </td>
+        <td class="px-4 py-3">${relatedHtml}</td>
+      </tr>
+    `;
+  }).join('');
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuestionChainDetail() {
+  const modal = document.getElementById('questionChainDetailModal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
 function closeQuestionDetail() {
-  document.getElementById('questionDetailModal').classList.add('hidden');
+  const modal = document.getElementById('questionDetailModal');
+  if (!modal) return;
+  modal.classList.add('hidden');
   document.body.style.overflow = '';
 }
 
@@ -1404,7 +1468,12 @@ function initBloomChart() {
   const data = MockData.teachingStrategy.thinkingStimulus.questionClassification.bloom;
   const labels = Object.keys(data);
   const values = Object.values(data);
-  const colors = labels.slice(0, 3).map(() => '#6366f1').concat(labels.slice(3).map(() => '#f59e0b'));
+
+  const basicCount = labels.slice(0, 3).reduce((sum, _, idx) => sum + (values[idx] || 0), 0);
+  const advancedCount = labels.slice(3).reduce((sum, _, idx) => sum + (values[idx + 3] || 0), 0);
+
+  const basicData = values.map((v, i) => (i < 3 ? v : null));
+  const advancedData = values.map((v, i) => (i >= 3 ? v : null));
 
   const option = {
     backgroundColor: 'transparent',
@@ -1414,11 +1483,23 @@ function initBloomChart() {
       borderColor: '#4b5563',
       textStyle: { color: '#e5e7eb' }
     },
+    legend: {
+      top: 0,
+      right: 0,
+      itemWidth: 10,
+      itemHeight: 10,
+      selectedMode: false,
+      textStyle: { color: '#9ca3af', fontSize: 10 },
+      data: [
+        `基础问题 (${basicCount})`,
+        `高阶问题 (${advancedCount})`
+      ]
+    },
     grid: {
       left: '3%',
       right: '4%',
       bottom: '3%',
-      top: '5%',
+      top: '18%',
       containLabel: true
     },
     xAxis: {
@@ -1433,12 +1514,22 @@ function initBloomChart() {
       axisLabel: { color: '#9ca3af' },
       splitLine: { lineStyle: { color: 'rgba(75, 85, 99, 0.3)' } }
     },
-    series: [{
-      type: 'bar',
-      data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i] } })),
-      barWidth: '50%',
-      itemStyle: { borderRadius: [4, 4, 0, 0] }
-    }]
+    series: [
+      {
+        name: `基础问题 (${basicCount})`,
+        type: 'bar',
+        data: basicData,
+        barWidth: '50%',
+        itemStyle: { color: '#6366f1', borderRadius: [4, 4, 0, 0] }
+      },
+      {
+        name: `高阶问题 (${advancedCount})`,
+        type: 'bar',
+        data: advancedData,
+        barWidth: '50%',
+        itemStyle: { color: '#f59e0b', borderRadius: [4, 4, 0, 0] }
+      }
+    ]
   };
 
   charts.bloomChart.setOption(option);

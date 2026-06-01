@@ -565,7 +565,12 @@
                     </div>
                     <p class="text-sm text-gray-300 leading-relaxed">本节课的问题链围绕张若虚的《春江花月夜》展开，通过分析诗歌中的意象、情感和哲理，引导学生深入理解诗歌内涵。问题链从意象分析到情感体验，再到哲理探讨，逻辑清晰，层层递进。教师通过提问激发学生的形象思维和辩证思维，问题集中包含复杂情境，问题类型多为收敛型和提高型，有助于学生逐步深入理解诗歌。<span class="text-blue-400">建议教师在后续教学中可以增加一些实际应用情境，以增强学生的应用思维和创新思维。</span></p>
                   </div>
-                  <div id="questionChainFlow" class="w-full" style="height: 280px;"></div>
+
+                  <!-- 操作区：问题链详情 -->
+                  <div class="flex items-center justify-end mb-3 -mt-2">
+                    <button onclick="showQuestionChainDetailModal()" class="px-3 py-1 text-xs bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/40 rounded-md transition-colors">问题链详情</button>
+                  </div>
+                  <div id="questionChainFlow" class="w-full" style="height: 360px;"></div>
                 </div>
               </div>
             </div>
@@ -1016,10 +1021,47 @@
               <th class="px-4 py-3 w-20 font-medium">4MAT</th>
               <th class="px-4 py-3 w-20 font-medium">布鲁姆</th>
               <th class="px-4 py-3 w-24 font-medium">学生应答</th>
-应              <th class="px-4 py-3 w-28 font-medium">教师反馈</th>
+              <th class="px-4 py-3 w-28 font-medium">教师反馈</th>
             </tr>
           </thead>
           <tbody id="questionDetailBody"></tbody>
+        </table>
+      </div>
+      <!-- 底部 -->
+      <div class="flex-shrink-0 px-6 py-3 bg-gray-800/95 border-t border-gray-700">
+        <p class="text-xs text-gray-500">由AI生成 · 仅供参考</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 问题链详情模态框 -->
+  <div id="questionChainDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeQuestionChainDetail()"></div>
+    <div class="relative w-full max-w-[1400px] mx-auto my-4 bg-gray-900 rounded-xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col" style="height: 850px;">
+      <!-- 头部 -->
+      <div class="flex-shrink-0 flex items-center justify-between px-6 py-4 bg-gray-800/95 border-b border-gray-700">
+        <h3 class="text-lg font-semibold text-white">问题链详情</h3>
+        <button onclick="closeQuestionChainDetail()" class="p-1 hover:bg-gray-700 rounded-md transition-colors">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <!-- 表格内容 -->
+      <div class="flex-1 overflow-y-auto min-h-0">
+        <table class="w-full text-sm">
+          <thead class="sticky top-0 bg-gray-800 z-10">
+            <tr class="text-left text-gray-400 text-xs">
+              <th class="px-4 py-3 w-14 font-medium">顺序</th>
+              <th class="px-4 py-3 w-32 font-medium">问题链</th>
+              <th class="px-4 py-3 w-64 font-medium">核心问题</th>
+              <th class="px-4 py-3 w-64 font-medium">学科思维体现</th>
+              <th class="px-4 py-3 w-52 font-medium">情境体现</th>
+              <th class="px-4 py-3 w-52 font-medium">问题集类型</th>
+              <th class="px-4 py-3 font-medium">关联问题集</th>
+            </tr>
+          </thead>
+          <tbody id="questionChainDetailBody"></tbody>
         </table>
       </div>
       <!-- 底部 -->
@@ -1048,4 +1090,5 @@
     </div>
   </div>
 </body>
+<script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
 </html>
