@@ -6,7 +6,7 @@
       "a": null,
       "f": null,
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "理解",
         "open_closed": "开放性",
         "feedback_type": "none"
@@ -18,8 +18,8 @@
       "a": null,
       "f": null,
       "labels": {
-        "mat4": "what",
-        "bloom": "记忆",
+        "mat4": "为何",
+        "bloom": "理解",
         "open_closed": "封闭性",
         "feedback_type": "none"
       }
@@ -30,8 +30,8 @@
       "a": null,
       "f": null,
       "labels": {
-        "mat4": "why",
-        "bloom": "理解",
+        "mat4": "为何",
+        "bloom": "分析",
         "open_closed": "开放性",
         "feedback_type": "none"
       }
@@ -42,7 +42,7 @@
       "a": "游子。",
       "f": null,
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "记忆",
         "open_closed": "封闭性",
         "feedback_type": "none"
@@ -54,7 +54,7 @@
       "a": "老家老家的游子坐在小船上漂流，什么地方有人在月光照耀下的格外的相思。",
       "f": "嗯，很好，请坐。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "理解",
         "open_closed": "开放性",
         "feedback_type": "评价性"
@@ -66,9 +66,9 @@
       "a": "过渡。",
       "f": "承上启下，很好。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "分析",
-        "open_closed": "开放性",
+        "open_closed": "封闭性",
         "feedback_type": "评价性"
       }
     },
@@ -78,8 +78,8 @@
       "a": null,
       "f": "都徘徊，都为他而徘徊，为，都在这个怜惜他，感到这个不舍不忍离去。",
       "labels": {
-        "mat4": "why",
-        "bloom": "理解",
+        "mat4": "为何",
+        "bloom": "分析",
         "open_closed": "开放性",
         "feedback_type": "指导性"
       }
@@ -90,7 +90,7 @@
       "a": null,
       "f": "啊，很好，都是女子闺中的东西。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "分析",
         "open_closed": "开放性",
         "feedback_type": "评价性"
@@ -102,8 +102,8 @@
       "a": null,
       "f": "也会幻想着突然这个游子就掀开了门帘回到了家中啊。",
       "labels": {
-        "mat4": "why",
-        "bloom": "理解",
+        "mat4": "为何",
+        "bloom": "分析",
         "open_closed": "开放性",
         "feedback_type": "指导性"
       }
@@ -114,7 +114,7 @@
       "a": null,
       "f": "捣衣是这个制作衣服，就比如她们这个古代要用这个麻的东西。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "记忆",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
@@ -126,8 +126,8 @@
       "a": null,
       "f": "还是他的愁思，他的这种相思之苦。",
       "labels": {
-        "mat4": "what",
-        "bloom": "理解",
+        "mat4": "是何",
+        "bloom": "分析",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
       }
@@ -138,7 +138,7 @@
       "a": "如果你用一个字，悲伤。",
       "f": "啊，可以，惆怅对不对？",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "评价",
         "open_closed": "开放性",
         "feedback_type": "评价性"
@@ -150,7 +150,7 @@
       "a": null,
       "f": "愿逐月华流照君。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "理解",
         "open_closed": "开放性",
         "feedback_type": "指导性"
@@ -162,7 +162,7 @@
       "a": "不能。",
       "f": "月光无垠，鸿雁长飞，怎么飞都飞不出月光。",
       "labels": {
-        "mat4": "what",
+        "mat4": "若何",
         "bloom": "理解",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
@@ -174,7 +174,7 @@
       "a": null,
       "f": "师父师父师父怎么样？思念远方的游子，思念这个离人。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "记忆",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
@@ -186,7 +186,7 @@
       "a": "动。",
       "f": "很好，是动的。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "理解",
         "open_closed": "封闭性",
         "feedback_type": "评价性"
@@ -198,7 +198,7 @@
       "a": "昨夜闲谈，昨天夜里的闲谈，梦到了落花。",
       "f": "闲谈能梦到落花吗？谁梦？",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "评价",
         "open_closed": "开放性",
         "feedback_type": "指导性"
@@ -210,7 +210,7 @@
       "a": "东临碣石，以观沧海。",
       "f": null,
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "记忆",
         "open_closed": "封闭性",
         "feedback_type": "none"
@@ -222,8 +222,8 @@
       "a": "不是。",
       "f": "不是完全的绝望，因为还有路。",
       "labels": {
-        "mat4": "what",
-        "bloom": "理解",
+        "mat4": "是何",
+        "bloom": "评价",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
       }
@@ -234,8 +234,8 @@
       "a": null,
       "f": "相思相思相思之情，这是游子和思妇的。",
       "labels": {
-        "mat4": "what",
-        "bloom": "理解",
+        "mat4": "是何",
+        "bloom": "分析",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
       }
@@ -246,7 +246,7 @@
       "a": "游子。",
       "f": "游子做了什么？游子啊，想回家，想去见自己心爱的人。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "记忆",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
@@ -258,7 +258,7 @@
       "a": "先前我们讲到了有运用了动静结合，还有虚实结合，因为是梦。",
       "f": "虚实结合，很好。",
       "labels": {
-        "mat4": "how",
+        "mat4": "如何",
         "bloom": "分析",
         "open_closed": "开放性",
         "feedback_type": "评价性"
@@ -270,7 +270,7 @@
       "a": "无限路，他说游子与思妇之间天各一方，表达出他们之间相思之情的浓厚。",
       "f": "哇，很好，说得很好。",
       "labels": {
-        "mat4": "what",
+        "mat4": "是何",
         "bloom": "分析",
         "open_closed": "封闭性",
         "feedback_type": "评价性"
@@ -282,7 +282,7 @@
       "a": "以景结情。",
       "f": "以景结情，很好，最终用一个景来结束了这首诗。",
       "labels": {
-        "mat4": "what",
+        "mat4": "如何",
         "bloom": "分析",
         "open_closed": "封闭性",
         "feedback_type": "评价性"
@@ -294,8 +294,8 @@
       "a": null,
       "f": "叫意象，用一系列意象，这个把情寄托在了景上。",
       "labels": {
-        "mat4": "what",
-        "bloom": "记忆",
+        "mat4": "是何",
+        "bloom": "理解",
         "open_closed": "封闭性",
         "feedback_type": "指导性"
       }

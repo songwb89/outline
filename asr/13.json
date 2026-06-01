@@ -1,0 +1,34 @@
+{
+    "feedback_examples": [
+      {
+        "start_ms": 0,
+        "f": "以景结情，很好，最终用一个景来结束了这首诗。",
+        "feedback_type": "评价性"
+      },
+      {
+        "start_ms": 0,
+        "f": "叫意象，用一系列意象，这个把情寄托在了景上。",
+        "feedback_type": "指导性"
+      },
+      {
+        "start_ms": 0,
+        "f": "哇，很好，说得很好。",
+        "feedback_type": "评价性"
+      },
+      {
+        "start_ms": 0,
+        "f": "不是完全的绝望，因为还有路。",
+        "feedback_type": "指导性"
+      },
+      {
+        "start_ms": 0,
+        "f": "虚实结合，很好。",
+        "feedback_type": "评价性"
+      },
+      {
+        "start_ms": 0,
+        "f": "月光无垠，鸿雁长飞，怎么飞都飞不出月光。",
+        "feedback_type": "指导性"
+      }
+    ]
+  }

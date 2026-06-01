@@ -1,0 +1,39 @@
+{
+  "total_questions": 25,
+  "answer_presence": [
+    {
+      "label": "有回答",
+      "count": 14
+    },
+    {
+      "label": "无回答",
+      "count": 11
+    }
+  ],
+  "answer_length_bins": [
+    {
+      "label": "0-5",
+      "count": 5
+    },
+    {
+      "label": "6-10",
+      "count": 1
+    },
+    {
+      "label": "11-15",
+      "count": 0
+    },
+    {
+      "label": "16-20",
+      "count": 1
+    },
+    {
+      "label": "21-30",
+      "count": 1
+    },
+    {
+      "label": "31+",
+      "count": 6
+    }
+  ]
+}
