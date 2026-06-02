@@ -784,7 +784,7 @@ const MockData = {
           matchDesc: '完全匹配：教学设计中的导入环节与实际教学环节完全一致，包括背诵诗歌、开场问候与回顾旧知，引出本节课学习重点',
           executions: [
             { name: '课程开场与旧知回顾', rate: 95 },
-            { name: '新课导入', rate: 95 },
+            { name: '新课导入', rate: 0 },
             { name: '文本深入分析', rate: 0 },
             { name: '课程总结与巩固提升', rate: 0 }
           ]
@@ -798,21 +798,21 @@ const MockData = {
           executions: [
             { name: '课程开场与旧知回顾', rate: 0 },
             { name: '新课导入', rate: 85 },
-            { name: '文本深入分析', rate: 85 },
+            { name: '文本深入分析', rate: 0 },
             { name: '课程总结与巩固提升', rate: 0 }
           ]
         },
         {
           phase: '课堂小结',
           planned: '归纳要点',
-          actual: '布置作业',
-          matchRate: 75,
-          matchDesc: '部分匹配：教学设计中的课堂小结环节在实际教学中有所体现，但实际教学中的总结更为详细，包括月下之景、月下之理和月下之情的总结，以及四幅图的内容',
+          actual: '—',
+          matchRate: 0,
+          matchDesc: '',
           executions: [
             { name: '课程开场与旧知回顾', rate: 0 },
             { name: '新课导入', rate: 0 },
             { name: '文本深入分析', rate: 0 },
-            { name: '课程总结与巩固提升', rate: 75 }
+            { name: '课程总结与巩固提升', rate: 0 }
           ]
         },
         {
