@@ -69,7 +69,10 @@ function initializeApp() {
   lucide.createIcons();
 
   // 设置导出按钮事件
-  document.getElementById('exportMindMap').addEventListener('click', exportMindMapAsImage);
+  const exportMindMapBtn = document.getElementById('exportMindMap');
+  if (exportMindMapBtn) {
+    exportMindMapBtn.addEventListener('click', exportMindMapAsImage);
+  }
 
   // 初始化策略Tab样式
   updateStrategyTabStyles();
