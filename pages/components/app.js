@@ -77,13 +77,33 @@ function initializeApp() {
   // 初始化策略Tab样式
   updateStrategyTabStyles();
 
+  // 根据媒体类型初始化悬浮播放器
+  mediaType = getMediaTypeFromURL();
+
   // 加载各模块数据
   loadTeachingStructure();
   loadTeachingBehavior();
   loadTeachingStrategy();
 
-  // 初始化悬浮音频播放器
-  initFloatingPlayer('data/kt4ys.mp3', '课堂教学录音');
+  if (mediaType === 'video') {
+    initFloatingVideoPlayer('data/6 Unit 1 My Name 39 s Gina P2.mp4', '课堂教学录像');
+  } else {
+    initFloatingPlayer('data/kt4ys.mp3', '课堂教学录音');
+  }
+  window.showFloatingMedia = function() {
+    if (mediaType === 'video') {
+      showFloatingVideoPlayer();
+    } else {
+      showFloatingPlayer();
+    }
+  };
+  window.hideFloatingMedia = function() {
+    if (mediaType === 'video') {
+      hideFloatingVideoPlayer();
+    } else {
+      hideFloatingPlayer();
+    }
+  };
 
   // 延迟渲染图表（等页面渲染完成后）
   setTimeout(() => {
@@ -217,7 +237,7 @@ function loadPhases() {
         </div>
         <!-- 环节名称 (可点击播放) -->
         <div class="flex items-center gap-2 flex-1 min-w-0 cursor-pointer group rounded px-1 -mx-1"
-             onclick="event.stopPropagation(); showFloatingPlayer()">
+             onclick="event.stopPropagation(); showFloatingMedia()">
           <span class="text-sm text-gray-400 group-hover:text-blue-400 truncate transition-colors" title="${item.name}">${item.name}</span>
           <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-400 flex-shrink-0 transition-colors" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
@@ -247,12 +267,6 @@ function loadPhases() {
       <div class="phase-content ${isFirstExpanded ? '' : 'hidden'} border-t border-gray-700/50">
         ${hasSubPhases ? `
           <div class="p-3 bg-gray-800/50">
-            <div class="text-xs text-gray-500 mb-2 flex items-center gap-2">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
-              </svg>
-              子环节详情
-            </div>
             <div class="space-y-2">
               ${subPhases.map((sub, subIdx) => `
                 <div class="flex items-start gap-3 text-xs">
@@ -260,10 +274,11 @@ function loadPhases() {
                     ${subIdx + 1}
                   </div>
                   <div class="flex-1">
-                    <div class="text-gray-300 cursor-pointer hover:text-blue-400 transition-colors" onclick="showFloatingPlayer()">${sub.name}</div>
-                    <div class="text-gray-500 mt-0.5">${sub.timeRange} · ${sub.content}</div>
+                    <span class="text-gray-300">${sub.name}</span>
+                    <span class="text-gray-500">（${sub.timeRange}）</span>
                   </div>
                 </div>
+                <div class="text-xs text-gray-500 pl-7 mb-1">${sub.content}</div>
               `).join('')}
             </div>
           </div>
@@ -2190,6 +2205,26 @@ function createHighlightCard(item) {
     </div>
   `).join('');
 
+  const previewMedia = mediaType === 'video'
+    ? `
+      <img
+        src="./data/ScreenShot_2026-06-04_115223_651.png"
+        alt="课堂片段预览"
+        class="w-full h-full object-cover rounded-lg"
+      />
+    `
+    : `
+      <div class="flex flex-col items-center justify-center gap-2 w-[170px] h-[100px] bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-lg flex-shrink-0 group-hover:from-blue-500/30 group-hover:to-indigo-500/30 transition-all">
+        <svg class="w-14 h-14 text-blue-400 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <rect x="1" y="9" width="3" height="6" rx="1.5"/>
+          <rect x="6" y="5" width="3" height="14" rx="1.5"/>
+          <rect x="11" y="2" width="3" height="20" rx="1.5"/>
+          <rect x="16" y="5" width="3" height="14" rx="1.5"/>
+          <rect x="21" y="9" width="3" height="6" rx="1.5"/>
+        </svg>
+      </div>
+    `;
+
   return `
     <div class="card rounded-xl overflow-hidden">
       <div class="grid grid-cols-12 divide-x divide-gray-700/50">
@@ -2199,19 +2234,13 @@ function createHighlightCard(item) {
             ${String(item.id).padStart(2, '0')}
           </span>
           <div class="flex items-start gap-3 mb-4 group">
-            <div class="flex flex-col items-center justify-center gap-2 w-[170px] h-[100px] bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-lg flex-shrink-0 group-hover:from-blue-500/30 group-hover:to-indigo-500/30 transition-all">
-              <svg class="w-14 h-14 text-blue-400 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                <rect x="1" y="9" width="3" height="6" rx="1.5"/>
-                <rect x="6" y="5" width="3" height="14" rx="1.5"/>
-                <rect x="11" y="2" width="3" height="20" rx="1.5"/>
-                <rect x="16" y="5" width="3" height="14" rx="1.5"/>
-                <rect x="21" y="9" width="3" height="6" rx="1.5"/>
-              </svg>
+            <div class="w-[170px] h-[100px] border border-blue-500/30 rounded-lg flex-shrink-0 overflow-hidden bg-gradient-to-r from-blue-500/20 to-indigo-500/20 group-hover:from-blue-500/30 group-hover:to-indigo-500/30 transition-all">
+              ${previewMedia}
             </div>
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <h3 onclick="showFloatingPlayer()" class="font-medium text-white leading-tight cursor-pointer group-hover:text-blue-400 transition-colors">${item.title}</h3>
-                <svg onclick="showFloatingPlayer()" class="w-4 h-4 text-gray-400 group-hover:text-blue-400 flex-shrink-0 transition-colors cursor-pointer" fill="currentColor" viewBox="0 0 24 24">
+                <h3 onclick="showFloatingMedia()" class="font-medium text-white leading-tight cursor-pointer group-hover:text-blue-400 transition-colors">${item.title}</h3>
+                <svg onclick="showFloatingMedia()" class="w-4 h-4 text-gray-400 group-hover:text-blue-400 flex-shrink-0 transition-colors cursor-pointer" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
@@ -2458,9 +2487,6 @@ function loadContentOrganization() {
       <div class="flex items-center gap-2 mb-4">
         <span class="text-xs text-gray-500 font-mono">${String(index + 1).padStart(2, '0')}</span>
         <h3 class="text-base font-medium text-white group-hover:text-blue-400 transition-colors cursor-pointer">${point.name}</h3>
-        <svg onclick="event.stopPropagation(); showFloatingPlayer()" class="w-4 h-4 text-gray-400 group-hover:text-blue-400 flex-shrink-0 transition-colors cursor-pointer ml-1" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
       </div>
       
       <!-- 内涵 -->
@@ -2562,6 +2588,8 @@ function showModal(modalId) {
 }
 
 function closeModal() {
+  const audio = document.getElementById('knowledgeAudio');
+  if (audio) { audio.pause(); audio.currentTime = 0; }
   const modal = document.getElementById('customModal');
   modal.classList.add('hidden');
 }
@@ -2660,6 +2688,11 @@ function showKnowledgeDetail(id) {
 
   const modal = document.getElementById('customModal');
   document.getElementById('modalTitle').textContent = point.name;
+
+  // 获取音频路径（根据媒体类型）
+  const urlParams = new URLSearchParams(window.location.search);
+  const audioSrc = urlParams.get('audio') || 'data/kt4ys.mp3';
+
   document.getElementById('modalContent').innerHTML = `
     <div class="space-y-4">
       <div class="bg-gray-700/50 rounded-lg p-4">
@@ -2680,7 +2713,7 @@ function showKnowledgeDetail(id) {
         <h4 class="text-sm text-gray-400 mb-2 flex items-center gap-2">
           <i data-lucide="settings" class="w-4 h-4"></i> 教学方法
         </h4>
-        <p class="text-gray-300">${detail.methods.join('、')}</p>
+          <p class="text-gray-300">${Array.isArray(detail.methods) ? detail.methods.join('、') : detail.methods}</p>
       </div>
       <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
         <h4 class="text-sm text-amber-400 mb-2 flex items-center gap-2">
@@ -2693,16 +2726,17 @@ function showKnowledgeDetail(id) {
           <i data-lucide="volume-2" class="w-4 h-4"></i> 知识点实录
         </h4>
         <div class="bg-gray-800 rounded-lg p-4">
+          <audio id="knowledgeAudio" src="${audioSrc}"></audio>
           <div class="flex items-center gap-4">
-            <button class="p-2 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
-              <i data-lucide="play" class="w-5 h-5"></i>
+            <button id="knowledgePlayBtn" onclick="toggleKnowledgeAudio()" class="p-2 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors flex-shrink-0">
+              <i data-lucide="play" class="w-5 h-5" id="knowledgePlayIcon"></i>
             </button>
             <div class="flex-1">
-              <div class="h-2 bg-gray-600 rounded-full overflow-hidden">
-                <div class="h-full bg-blue-500 rounded-full" style="width: 49%"></div>
+              <div id="knowledgeProgressTrack" class="h-2 bg-gray-600 rounded-full overflow-hidden cursor-pointer" onclick="seekKnowledgeAudio(event)">
+                <div id="knowledgeProgressFill" class="h-full bg-blue-500 rounded-full transition-all" style="width: 0%"></div>
               </div>
               <div class="flex justify-between text-xs text-gray-400 mt-1">
-                <span>${detail.audioTime.current}</span>
+                <span id="knowledgeCurrentTime">0:00</span>
                 <span>${detail.audioTime.total}</span>
               </div>
             </div>
@@ -2711,8 +2745,56 @@ function showKnowledgeDetail(id) {
       </div>
     </div>
   `;
+
+  const audio = document.getElementById('knowledgeAudio');
+  audio.addEventListener('timeupdate', () => {
+    const pct = (audio.currentTime / audio.duration) * 100 || 0;
+    document.getElementById('knowledgeProgressFill').style.width = pct + '%';
+    document.getElementById('knowledgeCurrentTime').textContent = formatTime(audio.currentTime);
+  });
+  audio.addEventListener('loadedmetadata', () => {
+    // 解析 timeRange 开始时间（如 "20'5\"" -> 秒数）
+    const startSec = parseTimeRange(point.timeRange);
+    if (startSec > 0 && startSec < audio.duration) {
+      audio.currentTime = startSec;
+    }
+  });
+
   modal.classList.remove('hidden');
   lucide.createIcons();
+}
+
+function toggleKnowledgeAudio() {
+  const audio = document.getElementById('knowledgeAudio');
+  const icon = document.getElementById('knowledgePlayIcon');
+  if (!audio) return;
+    if (audio.paused) {
+      audio.play();
+      setIconSvg(icon, 'pause');
+    } else {
+      audio.pause();
+      setIconSvg(icon, 'play');
+    }
+  lucide.createIcons();
+}
+
+function seekKnowledgeAudio(event) {
+  const audio = document.getElementById('knowledgeAudio');
+  const track = document.getElementById('knowledgeProgressTrack');
+  if (!audio || !track) return;
+  const rect = track.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+  audio.currentTime = pct * audio.duration;
+}
+
+function parseTimeRange(range) {
+  // 解析 "20'5\"-20'30\"" 或 "13'35\"-16:39\"" 格式，返回开始秒数
+  if (!range) return 0;
+  const match = range.match(/(\d+)'(\d+)[\\"]/);
+  if (match) {
+    return parseInt(match[1]) * 60 + parseInt(match[2]);
+  }
+  return 0;
 }
 
 // 点击模态框外部关闭
@@ -2817,8 +2899,20 @@ function closeDocPreview() {
 // ============================================
 let isRecordView = false;
 let mainAudioPlayer = null;
+let mainVideoPlayer = null;
+let mediaType = 'audio'; // 'audio' or 'video'
+
+// 从URL参数获取媒体类型
+function getMediaTypeFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('type') || 'audio';
+}
 
 function toggleView() {
+  if (isRecordView && document.fullscreenElement) {
+    document.exitFullscreen();
+  }
+
   isRecordView = !isRecordView;
   const recordView = document.getElementById('recordView');
   const analysisView = document.getElementById('analysisView');
@@ -2835,26 +2929,62 @@ function toggleView() {
     recordView.classList.add('hidden');
     analysisView.classList.remove('hidden');
     document.body.classList.remove('overflow-hidden');
-    btn.innerHTML = '<i data-lucide="file-text" class="w-4 h-4"></i><span>课堂实录</span>';
+    const viewText = mediaType === 'video' ? '课堂录像' : '课堂录音';
+    const viewIcon = mediaType === 'video' ? 'video' : 'audio-lines';
+    btn.innerHTML = `<i data-lucide="${viewIcon}" class="w-4 h-4"></i><span>${viewText}</span>`;
     lucide.createIcons();
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        Object.values(charts).forEach(chart => {
+          if (chart && chart.resize) chart.resize();
+        });
+      }, 50);
+    });
   }
 }
 
 function initRecordView() {
-  initMainAudioPlayer();
+  // 根据媒体类型显示对应的播放器
+  const audioCard = document.getElementById('audioPlayerCard');
+  const videoCard = document.getElementById('videoPlayerCard');
+  const audioTitle = document.getElementById('recordViewAudioTitle');
+  const videoTitle = document.getElementById('recordViewVideoTitle');
+  if (mediaType === 'video') {
+    audioCard.classList.add('hidden');
+    videoCard.classList.remove('hidden');
+    if (audioTitle) audioTitle.classList.add('hidden');
+    if (videoTitle) videoTitle.classList.remove('hidden');
+    initMainVideoPlayer();
+  } else {
+    audioCard.classList.remove('hidden');
+    videoCard.classList.add('hidden');
+    if (audioTitle) audioTitle.classList.remove('hidden');
+    if (videoTitle) videoTitle.classList.add('hidden');
+    initMainAudioPlayer();
+  }
   renderMindmap();
   renderTranscript();
 }
 
 function initMainAudioPlayer() {
   const audio = document.getElementById('mainAudio');
-  const playBtn = document.querySelector('#recordView .w-12');
+  if (!audio) return;
+
+  // 根据媒体类型动态设置音频源（悬浮播放器使用独立组件，此处仅处理内嵌音频）
+  const urlParams = new URLSearchParams(window.location.search);
+  const audioSrc = urlParams.get('audio') || 'data/kt4ys.mp3';
+  if (!audio.src || audio.src === window.location.origin + window.location.pathname) {
+    audio.src = audioSrc;
+  }
+
+  const playBtn = document.querySelector('#audioPlayerCard .w-12');
   const playIcon = document.getElementById('mainPlayIcon');
   const progressBar = document.getElementById('progressBar');
   const currentTimeEl = document.getElementById('currentTime');
   const totalTimeEl = document.getElementById('totalTime');
 
-  if (!audio || mainAudioPlayer) return;
+  // 避免重复初始化
+  if (mainAudioPlayer === audio) return;
   mainAudioPlayer = audio;
 
   audio.addEventListener('loadedmetadata', () => {
@@ -2868,19 +2998,17 @@ function initMainAudioPlayer() {
   });
 
   audio.addEventListener('ended', () => {
-    playIcon.setAttribute('data-lucide', 'play');
-    lucide.createIcons();
+    setIconSvg(playIcon, 'play');
   });
 
   playBtn.addEventListener('click', () => {
     if (audio.paused) {
       audio.play();
-      playIcon.setAttribute('data-lucide', 'pause');
+      setIconSvg(playIcon, 'pause');
     } else {
       audio.pause();
-      playIcon.setAttribute('data-lucide', 'play');
+      setIconSvg(playIcon, 'play');
     }
-    lucide.createIcons();
   });
 
   // 点击进度条跳转
@@ -2890,6 +3018,147 @@ function initMainAudioPlayer() {
     audio.currentTime = percent * audio.duration;
   });
 }
+
+function initMainVideoPlayer() {
+  const video = document.getElementById('mainVideo');
+  if (!video) return;
+
+  // 避免重复初始化
+  if (mainVideoPlayer === video) return;
+  mainVideoPlayer = video;
+
+  // 设置视频源
+  const videoSrc = 'data/6 Unit 1 My Name 39 s Gina P2.mp4';
+  video.src = videoSrc;
+
+  const playIcon = document.getElementById('mainVideoPlayIcon');
+  const playIcon2 = document.getElementById('mainVideoPlayIcon2');
+  const overlay = document.getElementById('videoOverlay');
+  const progressFill = document.getElementById('videoProgressFill');
+  const currentTimeEl = document.getElementById('videoCurrentTime');
+  const totalTimeEl = document.getElementById('videoTotalTime');
+
+  video.addEventListener('loadedmetadata', () => {
+    totalTimeEl.textContent = formatTime(video.duration);
+  });
+
+  video.addEventListener('timeupdate', () => {
+    const progress = (video.currentTime / video.duration) * 100;
+    progressFill.style.width = progress + '%';
+    currentTimeEl.textContent = formatTime(video.currentTime);
+  });
+
+  video.addEventListener('ended', () => {
+    setIconSvg(playIcon, 'play');
+    setIconSvg(playIcon2, 'play');
+    overlay.classList.remove('hidden');
+  });
+
+  video.addEventListener('play', () => {
+    setIconSvg(playIcon, 'pause');
+    setIconSvg(playIcon2, 'pause');
+    overlay.classList.add('hidden');
+  });
+
+  video.addEventListener('pause', () => {
+    setIconSvg(playIcon, 'play');
+    setIconSvg(playIcon2, 'play');
+    overlay.classList.remove('hidden');
+  });
+}
+
+function setIconSvg(el, name) {
+  if (!el) return;
+  const paths = el.querySelectorAll('path');
+  const icon = lucide.icons ? lucide.icons[name] : null;
+  if (icon && paths.length > 0 && icon[0] && icon[0].d) {
+    paths[0].setAttribute('d', icon[0].d);
+  } else {
+    el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${name === 'play' ? 'M5 3l14 9-14 9V3z' : 'M6 4h4v16H6zM14 4h4v16h-4z'}"></path></svg>`;
+  }
+}
+
+function toggleVideoPlay() {
+  const video = document.getElementById('mainVideo');
+  if (!video) return;
+
+  if (video.paused) {
+    video.play();
+  } else {
+    video.pause();
+  }
+}
+
+function seekVideo(event) {
+  const video = document.getElementById('mainVideo');
+  const track = document.getElementById('videoProgressTrack');
+  if (!video || !track) return;
+
+  const rect = track.getBoundingClientRect();
+  const percent = (event.clientX - rect.left) / rect.width;
+  video.currentTime = percent * video.duration;
+}
+
+function toggleVideoFullscreen() {
+  const videoWrap = document.querySelector('#videoPlayerCard .relative.rounded-lg');
+  if (!videoWrap) return;
+  if (!document.fullscreenElement) {
+    videoWrap.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function toggleMindmapFullscreen() {
+  const container = document.getElementById('jsmind_container');
+  if (!container) return;
+  if (!document.fullscreenElement) {
+    container.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  const isFs = !!document.fullscreenElement;
+
+  // 图标切换
+  document.querySelectorAll('[data-fullscreen-toggle]').forEach(btn => {
+    const icon = btn.querySelector('i');
+    setIconSvg(icon, isFs ? 'minimize' : 'maximize');
+  });
+
+  // 视频恢复样式
+  const video = document.getElementById('mainVideo');
+  if (video) {
+    if (isFs) {
+      video.style.maxHeight = '100vh';
+      video.style.objectFit = 'contain';
+    } else {
+      video.style.maxHeight = '340px';
+      video.style.objectFit = '';
+    }
+  }
+
+  // 思维导图恢复样式
+  const container = document.getElementById('jsmind_container');
+  if (container) {
+    container.style.maxHeight = isFs ? '100vh' : '';
+  }
+
+  if (jsMindInstance) {
+    setTimeout(() => {
+      autoFitMindmap();
+    }, 120);
+  }
+
+  // 全屏变化后需要重绘所有图表
+  setTimeout(() => {
+    Object.values(charts).forEach(chart => {
+      if (chart && chart.resize) chart.resize();
+    });
+  }, 100);
+});
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -3001,39 +3270,65 @@ function initMindmapMouseWheel() {
   }, { passive: false });
 }
 
-// 自动缩放以适应容器
+// 自动缩放以适应容器并居中
 function autoFitMindmap() {
   if (!jsMindInstance) return;
 
   const container = document.getElementById('jsmind_container');
   if (!container) return;
 
+  const jmnodes = container.querySelector('jmnodes');
+  const canvas = container.querySelector('canvas');
+  if (!jmnodes || !canvas) return;
+
   const containerWidth = container.clientWidth;
   const containerHeight = container.clientHeight;
+  if (!containerWidth || !containerHeight) return;
 
-  // 获取思维导图的尺寸
-  const viewSize = jsMindInstance.view.size;
-  if (!viewSize) return;
+  const nodeBounds = jmnodes.getBoundingClientRect();
+  const containerBounds = container.getBoundingClientRect();
+  const padding = document.fullscreenElement === container ? 64 : 32;
 
-  const mindWidth = viewSize.w;
-  const mindHeight = viewSize.h;
+  const contentWidth = nodeBounds.width;
+  const contentHeight = nodeBounds.height;
+  if (!contentWidth || !contentHeight) return;
 
-  // 计算缩放比例，确保完整显示
-  const scaleX = (containerWidth - 40) / mindWidth;
-  const scaleY = (containerHeight - 40) / mindHeight;
-  const targetScale = Math.min(scaleX, scaleY, 1);
+  const scaleX = (containerWidth - padding) / contentWidth;
+  const scaleY = (containerHeight - padding) / contentHeight;
+  const maxScale = document.fullscreenElement === container ? 2.2 : 1;
+  const minScale = 0.5;
+  const targetScale = Math.max(minScale, Math.min(scaleX, scaleY, maxScale));
 
-  // 获取当前缩放值
-  const currentScale = jsMindInstance.view._zoom || 1;
-
-  // 如果需要缩小，多次调用 zoom_out
-  if (targetScale < currentScale && targetScale > 0.1) {
-    const diff = currentScale - targetScale;
-    const steps = Math.ceil(diff / 0.1);
+  if (typeof jsMindInstance.view.set_zoom === 'function') {
+    jsMindInstance.view.set_zoom(targetScale);
+  } else {
+    const currentScale = jsMindInstance.view._zoom || 1;
+    const diff = targetScale - currentScale;
+    const steps = Math.ceil(Math.abs(diff) / 0.1);
     for (let i = 0; i < steps; i++) {
-      jsMindInstance.view.zoom_out();
+      if (diff > 0) {
+        jsMindInstance.view.zoom_in();
+      } else {
+        jsMindInstance.view.zoom_out();
+      }
     }
   }
+
+  requestAnimationFrame(() => {
+    const updatedBounds = jmnodes.getBoundingClientRect();
+    const offsetX = (containerBounds.width - updatedBounds.width) / 2 - (updatedBounds.left - containerBounds.left);
+    const offsetY = (containerBounds.height - updatedBounds.height) / 2 - (updatedBounds.top - containerBounds.top);
+
+    const currentLeft = parseFloat(jmnodes.style.left || '0') || 0;
+    const currentTop = parseFloat(jmnodes.style.top || '0') || 0;
+    const nextLeft = currentLeft + offsetX;
+    const nextTop = currentTop + offsetY;
+
+    jmnodes.style.left = `${nextLeft}px`;
+    jmnodes.style.top = `${nextTop}px`;
+    canvas.style.left = `${nextLeft}px`;
+    canvas.style.top = `${nextTop}px`;
+  });
 }
 
 // 为不同层级节点设置颜色

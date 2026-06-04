@@ -1247,6 +1247,11 @@
             tocList.querySelectorAll('.prd-toc-parent, .prd-toc-child').forEach(el => {
                 el.classList.toggle('active', el.dataset.id === id);
             });
+            // 自动将高亮项滚动到可视区域
+            const activeEl = tocList.querySelector('.prd-toc-parent.active, .prd-toc-child.active');
+            if (activeEl) {
+                activeEl.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+            }
         }
 
         // 默认高亮第一个

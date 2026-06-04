@@ -1,8 +1,8 @@
 {
   "docs": [
-    { "name": "课堂分析", "file": "课堂分析.md" }
+    { "name": "课堂分析", "file": "课堂分析PRD.md" }
   ],
   "pageMapping": {
-    "class-analysis": "课堂分析.md"
+    "class-analysis": "课堂分析PRD.md"
   }
 }

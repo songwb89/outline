@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>《春江花月夜》诗歌鉴赏 - 讯飞AI</title>
+  <script>
+    // 从URL参数获取媒体类型
+    function getMediaTypeFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('type') || 'audio';
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
@@ -20,6 +27,8 @@
         }
       }
     }
+    // 动态获取媒体类型
+    const pageMediaType = new URLSearchParams(window.location.search).get('type') || 'audio';
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -107,6 +116,16 @@
     /* jsMind 深色主题覆盖 - 使用正确的选择器 */
     #jsmind_container {
       background-color: transparent !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #jsmind_container:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      padding: 24px;
+      background: #111827 !important;
     }
     #jsmind_container canvas {
       background-color: transparent !important;
@@ -183,7 +202,7 @@
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-2">
           <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center glow-blue">
-            <i data-lucide="video" class="w-6 h-6 text-white"></i>
+            <i data-lucide="audio-lines" id="headerMediaIcon" class="w-6 h-6 text-white"></i>
           </div>
           <div>
             <h1 class="text-xl font-bold text-white">《春江花月夜》诗歌鉴赏</h1>
@@ -193,24 +212,25 @@
       </div>
     </div>
     <button id="viewToggleBtn" onclick="toggleView()" class="absolute right-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-700/30 hover:bg-gray-600/50 text-gray-400 hover:text-gray-200 rounded-lg text-sm transition-all flex items-center gap-2 border border-gray-600/30 hover:border-gray-500/50">
-      <i data-lucide="play-circle" class="w-4 h-4"></i>
-      <span>课堂实录</span>
+      <i data-lucide="play-circle" id="viewToggleIcon" class="w-4 h-4"></i>
+      <span id="viewToggleText">课堂实录</span>
     </button>
   </header>
 
   <!-- 课堂实录视图 -->
   <div id="recordView" class="hidden p-6 pt-[92px] h-screen overflow-hidden">
     <div class="grid grid-cols-12 gap-6" style="height: calc(100vh - 120px);">
-      <!-- 左侧：音频播放器 + 思维导图 -->
-      <div class="col-span-7 flex flex-col gap-6">
-        <!-- 音频播放器 -->
-        <div class="card rounded-xl p-4">
+      <!-- 左侧：媒体播放器 + 思维导图 -->
+      <div class="col-span-6 flex flex-col gap-6">
+        <!-- 音频播放器（音频模式） -->
+        <div id="audioPlayerCard" class="card rounded-xl p-4 hidden">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
               <i data-lucide="play" class="w-6 h-6 text-white" id="mainPlayIcon"></i>
             </div>
             <div class="flex-1">
-              <h3 class="text-white font-medium">课堂教学录音</h3>
+              <h3 id="recordViewAudioTitle" class="text-white font-medium hidden">课堂教学录音</h3>
+              <h3 id="recordViewVideoTitle" class="text-white font-medium hidden">课堂教学录像</h3>
               <div class="flex items-center gap-4 mt-2">
                 <span id="currentTime" class="text-sm text-gray-400">00:00</span>
                 <div class="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -218,7 +238,41 @@
                 </div>
                 <span id="totalTime" class="text-sm text-gray-400">00:00</span>
               </div>
-              <audio id="mainAudio" src="data/kt4ys.mp3"></audio>
+              <audio id="mainAudio"></audio>
+            </div>
+          </div>
+        </div>
+        <!-- 视频播放器（视频模式） -->
+        <div id="videoPlayerCard" class="card rounded-xl p-4 hidden">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i data-lucide="video" class="w-6 h-6 text-white" id="mainVideoIcon"></i>
+            </div>
+            <div class="flex-1">
+              <h3 id="recordViewVideoTitle" class="text-white font-medium">课堂教学录像</h3>
+            </div>
+          </div>
+          <div class="mt-4 relative rounded-lg overflow-hidden bg-black" style="max-height: 340px;">
+            <video id="mainVideo" class="w-full" style="max-height: 340px; object-fit: contain;"></video>
+            <div id="videoOverlay" class="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer" onclick="toggleVideoPlay()">
+              <div class="w-16 h-16 bg-blue-600/80 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                <i data-lucide="play" class="w-8 h-8 text-white" id="mainVideoPlayIcon"></i>
+              </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
+              <div class="flex items-center gap-3">
+                <button onclick="toggleVideoPlay()" class="p-1.5 hover:bg-white/20 rounded transition-colors">
+                  <i data-lucide="play" class="w-5 h-5 text-white" id="mainVideoPlayIcon2"></i>
+                </button>
+                <span id="videoCurrentTime" class="text-sm text-white/80">00:00</span>
+                <div class="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden cursor-pointer" id="videoProgressTrack" onclick="seekVideo(event)">
+                  <div id="videoProgressFill" class="h-full bg-blue-500 rounded-full" style="width: 0%"></div>
+                </div>
+                <span id="videoTotalTime" class="text-sm text-white/80">00:00</span>
+                <button onclick="toggleVideoFullscreen()" data-fullscreen-toggle class="p-1.5 hover:bg-white/20 rounded transition-colors" title="全屏">
+                  <i data-lucide="maximize" class="w-4 h-4 text-white"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -233,6 +287,9 @@
               <button onclick="zoomOutMindmap()" class="p-1.5 hover:bg-gray-700 rounded-lg transition-colors" title="缩小">
                 <i data-lucide="zoom-out" class="w-4 h-4 text-gray-400"></i>
               </button>
+              <button onclick="toggleMindmapFullscreen()" data-fullscreen-toggle class="p-1.5 hover:bg-gray-700 rounded-lg transition-colors" title="全屏">
+                <i data-lucide="maximize" class="w-4 h-4 text-gray-400"></i>
+              </button>
             </div>
           </div>
           <div id="jsmind_container" class="flex-1 relative">
@@ -241,7 +298,7 @@
         </div>
       </div>
       <!-- 右侧：课堂原文 -->
-      <div class="col-span-5 card rounded-xl p-4 overflow-hidden flex flex-col">
+      <div class="col-span-6 card rounded-xl p-4 overflow-hidden flex flex-col">
         <h3 class="text-white font-medium mb-4">课堂原文</h3>
         <div id="transcriptContainer" class="flex-1 overflow-y-auto space-y-4 scrollbar-thin">
           <!-- 原文内容由JS生成 -->
@@ -980,6 +1037,8 @@
   <script src="https://cdn.jsdelivr.net/npm/docx-preview@0.1.20/dist/docx-preview.min.js"></script>
   <!-- 悬浮音频播放组件 -->
   <script src="components/floating-player.js"></script>
+  <!-- 悬浮视频播放组件 -->
+  <script src="components/floating-video-player.js"></script>
   <script src="components/mock-data.js"></script>
   <script src="components/app.js"></script>
 
@@ -1078,6 +1137,25 @@
       </div>
     </div>
   </div>
+  <!-- 初始化媒体类型相关的UI -->
+  <script>
+    // 根据媒体类型更新 header 图标和按钮
+    if (pageMediaType === 'video') {
+      const icon = document.getElementById('headerMediaIcon');
+      if (icon) { icon.setAttribute('data-lucide', 'video'); lucide.createIcons(); }
+      const toggleIcon = document.getElementById('viewToggleIcon');
+      if (toggleIcon) { toggleIcon.setAttribute('data-lucide', 'video'); lucide.createIcons(); }
+      const toggleText = document.getElementById('viewToggleText');
+      if (toggleText) toggleText.textContent = '课堂录像';
+    } else {
+      const icon = document.getElementById('headerMediaIcon');
+      if (icon) { icon.setAttribute('data-lucide', 'audio-lines'); lucide.createIcons(); }
+      const toggleIcon = document.getElementById('viewToggleIcon');
+      if (toggleIcon) { toggleIcon.setAttribute('data-lucide', 'audio-lines'); lucide.createIcons(); }
+      const toggleText = document.getElementById('viewToggleText');
+      if (toggleText) toggleText.textContent = '课堂录音';
+    }
+  </script>
 </body>
 <script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
 </html>
