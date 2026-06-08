@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兆涵科技 - 智能教学管理平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+
+    * {
+      font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(99, 102, 241, 0.34) 0, transparent 28%),
+        radial-gradient(circle at 82% 22%, rgba(168, 85, 247, 0.22) 0, transparent 24%),
+        radial-gradient(circle at 68% 78%, rgba(59, 130, 246, 0.22) 0, transparent 28%),
+        linear-gradient(145deg, #07111f 0%, #0e1b33 45%, #111936 100%);
+      color: #fff;
+    }
+
+    .glow-orb {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(110px);
+      opacity: 0.38;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 28px 32px;
+    }
+
+    .brand-logo {
+      position: fixed;
+      top: 26px;
+      left: 34px;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo img {
+      display: block;
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.96);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .hero-layout {
+      min-height: calc(100vh - 56px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 48px;
+      align-items: center;
+      padding-right: 420px;
+      padding-top: 32px;
+      padding-bottom: 32px;
+    }
+
+    .hero-visual-wrap {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-visual {
+      position: relative;
+      width: 100%;
+      min-height: min(72vh, 760px);
+      border-radius: 34px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)),
+        rgba(255,255,255,0.03);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.06), transparent 34%),
+        radial-gradient(circle at 18% 24%, rgba(129, 140, 248, 0.24), transparent 24%),
+        radial-gradient(circle at 84% 70%, rgba(56, 189, 248, 0.22), transparent 22%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.18));
+      pointer-events: none;
+    }
+
+    .hero-screen {
+      position: absolute;
+      inset: 7% 6% 9% 6%;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        rgba(5, 10, 22, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .hero-screen::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 56px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-dots {
+      position: absolute;
+      top: 20px;
+      left: 22px;
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .hero-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .hero-lines {
+      position: absolute;
+      inset: 84px 24px 24px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+    }
+
+    .hero-panel,
+    .hero-card,
+    .hero-bar,
+    .hero-chip {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .hero-panel {
+      border-radius: 22px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .hero-bar {
+      height: 14px;
+      border-radius: 9999px;
+    }
+
+    .hero-card-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .hero-card {
+      min-height: 118px;
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: '';
+      position: absolute;
+      inset: auto 14px 14px 14px;
+      height: 10px;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, rgba(129,140,248,0.65), rgba(56,189,248,0.22));
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .hero-stat {
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 148px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-stat::before {
+      content: '';
+      position: absolute;
+      inset: auto -20px -34px auto;
+      width: 130px;
+      height: 130px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(99,102,241,0.42), transparent 72%);
+    }
+
+    .hero-circle {
+      width: 92px;
+      height: 92px;
+      border-radius: 9999px;
+      border: 10px solid rgba(255,255,255,0.06);
+      border-top-color: rgba(129,140,248,0.95);
+      border-right-color: rgba(56,189,248,0.7);
+      margin-bottom: 20px;
+    }
+
+    .hero-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-chip {
+      width: calc(50% - 6px);
+      height: 50px;
+      border-radius: 16px;
+    }
+
+    .login-card {
+      position: fixed;
+      top: 47%;
+      right: 36px;
+      transform: translateY(-50%);
+      width: 380px;
+      max-height: calc(100vh - 80px);
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 28px;
+      box-shadow: 0 24px 70px -16px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255,255,255,0.18);
+      backdrop-filter: blur(20px);
+      z-index: 50;
+      overflow: auto;
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .input-focus {
+      color: #111827;
+      background-color: #ffffff;
+    }
+
+    .input-focus::placeholder {
+      color: #9ca3af;
+    }
+
+    .input-focus:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    }
+
+    .input-error {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12) !important;
+    }
+
+    .field-error {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #dc2626;
+    }
+
+    .toast-stack {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 80;
+      pointer-events: none;
+    }
+
+    .toast {
+      min-width: 280px;
+      max-width: min(420px, calc(100vw - 32px));
+      padding: 14px 16px;
+      border-radius: 16px;
+      color: #fff;
+      box-shadow: 0 18px 40px -18px rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(12px);
+      animation: toastIn 0.25s ease-out;
+    }
+
+    .scene-modal-card {
+      width: min(720px, calc(100vw - 32px));
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 32px 80px -28px rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      overflow: hidden;
+    }
+
+    .scene-option {
+      position: relative;
+      border: 1px solid #e5e7eb;
+      border-radius: 24px;
+      padding: 24px;
+      text-align: left;
+      transition: all 0.25s ease;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .scene-option:hover {
+      transform: translateY(-2px);
+      border-color: #a5b4fc;
+      box-shadow: 0 20px 40px -24px rgba(79, 70, 229, 0.42);
+    }
+
+    .scene-option-primary {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(14, 165, 233, 0.12) 100%);
+    }
+
+    .scene-option-secondary {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+    }
+
+    .toast-success {
+      background: rgba(22, 163, 74, 0.92);
+    }
+
+    .toast-error {
+      background: rgba(220, 38, 38, 0.92);
+    }
+
+    .toast-info {
+      background: rgba(79, 70, 229, 0.92);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      box-shadow: 0 14px 30px -10px rgba(99, 102, 241, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .login-mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 6px;
+      border-radius: 16px;
+      background: #f3f4f6;
+      margin-bottom: 22px;
+    }
+
+    .mode-tab {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: transparent;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .mode-tab.active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 10px 24px -16px rgba(15, 23, 42, 0.45);
+    }
+
+    .login-panel.hidden {
+      display: none;
+    }
+
+    .wechat-qr-shell {
+      padding: 4px 0 0;
+    }
+
+    .wechat-qr-box {
+      width: 196px;
+      height: 196px;
+      margin: 0 auto;
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(99, 102, 241, 0.08)),
+        #ffffff;
+      border: 1px solid #dbeafe;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wechat-qr-grid {
+      width: 146px;
+      height: 146px;
+      background-image:
+        linear-gradient(90deg, rgba(15, 23, 42, 0.9) 8%, transparent 8%),
+        linear-gradient(rgba(15, 23, 42, 0.9) 8%, transparent 8%);
+      background-size: 18px 18px;
+      opacity: 0.14;
+      border-radius: 14px;
+    }
+
+    .wechat-qr-badge {
+      position: absolute;
+      inset: auto 14px 14px auto;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      background: rgba(34, 197, 94, 0.12);
+      color: #16a34a;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .qr-corner {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border: 5px solid #111827;
+      border-radius: 10px;
+    }
+
+    .qr-corner.left-top {
+      top: 20px;
+      left: 20px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .qr-corner.right-top {
+      top: 20px;
+      right: 20px;
+      border-left: none;
+      border-bottom: none;
+    }
+
+    .qr-corner.left-bottom {
+      left: 20px;
+      bottom: 20px;
+      border-right: none;
+      border-top: none;
+    }
+
+    .demo-action {
+      border: 1px dashed #c7d2fe;
+      background: #f8faff;
+      color: #4338ca;
+      transition: all 0.25s ease;
+    }
+
+    .demo-action:hover {
+      background: #eef2ff;
+      border-color: #818cf8;
+      transform: translateY(-1px);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      background: #ecfdf5;
+      color: #047857;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .wechat-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #9ca3af;
+      font-size: 12px;
+      margin: 16px 0;
+    }
+
+    .wechat-divider::before,
+    .wechat-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+
+    .modal-backdrop {
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .slide-up {
+      animation: slideUp 0.6s ease-out forwards;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 1100px) {
+      .brand-logo {
+        position: static;
+        width: fit-content;
+        margin-right: auto;
+        margin-bottom: 24px;
+      }
+
+      .brand-logo img {
+        max-width: 220px;
+        width: 180px;
+      }
+
+      .hero-layout {
+        grid-template-columns: 1fr;
+        padding-right: 0;
+        gap: 28px;
+        min-height: auto;
+      }
+
+      .hero-visual-wrap {
+        order: 2;
+        align-items: center;
+      }
+
+      .hero-visual {
+        min-height: 420px;
+      }
+
+      .login-card {
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        width: 100%;
+        max-width: 420px;
+        margin-left: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-shell {
+        padding: 18px;
+      }
+
+      .brand-logo {
+        margin: 0 0 18px;
+        padding: 10px 14px;
+      }
+
+      .brand-logo img {
+        width: 160px;
+        max-width: 48vw;
+      }
+
+      .hero-layout {
+        gap: 20px;
+      }
+
+      .hero-visual {
+        min-height: 300px;
+        border-radius: 24px;
+      }
+
+      .hero-screen {
+        inset: 8% 5% 8% 5%;
+        border-radius: 20px;
+      }
+
+      .hero-lines {
+        inset: 74px 16px 16px;
+        grid-template-columns: 1fr;
+      }
+
+      .hero-side {
+        display: none;
+      }
+
+      .hero-card-group {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .login-card {
+        max-width: none;
+        border-radius: 24px;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+  <div class="glow-orb w-[520px] h-[520px] bg-indigo-500 -top-28 -left-28"></div>
+  <div class="glow-orb w-[440px] h-[440px] bg-purple-500 top-[12%] right-[8%]"></div>
+  <div class="glow-orb w-[360px] h-[360px] bg-sky-500 bottom-[8%] left-[28%]"></div>
+
+  <div class="page-shell">
+    <div class="brand-logo fade-in">
+      <img src="img/logo.png" alt="兆涵科技 Logo">
+      <span class="brand-logo-text">兆涵科技</span>
+    </div>
+
+    <div class="hero-layout">
+      <div class="hero-visual-wrap slide-up">
+        <div class="hero-visual">
+          <div class="hero-grid"></div>
+          <div class="hero-screen">
+            <div class="hero-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="hero-lines">
+              <div class="hero-panel">
+                <div class="hero-bar w-[42%]"></div>
+                <div class="hero-bar w-[76%]"></div>
+                <div class="hero-bar w-[58%]"></div>
+                <div class="hero-card-group">
+                  <div class="hero-card"></div>
+                  <div class="hero-card"></div>
+                  <div class="hero-card"></div>
+                  <div class="hero-card"></div>
+                </div>
+              </div>
+
+              <div class="hero-side">
+                <div class="hero-stat">
+                  <div class="hero-circle"></div>
+                  <div class="hero-bar w-[70%]"></div>
+                </div>
+                <div class="hero-panel">
+                  <div class="hero-chip-row">
+                    <div class="hero-chip"></div>
+                    <div class="hero-chip"></div>
+                    <div class="hero-chip"></div>
+                    <div class="hero-chip"></div>
+                  </div>
+                  <div class="hero-bar w-full"></div>
+                  <div class="hero-bar w-[82%]"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-card p-7 md:p-8">
+        <div class="login-mode-tabs" role="tablist" aria-label="登录方式切换">
+          <button
+            type="button"
+            class="mode-tab active"
+            id="passwordTab"
+            onclick="switchLoginMode('password')"
+          >
+            密码登录
+          </button>
+          <button
+            type="button"
+            class="mode-tab"
+            id="wechatTab"
+            onclick="switchLoginMode('wechat')"
+          >
+            微信扫码登录
+          </button>
+        </div>
+
+        <div id="passwordPanel" class="login-panel">
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">账号</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                  </span>
+                  <input
+                    type="text"
+                    id="account"
+                    placeholder="请输入账号或手机号"
+                    class="input-focus w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm outline-none transition-all bg-white"
+                  >
+                  <p id="accountError" class="field-error hidden"></p>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">密码</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                  </span>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="请输入密码"
+                    class="input-focus w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl text-sm outline-none transition-all bg-white"
+                  >
+                  <p id="passwordError" class="field-error hidden"></p>
+                  <button
+                    type="button"
+                    onclick="togglePassword()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <i data-lucide="eye" id="eyeIcon" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    id="rememberMe"
+                    class="w-4 h-4 rounded border-gray-300 text-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                  >
+                  <span class="text-sm text-gray-500 group-hover:text-gray-700 transition-colors">记住密码</span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                class="btn-primary w-full py-3 rounded-xl text-white text-sm font-medium mt-2"
+              >
+                登录
+              </button>
+
+              <div class="mt-3">
+                <label class="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="agreeTerms"
+                    class="w-4 h-4 mt-0.5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                    checked
+                  >
+                  <span class="text-xs text-gray-400 leading-relaxed">
+                    已阅读并同意
+                    <a href="#" class="text-indigo-500 hover:underline">《用户服务协议》</a>
+                    与
+                    <a href="#" class="text-indigo-500 hover:underline">《隐私政策》</a>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="wechatPanel" class="login-panel hidden">
+          <div class="wechat-qr-shell text-center">
+            <div class="wechat-qr-box">
+              <img
+                src="img/071f3kQV2ASf100M.jpg"
+                alt="微信扫码二维码"
+                class="w-full h-full object-cover rounded-[22px]"
+              >
+            </div>
+            <p class="text-sm text-gray-700 font-medium mt-4">请使用微信扫一扫登录</p>
+
+            <div class="wechat-divider">扫码结果演示</div>
+
+            <div class="grid grid-cols-1 gap-3">
+              <button
+                type="button"
+                onclick="simulateWechatLogin('first')"
+                class="demo-action w-full rounded-xl px-4 py-3 text-sm font-medium"
+              >
+                模拟初次扫码（未绑定账号）
+              </button>
+              <button
+                type="button"
+                onclick="simulateWechatLogin('bound')"
+                class="demo-action w-full rounded-xl px-4 py-3 text-sm font-medium"
+              >
+                模拟已绑定账号，直接登录
+              </button>
+            </div>
+
+            <div class="mt-4">
+              <label class="flex items-start gap-2 cursor-pointer text-left">
+                <input
+                  type="checkbox"
+                  id="wechatAgreeTerms"
+                  class="w-4 h-4 mt-0.5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                  checked
+                >
+                <span class="text-xs text-gray-400 leading-relaxed">
+                  已阅读并同意
+                  <a href="#" class="text-indigo-500 hover:underline">《用户服务协议》</a>
+                  与
+                  <a href="#" class="text-indigo-500 hover:underline">《隐私政策》</a>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button onclick="openTrialModal()" class="text-sm text-amber-500 hover:text-amber-600 transition-colors font-medium">
+            申请试用
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastStack" class="toast-stack"></div>
+
+  <div id="entrySceneModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="scene-modal-card">
+      <div class="px-7 py-6 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+        <h3 class="text-2xl font-bold text-slate-900">请选择工作场景</h3>
+      </div>
+      <div class="p-7 grid md:grid-cols-2 gap-4">
+        <button type="button" onclick="enterWorkScene('teaching')" class="scene-option scene-option-primary">
+          <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-200/70 mb-5">
+            <i data-lucide="presentation" class="w-6 h-6"></i>
+          </div>
+          <div class="text-xl font-bold text-slate-900">课堂授课</div>
+          <p class="text-sm text-slate-500 mt-2 leading-6">课堂中进行课件讲授、开启活动等教学操作。</p>
+          <div class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-blue-600">
+            <span>进入</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </button>
+
+        <button type="button" onclick="enterWorkScene('preparing')" class="scene-option scene-option-secondary">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-200/70 mb-5">
+            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+          </div>
+          <div class="text-xl font-bold text-slate-900">日常备课</div>
+          <p class="text-sm text-slate-500 mt-2 leading-6">创建备课资源、布置作业等日常教学准备工作。</p>
+          <div class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600">
+            <span>进入</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="trialModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div class="bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 p-6 text-white relative">
+        <button
+          onclick="closeTrialModal()"
+          class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <h3 class="text-lg font-bold">申请试用</h3>
+          <p class="text-white/80 text-sm mt-1">填写以下信息，我们会尽快与您联系</p>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <form id="trialForm" onsubmit="handleTrialSubmit(event)">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">姓名 <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                id="trialName"
+                placeholder="请输入您的姓名"
+                class="input-focus w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm outline-none transition-all"
+              >
+              <p id="trialNameError" class="field-error hidden"></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">学校 <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                id="trialSchool"
+                placeholder="请输入学校名称"
+                class="input-focus w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm outline-none transition-all"
+              >
+              <p id="trialSchoolError" class="field-error hidden"></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">任教学科 <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                id="trialSubject"
+                placeholder="请输入任教学科"
+                class="input-focus w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm outline-none transition-all"
+              >
+              <p id="trialSubjectError" class="field-error hidden"></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">手机号 <span class="text-red-500">*</span></label>
+              <input
+                type="tel"
+                id="trialPhone"
+                placeholder="请输入手机号"
+                class="input-focus w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm outline-none transition-all"
+              >
+              <p id="trialPhoneError" class="field-error hidden"></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">备注</label>
+              <textarea
+                rows="3"
+                placeholder="请输入备注信息（选填）"
+                class="input-focus w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm outline-none transition-all resize-none"
+              ></textarea>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-primary w-full py-3 rounded-lg text-white text-sm font-medium mt-6"
+          >
+            提交申请
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="bindModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div class="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 p-6 text-white relative">
+        <button
+          type="button"
+          onclick="closeBindModal()"
+          class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <h3 class="text-lg font-bold">绑定账号</h3>
+          <p class="text-white/85 text-sm mt-1">首次微信扫码登录，请先绑定平台账号后继续</p>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <form id="bindForm" onsubmit="handleBindSubmit(event)">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">绑定账号</label>
+              <input
+                type="text"
+                id="bindAccount"
+                placeholder="请输入已有账号"
+                class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none transition-all"
+              >
+              <p id="bindAccountError" class="field-error hidden"></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">账号密码</label>
+              <input
+                type="password"
+                id="bindPassword"
+                placeholder="请输入账号密码"
+                class="input-focus w-full px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none transition-all"
+              >
+              <p id="bindPasswordError" class="field-error hidden"></p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mt-6">
+            <button
+              type="button"
+              onclick="closeBindModal()"
+              class="w-full py-3 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              class="btn-primary w-full py-3 rounded-xl text-white text-sm font-medium"
+            >
+              绑定并登录
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const SUCCESS_REDIRECT_URL = 'http://127.0.0.1:5502/pages/teach.html';
+    const HOME_REDIRECT_URL = 'http://127.0.0.1:5502/pages/home.html';
+    const WORK_SCENE_KEY = 'outlineWorkScene';
+    let currentLoginMode = 'password';
+
+    function showToast(message, type = 'info') {
+      const toastStack = document.getElementById('toastStack');
+      if (!toastStack) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      toastStack.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-6px)';
+        toast.style.transition = 'all 0.2s ease';
+      }, 2200);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 2450);
+    }
+
+    function setFieldError(inputId, errorId, message) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      if (!input || !error) return;
+      input.classList.add('input-error');
+      error.textContent = message;
+      error.classList.remove('hidden');
+    }
+
+    function clearFieldError(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      if (!input || !error) return;
+      input.classList.remove('input-error');
+      error.textContent = '';
+      error.classList.add('hidden');
+    }
+
+    function validateRequiredField(inputId, errorId, message) {
+      const input = document.getElementById(inputId);
+      if (!input) return true;
+      const value = input.value.trim();
+      if (!value) {
+        setFieldError(inputId, errorId, message);
+        return false;
+      }
+      clearFieldError(inputId, errorId);
+      return true;
+    }
+
+    function validateLoginForm() {
+      const accountValid = validateRequiredField('account', 'accountError', '请输入账号或手机号');
+      const passwordValid = validateRequiredField('password', 'passwordError', '请输入密码');
+      return accountValid && passwordValid;
+    }
+
+    function validateBindForm() {
+      const accountValid = validateRequiredField('bindAccount', 'bindAccountError', '请输入已有账号');
+      const passwordValid = validateRequiredField('bindPassword', 'bindPasswordError', '请输入账号密码');
+      return accountValid && passwordValid;
+    }
+
+    function validateTrialForm() {
+      const nameValid = validateRequiredField('trialName', 'trialNameError', '请输入您的姓名');
+      const schoolValid = validateRequiredField('trialSchool', 'trialSchoolError', '请输入学校名称');
+      const subjectValid = validateRequiredField('trialSubject', 'trialSubjectError', '请输入任教学科');
+      const phoneValid = validateRequiredField('trialPhone', 'trialPhoneError', '请输入手机号');
+      return nameValid && schoolValid && subjectValid && phoneValid;
+    }
+
+    function bindFieldClear(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.addEventListener('input', function() {
+        if (input.value.trim()) {
+          clearFieldError(inputId, errorId);
+        }
+      });
+    }
+
+    function togglePassword() {
+      const pwdInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeIcon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        pwdInput.type = 'password';
+        eyeIcon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    function switchLoginMode(mode) {
+      currentLoginMode = mode;
+      const passwordTab = document.getElementById('passwordTab');
+      const wechatTab = document.getElementById('wechatTab');
+      const passwordPanel = document.getElementById('passwordPanel');
+      const wechatPanel = document.getElementById('wechatPanel');
+
+      const isPassword = mode === 'password';
+      passwordTab.classList.toggle('active', isPassword);
+      wechatTab.classList.toggle('active', !isPassword);
+      passwordPanel.classList.toggle('hidden', !isPassword);
+      wechatPanel.classList.toggle('hidden', isPassword);
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const account = document.getElementById('account').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const rememberMe = document.getElementById('rememberMe').checked;
+      const agreeTerms = document.getElementById('agreeTerms').checked;
+
+      if (!validateLoginForm()) {
+        showToast('请先补全登录信息', 'error');
+        return;
+      }
+
+      if (!agreeTerms) {
+        showToast('请先阅读并同意《用户服务协议》与《隐私政策》', 'error');
+        return;
+      }
+
+      console.log('密码登录信息:', { account, password, rememberMe, currentLoginMode });
+      openEntrySceneModal();
+    }
+
+    function simulateWechatLogin(type) {
+      const agreeTerms = document.getElementById('wechatAgreeTerms').checked;
+      if (!agreeTerms) {
+        showToast('请先阅读并同意《用户服务协议》与《隐私政策》', 'error');
+        return;
+      }
+
+      if (type === 'first') {
+        openBindModal();
+        return;
+      }
+
+      showToast('登录成功，请选择工作场景', 'success');
+      setTimeout(openEntrySceneModal, 400);
+    }
+
+    function openTrialModal() {
+      const modal = document.getElementById('trialModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeTrialModal() {
+      const modal = document.getElementById('trialModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openBindModal() {
+      const modal = document.getElementById('bindModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeBindModal() {
+      const modal = document.getElementById('bindModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleBindSubmit(e) {
+      e.preventDefault();
+      const account = document.getElementById('bindAccount').value.trim();
+      const password = document.getElementById('bindPassword').value.trim();
+
+      if (!validateBindForm()) {
+        showToast('请先填写绑定信息', 'error');
+        return;
+      }
+
+      console.log('微信首次登录绑定信息:', { account, password });
+      showToast('账号绑定成功，请选择工作场景。', 'success');
+      closeBindModal();
+      setTimeout(openEntrySceneModal, 400);
+    }
+
+    function handleTrialSubmit(e) {
+      e.preventDefault();
+
+      if (!validateTrialForm()) {
+        showToast('请先补全试用申请信息', 'error');
+        return;
+      }
+
+      showToast('试用申请已提交，我们会尽快与您联系！', 'success');
+      closeTrialModal();
+    }
+
+    function openEntrySceneModal() {
+      const modal = document.getElementById('entrySceneModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeEntrySceneModal() {
+      const modal = document.getElementById('entrySceneModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function enterWorkScene(scene) {
+      localStorage.setItem(WORK_SCENE_KEY, scene);
+      if (scene === 'teaching') {
+        window.location.href = SUCCESS_REDIRECT_URL + '?mode=teaching';
+        return;
+      }
+      window.location.href = HOME_REDIRECT_URL;
+    }
+
+    function goTeachPage() {
+      window.location.href = SUCCESS_REDIRECT_URL;
+    }
+
+    document.getElementById('trialModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeTrialModal();
+      }
+    });
+
+    document.getElementById('bindModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeBindModal();
+      }
+    });
+
+    document.getElementById('entrySceneModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEntrySceneModal();
+      }
+    });
+
+    bindFieldClear('account', 'accountError');
+    bindFieldClear('password', 'passwordError');
+    bindFieldClear('trialName', 'trialNameError');
+    bindFieldClear('trialSchool', 'trialSchoolError');
+    bindFieldClear('trialSubject', 'trialSubjectError');
+    bindFieldClear('trialPhone', 'trialPhoneError');
+    bindFieldClear('bindAccount', 'bindAccountError');
+    bindFieldClear('bindPassword', 'bindPasswordError');
+
+    switchLoginMode('password');
+    lucide.createIcons();
+  </script>
+</body>
+<script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
+</html>

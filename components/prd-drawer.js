@@ -836,6 +836,16 @@
         document.body.style.overflow = '';
     }
 
+    async function openDocByPath(file, name) {
+        overlay.classList.add('open');
+        drawer.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        await loadConfig();
+        renderDocList();
+        await openDoc(file, name || file);
+    }
+
     // 点击面包屑返回列表
     breadcrumbRoot.addEventListener('click', () => {
         if (currentView === 'doc') {
@@ -1108,6 +1118,12 @@
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') close();
     });
+
+    window.prdDrawer = {
+        open,
+        close,
+        openDocByPath,
+    };
 
     // 生成目录
     function buildTOC() {

@@ -63,7 +63,7 @@
       <!-- 菜单列表 -->
       <nav class="py-2">
         <!-- 数据分析 -->
-        <a href="#analysis" class="menu-item active flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+        <a href="#analysis" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
           <i data-lucide="bar-chart-2" class="menu-icon w-5 h-5 text-gray-400"></i>
           <span>数据分析</span>
         </a>
@@ -99,7 +99,7 @@
         </a>
 
         <!-- 课堂分析（使用视频分析图标） -->
-        <a href="#class-analysis" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+        <a href="#class-analysis" class="menu-item active flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
           <i data-lucide="video" class="menu-icon w-5 h-5 text-gray-400"></i>
           <span>课堂分析</span>
         </a>
@@ -851,25 +851,40 @@
     // 页面加载完成后检查 URL hash 并切换到对应菜单
     function checkUrlHash() {
       const hash = window.location.hash;
+      let targetHref = '#class-analysis';
+      let targetTitle = '课堂分析';
+
       if (hash === '#student') {
-        exitFullscreenMode();
-        document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
-        const studentMenuItem = document.querySelector('.menu-item[href="#student"]');
-        if (studentMenuItem) {
-          studentMenuItem.classList.add('active');
-        }
-        switchPanel('#student', '学生管理');
-        initIcons();
+        targetHref = '#student';
+        targetTitle = '学生管理';
       } else if (hash === '#homework') {
-        exitFullscreenMode();
-        document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
-        const homeworkMenuItem = document.querySelector('.menu-item[href="#homework"]');
-        if (homeworkMenuItem) {
-          homeworkMenuItem.classList.add('active');
-        }
-        switchPanel('#homework', '作业&批改');
-        initIcons();
+        targetHref = '#homework';
+        targetTitle = '作业&批改';
+      } else if (hash === '#analysis') {
+        targetHref = '#analysis';
+        targetTitle = '数据分析';
+      } else if (hash === '#paper') {
+        targetHref = '#paper';
+        targetTitle = '智能组卷';
+      } else if (hash === '#comprehensive') {
+        targetHref = '#comprehensive';
+        targetTitle = '综合评价';
+      } else if (hash === '#classroom-review') {
+        targetHref = '#classroom-review';
+        targetTitle = '课堂点评';
+      } else if (hash === '#class-analysis') {
+        targetHref = '#class-analysis';
+        targetTitle = '课堂分析';
       }
+
+      exitFullscreenMode();
+      document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+      const targetMenuItem = document.querySelector(`.menu-item[href="${targetHref}"]`);
+      if (targetMenuItem) {
+        targetMenuItem.classList.add('active');
+      }
+      switchPanel(targetHref, targetTitle);
+      initIcons();
     }
 
     // 监听 hash 变化
@@ -1401,4 +1416,5 @@
     });
   </script>
 </body>
+<script src="../components/prd-drawer.js" data-doc="../docs/your-doc.md"></script>
 </html>
