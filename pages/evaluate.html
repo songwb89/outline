@@ -540,7 +540,10 @@
                     </div>
                   </td>
                   <td class="px-4 py-3">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">已失败</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">已失败</span>
+                      <span class="text-xs text-red-500">文件解析失败，请重新上传。</span>
+                    </div>
                   </td>
                   <td class="px-4 py-3 text-sm text-gray-500">2026-05-22 16:45</td>
                   <td class="px-4 py-3">
@@ -593,14 +596,14 @@
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
               <!-- 上传区域 -->
               <div id="upload-dropzone" class="relative border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer">
-                <input type="file" id="file-input" accept="video/*,audio/*" class="hidden" />
+                <input type="file" id="file-input" accept=".mp3,.wav,.mp4,.mov,.avi" class="hidden" />
                 <div class="flex flex-col items-center gap-3">
                   <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
                     <i data-lucide="upload-cloud" class="w-7 h-7 text-blue-600"></i>
                   </div>
                   <div>
                     <p class="text-sm font-medium text-gray-700">点击上传或拖拽文件到此处</p>
-                    <p class="text-xs text-gray-400 mt-1">支持 MP4、AVI、MOV 视频格式或 MP3、WAV 音频格式</p>
+                    <p class="text-xs text-gray-400 mt-1">支持 MP3、WAV、MP4、MOV、AVI 五种格式</p>
                   </div>
                 </div>
               </div>

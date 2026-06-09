@@ -2517,11 +2517,11 @@ function loadContentOrganization() {
         </div>
       </div>
       
-      <!-- 易错点 -->
+      <!-- 注意点 -->
       <div class="pt-3 border-t border-gray-700/50 flex items-start gap-2">
         <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-gray-500 flex-shrink-0 mt-0.5"></i>
         <div class="flex-1">
-          <span class="text-sm text-gray-300 font-medium">易错点</span>
+          <span class="text-sm text-gray-300 font-medium">注意点</span>
           <p class="text-sm text-gray-500 mt-0.5 leading-relaxed">${point.errorPoint}</p>
         </div>
       </div>
@@ -2717,7 +2717,7 @@ function showKnowledgeDetail(id) {
       </div>
       <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
         <h4 class="text-sm text-amber-400 mb-2 flex items-center gap-2">
-          <i data-lucide="alert-triangle" class="w-4 h-4"></i> 易错点
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i> 注意点
         </h4>
         <p class="text-gray-300">${detail.errorPoint}</p>
       </div>
