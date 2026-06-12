@@ -501,6 +501,42 @@
                   </button>
                 </div>
 
+                <!-- AI讲解 -->
+                <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-purple-300 transition-all">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                      <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">《春》AI讲解</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs font-medium rounded-full">AI讲解</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="openTeachAIExplainModal()" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors shrink-0 ml-2">
+                    查看
+                  </button>
+                </div>
+
+                <!-- AI讲课 -->
+                <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 hover:border-amber-300 transition-all">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                      <i data-lucide="play-circle" class="w-5 h-5 text-amber-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <span class="text-sm font-medium text-gray-700 block truncate">《春》AI讲课</span>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-2 py-0.5 bg-amber-50 text-amber-600 text-xs font-medium rounded-full">AI讲课</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onclick="openTeachAILectureModal()" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors shrink-0 ml-2">
+                    查看
+                  </button>
+                </div>
+
                 <!-- 占位卡片（保持3的倍数布局） -->
                 <div class="hidden"></div>
               </div>
@@ -644,6 +680,30 @@
     function openDictationGradingPreview() {
       document.getElementById('dictation-grading-preview-modal').classList.remove('hidden');
       lucide.createIcons();
+    }
+
+    function closeDictationGradingPreview() {
+      document.getElementById('dictation-grading-preview-modal').classList.add('hidden');
+    }
+
+    // AI讲解弹窗（智能授课）
+    function openTeachAIExplainModal() {
+      document.getElementById('teach-ai-explain-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTeachAIExplainModal() {
+      document.getElementById('teach-ai-explain-modal').classList.add('hidden');
+    }
+
+    // AI讲课弹窗（智能授课）
+    function openTeachAILectureModal() {
+      document.getElementById('teach-ai-lecture-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTeachAILectureModal() {
+      document.getElementById('teach-ai-lecture-modal').classList.add('hidden');
     }
 
     // 关闭听写批改预览
@@ -915,6 +975,26 @@
     </div>
   </div>
 
+  <!-- 预览弹窗：AI讲解（全屏） -->
+  <div id="teach-ai-explain-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeTeachAIExplainModal()" class="absolute -top-10 right-0 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
+      <img src="img/AI讲解-2.png" alt="AI讲解" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：AI讲课（全屏） -->
+  <div id="teach-ai-lecture-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeTeachAILectureModal()" class="absolute -top-10 right-0 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5 text-gray-700"></i>
+      </button>
+      <img src="img/AI讲课-2.png" alt="AI讲课" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+  </div>
+
   <!-- 评测记录列表（单词 / 对话 / 场景，风格一致） -->
   <div id="teach-eval-record-list-modal" class="fixed inset-0 z-[55] bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden border border-gray-100">
@@ -1021,6 +1101,8 @@
         closeSceneDialoguePreview();
         closeAgentPreview();
         closeDictationGradingPreview();
+        closeTeachAIExplainModal();
+        closeTeachAILectureModal();
         var classModal = document.getElementById('class-select-modal');
         if (classModal && !classModal.classList.contains('hidden')) {
           closeClassSelectModal();
@@ -1056,6 +1138,12 @@
     });
     document.getElementById('dictation-grading-preview-modal')?.addEventListener('click', function(e) {
       if (e.target === this) closeDictationGradingPreview();
+    });
+    document.getElementById('teach-ai-explain-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeTeachAIExplainModal();
+    });
+    document.getElementById('teach-ai-lecture-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeTeachAILectureModal();
     });
     document.getElementById('teach-eval-record-list-modal')?.addEventListener('click', function(e) {
       if (e.target === this) closeTeachEvalRecordList();

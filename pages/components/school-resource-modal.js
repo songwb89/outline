@@ -19,7 +19,9 @@
     { id: 'word-eval', label: '单词评测' },
     { id: 'dialogue-eval', label: '对话评测' },
     { id: 'scene-dialogue', label: '场景对话' },
-    { id: 'agent', label: '智能体' }
+    { id: 'agent', label: '智能体' },
+    { id: 'ai-explain', label: 'AI讲解' },
+    { id: 'ai-lecture', label: 'AI讲课' }
   ];
 
   // 模拟资源数据
@@ -70,6 +72,14 @@
       { id: 'ag1', title: '苏轼', type: 'agent', author: '系统', date: '1月15日', icon: 'bot', color: 'purple', bgColor: 'bg-purple-100', iconColor: 'text-purple-600', borderColor: 'border-purple-300' },
       { id: 'ag2', title: '李清照', type: 'agent', author: '系统', date: '1月13日', icon: 'bot', color: 'purple', bgColor: 'bg-purple-100', iconColor: 'text-purple-600', borderColor: 'border-purple-300' },
       { id: 'ag3', title: '杜甫', type: 'agent', author: '系统', date: '1月11日', icon: 'bot', color: 'purple', bgColor: 'bg-purple-100', iconColor: 'text-purple-600', borderColor: 'border-purple-300' }
+    ],
+    'ai-explain': [
+      { id: 'ae1', title: 'AI讲解-古诗词鉴赏', type: 'ai-explain', author: '王老师', date: '1月15日', icon: 'sparkles', color: 'violet', bgColor: 'bg-violet-100', iconColor: 'text-violet-600', borderColor: 'border-violet-300' },
+      { id: 'ae2', title: 'AI讲解-文言文翻译', type: 'ai-explain', author: '李老师', date: '1月12日', icon: 'sparkles', color: 'violet', bgColor: 'bg-violet-100', iconColor: 'text-violet-600', borderColor: 'border-violet-300' }
+    ],
+    'ai-lecture': [
+      { id: 'al1', title: 'AI讲课-现代文阅读', type: 'ai-lecture', author: '王老师', date: '1月14日', icon: 'presentation', color: 'amber', bgColor: 'bg-amber-100', iconColor: 'text-amber-600', borderColor: 'border-amber-300' },
+      { id: 'al2', title: 'AI讲课-写作指导', type: 'ai-lecture', author: '李老师', date: '1月11日', icon: 'presentation', color: 'amber', bgColor: 'bg-amber-100', iconColor: 'text-amber-600', borderColor: 'border-amber-300' }
     ]
   };
 
@@ -258,7 +268,8 @@
     const typeMap = {
       'lp': '教案', 'cw': '课件', 'sp': '学案', 'ac': '活动',
       'lt': '抽奖', 'qz': '随堂测', 'dt': '听写', 'we': '单词评测',
-      'de': '对话评测', 'sd': '场景对话', 'ag': '智能体'
+      'de': '对话评测', 'sd': '场景对话', 'ag': '智能体',
+      'ae': 'AI讲解', 'al': 'AI讲课'
     };
     const prefix = id.substring(0, 2);
     return typeMap[prefix] || '资源';
@@ -288,6 +299,16 @@
 
   // 预览资源 - 调用 prepare.html 中的预览函数
   window.previewSchoolResource = function(id, type) {
+    // AI讲解和AI讲课类型显示截图预览
+    if (type === 'ai-explain') {
+      openAIPreviewModal('ai-explain');
+      return;
+    }
+    if (type === 'ai-lecture') {
+      openAIPreviewModal('ai-lecture');
+      return;
+    }
+
     // 根据类型调用对应的预览函数
     const previewFunctions = {
       'lesson-plan': 'openLessonPlanPreview',
@@ -306,6 +327,41 @@
     const funcName = previewFunctions[type];
     if (funcName && typeof window[funcName] === 'function') {
       window[funcName](id);
+    }
+  };
+
+  // AI预览截图弹窗
+  function openAIPreviewModal(type) {
+    const modal = document.createElement('div');
+    modal.id = 'ai-preview-modal';
+    modal.className = 'fixed inset-0 z-[250] hidden items-center justify-center';
+    const title = type === 'ai-explain' ? 'AI讲解' : 'AI讲课';
+    const imgSrc = type === 'ai-explain' ? 'img/AI讲解-2.png' : 'img/AI讲课-2.png';
+    modal.innerHTML = `
+      <div class="absolute inset-0 bg-black/60" onclick="closeAIPreviewModal()"></div>
+      <div class="relative flex items-center justify-center p-8 w-full h-full">
+        <button onclick="closeAIPreviewModal()" class="absolute top-4 right-4 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10 shadow-lg">
+          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-full max-h-full flex items-center justify-center">
+          <img src="${imgSrc}" alt="${title}" class="max-w-full max-h-[85vh] object-contain">
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  };
+
+  // 关闭AI预览弹窗
+  window.closeAIPreviewModal = function() {
+    const modal = document.getElementById('ai-preview-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      setTimeout(() => modal.remove(), 300);
     }
   };
 

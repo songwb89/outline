@@ -282,6 +282,46 @@
             </div>
           </div>
 
+          <!-- 辅导 -->
+          <div class="relative">
+              <button type="button" onclick="togglePanel('tutor')" id="btn-tutor" class="toolbar-tile flex min-w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md px-2.5 py-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer" title="辅导">
+                <i data-lucide="graduation-cap" class="h-5 w-5 shrink-0 text-white/95"></i>
+                <span class="text-[11px] font-medium leading-tight text-neutral-400">辅导</span>
+              </button>
+            <!-- 辅导面板 -->
+            <div id="panel-tutor" class="absolute bottom-full left-1/2 z-[45] mb-2 w-72 -translate-x-1/2 bg-neutral-900/95 backdrop-blur-2xl border border-neutral-700 rounded-xl shadow-2xl overflow-hidden hidden" style="max-height: min(380px, 55vh);">
+              <div class="px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="graduation-cap" class="w-4 h-4 text-purple-400"></i>
+                  <span class="text-sm font-medium text-white">辅导</span>
+                </div>
+                <button onclick="togglePanel('tutor')" class="text-neutral-400 hover:text-white">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="p-3 space-y-2 overflow-y-auto" style="max-height: 300px;">
+                <div onclick="openTutorAIExplainPreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">AI讲解</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-purple-500/20 text-purple-300 rounded">AI讲解</span>
+                  </div>
+                </div>
+                <div onclick="openTutorAILecturePreview()" class="flex items-center gap-3 p-3 bg-neutral-800/60 border border-neutral-700 rounded-lg cursor-pointer hover:bg-neutral-700/60 transition-colors">
+                  <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                    <i data-lucide="play-circle" class="w-5 h-5 text-amber-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-neutral-100 truncate">AI讲课</p>
+                    <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-300 rounded">AI讲课</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
       </div>
 
       <div class="hidden h-9 w-px shrink-0 bg-white/10 self-center sm:block mx-0.5" aria-hidden="true"></div>
@@ -506,6 +546,8 @@
     function openDialoguePreview() { activePanel = null; document.getElementById('panel-speaking').classList.add('hidden'); document.getElementById('btn-speaking').classList.remove('ring-2', 'ring-white/50'); document.getElementById('dialogue-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
     function openSceneDialoguePreview() { activePanel = null; document.getElementById('panel-speaking').classList.add('hidden'); document.getElementById('btn-speaking').classList.remove('ring-2', 'ring-white/50'); document.getElementById('scene-dialogue-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
     function openAgentPreview() { activePanel = null; document.getElementById('panel-agent').classList.add('hidden'); document.getElementById('btn-agent').classList.remove('ring-2', 'ring-white/50'); document.getElementById('agent-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openTutorAIExplainPreview() { activePanel = null; document.getElementById('panel-tutor').classList.add('hidden'); document.getElementById('btn-tutor').classList.remove('ring-2', 'ring-white/50'); document.getElementById('tutor-ai-explain-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
+    function openTutorAILecturePreview() { activePanel = null; document.getElementById('panel-tutor').classList.add('hidden'); document.getElementById('btn-tutor').classList.remove('ring-2', 'ring-white/50'); document.getElementById('tutor-ai-lecture-preview-modal').classList.remove('hidden'); lucide.createIcons(); }
 
     // 保留旧的（兼容）
     function toggleActivityPanel() { togglePanel('activity'); }
@@ -519,6 +561,8 @@
     function closeDialoguePreview() { document.getElementById('dialogue-preview-modal').classList.add('hidden'); }
     function closeSceneDialoguePreview() { document.getElementById('scene-dialogue-preview-modal').classList.add('hidden'); }
     function closeAgentPreview() { document.getElementById('agent-preview-modal').classList.add('hidden'); }
+    function closeTutorAIExplainPreview() { document.getElementById('tutor-ai-explain-preview-modal').classList.add('hidden'); }
+    function closeTutorAILecturePreview() { document.getElementById('tutor-ai-lecture-preview-modal').classList.add('hidden'); }
 
     // 打开课堂点评预览
     function openReviewPreview() {
@@ -672,6 +716,26 @@
     </div>
   </div>
 
+  <!-- 预览弹窗：AI讲解 -->
+  <div id="tutor-ai-explain-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center p-4">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeTutorAIExplainPreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/AI讲解-2.png" alt="AI讲解" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+  </div>
+
+  <!-- 预览弹窗：AI讲课 -->
+  <div id="tutor-ai-lecture-preview-modal" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center p-4">
+    <div class="relative max-w-[90vw] max-h-[90vh]">
+      <button onclick="closeTutorAILecturePreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+      </button>
+      <img src="img/AI讲课-2.png" alt="AI讲课" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+  </div>
+
   <script>
     function showToast() {
       const toast = document.getElementById('toast');
@@ -708,6 +772,8 @@
     document.getElementById('dialogue-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeDialoguePreview(); });
     document.getElementById('scene-dialogue-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeSceneDialoguePreview(); });
     document.getElementById('agent-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeAgentPreview(); });
+    document.getElementById('tutor-ai-explain-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeTutorAIExplainPreview(); });
+    document.getElementById('tutor-ai-lecture-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeTutorAILecturePreview(); });
     document.getElementById('review-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeReviewPreview(); });
     document.getElementById('rollcall-preview-modal')?.addEventListener('click', function(e) { if (e.target === this) closeRollcallPreview(); });
   </script>

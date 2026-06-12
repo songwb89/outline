@@ -97,6 +97,12 @@
           <i data-lucide="video" class="menu-icon w-5 h-5 text-gray-400"></i>
           <span>课堂分析</span>
         </a>
+
+        <!-- 个性辅导（使用毕业帽图标） -->
+        <a href="#personal-tutor" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
+          <i data-lucide="graduation-cap" class="menu-icon w-5 h-5 text-gray-400"></i>
+          <span>个性辅导</span>
+        </a>
       </nav>
     </aside>
 
@@ -443,8 +449,6 @@
                 </tr>
               </thead>
               <tbody id="analysis-list" class="divide-y divide-gray-100">
-                <!-- 示例数据 -->
-                <!-- 示例数据：已完成-视频 -->
                 <tr class="hover:bg-gray-50 transition-colors" data-media="video">
                   <td class="px-4 py-3">
                     <div class="flex items-center gap-3">
@@ -560,6 +564,326 @@
         </div>
       </div>
 
+      <!-- 个性辅导 内容面板 -->
+      <div id="panel-personal-tutor" class="hidden space-y-6">
+        <!-- 顶部：页面标题 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-0 z-10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="font-bold text-gray-800">个性辅导</h3>
+            </div>
+            <button onclick="openAIExplainModal()" class="hidden flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs font-medium shadow-sm">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              新增讲解
+            </button>
+          </div>
+        </div>
+
+        <!-- AI讲解卡片列表 -->
+        <div id="tutor-card-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <!-- AI讲解卡片 1 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">三年级语文</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月11日</span>
+                <span class="text-gray-300">|</span>
+                <span>三年级一班</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 2 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">《秋天的雨》</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月12日</span>
+                <span class="text-gray-300">|</span>
+                <span>李明同学</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 3 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">二元一次方程</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月10日</span>
+                <span class="text-gray-300">|</span>
+                <span>四年级二班</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 4 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">英语语法时态</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月9日</span>
+                <span class="text-gray-300">|</span>
+                <span>王小红</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 5 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">物理力学专题</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月8日</span>
+                <span class="text-gray-300">|</span>
+                <span>高二三班</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 6 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">《背影》阅读理解</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月7日</span>
+                <span class="text-gray-300">|</span>
+                <span>张三同学</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 7 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">化学元素周期表</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月6日</span>
+                <span class="text-gray-300">|</span>
+                <span>高一二班</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 8 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">历史近代史复习</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月5日</span>
+                <span class="text-gray-300">|</span>
+                <span>赵小华</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 9 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">地理地形地貌</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月4日</span>
+                <span class="text-gray-300">|</span>
+                <span>初二一班</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 10 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">生物细胞结构</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月3日</span>
+                <span class="text-gray-300">|</span>
+                <span>陈小芳</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 11 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">音乐乐理基础</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月2日</span>
+                <span class="text-gray-300">|</span>
+                <span>三年级二班</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI讲解卡片 12 -->
+          <div class="group relative bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible">
+            <button onclick="event.stopPropagation(); toggleCardMenu(this)" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all z-10">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+            <div class="card-menu absolute top-10 right-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-20 hidden">
+              <button onclick="event.stopPropagation(); alert('重命名')" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">重命名</button>
+              <button onclick="event.stopPropagation(); alert('删除')" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">删除</button>
+            </div>
+            <div onclick="openAIExplainPreview()" class="cursor-pointer">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <h4 class="text-sm font-medium text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">体育运动规则</h4>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded">AI讲解</span>
+                <span>3月1日</span>
+                <span class="text-gray-300">|</span>
+                <span>刘小明</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       <!-- 其他菜单占位内容 -->
       <div id="panel-other" class="hidden bg-white rounded-xl shadow-sm border border-gray-100 min-h-[400px] flex items-center justify-center">
         <div class="text-center text-gray-400">
@@ -568,6 +892,42 @@
           <p class="text-sm mt-2">详细内容区域，后续开发</p>
         </div>
       </div>
+
+      <!-- AI讲解弹窗：输入 -->
+      <div id="modal-ai-explain-input" class="fixed inset-0 z-[110] bg-black/40 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-2xl w-[500px] max-w-[90vw] overflow-hidden flex flex-col">
+          <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+            <h3 class="text-base font-semibold text-gray-800">AI讲解</h3>
+            <button onclick="closeAIExplainInput()" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+              <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+            </button>
+          </div>
+          <div class="flex-1 overflow-auto p-5 bg-gray-50">
+            <div class="relative">
+              <textarea id="ai-explain-input-text" class="w-full h-40 p-3 pr-10 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm" placeholder="请输入要讲解的知识点或问题..."></textarea>
+              <div class="absolute bottom-3 right-3 text-gray-400">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+              <button onclick="submitAIExplain()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium shadow-sm">
+                生成讲解
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 预览弹窗：AI讲解 -->
+      <div id="modal-ai-explain-preview" class="fixed inset-0 z-[100] bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="relative max-w-[90vw] max-h-[90vh]">
+          <button onclick="closeAIExplainPreview()" class="absolute -top-10 right-0 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-colors z-10">
+            <i data-lucide="x" class="w-6 h-6 text-gray-700"></i>
+          </button>
+          <img src="img/AI讲解-2.png" alt="AI讲解" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+        </div>
+      </div>
+
       <!-- 上传音视频弹窗 -->
       <div id="modal-upload" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeUploadModal()"></div>
@@ -800,6 +1160,7 @@
       const panelComprehensive = document.getElementById('panel-comprehensive');
       const panelClassroomReview = document.getElementById('panel-classroom-review');
       const panelClassAnalysis = document.getElementById('panel-class-analysis');
+      const panelPersonalTutor = document.getElementById('panel-personal-tutor');
       const panelRefinedPaper = document.getElementById('panel-refined-paper');
       const panelQuickPaper = document.getElementById('panel-quick-paper');
       const panelAiPaper = document.getElementById('panel-ai-paper');
@@ -817,6 +1178,7 @@
       if (panelComprehensive) panelComprehensive.classList.add('hidden');
       if (panelClassroomReview) panelClassroomReview.classList.add('hidden');
       if (panelClassAnalysis) panelClassAnalysis.classList.add('hidden');
+      if (panelPersonalTutor) panelPersonalTutor.classList.add('hidden');
 
       if (href === '#homework' || menuTitle === '作业&批改') {
         panelHomework.classList.remove('hidden');
@@ -830,6 +1192,9 @@
         if (panelClassroomReview) panelClassroomReview.classList.remove('hidden');
       } else if (href === '#class-analysis' || menuTitle === '课堂分析') {
         if (panelClassAnalysis) panelClassAnalysis.classList.remove('hidden');
+        initIcons();
+      } else if (href === '#personal-tutor' || menuTitle === '个性辅导') {
+        if (panelPersonalTutor) panelPersonalTutor.classList.remove('hidden');
         initIcons();
       } else {
         panelOther.classList.remove('hidden');
@@ -1133,6 +1498,66 @@
     // ==================== 课堂分析功能 ====================
     let selectedFile = null;
     let selectedDoc = null;
+
+    // 打开AI讲解输入弹窗
+    function openAIExplainModal() {
+      document.getElementById('modal-ai-explain-input').classList.remove('hidden');
+      document.getElementById('ai-explain-input-text').value = '';
+    }
+
+    // 关闭AI讲解输入弹窗
+    function closeAIExplainInput() {
+      document.getElementById('modal-ai-explain-input').classList.add('hidden');
+    }
+
+    // 提交AI讲解
+    function submitAIExplain() {
+      closeAIExplainInput();
+      setTimeout(function() {
+        openAIExplainPreview();
+      }, 100);
+    }
+
+    // 打开AI讲解预览
+    function openAIExplainPreview() {
+      document.getElementById('modal-ai-explain-preview').classList.remove('hidden');
+    }
+
+    // 关闭AI讲解预览
+    function closeAIExplainPreview() {
+      document.getElementById('modal-ai-explain-preview').classList.add('hidden');
+    }
+
+    // 点击遮罩关闭预览
+    document.getElementById('modal-ai-explain-preview')?.addEventListener('click', function(e) {
+      if (e.target === this) closeAIExplainPreview();
+    });
+
+    // 点击遮罩关闭输入弹窗
+    document.getElementById('modal-ai-explain-input')?.addEventListener('click', function(e) {
+      if (e.target === this) closeAIExplainInput();
+    });
+
+    // 卡片菜单切换
+    function toggleCardMenu(btn) {
+      // 关闭其他已打开的菜单
+      document.querySelectorAll('.card-menu').forEach(menu => {
+        if (!menu.contains(btn) && !menu.previousElementSibling?.contains(btn)) {
+          menu.classList.add('hidden');
+        }
+      });
+      const menu = btn.nextElementSibling;
+      if (menu && menu.classList.contains('card-menu')) {
+        menu.classList.toggle('hidden');
+      }
+    }
+
+    // 点击其他地方关闭卡片菜单
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.card-menu') && !e.target.closest('.group button')) {
+        document.querySelectorAll('.card-menu').forEach(menu => menu.classList.add('hidden'));
+      }
+    });
     let deleteTargetId = null;
 
     // 打开上传弹窗

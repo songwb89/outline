@@ -209,6 +209,10 @@
         <i data-lucide="book-marked" class="w-5 h-5"></i>
         个性化备课
       </button>
+      <button onclick="openTutoringModal()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium flex items-center gap-2">
+        <i data-lucide="bot" class="w-5 h-5"></i>
+        个性化辅导
+      </button>
       <button class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium flex items-center gap-2">
         <i data-lucide="file-text" class="w-5 h-5"></i>
         布置个性化作业
@@ -483,12 +487,155 @@
         </div>
         <div class="flex-1">
           <h3 class="text-base font-bold text-gray-900 mb-1">内容正在生成</h3>
-          <p class="text-gray-600 text-sm mb-1">稍后请前往智能备课下的如下章节查看：</p>
+          <p id="generating-hint" class="text-gray-600 text-sm mb-1">稍后请前往智能备课下的如下章节查看：</p>
           <p id="generating-chapter" class="text-blue-600 text-sm font-medium"></p>
         </div>
       </div>
       <div class="flex justify-end mt-4">
         <button onclick="closeGeneratingDialog()" class="px-4 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 气泡选择弹窗（原型演示用） -->
+  <div id="tutoring-choice-modal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/40" onclick="closeTutoringChoiceModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm">
+      <!-- 原型标注 -->
+      <div class="text-center mb-3">
+        <span class="inline-block px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded-full border-2 border-red-400">原型演示专用</span>
+      </div>
+      <div class="bg-white rounded-xl shadow-2xl border-4 border-dashed border-red-400 overflow-hidden">
+        <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white px-5 py-3 font-bold text-center">
+          请选择辅导场景（原型）
+        </div>
+        <div class="p-4 space-y-3">
+          <button onclick="selectTutoringType('class')" class="w-full px-4 py-3 bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 hover:border-blue-500 rounded-lg text-left transition-all">
+            <div class="font-bold text-blue-700 flex items-center gap-2">
+              <i data-lucide="users" class="w-5 h-5"></i>
+              基于班级报告
+            </div>
+            <p class="text-sm text-gray-600 mt-1">根据班级整体学情生成辅导方案</p>
+          </button>
+          <button onclick="selectTutoringType('student')" class="w-full px-4 py-3 bg-green-50 hover:bg-green-100 border-2 border-green-300 hover:border-green-500 rounded-lg text-left transition-all">
+            <div class="font-bold text-green-700 flex items-center gap-2">
+              <i data-lucide="user" class="w-5 h-5"></i>
+              基于学生报告
+            </div>
+            <p class="text-sm text-gray-600 mt-1">根据单个学生学习情况生成个性化辅导</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 个性化辅导弹窗（基于班级报告） -->
+  <div id="tutoring-modal" class="fixed inset-0 z-[60] hidden">
+    <!-- 遮罩层 -->
+    <div class="absolute inset-0 bg-black/50" onclick="closeTutoringModal()"></div>
+
+    <!-- 弹窗主体 -->
+    <div class="absolute inset-4 md:inset-y-[15%] md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-[600px] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- 标题栏 -->
+      <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex items-center justify-between shrink-0">
+        <h2 class="text-xl font-bold">个性化辅导</h2>
+        <button onclick="closeTutoringModal()" class="hover:bg-white/20 rounded-full p-1 transition-colors">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- 内容区域 -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- 辅导场景选择 -->
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <h3 class="text-base font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <i data-lucide="target" class="w-4 h-4 text-blue-600"></i>
+            选择辅导场景
+          </h3>
+          <div class="grid grid-cols-2 gap-2">
+            <div onclick="selectTutoringScenario('inClass')" id="scenario-inclass" class="scenario-card selected bg-white border-2 border-blue-500 rounded-lg p-2 cursor-pointer hover:border-blue-600 hover:shadow-md transition-all">
+              <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="monitor" class="w-4 h-4 text-blue-600"></i>
+                <span class="font-bold text-sm text-blue-700">课中演示</span>
+              </div>
+              <p class="text-xs text-gray-600">在课堂中实时展示</p>
+            </div>
+            <div onclick="selectTutoringScenario('afterClass')" id="scenario-afterclass" class="scenario-card bg-white border-2 border-gray-200 rounded-lg p-2 cursor-pointer hover:border-blue-400 hover:shadow-md transition-all">
+              <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="home" class="w-4 h-4 text-gray-500"></i>
+                <span class="font-bold text-sm text-gray-700">课后辅导</span>
+              </div>
+              <p class="text-xs text-gray-500">学生课后学习</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 章节选择 -->
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <h3 class="text-base font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
+            选择辅导章节
+          </h3>
+
+          <!-- 级联选择器 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- 年级 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">年级</label>
+              <select id="tutoring-grade-select" onchange="onTutoringGradeChange()" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg cascade-select focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">请选择年级</option>
+                <optgroup label="一年级">
+                  <option value="g1_up">一年级上</option>
+                  <option value="g1_down">一年级下</option>
+                </optgroup>
+                <optgroup label="二年级">
+                  <option value="g2_up">二年级上</option>
+                  <option value="g2_down">二年级下</option>
+                </optgroup>
+                <optgroup label="三年级">
+                  <option value="g3_up">三年级上</option>
+                  <option value="g3_down">三年级下</option>
+                </optgroup>
+                <optgroup label="四年级">
+                  <option value="g4_up">四年级上</option>
+                  <option value="g4_down">四年级下</option>
+                </optgroup>
+                <optgroup label="五年级">
+                  <option value="g5_up">五年级上</option>
+                  <option value="g5_down">五年级下</option>
+                </optgroup>
+                <optgroup label="六年级">
+                  <option value="g6_up">六年级上</option>
+                  <option value="g6_down">六年级下</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- 教材版本 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">教材版本</label>
+              <select id="tutoring-version-select" onchange="onTutoringVersionChange()" disabled class="w-full px-4 py-2.5 border border-gray-300 rounded-lg cascade-select focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">请先选择年级</option>
+              </select>
+            </div>
+
+            <!-- 章节 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">章节</label>
+              <select id="tutoring-chapter-select" disabled class="w-full px-4 py-2.5 border border-gray-300 rounded-lg cascade-select focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">请先选择教材版本</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部按钮 -->
+      <div class="border-t border-gray-200 px-4 py-3 flex justify-end shrink-0 bg-gray-50">
+        <button onclick="startTutoring()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 shadow-lg shadow-blue-600/30">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          开始生成
+        </button>
       </div>
     </div>
   </div>
@@ -624,6 +771,151 @@
 
     function closePrepareModal() {
       document.getElementById('prepare-modal').classList.add('hidden');
+    }
+
+    // 个性化辅导弹窗（显示选择气泡）
+    function openTutoringModal() {
+      document.getElementById('tutoring-choice-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTutoringChoiceModal() {
+      document.getElementById('tutoring-choice-modal').classList.add('hidden');
+    }
+
+    // 选择辅导类型
+    function selectTutoringType(type) {
+      closeTutoringChoiceModal();
+      if (type === 'class') {
+        // 基于班级报告：打开辅导弹窗
+        document.getElementById('tutoring-modal').classList.remove('hidden');
+        lucide.createIcons();
+      } else {
+        // 基于学生报告：直接显示生成提示
+        document.getElementById('generating-hint').textContent = '稍后请前往智能评测下的个性化辅导中查看';
+        document.getElementById('generating-chapter').textContent = '';
+        document.getElementById('generating-dialog').classList.remove('hidden');
+        lucide.createIcons();
+      }
+    }
+
+// 辅导场景选择
+    let currentTutoringScenario = 'inClass';
+    function selectTutoringScenario(scenario) {
+      if (!scenario) return;
+      currentTutoringScenario = scenario;
+      document.querySelectorAll('.scenario-card').forEach(card => {
+        card.classList.remove('selected', 'border-blue-500', 'border-blue-400');
+        card.classList.add('border-gray-200');
+        card.style.backgroundColor = '';
+        card.querySelector('span').classList.remove('text-blue-700');
+        card.querySelector('span').classList.add('text-gray-700');
+        card.querySelector('i').classList.remove('text-blue-600');
+        card.querySelector('i').classList.add('text-gray-500');
+      });
+      const selectedCard = document.getElementById('scenario-' + scenario);
+      if (selectedCard) {
+        selectedCard.classList.add('selected');
+        selectedCard.classList.remove('border-gray-200');
+        selectedCard.classList.add('border-blue-500');
+        selectedCard.style.backgroundColor = '#eff6ff';
+        selectedCard.querySelector('span').classList.remove('text-gray-700');
+        selectedCard.querySelector('span').classList.add('text-blue-700');
+        selectedCard.querySelector('i').classList.remove('text-gray-500');
+        selectedCard.querySelector('i').classList.add('text-blue-600');
+      }
+    }
+
+    function closeTutoringModal() {
+      document.getElementById('tutoring-modal').classList.add('hidden');
+    }
+
+    // 辅导年级选择变化
+    function onTutoringGradeChange() {
+      const gradeSelect = document.getElementById('tutoring-grade-select');
+      const versionSelect = document.getElementById('tutoring-version-select');
+      const chapterSelect = document.getElementById('tutoring-chapter-select');
+      const selectedGrade = gradeSelect.value;
+
+      versionSelect.innerHTML = '<option value="">请选择教材版本</option>';
+      chapterSelect.innerHTML = '<option value="">请先选择教材版本</option>';
+      versionSelect.disabled = true;
+      chapterSelect.disabled = true;
+
+      if (selectedGrade && gradeData[selectedGrade]) {
+        const grade = gradeData[selectedGrade];
+        grade.versions.forEach((version, index) => {
+          const option = document.createElement('option');
+          option.value = 'v' + index;
+          option.textContent = version.name;
+          versionSelect.appendChild(option);
+        });
+        versionSelect.disabled = false;
+      }
+    }
+
+    // 辅导教材版本选择变化
+    function onTutoringVersionChange() {
+      const gradeSelect = document.getElementById('tutoring-grade-select');
+      const versionSelect = document.getElementById('tutoring-version-select');
+      const chapterSelect = document.getElementById('tutoring-chapter-select');
+      const selectedGrade = gradeSelect.value;
+      const selectedVersion = versionSelect.value;
+
+      chapterSelect.innerHTML = '<option value="">请先选择教材版本</option>';
+      chapterSelect.disabled = true;
+
+      if (selectedGrade && selectedVersion && gradeData[selectedGrade]) {
+        const versionIndex = parseInt(selectedVersion.replace('v', ''));
+        const version = gradeData[selectedGrade].versions[versionIndex];
+        version.chapters.forEach((chapter, index) => {
+          const option = document.createElement('option');
+          option.value = 'c' + index;
+          option.textContent = chapter;
+          chapterSelect.appendChild(option);
+        });
+        chapterSelect.disabled = false;
+      }
+    }
+
+    // 开始辅导
+    function startTutoring() {
+      const gradeSelect = document.getElementById('tutoring-grade-select');
+      const versionSelect = document.getElementById('tutoring-version-select');
+      const chapterSelect = document.getElementById('tutoring-chapter-select');
+
+      if (!gradeSelect.value) {
+        showToast('请选择年级', 'error');
+        return;
+      }
+      if (!versionSelect.value) {
+        showToast('请选择教材版本', 'error');
+        return;
+      }
+      if (!chapterSelect.value) {
+        showToast('请选择章节', 'error');
+        return;
+      }
+
+      const grade = gradeData[gradeSelect.value].name;
+      const versionIndex = parseInt(versionSelect.value.replace('v', ''));
+      const version = gradeData[gradeSelect.value].versions[versionIndex].name;
+      const chapterIndex = parseInt(chapterSelect.value.replace('c', ''));
+      const chapter = gradeData[gradeSelect.value].versions[versionIndex].chapters[chapterIndex];
+
+      closeTutoringModal();
+
+      if (currentTutoringScenario === 'afterClass') {
+        // 课后辅导：显示通用路径
+        document.getElementById('generating-hint').textContent = '稍后请前往智能评测下的个性化辅导中查看：';
+        document.getElementById('generating-chapter').textContent = '课后辅导';
+      } else {
+        // 课中演示：显示具体章节
+        document.getElementById('generating-hint').textContent = '稍后请前往智能备课下的如下章节查看：';
+        document.getElementById('generating-chapter').textContent = `${grade} / ${version} / ${chapter}`;
+      }
+      document.getElementById('generating-dialog').classList.remove('hidden');
+      lucide.createIcons();
     }
 
     // 年级选择变化
