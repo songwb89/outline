@@ -62,12 +62,6 @@
       
       <!-- 菜单列表 -->
       <nav class="py-2">
-        <!-- 数据分析 -->
-        <a href="#analysis" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
-          <i data-lucide="bar-chart-2" class="menu-icon w-5 h-5 text-gray-400"></i>
-          <span>数据分析</span>
-        </a>
-
         <!-- 作业&批改 -->
         <a href="#homework" class="menu-item flex items-center gap-3 px-4 py-3 text-sm text-gray-700 cursor-pointer no-underline">
           <i data-lucide="file-text" class="menu-icon w-5 h-5 text-gray-400"></i>
@@ -312,11 +306,6 @@
             <img id="img-ai-paper" class="w-full h-auto block" src="img/AI组卷1.png" alt="智能AI组卷" />
           </div>
         </div>
-      </div>
-
-      <!-- 数据分析 内容面板 -->
-      <div id="panel-analysis" class="">
-        <img src="img/数据分析.png" alt="数据分析" class="w-full h-auto block rounded-lg" />
       </div>
 
       <!-- 学生管理 内容面板 -->
@@ -807,7 +796,6 @@
       const panelAssign = document.getElementById('panel-assign');
       const panelPaper = document.getElementById('panel-paper');
       const panelCheck = document.getElementById('panel-check');
-      const panelAnalysis = document.getElementById('panel-analysis');
       const panelStudent = document.getElementById('panel-student');
       const panelComprehensive = document.getElementById('panel-comprehensive');
       const panelClassroomReview = document.getElementById('panel-classroom-review');
@@ -825,7 +813,6 @@
       if (panelQuickPaper) panelQuickPaper.classList.add('hidden');
       if (panelAiPaper) panelAiPaper.classList.add('hidden');
       if (panelCheck) panelCheck.classList.add('hidden');
-      if (panelAnalysis) panelAnalysis.classList.add('hidden');
       if (panelStudent) panelStudent.classList.add('hidden');
       if (panelComprehensive) panelComprehensive.classList.add('hidden');
       if (panelClassroomReview) panelClassroomReview.classList.add('hidden');
@@ -835,8 +822,6 @@
         panelHomework.classList.remove('hidden');
       } else if (href === '#paper' || menuTitle === '智能组卷') {
         panelPaper.classList.remove('hidden');
-      } else if (href === '#analysis' || menuTitle === '数据分析') {
-        if (panelAnalysis) panelAnalysis.classList.remove('hidden');
       } else if (href === '#student' || menuTitle === '学生管理') {
         if (panelStudent) panelStudent.classList.remove('hidden');
       } else if (href === '#comprehensive' || menuTitle === '综合评价') {
@@ -863,9 +848,6 @@
       } else if (hash === '#homework') {
         targetHref = '#homework';
         targetTitle = '作业&批改';
-      } else if (hash === '#analysis') {
-        targetHref = '#analysis';
-        targetTitle = '数据分析';
       } else if (hash === '#paper') {
         targetHref = '#paper';
         targetTitle = '智能组卷';
@@ -1046,13 +1028,12 @@
       }
     }
 
-    // 从面包屑返回主菜单（数据分析）
+    // 从面包屑返回主菜单
     function showEvaluateHome() {
       exitFullscreenMode();
       document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
-      document.querySelector('.menu-item[href="#analysis"]').classList.add('active');
-      document.getElementById('panel-analysis').classList.remove('hidden');
-      document.getElementById('panel-homework').classList.add('hidden');
+      document.querySelector('.menu-item[href="#homework"]').classList.add('active');
+      document.getElementById('panel-homework').classList.remove('hidden');
       document.getElementById('panel-other').classList.add('hidden');
       document.getElementById('panel-assign').classList.add('hidden');
       document.getElementById('panel-paper').classList.add('hidden');
@@ -1114,7 +1095,6 @@
       const panelOther = document.getElementById('panel-other');
       const panelAssign = document.getElementById('panel-assign');
       const panelCheck = document.getElementById('panel-check');
-      const panelAnalysis = document.getElementById('panel-analysis');
       const panelPaper = document.getElementById('panel-paper');
       const panelStudent = document.getElementById('panel-student');
       const panelComprehensive = document.getElementById('panel-comprehensive');
@@ -1124,7 +1104,6 @@
       panelOther.classList.add('hidden');
       panelAssign.classList.add('hidden');
       panelCheck.classList.add('hidden');
-      panelAnalysis.classList.add('hidden');
       panelPaper.classList.add('hidden');
       panelStudent.classList.add('hidden');
       panelComprehensive.classList.add('hidden');

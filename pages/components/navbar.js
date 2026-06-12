@@ -80,7 +80,8 @@ class Navbar {
       { id: 'home', label: '首页', href: 'home.html' },
       { id: 'prepare', label: '智能备课', href: 'prepare.html' },
       { id: 'teach', label: '智能授课', href: 'teach.html' },
-      { id: 'evaluate', label: '智能测评', href: 'evaluate.html' },
+      { id: 'evaluate', label: '智能评测', href: 'evaluate.html' },
+      { id: 'analysis', label: '学情分析', href: 'analysis.html' },
       { id: 'ai', label: 'AI专区', href: 'ai.html' },
       { id: 'academic', label: '教务管理', href: 'academic-class.html' }
     ];
