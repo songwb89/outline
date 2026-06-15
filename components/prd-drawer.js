@@ -34,6 +34,32 @@
     let currentDoc = null; // 当前显示的文档
     let currentView = 'list'; // 'list' 或 'doc'
 
+    // 用户主动选择缓存：按页面分别存储 { pageName: docFile }
+    function getUserChoiceKey() {
+        return 'prd-user-choice-' + getPageName();
+    }
+    function getUserChoice() {
+        try {
+            return localStorage.getItem(getUserChoiceKey());
+        } catch (e) {
+            return null;
+        }
+    }
+    function setUserChoice(docFile) {
+        try {
+            localStorage.setItem(getUserChoiceKey(), docFile);
+        } catch (e) {
+            // 忽略存储失败
+        }
+    }
+    function clearUserChoice() {
+        try {
+            localStorage.removeItem(getUserChoiceKey());
+        } catch (e) {
+            // 忽略
+        }
+    }
+
     // 获取当前页面名（标准化处理，兼容多种环境）
     function getPageName() {
         let pathname = window.location.pathname;
@@ -765,7 +791,7 @@
                 <span class="prd-doc-item-icon">📄</span>
                 <div class="prd-doc-item-name">${doc.name}</div>
             `;
-            item.onclick = () => openDoc(doc.file, doc.name);
+            item.onclick = () => openDoc(doc.file, doc.name, 'user');
             docListInner.appendChild(item);
         });
     }
@@ -788,8 +814,12 @@
     }
 
     // 打开指定文档
-    async function openDoc(file, name) {
+    // source: 'user' 表示用户主动选择（写入按页缓存）；其他值不写入
+    async function openDoc(file, name, source) {
         currentDoc = file;
+        if (source === 'user') {
+            setUserChoice(file);
+        }
         showDocView(name || file);
         await loadDocContent(scriptDir + '/../docs/' + file);
     }
@@ -804,7 +834,19 @@
         await loadConfig();
         renderDocList();
 
-        // 根据页面映射决定显示什么
+        // 1) 优先使用用户主动选择的缓存（按页面分别存储）
+        const userChoice = getUserChoice();
+        if (userChoice) {
+            const docInfo = config.docs.find(d => d.file === userChoice);
+            if (docInfo) {
+                await openDoc(userChoice, docInfo.name);
+                return;
+            }
+            // 缓存指向已不存在的文档时，清掉缓存并回退
+            clearUserChoice();
+        }
+
+        // 2) 回退：使用页面映射
         const pageName = getPageName();
         const mapping = getPageMapping(pageName);
 
