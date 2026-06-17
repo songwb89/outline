@@ -34,6 +34,25 @@
     let currentDoc = null; // 当前显示的文档
     let currentView = 'list'; // 'list' 或 'doc'
 
+    // ============================================================
+    // 缓存策略
+    //  - .md 文档内容：不缓存，每次强制重新拉取
+    //  - UI 状态（滚动位置、章节位置、大纲展开）：sessionStorage
+    //    （关掉浏览器标签页就清空，重新打开看到的是新内容 + 顶部位置）
+    //  - 用户主动选择的文档：localStorage（这是偏好，应跨标签页保留）
+    // ============================================================
+    const SESSION_PREFIX = 'prd-sess-';
+
+    function sessGet(key) {
+        try { return sessionStorage.getItem(SESSION_PREFIX + key); } catch (e) { return null; }
+    }
+    function sessSet(key, value) {
+        try { sessionStorage.setItem(SESSION_PREFIX + key, String(value)); } catch (e) {}
+    }
+    function sessDel(key) {
+        try { sessionStorage.removeItem(SESSION_PREFIX + key); } catch (e) {}
+    }
+
     // 用户主动选择缓存：按页面分别存储 { pageName: docFile }
     function getUserChoiceKey() {
         return 'prd-user-choice-' + getPageName();
@@ -904,7 +923,10 @@
             // 先加载依赖库
             await loadDependencies();
 
-            const res = await fetch(docPath);
+            // 强制不走任何缓存：cache:'no-store' + 时间戳参数
+            // 这样磁盘缓存和内存缓存都会被绕过，每次都拿到最新内容
+            const noCacheUrl = docPath + (docPath.includes('?') ? '&' : '?') + '_t=' + Date.now();
+            const res = await fetch(noCacheUrl, { cache: 'no-store' });
             if (!res.ok) throw new Error('文档未找到: ' + docPath);
             const md = await res.text();
 
@@ -953,7 +975,8 @@
             }
 
             // 恢复滚动条位置（在所有内容渲染完成后执行）
-            const savedScroll = localStorage.getItem('prd-scroll-' + currentDoc);
+            // 使用 sessionStorage：保留本次会话的滚动位置，但重新打开/刷新可拉到最新内容
+            const savedScroll = sessGet('scroll-' + currentDoc);
             if (savedScroll) {
                 setTimeout(() => {
                     content.scrollTop = parseInt(savedScroll);
@@ -1194,13 +1217,13 @@
         // 箭头 SVG
         const arrowSvg = '<svg class="prd-toc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>';
 
-        // 大纲展开状态存储 key
-        const tocStateKey = 'prd-toc-state-' + (currentDoc || 'default');
+        // 大纲展开状态存储 key（用 sessionStorage：本次会话内保持展开状态）
+        const tocStateKey = 'toc-state-' + (currentDoc || 'default');
 
         // 获取保存的展开状态
         function getCollapsedNodes() {
             try {
-                return JSON.parse(localStorage.getItem(tocStateKey)) || {};
+                return JSON.parse(sessGet(tocStateKey)) || {};
             } catch (e) {
                 return {};
             }
@@ -1208,7 +1231,7 @@
 
         // 保存展开状态
         function saveCollapsedNodes(collapsed) {
-            localStorage.setItem(tocStateKey, JSON.stringify(collapsed));
+            sessSet(tocStateKey, JSON.stringify(collapsed));
         }
 
         // 生成节点唯一标识（标题文字 + 层级）
@@ -1333,11 +1356,11 @@
 
         let saveScrollTimer = null;
         function scrollHandler() {
-            // 保存滚动位置（防抖处理）
+            // 保存滚动位置（防抖处理）- 用 sessionStorage
             if (saveScrollTimer) clearTimeout(saveScrollTimer);
             saveScrollTimer = setTimeout(() => {
                 if (currentDoc) {
-                    localStorage.setItem('prd-scroll-' + currentDoc, content.scrollTop);
+                    sessSet('scroll-' + currentDoc, content.scrollTop);
                 }
             }, 200);
 
