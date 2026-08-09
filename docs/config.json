@@ -1,17 +1,11 @@
 {
   "docs": [
     { "name": "课堂分析", "file": "课堂分析.md" },
-    { "name": "登录优化", "file": "登录优化.md" },
-    { "name": "个性化备课及辅导", "file": "个性化备课及辅导.md" },
-    { "name": "其它优化需求", "file": "1.0.8优化需求.md" }
+    { "name": "绘本需求1.0.4", "file": "绘本需求1.0.4.md" }
   ],
   "pageMapping": {
     "class-analysis": "课堂分析.md",
-    "evaluate": "课堂分析.md",
-    "teach": "个性化备课及辅导.md",
-    "home": "登录优化.md",
-    "login": "登录优化.md",
-    "analysis": "个性化备课及辅导.md",
-    "prepare": "个性化备课及辅导.md"
+    "index.html": "绘本需求1.0.4.md",
+    "my-books.html": "绘本需求1.0.4.md"
   }
 }
