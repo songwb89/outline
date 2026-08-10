@@ -159,20 +159,24 @@
         .prd-fab {
             position: fixed;
             ${positions[buttonPosition] || positions['bottom-right']}
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 18px 0 14px;
+            height: 44px;
+            border-radius: 22px;
             background: #1a1a2e;
             color: white;
             border: none;
-            font-size: 24px;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             transition: transform 0.2s, background 0.2s;
             z-index: 10000;
         }
         .prd-fab:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             background: #2d2d44;
         }
         .prd-overlay {
@@ -689,7 +693,7 @@
     // 创建 DOM 结构
     const container = document.createElement('div');
     container.innerHTML = `
-        <button class="prd-fab" title="查看 PRD 文档">📄</button>
+        <button class="prd-fab" title="查看设计文档">📄 文档</button>
         <div class="prd-overlay"></div>
         <div class="prd-drawer">
             <div class="prd-header">

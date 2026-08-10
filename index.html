@@ -3,121 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>兆涵科技 - 智能教学管理系统</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://registry.npmmirror.com/lucide/latest/files/dist/umd/lucide.js"></script>
+  <title>宋韦兵 · 作品集</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #ffffff;
+      color: #111;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
-    
-    .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 80px 24px 60px;
     }
-    
-    .card-hover {
-      transition: all 0.3s ease;
+
+    /* 个人信息 */
+    .me { margin-bottom: 56px; }
+    .me h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
-    
-    .card-hover:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    .me .bio {
+      margin-top: 20px;
+      color: #444;
+      max-width: 520px;
     }
-    
-    .icon-float {
-      animation: float 3s ease-in-out infinite;
+
+    /* 项目列表 */
+    .list { border-top: 1px solid #eee; }
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid #eee;
+      transition: padding 0.15s ease;
     }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .item:hover { padding-left: 8px; }
+    .item .text { min-width: 0; }
+    .item .name {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
     }
-    
-    .pulse-ring {
-      animation: pulse-ring 2s ease-out infinite;
+    .item .desc {
+      color: #888;
+      font-size: 13px;
     }
-    
-    @keyframes pulse-ring {
-      0% { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(1.5); opacity: 0; }
+    .item .arrow {
+      color: #bbb;
+      font-size: 18px;
+      line-height: 1;
+      transition: color 0.15s ease, transform 0.15s ease;
+    }
+    .item:hover .arrow {
+      color: #111;
+      transform: translateX(2px);
+    }
+
+    /* 底部 */
+    footer {
+      margin-top: 56px;
+      color: #bbb;
+      font-size: 12px;
     }
   </style>
 </head>
-<body class="min-h-screen bg-gray-50">
-  <!-- 顶部 Logo -->
-  <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4">
-      <div class="flex items-center gap-3">
-        <div class="flex flex-col leading-tight">
-          <span class="text-lg font-bold text-gray-800">兆涵科技</span>
-          <span class="text-xs text-gray-500">Sigma Education</span>
+<body>
+  <div class="wrap">
+
+    <!-- 个人信息 -->
+    <section class="me">
+      <h1>宋韦兵 <span style="color:#bbb; font-weight:400;">· Arlen</span></h1>
+      <p class="bio">两个原型，均来自小兆老师：一款用于课堂复盘，一款用于绘本创作。</p>
+    </section>
+
+    <!-- 原型列表 -->
+    <nav class="list">
+      <a class="item" href="pages/class-analysis.html" target="_blank" rel="noopener noreferrer">
+        <div class="text">
+          <div class="name">智能课堂分析</div>
+          <div class="desc">上传课堂实录，自动生成多维度分析报告</div>
         </div>
-      </div>
-    </div>
-  </header>
+        <span class="arrow">↗</span>
+      </a>
 
-  <!-- 主内容区 -->
-  <main class="max-w-5xl mx-auto px-6 py-16">
-    <!-- 入口卡片 -->
-    <div class="max-w-2xl mx-auto">
-      <!-- 教师端入口 -->
-      <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        <div class="gradient-bg p-8 text-center text-white">
-          <div class="relative inline-block mb-4">
-            <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto">
-              <i data-lucide="graduation-cap" class="w-10 h-10"></i>
-            </div>
-            <div class="absolute inset-0 bg-white/20 rounded-2xl pulse-ring"></div>
-          </div>
-          <h2 class="text-2xl font-bold mb-2">教师端</h2>
-          <p class="text-white/80 text-sm">课堂分析、登录优化、个性化备课/辅导、其它优化</p>
+      <a class="item" href="https://ai-picbook.netlify.app/" target="_blank" rel="noopener noreferrer">
+        <div class="text">
+          <div class="name">AI 绘本生成</div>
+          <div class="desc">从一句话创意到完整绘本，支持大纲自定义调整</div>
         </div>
-        <div class="p-6">
-          <div class="flex flex-wrap items-center justify-end gap-3">
-            <a href="pages/evaluate.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-blue-200 px-4 py-2 text-sm font-medium text-blue-600 transition hover:border-blue-300 hover:bg-blue-50">
-              <span>课堂分析</span>
-              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-            </a>
-            <a href="pages/prepare.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-blue-200 px-4 py-2 text-sm font-medium text-blue-600 transition hover:border-blue-300 hover:bg-blue-50">
-              <span>个性化备课/辅导</span>
-              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-            </a>
-            <a href="pages/login.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl border border-blue-200 px-4 py-2 text-sm font-medium text-blue-600 transition hover:border-blue-300 hover:bg-blue-50">
-              <span>登录优化</span>
-              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-            </a>
-            <button type="button" onclick="openOptimizeRequirement()" class="inline-flex items-center gap-2 rounded-xl border border-blue-200 px-4 py-2 text-sm font-medium text-blue-600 transition hover:border-blue-300 hover:bg-blue-50">
-              <span>优化需求</span>
-              <i data-lucide="panel-right-open" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+        <span class="arrow">↗</span>
+      </a>
+    </nav>
 
-    <!-- 底部信息 -->
-    <div class="text-center mt-16 text-gray-400 text-sm">
-      <p>兆涵科技 © 2026 Sigma Education</p>
-    </div>
-  </main>
-
-  <script src="components/prd-drawer.js"></script>
-  <script>
-    async function openOptimizeRequirement() {
-      if (!window.prdDrawer || typeof window.prdDrawer.openDocByPath !== 'function') {
-        return;
-      }
-      await window.prdDrawer.openDocByPath('1.0.8优化需求.md', '1.0.8 优化需求');
-      if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-      }
-    }
-
-    lucide.createIcons();
-  </script>
+    <footer>© 2026 Song Weibing · Arlen</footer>
+  </div>
 </body>
 </html>
